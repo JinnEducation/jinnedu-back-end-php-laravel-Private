@@ -1,0 +1,1222 @@
+Database Tables Issues
+  All tables not related with each others (not have foreign keys)
+  
+
+"users" table 
+  id (primary_key), 
+  name (string), 
+  avatar (string - nullable),
+  type (integer - default(0)),
+  email (string - unique), 
+  email_verified_at (timestamps - nullable) , 
+  password (string), 
+  remember_token ,
+  last_session (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at ,
+  online (integer - default(0))
+  last_online_date (date_time - nullable)
+  
+
+"menus" table
+  id (primary_key), 
+  p_id (unsignedBigInteger - nullable) , 
+  title (string), 
+  name (string - nullable),
+  route (string - nullable), 
+  slug (text - nullable), 
+  svg (string - nullable), 
+  icon (string - nullable), 
+  image (string - nullable), 
+  font (string - nullable), 
+  color (string - nullable), 
+  note (string - nullable), 
+  status (string - nullable),
+  invisible (integer),
+  type (string - nullable),
+  active_routes (text - nullable),
+  sortable (integer),
+  created_at , 
+  updated_at , 
+  deleted_at 
+
+"abilities" table  
+  id (bigIncrements)
+  name (string - nullable)
+  title (string - nullable)
+  entity_id (bigInteger - nullable)
+  entity_type (string - nullable)
+  only_owned (boolean)
+  options (json)
+  scope (integer - nullable - index)
+  created_at , 
+  updated_at , 
+
+"roles" table
+
+"assigned_roles" table
+
+"permissions" table
+
+"login_session_logs" table
+  id (primary_key),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  session (string) , 
+  ipaddress (string),
+  browser (string),
+  os (string),
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"languages" table 
+  id (primary_key), 
+  name (string),
+  shortname (string),
+  direction (string),
+  dirword (string),
+  icon (string), 
+  status (integer - default(0)),
+  main (integer - default(0)),
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"translations" table 
+  id (primary_key),  
+  langid (integer),
+  labelid (integer)
+  title (string), 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"labels" table 
+  id (primary_key),  
+  name (string),
+  file (string),
+  title (string), 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"user_abouts" table  
+  id (primary_key),  
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  first_name (string - nullable),
+  last_name (string - nullable),
+  phone (string - nullable),
+  country_id (integer)  [need to be foreign_key to "countries" table ],
+  level_id (integer)  [need to be foreign_key to "levels" table ],
+  language_id (integer)  [need to be foreign_key to "languages" table ],
+  subject_id (integer)  [need to be foreign_key to "subjects" table ],
+  experience_id (integer)  [need to be foreign_key to "experiences" table ],
+  situation_id (integer)  [need to be foreign_key to "situations" table ],
+  age (integer)
+  created_at , 
+  updated_at , 
+  deleted_at ,
+  date_of_birth (date - nullable)
+
+"countries" table
+  id (primary_key),  
+  name (string - nullable),
+  iso (string - nullable),
+  iso3 (string - nullable),
+  en_name (string - nullable),
+  ar_name (string - nullable),
+  numcode (string - nullable),
+  phonecode (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"levels" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"subjects" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"experiences" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at   
+
+"situations" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at 
+
+"user_certifications" table
+  id (primary_key),  
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  subject_id (integer - default(0))  [need to be foreign_key to "subjects" table ],
+  certificate (string - nullable),
+  description (text - nullable),
+  issued_by (string - nullable),
+  attachment (string - nullable),
+  years_from (integer)
+  years_to (integer)
+  created_at , 
+  updated_at , 
+  deleted_at 
+
+"user_educations" table 
+  id (primary_key),  
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  university (string - nullable)
+  degree (string - nullable)
+  degree_type_id (integer - default(0))  [need to be foreign_key to "degree_types" table ],
+  specialization (string - nullable)
+  attachment (string - nullable)
+  years_from (integer)
+  years_to (integer)
+  created_at , 
+  updated_at , 
+  deleted_at 
+  specialization_id (integer - default(0))  [need to be foreign_key to "specializations" table ],
+
+
+"user_descriptions" table 
+  id (primary_key),  
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  headline (text - nullable)
+  interests (text - nullable)
+  experience (text - nullable)
+  specialization (text - nullable)
+  methodology (text - nullable)
+  motivation (text - nullable)
+  specialization_id (integer - default(0))  [need to be foreign_key to "specializations" table ],
+  created_at , 
+  updated_at , 
+  deleted_at 
+
+"degree_types" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"world_timezones" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"week_days" table 
+  id (primary_key),  
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"user_availabilities" table  
+  id (primary_key),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  timezone_id (integer - default(0))  [need to be foreign_key to "world_timezones" table ],
+  day_id (integer - default(0))  [need to be foreign_key to "week_days" table ],
+  status (integer - default(0))
+  hour_from (string - nullable)
+  hour_to (string - nullable)
+  created_at , 
+  updated_at , 
+  deleted_at 
+
+"user_videos" table 
+  id (primary_key),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  youtube_url (string - nullable),
+  video_path (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"user_hourly_prices" table 
+  id (primary_key),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  price (float - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"user_languages" table
+  id (primary_key),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  level_id (integer)  [need to be foreign_key to "levels" table ],
+  language_id (integer)  [need to be foreign_key to "languages" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"posts" table
+  id (primary_key),
+  name (string - nullable)
+  depid (integer - default(0))  [need to be foreign_key to "departments" table ],
+  image (integer - default(0)) [need to be boolean]
+  status (integer - default(0)) [need to be boolean]
+  publish (integer - default(0)) [need to be boolean]
+  publish_date (date_time - nullable) 
+  sortable (integer - default(0)) [need to be boolean]
+  template (integer - default(0)) [need to be boolean]
+  rating (integer - default(0)) 
+  sum_rating (integer - default(0)) 
+  num_rating (integer - default(0)) 
+  readmore (integer - default(0)) 
+  content_type (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  main (integer - default(0)) 
+  authorid (integer - default(0))  []
+  variant (integer - default(0)) 
+  metadata (string - nullable) 
+  embed (text - nullable)
+  token (string - nullable)
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"departments" table
+  id (primary_key),
+  name (string - default(0))
+  parent_id (integer - default(0))  [need to be foreign_key to "departments" table ],
+  image (integer - default(0)) [need to be boolean]
+  icon (integer - default(0)) [need to be boolean]
+  banner (integer - default(0)) [need to be boolean]
+  class (string - nullable) 
+  color (string - nullable) 
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean]
+  template (integer - default(0)) [need to be boolean]
+  childrens (integer - default(0)) 
+  posts (integer - default(0)) 
+  readmore (integer - default(0)) 
+  content_type (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  token (string - nullable)
+  embed (text - nullable)
+  metadata (string - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"department_langs" table
+  id (primary_key),
+  depid (string - default(0))  [need to be foreign_key to "departments" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  summary (text - nullable) 
+  description (text - nullable) 
+  keywords (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"post_langs" table
+  id (primary_key),
+  postid (string - default(0))  [need to be foreign_key to "posts" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  summary (text - nullable) 
+  description (text - nullable) 
+  keywords (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"post_media" table
+  id (primary_key),
+  postid (string - default(0))  [need to be foreign_key to "posts" table ],
+  mediaid (string - default(0))  [need to be foreign_key to "media" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"post_comments" table
+  id (primary_key),
+  postid (string - default(0))  [need to be foreign_key to "posts" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  title (string - nullable) 
+  name (string - nullable) 
+  email (string - nullable) 
+  country (string - nullable) 
+  url (string - nullable) 
+  mobile (string - nullable) 
+  phone (string - nullable) 
+  comment (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"post_departments" table
+  id (primary_key),
+  postid (integer - default(0))  [need to be foreign_key to "posts" table ],
+  depid (integer - default(0))  [need to be foreign_key to "departments" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"media" table
+  id (primary_key),
+  name ( string - nullable )
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  likes ( integer - default(0) )
+  views ( integer - default(0) )
+  token ( string - nullable )
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"courses" table
+  id (primary_key),
+  name (string - default(0))
+  parent_id (integer - default(0))  [need to be foreign_key to "courses" table ],
+  image (integer - default(0)) [need to be boolean]
+  icon (integer - default(0)) [need to be boolean]
+  banner (integer - default(0)) [need to be boolean]
+  class (string - nullable) 
+  color (string - nullable) 
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean]
+  template (integer - default(0)) [need to be boolean]
+  childrens (integer - default(0)) 
+  posts (integer - default(0)) 
+  readmore (integer - default(0)) 
+  content_type (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  token (string - nullable)
+  embed (text - nullable)
+  metadata (string - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"course_langs" table
+  id (primary_key),
+  corid (string - default(0))  [need to be foreign_key to "courses" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  summary (text - nullable) 
+  description (text - nullable) 
+  keywords (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"category_langs" table
+  id (primary_key),
+  catid (string - default(0))  [need to be foreign_key to "categories" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  summary (text - nullable) 
+  description (text - nullable) 
+  keywords (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"categories" table
+  id (primary_key),
+  name (string - default(0))
+  parent_id (integer - default(0))  [need to be foreign_key to "categories" table ],
+  image (integer - default(0)) [need to be boolean]
+  icon (integer - default(0)) [need to be boolean]
+  banner (integer - default(0)) [need to be boolean]
+  class (string - nullable) 
+  color (string - nullable) 
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean]
+  template (integer - default(0)) [need to be boolean]
+  childrens (integer - default(0)) 
+  posts (integer - default(0)) 
+  readmore (integer - default(0)) 
+  content_type (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  token (string - nullable)
+  embed (text - nullable)
+  metadata (string - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"frequencies" table
+  id (primary_key),
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"outlines" table
+  id (primary_key),
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"reviews" table 
+  id (primary_key),
+  type (string - nullable),
+  ref_id (integer - default(0))  [unknown]
+  stars (integer - default(0))
+  status (integer - default(0))
+  sortable (integer - default(0))
+  comment (text - nullable)
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"chats" table 
+  id (primary_key),
+  from_user (integer)
+  to_user (integer)
+  message (text - nullable)
+  status (integer - default(0))
+  fav (integer - default(0))
+  seen (integer - default(0))
+  seen_time (date_time - nullable)
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"navigations" table
+  id (primary_key),
+  name (string - default(0))
+  parent_id (integer - default(0))  [need to be foreign_key to "navigations" table ],
+  image (integer - default(0)) [need to be boolean]
+  icon (integer - default(0)) [need to be boolean]
+  banner (integer - default(0)) [need to be boolean]
+  class (string - nullable) 
+  color (string - nullable) 
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean]
+  template (integer - default(0)) [need to be boolean]
+  childrens (integer - default(0)) 
+  posts (integer - default(0)) 
+  readmore (integer - default(0)) 
+  content_type (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  token (string - nullable)
+  embed (text - nullable)
+  metadata (string - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"navigation_langs" table
+  id (primary_key),
+  navid (string - default(0))  [need to be foreign_key to "navigations" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  main (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  readmore (integer - default(0)) 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  summary (text - nullable) 
+  description (text - nullable) 
+  keywords (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"prices" table
+  id (primary_key),
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at    
+
+"sort_by_tutors" table
+  id (primary_key),
+  name (string - nullable),
+  created_at , 
+  updated_at , 
+  deleted_at   
+
+"our_courses" table 
+  id (primary_key),
+  name (string - nullable),
+  category_id (string - default(0))  [need to be foreign_key to "categories" table ],
+  lessons (integer - default(0)) ,
+  class_length (integer - default(0)) ,
+  status (integer - default(0)) ,
+  image (integer - default(0)) ,
+  sortable (integer - default(0)) ,
+  likes (integer - default(0)) ,
+  views (integer - default(0)) ,
+  token (string - nullable ),
+  embed (text - nullable ),
+  metadata (text - nullable ),
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at ,
+  publish (integer - default(0))
+  publish_date (date_time - nullable)
+
+
+"our_course_langs" table
+  id (primary_key),
+  courseid (string - default(0))  [need to be foreign_key to "our_courses" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  about (text - nullable) 
+  headline (text - nullable) 
+  information (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at   
+
+"our_course_levels" table 
+  id (primary_key),
+  course_id (integer - default(0))  [need to be foreign_key to "courses or our_courses" table ],
+  level_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"our_course_dates" table
+  id (primary_key), 
+  course_id (integer - default(0))  [need to be foreign_key to "courses or our_courses" table ],
+  level_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  lessons (integer - default(0))
+  lessons_price (float)
+  class_date (date_time)
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"orders" table  
+  id (primary_key), 
+  ref_type (integer - default(0))
+  ref_id (integer - default(0))  [unknown]
+  price (decimal)
+  status (integer - default(0))
+  token (string - nullable)
+  payment (text - nullable)
+  metadata (text - nullable)
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  outline_id (integer - default(0))  [need to be foreign_key to "outlines" table ],
+  lessons (integer - default(0))
+  dates (text - nullable)
+  level_id (integer - default(0))  [need to be foreign_key to "levels" table ],
+  created_at , 
+  updated_at , 
+  deleted_at,
+  note (text - nullable) ,
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  currency_id (integer - default(0))  [need to be foreign_key to "currencies" table ],
+  currency_code (string),
+  currency_exchange (decimal),
+  transfer (integer),
+
+
+
+"conferences" table  
+  id (primary_key), 
+  ref_type (integer - default(0))
+  ref_id (integer - default(0))  [unknown]
+  order_id (integer - default(0))  [need to be foreign_key to "orders" table ],
+  status (integer - default(0))
+  title (string - nullable)
+  date (string - nullable)
+  start_time (string - nullable)
+  end_time (string - nullable)
+  record (integer - default(0))
+  timezone (integer - default(0))
+  type (string - nullable)
+  response (text - nullable)
+  notes (text - nullable)
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  student_id (integer - default(0))  [need to be foreign_key to "students" table / (doesn't exist) ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at , 
+  start_date_time (date_time - nullable) ,
+  end_date_time (date_time - nullable) , 
+  student_change_date (integer - default(0)),
+  old_student_start_date_time (date_time - nullable),
+  tutor_change_date (integer - default(0)),
+  old_tutor_start_date_time (date_time - nullable),
+
+
+"conference_links" table  
+  id (primary_key), 
+  ref_type (integer - default(0))
+  ref_id (integer - default(0))  [unknown]
+  order_id (integer - default(0))  [need to be foreign_key to "orders" table ],
+  conference_id (integer - default(0))  [need to be foreign_key to "conferences" table ],
+  status (integer - default(0))
+  class_id (string - nullable) [unknown]
+  user_name (string - nullable)
+  is_teacher (string - nullable)
+  lesson_name (string - nullable)
+  course_name (string - nullable)
+  type (string - nullable)
+  response (text - nullable)
+  notes (text - nullable)
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"chat_contacts" table 
+  id (primary_key),
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  contact_id (integer - default(0))  [need to be foreign_key to "contacts" table ],
+  last_msg (string - nullable)
+  last_msg_date (date_time - nullable)
+  status (integer - default(0))
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"parent_invitations" table 
+  id (primary_key),
+  parent_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  child_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  status (integer - default(0))
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"conference_notes" table 
+  id (primary_key),
+  conference_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  note (text - nullable) ,
+  status (integer - default(0)) ,
+  sortable (integer - default(0)) ,
+  token (string - nullable),
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) ,
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"conference_files" table
+  id (primary_key),
+  conference_id (integer - default(0))  [need to be foreign_key to "conferences" table ],
+  name ( string - nullable )
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  token ( string - nullable )
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"conference_complaints" table
+  id (primary_key),
+  conference_id (integer - default(0))  [need to be foreign_key to "conferences" table ],
+  subject ( string - nullable ) ,
+  note (text - nullable)
+  name ( string - nullable ) ,
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  token ( string - nullable )
+  reply_id (integer - default(0)) [unknown]
+  tutor_id (integer - default(0)) [need to be foreign_key to "tutors" table ],
+  student_id (integer - default(0)) [need to be foreign_key to "students" table / (doesn't exist) ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"supports" table
+  id (primary_key),
+  subject ( string - nullable ) ,
+  note (text - nullable)
+  name ( string - nullable ) ,
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  token ( string - nullable )
+  reply_id (integer - default(0)) [unknown]
+  country_id (integer - default(0)) [need to be foreign_key to "countries" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"user_interests" table 
+  id (primary_key),
+  subject_id (integer - default(0))  [need to be foreign_key to "subjects" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"user_favorites" table 
+  id (primary_key),
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"conference_tasks" table
+  id (primary_key),
+  conference_id (integer - default(0))  [need to be foreign_key to "conferences" table ],
+  subject ( string - nullable ) ,
+  note (text - nullable)
+  name ( string - nullable ) ,
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  token ( string - nullable )
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"conference_task_answers" table
+  id (primary_key),
+  conference_id (integer - default(0))  [need to be foreign_key to "conferences" table ],
+  task_id (integer - default(0))  [need to be foreign_key to "tasks" table / (doesn't exist) ],
+  subject ( string - nullable ) ,
+  note (text - nullable)
+  name ( string - nullable ) ,
+  file ( string - nullable )
+  type ( string - nullable )
+  extention ( string - nullable )
+  path ( string - nullable )
+  size ( integer - default(0) )
+  status ( integer - default(0) )
+  sortable ( integer - default(0) )
+  token ( string - nullable )
+  student_id (integer - default(0))  [need to be foreign_key to "students" table / (doesn't exist) ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"notifications" table
+  id (primary_key),
+  type (string) , 
+  notifiable (morphs),
+  data (text) ,
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"notification_infos" table 
+  id (primary_key),
+  n_title (string - nullable) , 
+  n_details (string - nullable) , 
+  n_url (string - nullable) , 
+  n_icon (string - nullable) , 
+  n_color (string - nullable) , 
+  n_seen (string - nullable) , 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"user_wallets" table
+   id (primary_key),
+   user_id (integer - default(0))  [need to be foreign_key to "users" table],
+   balance (float)
+   created_at , 
+   updated_at , 
+   deleted_at ,
+   group_class_count (integer) ,
+   our_course_count (integer) ,
+   private_lesson_count (integer),
+
+"settings" table
+   id (primary_key),
+   name (string - nullable) ,
+   type (string - nullable) ,
+   value (text - nullable) ,
+   options (text - nullable) ,
+   icon (string - nullable) ,
+   color (string - nullable) ,
+   class (string - nullable) ,
+   user_id (integer - default(0))  [need to be foreign_key to "users" table],
+   created_at , 
+   updated_at , 
+   deleted_at
+
+
+"group_classes" table 
+  id (primary_key),
+  name (string - nullable) ,
+  category_id (integer - default(0))  [need to be foreign_key to "categories" table],
+  level_id (integer - default(0))  [need to be foreign_key to "levels" table],
+  classes (integer - default(0)) , 
+  class_length (integer - default(0)) , 
+  frequency_id (integer - default(0))  [need to be foreign_key to "frequencies" table],
+  min_size (integer - default(0)) , 
+  status (integer - default(0)) , 
+  image (integer - default(0)) , 
+  sortable (integer - default(0)) , 
+  publish (integer - default(0)) , 
+  publish_date (date_time - nullable),
+  price (decimal) , 
+  likes (integer - default(0)) ,
+  views (integer - default(0)) ,
+  token (string - nullable)
+  embed (text - nullable)
+  metadata (string - nullable) ,
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"group_class_langs" table 
+  id (primary_key),
+  classid (string - default(0))  [need to be foreign_key to "group_classes" table ],
+  langid (string - default(0))  [need to be foreign_key to "langs" table ],
+  status (integer - default(0)) [need to be boolean]
+  sortable (integer - default(0)) [need to be boolean] 
+  likes (integer - default(0)) 
+  views (integer - default(0)) 
+  slug (string - nullable) 
+  title (string - nullable) 
+  about (text - nullable) 
+  headline (text - nullable) 
+  information (text - nullable) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"group_class_dates" table 
+  id (primary_key),
+  classid (string - default(0))  [need to be foreign_key to "group_classes" table ],
+  class_date (date_time) 
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"group_class_outlines" table 
+  id (primary_key),
+  class_id (string - default(0))  [need to be foreign_key to "group_classes" table ],
+  outline_id (string - default(0))  [need to be foreign_key to "outlines" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"group_class_students" table 
+  id (primary_key),
+  class_id (string - default(0))  [need to be foreign_key to "group_classes" table ],
+  student_id (string - default(0))  [need to be foreign_key to "students" table ],
+  order_id (integer - default(0))  [need to be foreign_key to "orders" table ],
+  status (integer - default(0))
+  ipaddress (string - nullable) 
+  created_at , 
+  updated_at , 
+  deleted_at    
+
+"our_course_tutors" table 
+  id (primary_key),
+  course_id (integer - default(0))  [need to be foreign_key to "our_courses" table ],
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"specializations" table
+  id (primary_key),
+  name (string - nullable)
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"post_packages" table 
+  id (primary_key),
+  post_id (integer - default(0))  [need to be foreign_key to "posts" table ],
+  price (decimal),
+  group_class_count (integer) ,
+  our_course_count (integer) ,
+  private_lesson_count (integer),
+  user_id (integer)  [need to be foreign_key to "users" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"currencies" table
+  id (primary_key),
+  currency_id (integer - default(0))  [need to be foreign_key to "currencies" table ],
+  currency_code (string - nullable) ,
+  exchange (decimal),
+  last_updated_at (string - nullable)
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"currency_latest" table
+  id (primary_key),
+  name (string - nullable)
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"tutor_tranfers" table 
+  id (primary_key),
+  tutor_id (integer - default(0))  [need to be foreign_key to "tutors" table ],
+  order_id (integer - default(0))  [need to be foreign_key to "orders" table ],
+  type (integer - nullable) ,
+  percentage (decimal),
+  amount (decimal),
+  status (integer - default(0)) ,
+  note (string - nullable)
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"exams" table 
+  id (primary_key),
+  level_id (integer - default(0))  [need to be foreign_key to "levels" table ],
+  category_id (integer - default(0))  [need to be foreign_key to "categories" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"exams_lang" table 
+  id (primary_key),
+  exam_id (integer - default(0))  [need to be foreign_key to "exams" table ],
+  lang_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  title (string)
+  created_at , 
+  updated_at , 
+  deleted_at  
+
+"answers" table 
+  id (primary_key),
+  exam_id (integer - default(0))  [need to be foreign_key to "exams" table ],
+  user_id (integer - default(0))  [need to be foreign_key to "users" table ],
+  is_true (tinyInteger - default(0))
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"answers_lang" table 
+  id (primary_key),
+  exam_id (integer - default(0))  [need to be foreign_key to "exams" table ],
+  answer_id (integer - default(0))  [need to be foreign_key to "answers" table ],
+  lang_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  title (string)
+  created_at , 
+  updated_at , 
+  deleted_at    
+
+"group_class_exam" table  
+  id (primary_key),
+  class_id (integer - default(0))  [need to be foreign_key to "group_classes" table ],
+  student_id (integer - default(0))  [need to be foreign_key to "students" table / (not exist) ],
+  question_no (integer - default(0))
+  success_rate (integer - default(0))
+  result (float)
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"group_class_question" table  
+  id (primary_key),
+  class_id (integer - default(0))  [need to be foreign_key to "group_classes" table ],
+  exam_id (integer - default(0))  [need to be foreign_key to "exams" table / (not exist) ],
+  group_class_exam_id (integer - default(0))  [need to be foreign_key to "group_class_exam" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"group_class_question_langs" table
+  id (primary_key),
+  title (string )
+  lang_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  group_class_question_id (integer - default(0))  [need to be foreign_key to "group_class_question" table ],
+  group_class_exam_id (integer - default(0))  [need to be foreign_key to "group_class_exam" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+"group_class_answers" table
+  id (primary_key),
+  class_id (integer - default(0))  [need to be foreign_key to "group_classes" table ],
+  is_true (tinyInteger - default(0))
+  student_answer (tinyInteger - default(0))
+  group_class_question_id (integer - default(0))  [need to be foreign_key to "group_class_question" table ],
+  group_class_exam_id (integer - default(0))  [need to be foreign_key to "group_class_exam" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+"group_class_answers_langs" table
+  id (primary_key),
+  title (string )
+  lang_id (integer - default(0))  [need to be foreign_key to "langs" table ],
+  group_class_question_id (integer - default(0))  [need to be foreign_key to "group_class_question" table ],
+  group_class_exam_id (integer - default(0))  [need to be foreign_key to "group_class_exam" table ],
+  created_at , 
+  updated_at , 
+  deleted_at
+
+
+  ----------------------------------------------------------------------------
+
+notes: 
+  - "status" columns need to be converted to boolean in all table
+  - "sortable" columns need to be converted to boolean in all table
+  - useless columns need to be removed from all table
+  - missing tables need to be added like "students - tasks"

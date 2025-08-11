@@ -1,0 +1,15 @@
+backend
+- all table not related with each others (not have foreign keys)
+- database need to be reviewed 
+
+
+frontend 
+- frontend views and routes not exists in the vue project 
+
+
+
+-tables to import 
+          menus - roles - assignroles - permissions - abilities
+
+
+user type           
