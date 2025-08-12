@@ -1,0 +1,64 @@
+    public function localesLang($lang)
+    {
+        // get last record in translations_table
+        $local = Translation::select('updated_at')->orderBy('updated_at', 'DESC')->first();
+
+        if (file_exists('../public/static/locales/lang/' . $lang . '.php')) {
+            // if file
+            if(date('Y-m-d H:i:s', filemtime('../public/static/locales/lang/' . $lang . '.php')) >= $local->updated_at) {
+                include '../public/static/locales/lang/' . $lang . '.php';
+                $responsejson = $lang;
+                $gzipData = gzencode($responsejson, 9);
+                return response($gzipData)->withHeaders([
+                    'Access-Control-Allow-Origin' => '*',
+                    'Access-Control-Allow-Methods' => 'GET',
+                    'Content-type' => 'application/json; charset=utf-8',
+                    'Content-Length' => strlen($gzipData),
+                    'Content-Encoding' => 'gzip'
+                ]);
+                return json_decode($lang);
+                exit;
+            }
+        }
+        $language = Language::where('shortname', $lang)->first();
+        if(!$language) {
+            return [];
+        }
+
+        $labels = Label::all();
+        $translations = [];
+        foreach($labels as $label) {
+            $translation = $label->translations()->where('langid', $language->id)->first();
+            $translations[$label->file][$label->name] = isset($translation->title) ? $translation->title : $label->name;
+        }
+
+        if (file_exists('../public/static/locales/lang/' . $lang . '.php')) {
+            unlink('../public/static/locales/lang/' . $lang . '.php');
+        }
+        $myfile = fopen('../public/static/locales/lang/' . $lang . '.php', "w") or die("Unable to open file!");
+        $translations['static'] = true;
+        $txt = "<?php\n" .
+        //"header('Content-Type: application/json; charset=utf-8');\n".
+        //"\$filename = '../public/static/locales/lang/".$lang.".php';\n".
+        //"\$file_time = date(\"Y-m-d H:i:s.\", filemtime(\$filename));\n".
+        "\$lang = '" . str_replace("'", '', json_encode($translations)) . "';\n" .
+        //"echo \$lang;\n".
+        "?>";
+$translations['static'] = false;
+
+//echo $txt;exit;
+fwrite($myfile, $txt);
+fclose($myfile);
+
+$responsejson = json_encode($translations);
+$gzipData = gzencode($responsejson, 9);
+return response($gzipData)->withHeaders([
+'Access-Control-Allow-Origin' => '*',
+'Access-Control-Allow-Methods' => 'GET',
+'Content-type' => 'application/json; charset=utf-8',
+'Content-Length' => strlen($gzipData),
+'Content-Encoding' => 'gzip'
+]);
+
+return $translations;
+}

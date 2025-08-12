@@ -1,0 +1,251 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
+use App\Models\Conference;
+use App\Models\ConferenceLink;
+use App\Models\ConferenceNote;
+use App\Models\ConferenceFile;
+
+use App\Models\User;
+use App\Models\GroupClass;
+use App\Models\GroupClassDate;
+use App\Models\GroupClassOutline;
+use App\Models\GroupClassLang;
+
+use Bouncer;
+use Mail;
+
+class ConferenceController extends Controller
+{
+    public function myFiles(Request $request)
+    {
+        $user = Auth::user();
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = ConferenceFile::query();
+        $items->where('user_id',$user->id);
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function myNotes(Request $request)
+    {
+        $user = Auth::user();
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = ConferenceNote::query();
+        $items->where('user_id',$user->id);
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function myLinks(Request $request)
+    {
+        $user = Auth::user();
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = ConferenceLink::query();
+        $items->where('user_id',$user->id);
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function adminIndex(Request $request)
+    {
+        $user = Auth::user();
+        
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = Conference::query();
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+        foreach($items as $item){
+            $item->tutor;
+            $item->student;
+        }
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function studentIndex(Request $request)
+    {
+        $user = Auth::user();
+        
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = Conference::query();
+        $items->where('student_id',$user->id);
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+        foreach($items as $item){
+            $item->tutor;
+        }
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function tutorIndex(Request $request)
+    {
+        $user = Auth::user();
+        
+ 
+        $limit = setDataTablePerPageLimit($request->limit);
+        
+        $items = Conference::query();
+        $items->where('tutor_id',$user->id);
+        if(!empty($request->q)){
+            $items->whereRaw(filterTextDB('title').' like ?',['%'.filterText($request->q).'%']);
+        }
+        $items = $items->paginate($limit);
+        foreach($items as $item){
+            $item->student;
+        }
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $items
+        ] , 200);
+    }
+    
+    public function createLink(Request $request, $id)
+    {
+        $user = Auth::user();
+        
+        $conference = Conference::find($id);
+        if(!$conference) return response([
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '111'
+        ] , 401);
+        
+        if($conference->tutor_id != $user->id && $conference->student_id != $user->id ) return response([
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '222'
+        ] , 401);
+        
+        $response = json_decode($conference->response);
+        if(!$response) return response([
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '333'
+        ] , 401);
+        
+        if($response->status!='ok') return response([
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '444'
+        ] , 401);
+        
+        $conferenceLink = new ConferenceLink;
+	    
+	    $conferenceLink->ref_id=$conference->ref_id;
+	    $conferenceLink->ref_type=$conference->ref_type;
+	    $conferenceLink->order_id=$conference->order_id;
+	    $conferenceLink->conference_id=$conference->id;
+	    
+	    $conferenceLink->class_id=$response->class_id;
+	    $conferenceLink->user_name=$user->name;
+	    
+	    if($conference->tutor_id== $user->id) $conferenceLink->is_teacher=1;
+	    else $conferenceLink->is_teacher=0;
+	    
+	    $conferenceLink->user_id=$user->id;
+	    
+	    $conferenceLink->lesson_name='at '.$conference->date.' from '.$conference->start_time.' to '.$conference->end_time;
+	    $conferenceLink->course_name=$conference->title;
+	    
+	    $conferenceLink->type='braincert';
+	    $conferenceLink->status=0;
+	    $conferenceLink->save();
+	    
+	    $postValues = array(
+        	'class_id' => $conferenceLink->class_id,
+        	'userId' => $conferenceLink->user_id,
+        	'userName' => $conferenceLink->user_name,
+        	'isTeacher' => $conferenceLink->is_teacher,
+        	'lessonName' => $conferenceLink->lesson_name,
+        	'courseName' => $conferenceLink->course_name
+        );
+        
+        $braincert = new BraincertController;
+        $conferenceLink->response = $braincert->conferenceLink($postValues);
+        //$conferenceLink->notes = json_encode($postValues);
+        $conferenceLink->save();
+            
+         return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => $conferenceLink
+        ] , 200);
+    }
+    
+    public function uploadFile(Request $request,$id)
+    {
+        dd('123');
+        $user = Auth::user();
+        
+        $data = [];
+        if(!empty($request->file)) $data = uploadMedia($request->file,['pdf','doc','docx','ppt','pptx','exl','exlx','jpg','jpeg','png','gif','svg','mp3','mp4'],'conferences-files');
+        $data['user_id'] = $user->id;
+        $data['conference_id'] = $id;
+        $data['ipaddress'] = $request->ip();
+        $item = ConferenceFile::create($data);
+        return response([
+                'success' => true,
+                'message' => 'item-added-successfully',
+                'result' => $item
+        ] , 200);
+    }
+    
+}

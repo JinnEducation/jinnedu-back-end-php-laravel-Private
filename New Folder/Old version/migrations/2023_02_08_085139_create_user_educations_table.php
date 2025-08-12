@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('user_educations', function (Blueprint $table) {
+            $table->id();
+            $table->integer('user_id');
+            $table->String('university')->nullable();
+            $table->String('degree')->nullable();
+            $table->String('degree_type_id')->default(0);
+            $table->String('specialization')->nullable();
+            $table->String('attachment')->nullable();
+            $table->integer('years_from');
+            $table->integer('years_to');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('user_educations');
+    }
+};
