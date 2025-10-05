@@ -44,5 +44,10 @@ Route::prefix('stripe')->name('stripe.')->group(function () {
     Route::get('/cancel', [StripeCheckoutController::class,'cancel'])->name('cancel');
 });
 
-Route::get('/payment-response/{id}/{status}',[WalletPaymentTransactionController::class,'handlePaymentResponse'])->name('checkout-response');
+// Route::get('/payment-response/{id}/{status}',[WalletPaymentTransactionController::class,'handlePaymentResponse'])->name('checkout-response');
+
+Route::get('/payment-response/{id}/{status}',[PaymentResponseController::class,'handlePaymentResponse'])->name('checkout-response');
+
+
+
 
