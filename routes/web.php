@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MuxController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZoomController;
+use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\PaypalCheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\PaymentResponseController;
@@ -19,9 +21,7 @@ use App\Http\Controllers\WalletPaymentTransactionController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/',[HomeController::class,'index'])->name('home');
 
 Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('password.reset');
 Route::get('/mux',[MuxController::class,'index']);
