@@ -122,6 +122,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 
+
     public function abouts()
     {
         return $this->hasOne(UserAbout::class, 'user_id');
@@ -196,6 +197,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ConferenceReview::class, 'tutor_id');
     }
+    
 
     public function studentReviews()
     {
