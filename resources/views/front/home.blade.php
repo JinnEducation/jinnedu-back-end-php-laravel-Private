@@ -31,17 +31,18 @@
                                 <h1 class="mb-6 text-[25px] font-black leading-[1.5] text-gray-900 lg:text-5xl">
                                     Learn better, faster, and smarter with us.
                                 </h1>
-                                <p
-                                    class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
+                                <p class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
                                     Learn with speed, think with clarity, grow with confidence.
                                 </p>
                                 <!-- Dots Indicators -->
                                 <div class="flex z-20 gap-2 justify-center my-4 lg:hidden dots-container">
                                     <button class="w-2 h-2 rounded-full transition-all duration-300 bg-primary hero-dot"
                                         data-slide="0"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="1"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="2"></button>
                                 </div>
                                 <div class="hero-cta">
@@ -71,9 +72,11 @@
                                 <div class="flex z-20 gap-2 justify-center my-4 lg:hidden dots-container">
                                     <button class="w-2 h-2 rounded-full transition-all duration-300 bg-primary hero-dot"
                                         data-slide="0"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="1"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="2"></button>
                                 </div>
                                 <div class="hero-cta">
@@ -103,9 +106,11 @@
                                 <div class="flex z-20 gap-2 justify-center my-4 lg:hidden dots-container">
                                     <button class="w-2 h-2 rounded-full transition-all duration-300 bg-primary hero-dot"
                                         data-slide="0"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="1"></button>
-                                    <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
+                                    <button
+                                        class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
                                         data-slide="2"></button>
                                 </div>
                                 <div class="hero-cta">
@@ -126,8 +131,7 @@
 
                 <!-- Image Section -->
                 <div class="order-1 lg:order-2 lg:aspect-[1/1] relative">
-                    <div
-                        class="flex overflow-hidden justify-center items-center hero-image-container md:items-end">
+                    <div class="flex overflow-hidden justify-center items-center hero-image-container md:items-end">
 
                         <!-- Slide 1 Image -->
                         <div class="flex justify-center items-center h-full opacity-100 transition-all duration-500 ease-out scale-100 translate-x-0 hero-image"
@@ -182,7 +186,8 @@
 
 
         <!-- Dots Indicators -->
-        <div class="hidden absolute left-1/2 z-20 gap-2 transform -translate-x-1/2 lg:flex bottom-37 md:bottom-8 dots-container">
+        <div
+            class="hidden absolute left-1/2 z-20 gap-2 transform -translate-x-1/2 lg:flex bottom-37 md:bottom-8 dots-container">
             <button class="w-2 h-2 rounded-full transition-all duration-300 bg-primary hero-dot"
                 data-slide="0"></button>
             <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
@@ -210,14 +215,18 @@
                     <div class="flex items-center">
                         <div class="flex-none mr-4 rtl:mr-0 rtl:ml-4">
                             <!-- <i class="text-4xl transition-colors duration-300 text-primary fas fa-cog group-hover:text-primary-700"></i> -->
-                            <img src="{{ asset('front/assets/imgs/our_number/approve.png') }}" alt="Educational Services">
+                            <img src="{{ asset('front/assets/imgs/our_number/approve.png') }}"
+                                alt="Educational Services">
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px]">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px]">
                                     5
                                 </span>
-                                <span class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">EDUCATIONAL SERVICES</span>
+                                <span
+                                    class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">EDUCATIONAL
+                                    SERVICES</span>
                             </div>
                         </div>
                     </div>
@@ -233,10 +242,13 @@
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="mb-2 text-3xl font-black text-center text-[#7242B8] transition-colors duration-300 lg:text-left lg:rtl:text-right">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center text-[#7242B8] transition-colors duration-300 lg:text-left lg:rtl:text-right">
                                     74
                                 </span>
-                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">STUDENTS COUNT</span>
+                                <span
+                                    class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">STUDENTS
+                                    COUNT</span>
                             </div>
                         </div>
                     </div>
@@ -252,10 +264,12 @@
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="mb-2 text-3xl font-black text-center transition-colors duration-300 lg:text-left lg:rtl:text-right text-[#1C3C55]">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center transition-colors duration-300 lg:text-left lg:rtl:text-right text-[#1C3C55]">
                                     10
                                 </span>
-                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">TUTORS COUNT</span>
+                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">TUTORS
+                                    COUNT</span>
                             </div>
                         </div>
                     </div>
@@ -271,10 +285,12 @@
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
+                                <span
+                                    class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
                                     1
                                 </span>
-                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">COURSES COUNT</span>
+                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">COURSES
+                                    COUNT</span>
                             </div>
                         </div>
                     </div>
@@ -663,7 +679,8 @@
 
                     <!-- Image Section -->
                     <div class="overflow-hidden relative order-1 col-span-2 lg:order-2 rtl:order-1">
-                        <img src="{{ asset('front/assets/imgs/Skills/Rectangle 19041.png') }}" alt="Student learning online"
+                        <img src="{{ asset('front/assets/imgs/Skills/Rectangle 19041.png') }}"
+                            alt="Student learning online"
                             class="w-full h-full object-cover min-h-[200px] md:min-h-[300px] lg:min-h-[400px]">
 
                         <!-- Gradient Overlay for better text readability on mobile -->
@@ -906,86 +923,92 @@
                     </button>
 
                     <!-- Swiper -->
-                   <!-- Swiper -->
-<div class="swiper tutors-swiper">
-    <div class="swiper-wrapper">
-        <!-- Tutor Cards -->
-        @forelse($tutors as $tutor)
-            @php
-                // الصورة
-                $avatar = $tutor->avatar
-                    ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL) ? $tutor->avatar : asset($tutor->avatar))
-                    : asset('front/assets/imgs/tutors/1.jpg');
+                    <!-- Swiper -->
+                    <div class="swiper tutors-swiper">
+                        <div class="swiper-wrapper">
+                            <!-- Tutor Cards -->
+                            @forelse($tutors as $tutor)
+                                @php
+                                    // الصورة
+                                    $avatar = $tutor->avatar
+                                        ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
+                                            ? $tutor->avatar
+                                            : asset($tutor->avatar))
+                                        : asset('front/assets/imgs/tutors/1.jpg');
 
-                // الدولة
-                $country = $tutor->abouts?->country?->name ?? '—';
+                                    // الدولة
+                                    $country = $tutor->abouts?->country?->name ?? '—';
 
-                // التخصص (أول وصف)
-                $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
+                                    // التخصص (أول وصف)
+                                    $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
 
-                // تقييم "ستاتيك" مؤقتًا
-                $avg = 4.0;
-                $maxStars = 5;
-                $fullStars = (int) floor($avg);
-            @endphp
+                                    // تقييم "ستاتيك" مؤقتًا
+                                    $avg = 4.0;
+                                    $maxStars = 5;
+                                    $fullStars = (int) floor($avg);
+                                @endphp
 
-            <div class="swiper-slide">
-                <div class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
-                    <div class="flex justify-center mb-6">
-                        <img src="{{ $avatar }}" alt="{{ $tutor->name }}" class="object-cover rounded-full w-31 h-31">
+                                <div class="swiper-slide">
+                                    <div
+                                        class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+                                        <div class="flex justify-center mb-6">
+                                            <img src="{{ $avatar }}" alt="{{ $tutor->name }}"
+                                                class="object-cover rounded-full w-31 h-31">
+                                        </div>
+
+                                        <div class="text-left rtl:text-left">
+                                            <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
+                                            <p class="mb-4 font-medium text-black">{{ $spec }}</p>
+
+                                            <div class="flex items-center mb-4 text-gray-500">
+                                                <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
+                                                    <svg width="14" height="22" viewBox="0 0 14 22"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
+                                                            fill="#1B449C" />
+                                                    </svg>
+                                                </i>
+                                                <span class="text-sm">{{ $country }}</span>
+                                            </div>
+
+                                            <div class="flex flex-col items-left rtl:items-right">
+                                                <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
+                                                    @for ($i = 1; $i <= $maxStars; $i++)
+                                                        @if ($i <= $fullStars)
+                                                            <i class="mr-1 fas fa-star text-[#FFC700]"></i>
+                                                        @else
+                                                            <i class="mr-1 fas fa-star text-gray-300"></i>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+                                                <span class="mt-2 text-sm text-gray-500">
+                                                    {{ number_format($avg, 1) }} / 5
+                                                </span>
+                                            </div>
+
+                                            <div class="flex gap-2 justify-between my-3">
+                                                <button
+                                                    class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
+                                                    Trial Lesson
+                                                </button>
+                                                <button
+                                                    class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
+                                                    Message
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="swiper-slide">
+                                    <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
+                                        لا يوجد مدرّسون لعرضهم حالياً.
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
                     </div>
-
-                    <div class="text-left rtl:text-left">
-                        <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
-                        <p class="mb-4 font-medium text-black">{{ $spec }}</p>
-
-                        <div class="flex items-center mb-4 text-gray-500">
-                            <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
-                                <svg width="14" height="22" viewBox="0 0 14 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
-                                        fill="#1B449C" />
-                                </svg>
-                            </i>
-                            <span class="text-sm">{{ $country }}</span>
-                        </div>
-
-                        <div class="flex flex-col items-left rtl:items-right">
-                            <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
-                                @for ($i = 1; $i <= $maxStars; $i++)
-                                    @if ($i <= $fullStars)
-                                        <i class="mr-1 fas fa-star text-[#FFC700]"></i>
-                                    @else
-                                        <i class="mr-1 fas fa-star text-gray-300"></i>
-                                    @endif
-                                @endfor
-                            </div>
-                            <span class="mt-2 text-sm text-gray-500">
-                                {{ number_format($avg, 1) }} / 5
-                            </span>
-                        </div>
-
-                        <div class="flex gap-2 justify-between my-3">
-                            <button class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
-                                Trial Lesson
-                            </button>
-                            <button class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
-                                Message
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="swiper-slide">
-                <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
-                    لا يوجد مدرّسون لعرضهم حالياً.
-                </div>
-            </div>
-        @endforelse
-    </div>
-</div>
 
                     <!-- Pagination -->
                     <!-- <div class="mt-20 swiper-pagination !bottom-[-30px]"></div> -->
@@ -1008,7 +1031,8 @@
                     <!-- Image Section -->
                     <div class="overflow-hidden relative order-1 rounded-lg lg:order-1 rtl:order-2">
                         <!-- Main Image -->
-                        <img src="{{ asset('front/assets/imgs/become_tutor/imgs.png') }}" alt="Professional tutor working"
+                        <img src="{{ asset('front/assets/imgs/become_tutor/imgs.png') }}"
+                            alt="Professional tutor working"
                             class="h-full object-cover min-h-[200px] md:min-h-[400px] lg:min-h-auto">
 
                         <!-- Gradient Overlay for depth -->
@@ -1132,8 +1156,5 @@
                 </div>
             </div>
         </div>
-
     </section>
-
-
 </x-front-layout>
