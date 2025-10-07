@@ -215,7 +215,7 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
                                 <span class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px]">
-                                    5
+                                    {{ $stats['services'] }}
                                 </span>
                                 <span class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">EDUCATIONAL SERVICES</span>
                             </div>
@@ -234,7 +234,7 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
                                 <span class="mb-2 text-3xl font-black text-center text-[#7242B8] transition-colors duration-300 lg:text-left lg:rtl:text-right">
-                                    74
+                                    {{ $stats['students'] }}
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">STUDENTS COUNT</span>
                             </div>
@@ -253,7 +253,7 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
                                 <span class="mb-2 text-3xl font-black text-center transition-colors duration-300 lg:text-left lg:rtl:text-right text-[#1C3C55]">
-                                    10
+                                    {{ $stats['tutors'] }}
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">TUTORS COUNT</span>
                             </div>
@@ -272,7 +272,8 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
                                 <span class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
-                                    1
+                                    {{ $stats['courses'] }}
+
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">COURSES COUNT</span>
                             </div>
@@ -283,6 +284,7 @@
             </div>
         </div>
     </section>
+
 
     <!-- Recent Courses Section -->
     <section class="px-4 py-16">
@@ -305,36 +307,26 @@
 
                 <div id="filter-container"
                     class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    <button
-                        class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn active hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="all">
+
+
+                    <a href="{{ url()->current() }}"
+                        class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold">
                         All categories
-                    </button>
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="AI">
-                        Artificial Intelligence - AI
-                    </button>
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="Business">
-                        Business
-                    </button>
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="Programming">
-                        Programming
-                    </button>
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="Design">
-                        Design
-                    </button>
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="Marketing">
-                        Marketing
-                    </button>
+                    </a>
+
+
+                    @foreach ($categories as $cat)
+                    @php
+                    $catTitle = $cat->langs->first()->title ?? $cat->name ?? 'Category';
+                    $isActive = (int)$categoryId === (int)$cat->id;
+                    @endphp
+                    <a href="{{ url()->current() }}?category_id={{ $cat->id }}"
+                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold {{ $isActive ? 'text-primary active' : '' }}"
+                        data-type="{{ $catTitle }}">
+                        {{ $catTitle }}
+                    </a>
+                    @endforeach
+
                 </div>
 
                 <!-- سهم يمين -->
@@ -352,23 +344,47 @@
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
 
+
+                @foreach ($courses as $course)
+                @php
+                $langRow = $course->langs->first();
+                $title   = $course->name ?? 'Course';
+                $about = $langRow->about ?? '';
+
+                $lessons = (int)($course->lessons ?? 0);
+                $classLength = (int)($course->class_length ?? 0);
+                $totalMinutes = $lessons * $classLength;
+                if ($totalMinutes >= 60) {
+                $h = intdiv($totalMinutes, 60);
+                $m = $totalMinutes % 60;
+                $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
+                } else {
+                $timeLabel = "{$totalMinutes} minutes";
+                }
+                $img = $course->imageInfo?->path ? asset($course->imageInfo->path)
+                : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
+                $showUrl = route('courses.show', $course->slug ?? $course->id);
+                @endphp
                 <!-- Course Card 1 - Design (Original - No Changes) -->
                 <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
                     data-type="Design">
                     <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop"
-                            alt="Design Course" class="object-cover w-full h-full">
+                        <a href="{{ $showUrl }}">
+                            <img src="{{ $img }}" alt="{{ $title }}" class="object-cover w-full h-full">
+                        </a>
                     </div>
                     <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Design</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet,consectetur adipiscing elit.
+                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
+
+                        <p class="mb-4 text-[13px] text-black">
+                            {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
                         </p>
                         <div class="pt-4 border-t border-[#E5E7EB]">
                             <div
                                 class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
                                 <div class="flex gap-2 items-center">
                                     <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
+                                    <span class="text-sm text-black">{{ $timeLabel }}</span>
                                 </div>
                                 <span class="text-lg font-bold text-[#1B449C]">Free</span>
                             </div>
@@ -382,230 +398,29 @@
                         </div>
                     </div>
                 </div>
+                @endforeach
 
                 <!-- Course Card 2 - AI -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="AI">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop"
-                            alt="AI Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Development</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Course Card 3 - Marketing -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Marketing">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
-                            alt="Marketing Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Marketing</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-sm line-through text-[#87CEEB]">$200</span>
-                                    <span class="text-[15px] font-bold text-[#1B449C]">$199.99</span>
-                                </div>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Course Card 4 - Business -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Business">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=250&fit=crop"
-                            alt="Business Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Business</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">30 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">$99.99</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Hidden Course Cards for Load More -->
                 <!-- Course Card 5 - Programming -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Programming" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=250&fit=crop"
-                            alt="Programming Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Programming</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Course Card 6 - Design -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Design" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop"
-                            alt="UX Design Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">UX Design</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">35 total hours</span>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-sm line-through text-[#87CEEB]">$150</span>
-                                    <span class="text-[15px] font-bold text-[#1B449C]">$129.99</span>
-                                </div>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Course Card 7 - AI -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="AI" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop"
-                            alt="Machine Learning Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Machine Learning</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">42 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Course Card 8 - Business -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Business" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop"
-                            alt="Leadership Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Leadership</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">28 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">$149.99</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
             </div>
 
@@ -906,86 +721,86 @@
                     </button>
 
                     <!-- Swiper -->
-                   <!-- Swiper -->
-<div class="swiper tutors-swiper">
-    <div class="swiper-wrapper">
-        <!-- Tutor Cards -->
-        @forelse($tutors as $tutor)
-            @php
-                // الصورة
-                $avatar = $tutor->avatar
-                    ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL) ? $tutor->avatar : asset($tutor->avatar))
-                    : asset('front/assets/imgs/tutors/1.jpg');
+                    <!-- Swiper -->
+                    <div class="swiper tutors-swiper">
+                        <div class="swiper-wrapper">
+                            <!-- Tutor Cards -->
+                            @forelse($tutors as $tutor)
+                            @php
+                            // الصورة
+                            $avatar = $tutor->avatar
+                            ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL) ? $tutor->avatar : asset($tutor->avatar))
+                            : asset('front/assets/imgs/tutors/1.jpg');
 
-                // الدولة
-                $country = $tutor->abouts?->country?->name ?? '—';
+                            // الدولة
+                            $country = $tutor->abouts?->country?->name ?? '—';
 
-                // التخصص (أول وصف)
-                $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
+                            // التخصص (أول وصف)
+                            $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
 
-                // تقييم "ستاتيك" مؤقتًا
-                $avg = 4.0;
-                $maxStars = 5;
-                $fullStars = (int) floor($avg);
-            @endphp
+                            // تقييم "ستاتيك" مؤقتًا
+                            $avg = 4.0;
+                            $maxStars = 5;
+                            $fullStars = (int) floor($avg);
+                            @endphp
 
-            <div class="swiper-slide">
-                <div class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
-                    <div class="flex justify-center mb-6">
-                        <img src="{{ $avatar }}" alt="{{ $tutor->name }}" class="object-cover rounded-full w-31 h-31">
-                    </div>
+                            <div class="swiper-slide">
+                                <div class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+                                    <div class="flex justify-center mb-6">
+                                        <img src="{{ $avatar }}" alt="{{ $tutor->name }}" class="object-cover rounded-full w-31 h-31">
+                                    </div>
 
-                    <div class="text-left rtl:text-left">
-                        <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
-                        <p class="mb-4 font-medium text-black">{{ $spec }}</p>
+                                    <div class="text-left rtl:text-left">
+                                        <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
+                                        <p class="mb-4 font-medium text-black">{{ $spec }}</p>
 
-                        <div class="flex items-center mb-4 text-gray-500">
-                            <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
-                                <svg width="14" height="22" viewBox="0 0 14 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
-                                        fill="#1B449C" />
-                                </svg>
-                            </i>
-                            <span class="text-sm">{{ $country }}</span>
-                        </div>
+                                        <div class="flex items-center mb-4 text-gray-500">
+                                            <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
+                                                <svg width="14" height="22" viewBox="0 0 14 22" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
+                                                        fill="#1B449C" />
+                                                </svg>
+                                            </i>
+                                            <span class="text-sm">{{ $country }}</span>
+                                        </div>
 
-                        <div class="flex flex-col items-left rtl:items-right">
-                            <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
-                                @for ($i = 1; $i <= $maxStars; $i++)
-                                    @if ($i <= $fullStars)
-                                        <i class="mr-1 fas fa-star text-[#FFC700]"></i>
-                                    @else
-                                        <i class="mr-1 fas fa-star text-gray-300"></i>
-                                    @endif
-                                @endfor
+                                        <div class="flex flex-col items-left rtl:items-right">
+                                            <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
+                                                @for ($i = 1; $i <= $maxStars; $i++)
+                                                    @if ($i <=$fullStars)
+                                                    <i class="mr-1 fas fa-star text-[#FFC700]"></i>
+                                                    @else
+                                                    <i class="mr-1 fas fa-star text-gray-300"></i>
+                                                    @endif
+                                                    @endfor
+                                            </div>
+                                            <span class="mt-2 text-sm text-gray-500">
+                                                {{ number_format($avg, 1) }} / 5
+                                            </span>
+                                        </div>
+
+                                        <div class="flex gap-2 justify-between my-3">
+                                            <button class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
+                                                Trial Lesson
+                                            </button>
+                                            <button class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
+                                                Message
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="mt-2 text-sm text-gray-500">
-                                {{ number_format($avg, 1) }} / 5
-                            </span>
-                        </div>
-
-                        <div class="flex gap-2 justify-between my-3">
-                            <button class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
-                                Trial Lesson
-                            </button>
-                            <button class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
-                                Message
-                            </button>
+                            @empty
+                            <div class="swiper-slide">
+                                <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
+                                    لا يوجد مدرّسون لعرضهم حالياً.
+                                </div>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
-                </div>
-            </div>
-        @empty
-            <div class="swiper-slide">
-                <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
-                    لا يوجد مدرّسون لعرضهم حالياً.
-                </div>
-            </div>
-        @endforelse
-    </div>
-</div>
 
                     <!-- Pagination -->
                     <!-- <div class="mt-20 swiper-pagination !bottom-[-30px]"></div> -->
