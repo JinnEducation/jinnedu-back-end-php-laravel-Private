@@ -198,6 +198,9 @@
     <!-- Statistics Section -->
     <section class="py-16 bg-[#fcfcfc]">
         <div class="container mx-auto">
+            @php
+                $initialVisibleCount = 4;
+            @endphp
 
             <!-- Section Title -->
             <div class="mb-12 text-center">
@@ -218,7 +221,8 @@
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0">
                                     {{ $stats['services'] }}
                                 </span>
                                 <span
@@ -306,14 +310,11 @@
         </div>
     </section>
 
-
     <!-- Recent Courses Section -->
     <section class="px-4 py-16">
         <div class="container mx-auto">
-
             <!-- Section Title -->
             <h2 class="mb-6 text-center h-section">Recent courses</h2>
-
             <!-- Category Filter -->
             <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
                 <!-- سهم يسار -->
@@ -325,29 +326,24 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </div>
-
                 <div id="filter-container"
                     class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-
-
-                    <a href="{{ url()->current() }}"
-                        class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold">
+                    <button
+                        class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold"
+                        data-type="all">
                         All categories
-                    </a>
-
-
+                    </button>
                     @foreach ($categories as $cat)
                         @php
                             $catTitle = $cat->langs->first()->title ?? ($cat->name ?? 'Category');
                             $isActive = (int) $categoryId === (int) $cat->id;
                         @endphp
-                        <a href="{{ url()->current() }}?category_id={{ $cat->id }}"
-                            class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold {{ $isActive ? 'text-primary active' : '' }}"
+                        <button
+                            class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
                             data-type="{{ $catTitle }}">
                             {{ $catTitle }}
-                        </a>
+                        </button>
                     @endforeach
-
                 </div>
 
                 <!-- سهم يمين -->
@@ -360,12 +356,14 @@
                     </svg>
                 </div>
             </div>
-
-
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
-
-
+                @php
+                    $categoryTitlesMap = $categories->mapWithKeys(function ($cat) {
+                        $title = optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
+                        return [$cat->id => $title];
+                    });
+                @endphp
                 @foreach ($courses as $course)
                     @php
                         $langRow = $course->langs->first();
@@ -386,77 +384,56 @@
                             ? asset($course->imageInfo->path)
                             : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
                         $showUrl = route('courses.show', $course->slug ?? $course->id);
+                        $courseCategoryTitle = $categoryTitlesMap[$course->category_id] ?? optional($course->category)->name ?? 'Category';
+                        $shouldHideInitially = $loop->index >= $initialVisibleCount;
                     @endphp
-                    <!-- Course Card 1 - Design (Original - No Changes) -->
-                    <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                        data-type="Design">
-                        <div class="overflow-hidden relative h-48 rounded-sm">
-                            <a href="{{ $showUrl }}">
-                                <img src="{{ $img }}" alt="{{ $title }}"
-                                    class="object-cover w-full h-full">
-                            </a>
-                        </div>
-                        <div class="pt-4">
-                            <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
-
-                            <p class="mb-4 text-[13px] text-black">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
-                            </p>
-                            <div class="pt-4 border-t border-[#E5E7EB]">
-                                <div
-                                    class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                    <div class="flex gap-2 items-center">
-                                        <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                        <span class="text-sm text-black">{{ $timeLabel }}</span>
-                                    </div>
-                                    <span class="text-lg font-bold text-[#1B449C]">Free</span>
+                                    <!-- Course Card 1 - Design (Original - No Changes) -->
+                <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                    data-type="{{ $courseCategoryTitle }}" style="{{ $shouldHideInitially ? 'display: none;' : '' }}">
+                    <div class="overflow-hidden relative h-48 rounded-sm">
+                        <img src="{{ $img }}"
+                            alt="{{ $title }}" class="object-cover w-full h-full">
+                    </div>
+                    <div class="pt-4">
+                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
+                        <p class="mb-4 text-[13px] text-black">{{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}</p>
+                        <div class="pt-4 border-t border-[#E5E7EB]">
+                            <div
+                                class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                <div class="flex gap-2 items-center">
+                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                    <span class="text-sm text-black">{{ $timeLabel }}</span>
                                 </div>
-                                <div
-                                    class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                    <a href="#"
-                                        class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                        Preview this courses
-                                    </a>
-                                </div>
+                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
+                            </div>
+                            <div
+                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                <a href="#"
+                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                    Preview this courses
+                                </a>
                             </div>
                         </div>
                     </div>
+                </div>
+
                 @endforeach
 
-                <!-- Course Card 2 - AI -->
-
-
-                <!-- Course Card 3 - Marketing -->
-
-
-                <!-- Course Card 4 - Business -->
-
-
-                <!-- Hidden Course Cards for Load More -->
-                <!-- Course Card 5 - Programming -->
-
-
-                <!-- Course Card 6 - Design -->
-
-
-                <!-- Course Card 7 - AI -->
-
-
-                <!-- Course Card 8 - Business -->
-
 
             </div>
 
-            <!-- Load More Button -->
-            <div class="text-center">
-                <button id="loadMoreBtn"
-                    class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                    <span class="relative z-10">Load More</span>
-                    <div
-                        class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
-                    </div>
-                </button>
-            </div>
+            @if ($courses->count() > $initialVisibleCount)
+                <!-- Load More Button -->
+                <div class="text-center">
+                    <button id="loadMoreBtn"
+                        class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
+                        <span class="relative z-10">Load More</span>
+                        <div
+                            class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                        </div>
+                    </button>
+                </div>
+            @endif
 
         </div>
     </section>

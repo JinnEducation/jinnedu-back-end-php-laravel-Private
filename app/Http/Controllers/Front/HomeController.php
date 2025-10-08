@@ -29,7 +29,6 @@ class HomeController extends Controller
     ->where('parent_id', 0)     // بدّلناها بدل whereNull
     // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
     ->orderBy('id')
-     ->limit(5)
     ->get();
 
     
@@ -44,7 +43,7 @@ class HomeController extends Controller
     }
 
    
-    $courses = $coursesQuery->limit(4)->get();
+    $courses = $coursesQuery->limit(12)->get();
 
     // Popular Tutors
     $tutors = User::query()

@@ -17,10 +17,8 @@
     <!-- Swiper -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/swiper-bundle.min.css') }}" />
     <script src="{{ asset('front/assets/js/swiper-bundle.min.js') }}"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/all.min.css') }}">
-
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/tailwind.css') }}">
 </head>
@@ -324,7 +322,8 @@
                         <div class="hidden relative user-menu-mobile">
                             <button
                                 class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
-                                <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User" class="w-8 h-8 rounded-full">
+                                <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
+                                    class="w-8 h-8 rounded-full">
                                 <span class="font-medium">John Doe</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -535,7 +534,8 @@
                 <div class="hidden mobile-dropdown user-menu-mobile">
                     <button
                         class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group mobile-dropdown-btn">
-                        <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User" class="w-8 h-8 rounded-full">
+                        <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
+                            class="w-8 h-8 rounded-full">
                         <span class="font-medium">John Doe</span>
                         <i
                             class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -578,13 +578,13 @@
     </header>
 
 
-   
+
 
     <!-- Hero Section -->
-   {{ $slot }}
+    {{ $slot }}
 
 
-  
+
 
     <!-- Footer -->
     <footer class="bg-[#374151] text-white px-4">
@@ -595,7 +595,8 @@
                 <!-- العمود الأول: الشعار والوصف -->
                 <div class="col-span-1 text-center md:col-span-2 md:text-left rtl:md:text-right">
                     <div class="flex justify-center mb-4 lg:justify-start">
-                        <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="Jinn Education Logo" class="w-32">
+                        <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="Jinn Education Logo"
+                            class="w-32">
                     </div>
                     <p class="text-sm leading-relaxed text-gray-300 md:text-[13px]">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
@@ -781,14 +782,14 @@
                     <!-- نموذج الاشتراك -->
                     <div class="flex gap-3 mx-auto max-w-md md:mx-0">
                         <input type="email" placeholder="Enter your email"
-                          class="flex-1 px-4 py-3 min-w-0 placeholder-gray-400 text-black bg-white rounded-lg border border-gray-500 transition-all duration-300 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50" />
-                        
+                            class="flex-1 px-4 py-3 min-w-0 placeholder-gray-400 text-black bg-white rounded-lg border border-gray-500 transition-all duration-300 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50" />
+
                         <button
-                          class="px-6 py-3 font-medium text-white rounded-lg transition-all duration-300 transform bg-primary hover:bg-primary-700 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50">
-                          Subscribe
+                            class="px-6 py-3 font-medium text-white rounded-lg transition-all duration-300 transform bg-primary hover:bg-primary-700 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50">
+                            Subscribe
                         </button>
-                      </div>
-                      
+                    </div>
+
                 </div>
             </div>
         </div>
