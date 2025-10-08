@@ -1,6 +1,4 @@
 <x-front-layout>
-
-
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] min-h-screen-hero shadow-sm">
         <!-- Background Shape 1 - Bottom Left -->
@@ -220,8 +218,8 @@
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
-                                <span class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px]">
-                                    {{ $stats['services'] }} 
+                                <span class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0">
+                                    {{ $stats['services'] }}
                                 </span>
                                 <span
                                     class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">EDUCATIONAL
@@ -242,10 +240,11 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
 
-                                <span class="mb-2 text-3xl font-black text-center text-[#7242B8] transition-colors duration-300 lg:text-left lg:rtl:text-right">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center text-[#7242B8] transition-colors duration-300 lg:text-left lg:rtl:text-right">
                                     {{ $stats['students'] }}
 
-                              
+
                                 </span>
                                 <span
                                     class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">STUDENTS
@@ -266,7 +265,8 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
 
-                                <span class="mb-2 text-3xl font-black text-center transition-colors duration-300 lg:text-left lg:rtl:text-right text-[#1C3C55]">
+                                <span
+                                    class="mb-2 text-3xl font-black text-center transition-colors duration-300 lg:text-left lg:rtl:text-right text-[#1C3C55]">
                                     {{ $stats['tutors'] }}
 
                                 </span>
@@ -288,11 +288,12 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
 
-                                <span class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
+                                <span
+                                    class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
                                     {{ $stats['courses'] }}
 
 
-                           
+
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">COURSES
                                     COUNT</span>
@@ -336,15 +337,15 @@
 
 
                     @foreach ($categories as $cat)
-                    @php
-                    $catTitle = $cat->langs->first()->title ?? $cat->name ?? 'Category';
-                    $isActive = (int)$categoryId === (int)$cat->id;
-                    @endphp
-                    <a href="{{ url()->current() }}?category_id={{ $cat->id }}"
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold {{ $isActive ? 'text-primary active' : '' }}"
-                        data-type="{{ $catTitle }}">
-                        {{ $catTitle }}
-                    </a>
+                        @php
+                            $catTitle = $cat->langs->first()->title ?? ($cat->name ?? 'Category');
+                            $isActive = (int) $categoryId === (int) $cat->id;
+                        @endphp
+                        <a href="{{ url()->current() }}?category_id={{ $cat->id }}"
+                            class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold {{ $isActive ? 'text-primary active' : '' }}"
+                            data-type="{{ $catTitle }}">
+                            {{ $catTitle }}
+                        </a>
                     @endforeach
 
                 </div>
@@ -366,58 +367,60 @@
 
 
                 @foreach ($courses as $course)
-                @php
-                $langRow = $course->langs->first();
-                $title   = $course->name ?? 'Course';
-                $about = $langRow->about ?? '';
+                    @php
+                        $langRow = $course->langs->first();
+                        $title = $course->name ?? 'Course';
+                        $about = $langRow->about ?? '';
 
-                $lessons = (int)($course->lessons ?? 0);
-                $classLength = (int)($course->class_length ?? 0);
-                $totalMinutes = $lessons * $classLength;
-                if ($totalMinutes >= 60) {
-                $h = intdiv($totalMinutes, 60);
-                $m = $totalMinutes % 60;
-                $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
-                } else {
-                $timeLabel = "{$totalMinutes} minutes";
-                }
-                $img = $course->imageInfo?->path ? asset($course->imageInfo->path)
-                : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
-                $showUrl = route('courses.show', $course->slug ?? $course->id);
-                @endphp
-                <!-- Course Card 1 - Design (Original - No Changes) -->
-                <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Design">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <a href="{{ $showUrl }}">
-                            <img src="{{ $img }}" alt="{{ $title }}" class="object-cover w-full h-full">
-                        </a>
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
+                        $lessons = (int) ($course->lessons ?? 0);
+                        $classLength = (int) ($course->class_length ?? 0);
+                        $totalMinutes = $lessons * $classLength;
+                        if ($totalMinutes >= 60) {
+                            $h = intdiv($totalMinutes, 60);
+                            $m = $totalMinutes % 60;
+                            $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
+                        } else {
+                            $timeLabel = "{$totalMinutes} minutes";
+                        }
+                        $img = $course->imageInfo?->path
+                            ? asset($course->imageInfo->path)
+                            : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
+                        $showUrl = route('courses.show', $course->slug ?? $course->id);
+                    @endphp
+                    <!-- Course Card 1 - Design (Original - No Changes) -->
+                    <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                        data-type="Design">
+                        <div class="overflow-hidden relative h-48 rounded-sm">
+                            <a href="{{ $showUrl }}">
+                                <img src="{{ $img }}" alt="{{ $title }}"
+                                    class="object-cover w-full h-full">
+                            </a>
+                        </div>
+                        <div class="pt-4">
+                            <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
 
-                        <p class="mb-4 text-[13px] text-black">
-                            {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">{{ $timeLabel }}</span>
+                            <p class="mb-4 text-[13px] text-black">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
+                            </p>
+                            <div class="pt-4 border-t border-[#E5E7EB]">
+                                <div
+                                    class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                    <div class="flex gap-2 items-center">
+                                        <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                        <span class="text-sm text-black">{{ $timeLabel }}</span>
+                                    </div>
+                                    <span class="text-lg font-bold text-[#1B449C]">Free</span>
                                 </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
+                                <div
+                                    class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                    <a href="#"
+                                        class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                        Preview this courses
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
 
                 <!-- Course Card 2 - AI -->
