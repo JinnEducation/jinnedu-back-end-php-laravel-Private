@@ -15,65 +15,74 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-// Our Numbers
-    $stats = [
-        'services' => 8,
-        'students' => DB::table('users')->where('type', 1)->count(),
-        'tutors'   => DB::table('users')->where('type', 2)->count(),
-        'courses'  => DB::table('our_courses')->where('status', 1)->count(),
-    ];
+        // Our Numbers
+        $stats = [
+            'services' => 8,
+            'students' => DB::table('users')->where('type', 1)->count(),
+            'tutors'   => DB::table('users')->where('type', 2)->count(),
+            'courses'  => DB::table('our_courses')->where('status', 1)->count(),
+        ];
 
- //our course
-    $categoryId = $request->query('category_id');
-    $categories = Category::query()
-    ->with('langs')
-    ->select('id','name','parent_id')
-    ->where('parent_id', 0)     // بدّلناها بدل whereNull
-    // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
-    ->orderBy('id')
-    ->get();
+        //our course
+        $categoryId = $request->query('category_id');
+        $categories = Category::query()
+            ->with('langs')
+            ->select('id', 'name', 'parent_id')
+            ->where('parent_id', 0)     // بدّلناها بدل whereNull
+            // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
+            ->orderBy('id')
+            ->get();
 
-    
-    $coursesQuery = OurCourse::query()
-        ->with(['langs','imageInfo','category:id,name'])
-        ->select('id','name','slug','category_id','lessons','class_length','image','status')
-        ->where('status', 1)
-        ->latest('id');
 
-    if ($categoryId) {
-        $coursesQuery->where('category_id', $categoryId);
-    }
+        $coursesQuery = OurCourse::query()
+            ->with(['langs', 'imageInfo', 'category:id,name'])
+            ->select('id', 'name', 'slug', 'category_id', 'lessons', 'class_length', 'image', 'status')
+            ->where('status', 1)
+            ->latest('id');
 
-   
-    $courses = $coursesQuery->limit(12)->get();
+        if ($categoryId) {
+            $coursesQuery->where('category_id', $categoryId);
+        }
 
-    // Popular Tutors
-    $tutors = User::query()
-        ->where('type', 2)
-        ->with([
-            'abouts.country:id,name',
-            'descriptions.specialization:id,name',
-        ])
-        ->select('id','name','slug','avatar')
-        ->latest('id')
-        ->limit(12)
-        ->get();
 
-        return view('front.home', compact('tutors', 'stats','categories','courses','categoryId'));
+        $courses = $coursesQuery->limit(12)->get();
+
+        // Popular Tutors
+        $tutors = User::query()
+            ->where('type', 2)
+            ->with([
+                'abouts.country:id,name',
+                'descriptions.specialization:id,name',
+            ])
+            ->select('id', 'name', 'slug', 'avatar')
+            ->latest('id')
+            ->limit(12)
+            ->get();
+
+        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId'));
     }
 
     public function blog(Request $request)
     {
 
-          $categories = CateqBlog::query()
+        $perPage = (int) $request->input('per_page', 9);
+        $allowedPerPage = [9, 12, 18, 24];
+        if (! in_array($perPage, $allowedPerPage)) {
+            $perPage = 9;
+        }
+
+
+        $categories = CateqBlog::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
+
         $categorySlug = $request->query('category');
 
-        $posts = Blog::query()
+
+        $blogs = Blog::query()
             ->with('category')
             ->published()
             ->when($categorySlug, function ($q) use ($categorySlug) {
@@ -81,10 +90,12 @@ class HomeController extends Controller
                     $c->where('slug', $categorySlug);
                 });
             })
-            ->orderByDesc('published_at')
-            ->paginate(9)
+            ->orderByDesc('date')
+            ->paginate($perPage)
             ->withQueryString();
-            
-       return view('front.blog', compact('categories','posts','categorySlug'));
+
+
+
+        return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage'));
     }
 }

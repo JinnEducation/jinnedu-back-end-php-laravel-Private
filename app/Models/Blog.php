@@ -9,6 +9,8 @@ class Blog extends Model
 {
     use HasFactory;
 
+
+     protected $table = 'blog';
     protected $fillable = [
         'cateq_blog_id','title','slug','description',
         'image','date','status',
@@ -20,12 +22,11 @@ class Blog extends Model
         return $this->belongsTo(CateqBlog::class, 'cateq_blog_id');
     }
 
-    // سكوب لإحضار المنشورات المنشورة فقط
-    public function scopePublished($q)
-    {
-        return $q->where('status', 'published')
-                 ->whereNotNull('published_at')
-                 ->where('published_at', '<=', now());
-    }
+   
+   public function scopePublished($q)
+{
+    return $q->where('status', 'published')
+             ->whereDate('date', '<=', now()); 
+}
 
 }
