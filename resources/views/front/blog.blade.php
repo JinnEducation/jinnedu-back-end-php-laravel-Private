@@ -27,71 +27,32 @@
             <h2 class="mb-7 text-3xl font-bold">Explore Our Blogs !</h2>
 
             <!-- Category Filter -->
-            <div class="relative mx-[-30px]" dir="ltr">
-                <!-- سهم يسار -->
-                <div id="left-arrow"
-                    class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none md:-left-10 ps-2 text-primary">
-                    <!-- Heroicons: chevron-left -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </div>
+           
+          <!-- Category Filter -->
+<div class="relative mx-[-30px]" dir="ltr">
+    <div id="filter-container"
+        class="flex overflow-x-auto overflow-y-hidden relative flex-nowrap gap-2 px-8 whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing">
+        
+        
+        <button
+            class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-white bg-primary border border-primary transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer {{ $categorySlug ? '' : 'active' }}"
+            data-type="all">
+            All
+        </button>
 
-                <div id="filter-container"
-                    class="flex overflow-x-auto overflow-y-hidden relative flex-nowrap gap-2 px-8 whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing">
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-white bg-primary border border-primary transition-all duration-300 text-md category-blogs-btn active hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="all" id="all-blogs-btn">
-                        All
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="english">
-                        English
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="tech">
-                        Tech
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="arabic">
-                        Arabic
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="math">
-                        Math
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="programming">
-                        Programming
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="physics">
-                        Physics
-                    </button>
-                    <button
-                        class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="chemistry">
-                        Chemistry
-                    </button>                
-                </div>
+      
+        @foreach($categories as $category)
+            <button
+                class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer {{ $categorySlug === $category->slug ? 'bg-primary text-white' : '' }}"
+                data-type="{{ $category->slug }}">
+                {{ $category->name }}
+            </button>
+        @endforeach
+    </div>
+</div>
 
-                <!-- سهم يمين -->
-                <div id="right-arrow"
-                    class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none md:-right-10 pe-2 text-primary">
-                    <!-- Heroicons: chevron-right -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </div>
-            </div>
+
+
         </div>
     </section>
 
@@ -201,16 +162,14 @@
     </section>
 
  
-   <script>
+<script>
 (() => {
-  // ✳️ مهم: حط السيليكتور الصحيح لعناصر التصنيفات الموجودة عندك فوق
-  // أمثلة: '#categoryTabs a'  أو  '.cats a'  أو  '.tabs button'
-  const CAT_LINKS = '#categoryTabs a'; // <-- عدّل هذا السطر فقط
-
   const gridSelector = '#coursesGridBlogs';
   const paginationSelector = '#paginationBlogs';
   const perPageSelector = '#perPageSelect';
+  const categoryButtons = document.querySelectorAll('#filter-container .category-blogs-btn');
 
+  // 🔹 تحميل المدونات عبر AJAX
   async function loadBlogs(url) {
     try {
       const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
@@ -219,122 +178,83 @@
 
       const newGrid = doc.querySelector(gridSelector);
       const newPagination = doc.querySelector(paginationSelector);
+
       const oldGrid = document.querySelector(gridSelector);
       const oldPagination = document.querySelector(paginationSelector);
 
       if (newGrid && oldGrid) oldGrid.replaceWith(newGrid);
       if (newPagination && oldPagination) oldPagination.replaceWith(newPagination);
 
+      // تحديث عنوان الرابط بدون ريفرش
       history.pushState({}, '', url);
 
-      // بعد الاستبدال، نعيد ربط المستمعين لأنها بتروح مع DOM القديم
-      attachHandlers();
-    } catch (e) {
-      console.error('AJAX load error:', e);
+      // إعادة ربط أزرار الباجينيشن
+      attachPaginationHandlers();
+    } catch (err) {
+      console.error('Error loading blogs:', err);
     }
   }
 
-  function getPerPage() {
-    const u = new URL(location.href);
-    return u.searchParams.get('per_page') || (document.querySelector(perPageSelector)?.value || '9');
-  }
-
+  // 🔹 بناء رابط جديد بالباراميترات المناسبة
   function buildUrl(mod = {}) {
     const u = new URL(location.href);
     Object.entries(mod).forEach(([k, v]) => {
-      if (v === null || v === undefined || v === '') u.searchParams.delete(k);
+      if (!v) u.searchParams.delete(k);
       else u.searchParams.set(k, v);
     });
-    if (!u.searchParams.get('per_page')) u.searchParams.set('per_page', getPerPage());
-    // لما نبدّل تصنيف/عدد العناصر، رجّع للصفحة الأولى
-    if (mod.category !== undefined || mod.per_page !== undefined) u.searchParams.delete('page');
+    if (!u.searchParams.get('per_page')) {
+      const perSel = document.querySelector(perPageSelector);
+      if (perSel) u.searchParams.set('per_page', perSel.value);
+    }
     return u.toString();
   }
 
-  function getCurrentPage() {
-    const u = new URL(location.href);
-    return parseInt(u.searchParams.get('page') || '1', 10) || 1;
-  }
-  function getLastPageFromDom() {
-    const nums = [...document.querySelectorAll('#pagesNumbers button[data-page]')]
-      .map(b => parseInt(b.dataset.page, 10))
-      .filter(n => !isNaN(n));
-    return nums.length ? Math.max(...nums) : getCurrentPage();
-  }
+  // 🔹 الضغط على تصنيف
+  categoryButtons.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
 
-  function attachHandlers() {
-    // 1) روابط/أزرار التصنيفات المحددة بالسيليكتور
-    document.querySelectorAll(CAT_LINKS).forEach(el => {
-      el.removeEventListener('click', el.__catHandler__);
-      el.__catHandler__ = (e) => {
-        e.preventDefault();
-        // أولاً جرّب نقرأ slug من href إن وجد ?category=...
-        const href = el.getAttribute('href') || '';
-        let slug = null;
-        if (/[?&]category=/.test(href)) {
-          const u = new URL(href, location.origin);
-          slug = u.searchParams.get('category');
-        }
-        // لو ما فيه، جرّب data-attrs (إن كانت موجودة أصلاً)
-        slug = slug || el.dataset.category || el.dataset.slug;
-        if (!slug) {
-          // آخر حل: خُذ النص كما هو وحوّلو slug بسيط (بدون ما نعدّل HTML)
-          const name = (el.textContent || '').trim();
-          if (!name) return;
-          slug = name
-            .normalize('NFKD')
-            .replace(/[\u0300-\u036f]/g,'') // إزالة تشكيل/ديacritics
-            .replace(/\s+/g,'-')
-            .replace(/[^\w\-]+/g,'')
-            .toLowerCase();
-        }
-        const url = buildUrl({ category: slug, per_page: getPerPage() });
-        loadBlogs(url);
-      };
-      el.addEventListener('click', el.__catHandler__);
+      // تفعيل الزر الحالي
+      categoryButtons.forEach(b => b.classList.remove('bg-primary', 'text-white', 'border-primary'));
+      btn.classList.add('bg-primary', 'text-white', 'border-primary');
+
+      const slug = btn.dataset.type;
+      const url = buildUrl({ category: slug === 'all' ? null : slug, page: null });
+      loadBlogs(url);
     });
+  });
 
-    // 2) تغيير PER PAGE
-    const perSel = document.querySelector(perPageSelector);
-    if (perSel) {
-      perSel.removeEventListener('change', perSel.__ppHandler__);
-      perSel.__ppHandler__ = () => {
-        const url = buildUrl({ per_page: perSel.value });
-        loadBlogs(url);
-      };
-      perSel.addEventListener('change', perSel.__ppHandler__);
-    }
+  // 🔹 تغيير عدد العناصر PER PAGE
+  const perSel = document.querySelector(perPageSelector);
+  if (perSel) {
+    perSel.addEventListener('change', () => {
+      const url = buildUrl({ per_page: perSel.value, page: null });
+      loadBlogs(url);
+    });
+  }
 
-    // 3) أزرار الباجينيشن (الأزرار اللي أنت عاملها بـ data-page)
+  // 🔹 أزرار الباجينيشن
+  function attachPaginationHandlers() {
     document.querySelectorAll('#paginationBlogs [data-page]').forEach(btn => {
-      btn.removeEventListener('click', btn.__pgHandler__);
-      btn.__pgHandler__ = (e) => {
+      btn.addEventListener('click', e => {
         e.preventDefault();
-        const val = (btn.getAttribute('data-page') || '').toLowerCase();
-        const cur = getCurrentPage();
-        const last = getLastPageFromDom();
-        let next = cur;
-        if (val === 'prev') next = Math.max(1, cur - 1);
-        else if (val === 'next') next = Math.min(last, cur + 1);
-        else {
-          const n = parseInt(val, 10);
-          if (!isNaN(n)) next = n;
-        }
-        if (next !== cur) {
-          const u = buildUrl({ page: next, per_page: getPerPage() });
-          loadBlogs(u);
-        }
-      };
-      btn.addEventListener('click', btn.__pgHandler__);
+        const val = btn.getAttribute('data-page');
+        const current = parseInt(document.querySelector('#pagesNumbers button.bg-primary')?.dataset.page || '1');
+        const last = Math.max(...[...document.querySelectorAll('#pagesNumbers button[data-page]')].map(b => parseInt(b.dataset.page || '1')));
+        let next = current;
+        if (val === 'prev') next = Math.max(1, current - 1);
+        else if (val === 'next') next = Math.min(last, current + 1);
+        else next = parseInt(val);
+        const url = buildUrl({ page: next });
+        loadBlogs(url);
+      });
     });
   }
 
-  // أول تشغيل
-  attachHandlers();
-
-  // دعم الرجوع/التقدّم
+  attachPaginationHandlers();
   window.addEventListener('popstate', () => loadBlogs(location.href));
 })();
 </script>
+
 
 </x-front-layout>
