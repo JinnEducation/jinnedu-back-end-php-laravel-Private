@@ -216,7 +216,7 @@
                         </a>
 
                         <!-- Blog Link -->
-                        <a href="blog.html"
+                        <a href="{{route('site.blog')}}"
                             class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
                             Blog
                         </a>
@@ -417,7 +417,7 @@
                 </a>
 
                 <!-- Blog Link -->
-                <a href="blog.html"
+                <a href="{{route('site.blog')}}"
                     class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                     <i class="w-5 text-center fas fa-article text-primary-600 me-2"></i>
                     <span>المدونة</span>

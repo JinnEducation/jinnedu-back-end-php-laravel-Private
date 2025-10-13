@@ -46,6 +46,9 @@ Route::prefix('stripe')->name('stripe.')->group(function () {
 
  Route::get('/payment-response/{id}/{status}',[WalletPaymentTransactionController::class,'handlePaymentResponse'])->name('checkout-response');
 
+ //site route
+ Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
+
 
 
 

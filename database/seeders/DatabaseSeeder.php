@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             ExperienceSeeder::class,
             WeekDaySeeder::class,
+            BlogSeeder::class,
         ]);
     }
 }

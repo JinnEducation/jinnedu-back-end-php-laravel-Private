@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Models\Blog;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\CateqBlog;
 use App\Models\OurCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,5 +60,31 @@ class HomeController extends Controller
         ->get();
 
         return view('front.home', compact('tutors', 'stats','categories','courses','categoryId'));
+    }
+
+    public function blog(Request $request)
+    {
+
+          $categories = CateqBlog::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        $categorySlug = $request->query('category');
+
+        $posts = Blog::query()
+            ->with('category')
+            ->published()
+            ->when($categorySlug, function ($q) use ($categorySlug) {
+                $q->whereHas('category', function ($c) use ($categorySlug) {
+                    $c->where('slug', $categorySlug);
+                });
+            })
+            ->orderByDesc('published_at')
+            ->paginate(9)
+            ->withQueryString();
+            
+       return view('front.blog', compact('categories','posts','categorySlug'));
     }
 }
