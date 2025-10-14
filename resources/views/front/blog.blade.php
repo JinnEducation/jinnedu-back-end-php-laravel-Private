@@ -168,9 +168,11 @@
   const paginationSelector = '#paginationBlogs';
   const perPageSelector = '#perPageSelect';
   const categoryButtons = document.querySelectorAll('#filter-container .category-blogs-btn');
+  let perPageSelectEl = null;
 
   // 🔹 تحميل المدونات عبر AJAX
-  async function loadBlogs(url) {
+  async function loadBlogs(url, options = {}) {
+    const { skipHistory = false } = options;
     try {
       const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
       const html = await resp.text();
@@ -186,9 +188,10 @@
       if (newPagination && oldPagination) oldPagination.replaceWith(newPagination);
 
       // تحديث عنوان الرابط بدون ريفرش
-      history.pushState({}, '', url);
+      if (!skipHistory) history.pushState({}, '', url);
 
       // إعادة ربط أزرار الباجينيشن
+      bindPerPageSelect();
       attachPaginationHandlers();
     } catch (err) {
       console.error('Error loading blogs:', err);
@@ -225,12 +228,19 @@
   });
 
   // 🔹 تغيير عدد العناصر PER PAGE
-  const perSel = document.querySelector(perPageSelector);
-  if (perSel) {
-    perSel.addEventListener('change', () => {
-      const url = buildUrl({ per_page: perSel.value, page: null });
-      loadBlogs(url);
-    });
+  function handlePerPageChange(event) {
+    const select = event.currentTarget;
+    const url = buildUrl({ per_page: select.value, page: null });
+    loadBlogs(url);
+  }
+
+  function bindPerPageSelect() {
+    const latestSelect = document.querySelector(perPageSelector);
+    if (!latestSelect) return;
+    if (perPageSelectEl === latestSelect) return;
+    if (perPageSelectEl) perPageSelectEl.removeEventListener('change', handlePerPageChange);
+    perPageSelectEl = latestSelect;
+    perPageSelectEl.addEventListener('change', handlePerPageChange);
   }
 
   // 🔹 أزرار الباجينيشن
@@ -251,8 +261,9 @@
     });
   }
 
+  bindPerPageSelect();
   attachPaginationHandlers();
-  window.addEventListener('popstate', () => loadBlogs(location.href));
+  window.addEventListener('popstate', () => loadBlogs(location.href, { skipHistory: true }));
 })();
 </script>
 

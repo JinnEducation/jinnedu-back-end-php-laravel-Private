@@ -66,7 +66,7 @@ class HomeController extends Controller
     {
 
         $perPage = (int) $request->input('per_page', 9);
-        $allowedPerPage = [9, 12, 18, 24];
+        $allowedPerPage = [6, 9, 12];
         if (! in_array($perPage, $allowedPerPage)) {
             $perPage = 9;
         }

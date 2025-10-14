@@ -11,12 +11,14 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up() : void
     {
+        if (!Schema::hasColumn('tutor_finances', 'total')) {
         Schema::table('tutor_finances', function (Blueprint $table) {
             $table->decimal('total', 8, 2)->default(0)->after('ref_id');
         });
     }
+}
 
     /**
      * Reverse the migrations.

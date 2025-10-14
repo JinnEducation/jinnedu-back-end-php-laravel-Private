@@ -12,14 +12,14 @@ class Blog extends Model
 
      protected $table = 'blog';
     protected $fillable = [
-        'cateq_blog_id','title','slug','description',
+        'categ_blog_id','title','slug','description',
         'image','date','status',
         'published_at',
     ];
 
     public function category()
     {
-        return $this->belongsTo(CateqBlog::class, 'cateq_blog_id');
+        return $this->belongsTo(CateqBlog::class, 'categ_blog_id');
     }
 
    
