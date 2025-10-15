@@ -11,8 +11,9 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
+        if (!Schema::hasTable('tutor_finances')) {
         Schema::create('tutor_finances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tutor_id')->constrained('users')->onDelete('cascade');
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+    }
     }
 
     /**

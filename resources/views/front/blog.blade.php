@@ -167,17 +167,37 @@
   const gridSelector = '#coursesGridBlogs';
   const paginationSelector = '#paginationBlogs';
   const perPageSelector = '#perPageSelect';
-  const btnsSelector = '#filter-container .category-blogs-btn';
 
-  const gridEl = () => document.querySelector(gridSelector);
-  const paginationEl = () => document.querySelector(paginationSelector);
+  const categoryButtons = document.querySelectorAll('#filter-container .category-blogs-btn');
+  let perPageSelectEl = null;
 
-  function getPerPage() {
-    const u = new URL(location.href);
-    const qp = u.searchParams.get('per_page');
-    if (qp) return qp;
-    const sel = document.querySelector(perPageSelector);
-    return sel ? sel.value : '9';
+  // 🔹 تحميل المدونات عبر AJAX
+  async function loadBlogs(url, options = {}) {
+    const { skipHistory = false } = options;
+    try {
+      const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      const html = await resp.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+
+      const newGrid = doc.querySelector(gridSelector);
+      const newPagination = doc.querySelector(paginationSelector);
+
+      const oldGrid = document.querySelector(gridSelector);
+      const oldPagination = document.querySelector(paginationSelector);
+
+      if (newGrid && oldGrid) oldGrid.replaceWith(newGrid);
+      if (newPagination && oldPagination) oldPagination.replaceWith(newPagination);
+
+      // تحديث عنوان الرابط بدون ريفرش
+      if (!skipHistory) history.pushState({}, '', url);
+
+      // إعادة ربط أزرار الباجينيشن
+      bindPerPageSelect();
+      attachPaginationHandlers();
+    } catch (err) {
+      console.error('Error loading blogs:', err);
+    }
+
   }
 
   function buildUrl(params = {}) {
@@ -193,14 +213,37 @@
     return u.toString();
   }
 
-  // فلتر احتياطي على الواجهة (بدون رجوع للسيرفر) لو ما عرفنا نستبدل الـHTML
-  function clientSideFilter(slugOrAll) {
-    const cards = document.querySelectorAll(`${gridSelector} .course-blogs-card`);
-    cards.forEach(card => {
-      const t = (card.getAttribute('data-type') || '').trim();
-      const show = !slugOrAll || slugOrAll === 'all' || t === slugOrAll;
-      card.style.display = show ? '' : 'none';
+
+  // 🔹 الضغط على تصنيف
+  categoryButtons.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+
+      // تفعيل الزر الحالي
+      categoryButtons.forEach(b => b.classList.remove('bg-primary', 'text-white', 'border-primary'));
+      btn.classList.add('bg-primary', 'text-white', 'border-primary');
+
+      const slug = btn.dataset.type;
+      const url = buildUrl({ category: slug === 'all' ? null : slug, page: null });
+      loadBlogs(url);
     });
+  });
+
+  // 🔹 تغيير عدد العناصر PER PAGE
+  function handlePerPageChange(event) {
+    const select = event.currentTarget;
+    const url = buildUrl({ per_page: select.value, page: null });
+    loadBlogs(url);
+  }
+
+  function bindPerPageSelect() {
+    const latestSelect = document.querySelector(perPageSelector);
+    if (!latestSelect) return;
+    if (perPageSelectEl === latestSelect) return;
+    if (perPageSelectEl) perPageSelectEl.removeEventListener('change', handlePerPageChange);
+    perPageSelectEl = latestSelect;
+    perPageSelectEl.addEventListener('change', handlePerPageChange);
+
   }
 
   function markActiveButton(slugOrAll) {
@@ -252,85 +295,14 @@
     });
   }
 
-  function attachCategoryHandlers() {
-    document.querySelectorAll(btnsSelector).forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.preventDefault();
-        const slug = (btn.dataset.type || '').trim();
-        markActiveButton(slug || 'all');
-        const u = buildUrl({ category: slug === 'all' ? null : slug, page: null });
-        loadBlogs(u);
-      });
-    });
-  }
 
-  function attachPerPageHandler() {
-    const sel = document.querySelector(perPageSelector);
-    if (!sel) return;
-    sel.addEventListener('change', () => {
-      const u = buildUrl({ per_page: sel.value, page: null });
-      loadBlogs(u);
-    });
-  }
-
-  async function loadBlogs(url) {
-    try {
-      const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-      const html = await resp.text();
-
-      // استخدم DOMParser لإيجاد العناصر
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      const newGrid = doc.querySelector(gridSelector);
-      const newPagination = doc.querySelector(paginationSelector);
-
-      if (newGrid && gridEl()) {
-        // استبدل المحتوى الداخلي فقط (أكثر أمانًا)
-        gridEl().innerHTML = newGrid.innerHTML;
-      }
-      if (newPagination && paginationEl()) {
-        paginationEl().innerHTML = newPagination.innerHTML;
-      }
-
-      // لو لأي سبب ما لقيناهم، فعّل الفلتر المحلي كحل أخير
-      if (!newGrid && !newPagination) {
-        const urlObj = new URL(url);
-        const cat = urlObj.searchParams.get('category') || 'all';
-        clientSideFilter(cat);
-      }
-
-      // حدّث العنوان
-      history.pushState({}, '', url);
-
-      // لازم نعيد ربط المستمعين بعد تحديث الدوم
-      attachPaginationHandlers();
-
-      // حدّث تمييز الزر النشط حسب URL
-      const catNow = (new URL(location.href)).searchParams.get('category') || 'all';
-      markActiveButton(catNow);
-    } catch (err) {
-      console.error(err);
-      // في حال الخطأ: فلتر محلي
-      const urlObj = new URL(url);
-      const cat = urlObj.searchParams.get('category') || 'all';
-      clientSideFilter(cat);
-      history.pushState({}, '', url);
-      markActiveButton(cat);
-    }
-  }
-
-  // أول تشغيل
-  attachCategoryHandlers();
-  attachPerPageHandler();
+  bindPerPageSelect();
   attachPaginationHandlers();
-
-  // دعم الرجوع/التقدم
-  window.addEventListener('popstate', () => loadBlogs(location.href));
-
-  // عند أول تحميل، وازن زرّ الحالة من الـURL
-  markActiveButton((new URL(location.href)).searchParams.get('category') || 'all');
+  window.addEventListener('popstate', () => loadBlo
 })();
 </script>
 
 
 
 </x-front-layout>
+

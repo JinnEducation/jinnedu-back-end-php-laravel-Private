@@ -11,11 +11,13 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up() : void
     {
+        if (!Schema::hasColumn('our_courses', 'slug')) {
         Schema::table('our_courses', function (Blueprint $table) {
             $table->string('slug')->unique()->after('name');
         });
+    }
     }
 
     /**

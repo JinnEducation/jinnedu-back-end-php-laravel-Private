@@ -11,12 +11,14 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
+        if (!Schema::hasColumn('categories', 'type')) {
         Schema::table('categories', function (Blueprint $table) {
             $table->enum('type', ['general', 'tab'])->default('general')->after('user_id');
         });
     }
+}
 
     /**
      * Reverse the migrations.

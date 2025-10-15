@@ -11,8 +11,9 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
+        if (!Schema::hasTable('conference_attendances')) {
         Schema::create('conference_attendances', function (Blueprint $table) {
             $table->id();
             $table->integer('ref_type')->default(0)->comment('1=>group_class, 4=>private_lesson');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+    }
     }
 
     /**

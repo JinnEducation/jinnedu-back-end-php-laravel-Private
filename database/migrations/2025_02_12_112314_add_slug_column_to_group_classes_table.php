@@ -11,12 +11,14 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
+        if (!Schema::hasColumn('group_classes', 'slug')) {
         Schema::table('group_classes', function (Blueprint $table) {
             $table->string('slug')->unique()->after('name');
         });
     }
+}
 
     /**
      * Reverse the migrations.
