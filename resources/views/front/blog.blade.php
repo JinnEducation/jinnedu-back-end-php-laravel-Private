@@ -167,94 +167,170 @@
   const gridSelector = '#coursesGridBlogs';
   const paginationSelector = '#paginationBlogs';
   const perPageSelector = '#perPageSelect';
-  const categoryButtons = document.querySelectorAll('#filter-container .category-blogs-btn');
+  const btnsSelector = '#filter-container .category-blogs-btn';
 
-  // 🔹 تحميل المدونات عبر AJAX
-  async function loadBlogs(url) {
-    try {
-      const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-      const html = await resp.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
+  const gridEl = () => document.querySelector(gridSelector);
+  const paginationEl = () => document.querySelector(paginationSelector);
 
-      const newGrid = doc.querySelector(gridSelector);
-      const newPagination = doc.querySelector(paginationSelector);
-
-      const oldGrid = document.querySelector(gridSelector);
-      const oldPagination = document.querySelector(paginationSelector);
-
-      if (newGrid && oldGrid) oldGrid.replaceWith(newGrid);
-      if (newPagination && oldPagination) oldPagination.replaceWith(newPagination);
-
-      // تحديث عنوان الرابط بدون ريفرش
-      history.pushState({}, '', url);
-
-      // إعادة ربط أزرار الباجينيشن
-      attachPaginationHandlers();
-    } catch (err) {
-      console.error('Error loading blogs:', err);
-    }
+  function getPerPage() {
+    const u = new URL(location.href);
+    const qp = u.searchParams.get('per_page');
+    if (qp) return qp;
+    const sel = document.querySelector(perPageSelector);
+    return sel ? sel.value : '9';
   }
 
-  // 🔹 بناء رابط جديد بالباراميترات المناسبة
-  function buildUrl(mod = {}) {
+  function buildUrl(params = {}) {
     const u = new URL(location.href);
-    Object.entries(mod).forEach(([k, v]) => {
-      if (!v) u.searchParams.delete(k);
+    Object.entries(params).forEach(([k,v]) => {
+      if (v === null || v === undefined || v === '') u.searchParams.delete(k);
       else u.searchParams.set(k, v);
     });
+    // ثبّت per_page الحالي
     if (!u.searchParams.get('per_page')) {
-      const perSel = document.querySelector(perPageSelector);
-      if (perSel) u.searchParams.set('per_page', perSel.value);
+      u.searchParams.set('per_page', getPerPage());
     }
     return u.toString();
   }
 
-  // 🔹 الضغط على تصنيف
-  categoryButtons.forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-
-      // تفعيل الزر الحالي
-      categoryButtons.forEach(b => b.classList.remove('bg-primary', 'text-white', 'border-primary'));
-      btn.classList.add('bg-primary', 'text-white', 'border-primary');
-
-      const slug = btn.dataset.type;
-      const url = buildUrl({ category: slug === 'all' ? null : slug, page: null });
-      loadBlogs(url);
-    });
-  });
-
-  // 🔹 تغيير عدد العناصر PER PAGE
-  const perSel = document.querySelector(perPageSelector);
-  if (perSel) {
-    perSel.addEventListener('change', () => {
-      const url = buildUrl({ per_page: perSel.value, page: null });
-      loadBlogs(url);
+  // فلتر احتياطي على الواجهة (بدون رجوع للسيرفر) لو ما عرفنا نستبدل الـHTML
+  function clientSideFilter(slugOrAll) {
+    const cards = document.querySelectorAll(`${gridSelector} .course-blogs-card`);
+    cards.forEach(card => {
+      const t = (card.getAttribute('data-type') || '').trim();
+      const show = !slugOrAll || slugOrAll === 'all' || t === slugOrAll;
+      card.style.display = show ? '' : 'none';
     });
   }
 
-  // 🔹 أزرار الباجينيشن
+  function markActiveButton(slugOrAll) {
+    document.querySelectorAll(btnsSelector).forEach(b => {
+      b.classList.remove('bg-primary','text-white','border-primary');
+      b.classList.add('text-gray-600','border','border-gray-200');
+    });
+    const btn = Array.from(document.querySelectorAll(btnsSelector))
+      .find(b => (b.dataset.type || '') === (slugOrAll || 'all'));
+    if (btn) {
+      btn.classList.remove('text-gray-600','border','border-gray-200');
+      btn.classList.add('bg-primary','text-white','border-primary');
+    }
+  }
+
   function attachPaginationHandlers() {
-    document.querySelectorAll('#paginationBlogs [data-page]').forEach(btn => {
+    // أزرار الباجينيشن المولّدة بالسيرفر
+    document.querySelectorAll('#pagesNumbers button[data-page], #paginationBlogs button[data-page]').forEach(btn => {
       btn.addEventListener('click', e => {
         e.preventDefault();
         const val = btn.getAttribute('data-page');
-        const current = parseInt(document.querySelector('#pagesNumbers button.bg-primary')?.dataset.page || '1');
-        const last = Math.max(...[...document.querySelectorAll('#pagesNumbers button[data-page]')].map(b => parseInt(b.dataset.page || '1')));
-        let next = current;
-        if (val === 'prev') next = Math.max(1, current - 1);
-        else if (val === 'next') next = Math.min(last, current + 1);
-        else next = parseInt(val);
-        const url = buildUrl({ page: next });
-        loadBlogs(url);
+        const pages = Array.from(document.querySelectorAll('#pagesNumbers button[data-page]'))
+          .map(b => parseInt(b.dataset.page || '1'));
+        const last = pages.length ? Math.max(...pages) : 1;
+
+        // ابحث عن الصفحة الحالية من الـURL
+        const urlNow = new URL(location.href);
+        const curr = parseInt(urlNow.searchParams.get('page') || '1');
+
+        let next = curr;
+        if (val === 'prev') next = Math.max(1, curr - 1);
+        else if (val === 'next') next = Math.min(last, curr + 1);
+        else next = parseInt(val || '1');
+
+        const u = buildUrl({ page: next });
+        loadBlogs(u);
+      });
+    });
+
+    // روابط باجينيشن (لو Laravel طابع <a>)
+    document.querySelectorAll('#paginationBlogs a[href]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const u = new URL(a.href, location.origin);
+        // ثبّت per_page الحالي
+        u.searchParams.set('per_page', getPerPage());
+        loadBlogs(u.toString());
       });
     });
   }
 
+  function attachCategoryHandlers() {
+    document.querySelectorAll(btnsSelector).forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        const slug = (btn.dataset.type || '').trim();
+        markActiveButton(slug || 'all');
+        const u = buildUrl({ category: slug === 'all' ? null : slug, page: null });
+        loadBlogs(u);
+      });
+    });
+  }
+
+  function attachPerPageHandler() {
+    const sel = document.querySelector(perPageSelector);
+    if (!sel) return;
+    sel.addEventListener('change', () => {
+      const u = buildUrl({ per_page: sel.value, page: null });
+      loadBlogs(u);
+    });
+  }
+
+  async function loadBlogs(url) {
+    try {
+      const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      const html = await resp.text();
+
+      // استخدم DOMParser لإيجاد العناصر
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const newGrid = doc.querySelector(gridSelector);
+      const newPagination = doc.querySelector(paginationSelector);
+
+      if (newGrid && gridEl()) {
+        // استبدل المحتوى الداخلي فقط (أكثر أمانًا)
+        gridEl().innerHTML = newGrid.innerHTML;
+      }
+      if (newPagination && paginationEl()) {
+        paginationEl().innerHTML = newPagination.innerHTML;
+      }
+
+      // لو لأي سبب ما لقيناهم، فعّل الفلتر المحلي كحل أخير
+      if (!newGrid && !newPagination) {
+        const urlObj = new URL(url);
+        const cat = urlObj.searchParams.get('category') || 'all';
+        clientSideFilter(cat);
+      }
+
+      // حدّث العنوان
+      history.pushState({}, '', url);
+
+      // لازم نعيد ربط المستمعين بعد تحديث الدوم
+      attachPaginationHandlers();
+
+      // حدّث تمييز الزر النشط حسب URL
+      const catNow = (new URL(location.href)).searchParams.get('category') || 'all';
+      markActiveButton(catNow);
+    } catch (err) {
+      console.error(err);
+      // في حال الخطأ: فلتر محلي
+      const urlObj = new URL(url);
+      const cat = urlObj.searchParams.get('category') || 'all';
+      clientSideFilter(cat);
+      history.pushState({}, '', url);
+      markActiveButton(cat);
+    }
+  }
+
+  // أول تشغيل
+  attachCategoryHandlers();
+  attachPerPageHandler();
   attachPaginationHandlers();
+
+  // دعم الرجوع/التقدم
   window.addEventListener('popstate', () => loadBlogs(location.href));
+
+  // عند أول تحميل، وازن زرّ الحالة من الـURL
+  markActiveButton((new URL(location.href)).searchParams.get('category') || 'all');
 })();
 </script>
+
 
 
 </x-front-layout>
