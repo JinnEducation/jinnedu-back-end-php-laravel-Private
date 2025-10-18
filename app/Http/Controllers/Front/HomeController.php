@@ -98,4 +98,30 @@ class HomeController extends Controller
 
         return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage'));
     }
+
+    public function showBlog(string $slug)
+    {
+
+        $blog = Blog::query()
+            ->published()                  
+            ->where('slug', $slug)
+            ->with([
+                'category:id,name,slug',
+                'users:id,name',
+                'courses' => function ($q) {
+                    $q->select(
+                        'id', 'name', 'image',
+                        'lessons', 'class_length',
+                        'category_id', 'blog_id',
+                        'publish', 'publish_date'
+                    )
+                    ->where('publish', 1)
+                    ->orderByDesc('publish_date');
+                    $q->with(['category:id,name']);
+                },
+            ])
+            ->firstOrFail();
+
+        return view('front.singlebloge', compact('blog'));
+    }
 }

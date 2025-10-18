@@ -22,6 +22,17 @@ class Blog extends Model
         return $this->belongsTo(CateqBlog::class, 'categ_blog_id');
     }
 
+    public function users()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+     public function courses()
+{
+    return $this->hasMany(OurCourse::class, 'blog_id');
+}
+
    
    public function scopePublished($q)
 {

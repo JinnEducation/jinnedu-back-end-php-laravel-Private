@@ -15,16 +15,17 @@ return new class extends Migration
     {
         Schema::create('blog', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('categ_blog_id') 
+            $table->foreignId('categ_blog_id')
                 ->nullable()
                 ->constrained('categ_blog')
                 ->nullOnDelete();
+             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->string('slug')->unique();
             $table->longText('description');
             $table->string('image');
-            $table->date('date'); 
-            $table->enum('status', ['draft','published','archived']);
+            $table->date('date');
+            $table->enum('status', ['draft', 'published', 'archived']);
             $table->timestamps();
         });
     }

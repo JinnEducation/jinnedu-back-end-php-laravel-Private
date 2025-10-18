@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Blog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class OurCourse extends Model
 {
     use HasFactory, SoftDeletes, Sluggable;
@@ -73,6 +75,13 @@ class OurCourse extends Model
     {
         return $this->belongsTo(Category::class,'category_id');
     }
+
+
+      public function blog()
+{
+    return $this->belongsTo(Blog::class, 'blog_id');
+}
+
         
     public function getIsFavouriteAttribute(){
         $authorization = \Request::header('Authorization');

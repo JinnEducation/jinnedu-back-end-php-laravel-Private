@@ -48,6 +48,8 @@ Route::prefix('stripe')->name('stripe.')->group(function () {
 
  //site route
  Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
+ Route::get('blog/{slug}', [HomeController::class, 'showBlog'])->name('site.showBlog');
+
 
 
 
