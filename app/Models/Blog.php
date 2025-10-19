@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Blog extends Model
 {
@@ -40,4 +41,23 @@ class Blog extends Model
              ->whereDate('date', '<=', now()); 
 }
 
+public function scopeFilter(Builder $builder, $filters)
+    {
+        $options = array_merge([
+            'user_id' => null,
+            'category_id' => null,
+            'course_id' => null,
+        ], $filters);
+
+         $builder->when($options['user_id'], function($builder, $value) {
+            $builder->where('user_id', $value);
+        });
+        $builder->when($options['category_id'], function($builder, $value) {
+            $builder->where('category_id', $value);
+        });
+        $builder->when($options['course_id'], function($builder, $value) {
+            $builder->where('course_id', $value);
+        });
+
+}
 }

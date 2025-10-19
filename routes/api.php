@@ -84,3 +84,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 include 'api-admin.php';
 include 'api-tutor.php';
 include 'api-front.php';
+include 'api-dash.php';
