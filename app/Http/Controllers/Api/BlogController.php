@@ -13,7 +13,7 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         $blogs = Blog::filter($request->query())
-        ->with('category:id,name', 'user:id,name', 'course:id,name') 
+        ->with('category:id,name', 'users:id,name', 'courses:id,name') 
             ->paginate();
             
             return BlogResource::collection($blogs);
@@ -29,11 +29,25 @@ class BlogController extends Controller
             'image' => 'required',
             'date' => 'required',
             'status' => 'required',
-            'published_at' => 'required',
+             'user_id' => 'required',
         ]);
 
         $blogs = Blog::create($request->all());
         return Response::json($blogs, 200);
+    }
+
+
+
+    public function show(Blog $blog)
+    {
+        
+       return  $blog->load([
+        'category:id,name',
+        'users:id,name',            
+        'courses:id,name,blog_id',
+    ]);
+
+            //  return new BlogResource($blog);
     }
 
 

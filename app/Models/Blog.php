@@ -14,8 +14,8 @@ class Blog extends Model
      protected $table = 'blog';
     protected $fillable = [
         'categ_blog_id','title','slug','description',
-        'image','date','status',
-        'published_at',
+        'image','date','status','user_id'
+        
     ];
 
     public function category()
@@ -25,8 +25,9 @@ class Blog extends Model
 
     public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+
 
 
      public function courses()
@@ -52,11 +53,15 @@ public function scopeFilter(Builder $builder, $filters)
          $builder->when($options['user_id'], function($builder, $value) {
             $builder->where('user_id', $value);
         });
-        $builder->when($options['category_id'], function($builder, $value) {
-            $builder->where('category_id', $value);
-        });
-        $builder->when($options['course_id'], function($builder, $value) {
-            $builder->where('course_id', $value);
+        // $builder->when($options['category_id'], function($builder, $value) {
+        //     $builder->where('category_id', $value);
+        // });
+         $builder->when($options['category_id'], fn($q, $v) => $q->where('categ_blog_id', $v));
+        // $builder->when($options['course_id'], function($builder, $value) {
+        //     $builder->where('course_id', $value);
+        // });
+         $builder->when($options['course_id'], function ($q, $v) {
+            $q->whereHas('courses', fn($qq) => $qq->where('id', $v));
         });
 
 }
