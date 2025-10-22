@@ -10,13 +10,22 @@ use App\Http\Resources\BlogResource;
 
 class BlogController extends Controller
 {
+
+
+     public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     public function index(Request $request)
     {
         $blogs = Blog::filter($request->query())
         ->with('category:id,name', 'users:id,name', 'courses:id,name') 
             ->paginate();
             
-            return BlogResource::collection($blogs);
+
+             return Response::json($blogs);
+            // return BlogResource::collection($blogs);
     }
 
     public function store(Request $request)
@@ -40,36 +49,32 @@ class BlogController extends Controller
 
     public function show(Blog $blog)
     {
-        
-       return  $blog->load([
-        'category:id,name',
-        'users:id,name',            
-        'courses:id,name,blog_id',
-    ]);
-
-            //  return new BlogResource($blog);
+       return new BlogResource($blog);
     }
 
 
-     public function update(Request $request, Blog $blogs)
-    {
-       $request->validate([
-            'categ_blog_id' => 'required',
-            'title' => 'required',
-            'slug' => 'required',
-            'description' => 'required',
-            'image' => 'required',
-            'date' => 'required',
-            'status' => 'required',
-            'published_at' => 'required',
-        ]);
+    public function update(Request $request, $id)
+{
 
+     $blog = Blog::findOrFail($id);
 
+    $data = $request->validate([
+        'categ_blog_id' => 'sometimes|required|integer|exists:categ_blog,id',
+        'title'         => 'sometimes|required|string',
+        'slug'          => 'sometimes|required|string',
+        'description'   => 'sometimes|required|string',
+        'image'         => 'sometimes|required|string',
+        'date'          => 'sometimes|required|date',
+        'status'        => 'sometimes|required|in:draft,published,archived',
+        'user_id'       => 'sometimes|required|integer|exists:users,id',
+    ]);
 
-        $blogs->update($request->all());
+    $blog->update($data);
+        // $blog->update($request->all());
 
-
-        return Response::json($blogs);
+         return Response::json($blog);
+      
+        
     }
 
 
@@ -81,4 +86,5 @@ class BlogController extends Controller
                      
                  ], 204);
     }
+
 }
