@@ -27,40 +27,27 @@ class BlogResource extends JsonResource
 
             'relations' => [
                 'categ_blog_id' => [
-                    'id' => $this->category->id,
-                    'name' => $this->category->name,
+                    'id' => $this->category?->id,
+                    'name' => $this->category?->name,
                 ],
 
-                // 'category' => $this->whenLoaded('category', function () {
-                //     return $this->category ? [
-                //         'id'   => $this->category->id,
-                //         'name' => $this->category->name,
-                //     ] : null;
-                // }),
+               
 
                 'courses' => [
-                    'id' => $this->course->id,
-                    'name' => $this->course->name,
+                    'id' => $this->course?->id,
+                    'name' => $this->course?->name,
                 ],
 
                 'user' => $this->whenLoaded('users', function () {
                     return $this->users
                         ? [
-                            'id'   => $this->users->id,
-                            'name' => $this->users->name,
+                            'id'   => $this->users?->id,
+                            'name' => $this->users?->name,
                         ]
                         : null;
                 }),
 
-               
-            //     'courses' => $this->whenLoaded('courses', function () {
-            //         return $this->courses->map(function ($c) {
-            //             return [
-            //                 'id'   => $c->id,
-            //                 'name' => $c->name,
-            //             ];
-            //         })->values();
-            //     }),
+            
             ],
         ];
     }

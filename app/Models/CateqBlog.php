@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class CateqBlog extends Model
 {
@@ -19,4 +21,23 @@ class CateqBlog extends Model
     {
         return $this->hasMany(Blog::class, 'categ_blog_id');
     }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+
+
+    public function scopeFilter(Builder $builder, $filters)
+    {
+        $options = array_merge([
+            'user_id' => null,
+        ], $filters);
+
+         $builder->when($options['user_id'], function($builder, $value) {
+            $builder->where('user_id', $value);
+        });
+       
+}
 }
