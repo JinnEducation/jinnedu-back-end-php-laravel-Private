@@ -18,8 +18,7 @@ use filemtime;
 
 
 class LocalController extends Controller
-{
-    
+{    
     public function locallLang($lang){
         $language = Language::where('shortname',$lang)->first();
         if(!$language) return []; 
@@ -35,11 +34,11 @@ class LocalController extends Controller
     
     public function localesLang($lang){
         $local = Translation::select('updated_at')->orderBy('updated_at','DESC')->first();
-        
-        
-        // if (file_exists('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php')) {
-        //     if(date('Y-m-d H:i:s',filemtime('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php')) >= $local->updated_at ){
-        //         include '/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php';
+        $path = public_path('static/locales/lang/'.$lang.'.php');
+
+        // if (file_exists($path)) {
+        //     if(date('Y-m-d H:i:s',filemtime($path)) >= $local->updated_at ){
+        //         include $path;
         //         $responsejson=$lang;
         //         $gzipData=gzencode($responsejson,9);
         //         return response($gzipData)->withHeaders([
@@ -76,9 +75,9 @@ class LocalController extends Controller
          }
         }
         
-        if (file_exists('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php'))
-            unlink('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php');
-        $myfile = fopen('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/lang/'.$lang.'.php', "w") or die("Unable to open file!");
+        if (file_exists($path))
+            unlink($path);
+        $myfile = fopen($path, "w") or die("Unable to open file!");
         $translations['static']=true;
         $txt = "<?php\n".
         //"header('Content-Type: application/json; charset=utf-8');\n".
@@ -107,10 +106,12 @@ class LocalController extends Controller
     }
     
     public function localesLangs(){
+        $path = public_path('static/locales/langs.php');
+
         $local = Language::select('updated_at')->orderBy('updated_at','DESC')->first();
-        if (file_exists('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php')) {
-            if(date('Y-m-d H:i:s',filemtime('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php')) >= $local->updated_at ){
-                include '/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php';
+        if (file_exists($path)) {
+            if(date('Y-m-d H:i:s',filemtime($path)) >= $local->updated_at ){
+                include $path;
                 $responsejson=$langs;
                 $gzipData=gzencode($responsejson,9);
                 return response($gzipData)->withHeaders([
@@ -133,9 +134,9 @@ class LocalController extends Controller
             'data'=> $langs
         ];
         
-        if (file_exists('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php'))
-            unlink('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php');
-        $myfile = fopen('/home/jinnedu/public_html/jinntest.jinnedu.com/server/static/locales/langs.php', "w") or die("Unable to open file!");
+        if (file_exists($path))
+            unlink($path);
+        $myfile = fopen($path, "w") or die("Unable to open file!");
         $data['static']=true;
         $txt = "<?php\n".
         //"header('Content-Type: application/json; charset=utf-8');\n".

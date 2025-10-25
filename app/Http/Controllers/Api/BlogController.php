@@ -21,16 +21,14 @@ class BlogController extends Controller
     {
         $blogs = Blog::filter($request->query())
             ->with('category:id,name', 'users:id,name', 'courses:id,name')
-             ->paginate(10);
+            ->paginate(10);
 
-
-        return Response::json($blogs);
-       
+        return BlogResource::collection($blogs);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'categ_blog_id' => 'required',
             'title' => 'required',
             'slug' => 'required',
@@ -41,7 +39,15 @@ class BlogController extends Controller
             'user_id' => 'required',
         ]);
 
-        $blogs = Blog::create($request->all());
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('uploads/blogs', 'public');
+        } else {
+            $imagePath = null;
+        }
+        $data['image'] = $imagePath;
+
+        $blogs = Blog::create($data);
         return Response::json($blogs, 200);
     }
 
@@ -58,7 +64,6 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
 
-        dd($request->all());
         $blog = Blog::findOrFail($id);
 
         $data = $request->validate([
@@ -66,11 +71,19 @@ class BlogController extends Controller
             'title'         => 'sometimes|required|string',
             'slug'          => 'sometimes|required|string',
             'description'   => 'sometimes|required|string',
-            'image'         => 'sometimes|required|string',
+            'image'         => 'sometimes|required',
             'date'          => 'sometimes|required|date',
             'status'        => 'sometimes|required|in:draft,published,archived',
             'user_id'       => 'sometimes|required|integer|exists:users,id',
         ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('uploads/blogs', 'public');
+        } else {
+            $imagePath = $blog->image ?? null;
+        }
+        $data['image'] = $imagePath;
 
         $blog->update($data);
 
