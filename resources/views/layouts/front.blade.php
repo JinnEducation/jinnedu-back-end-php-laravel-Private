@@ -311,7 +311,7 @@
                                 <span
                                     class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                             </button>
-                            <a href="./signup.html"
+                            <a href="{{route('register')}}"
                                 class="overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 ltr:border-black ltr:border-l-2 hover:text-primary-600 group">
                                 <span class="relative z-10">Sign Up</span>
                                 <span

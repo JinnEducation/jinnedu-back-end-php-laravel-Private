@@ -150,7 +150,8 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
-            <form method="post" action="#">
+            <form method="post" action="{{ route('register') }}" enctype="multipart/form-data">
+                @csrf
                 <!-- Step 1: Account Type -->
                 <div class="pane block opacity-100" data-step="1">
                     <div class="mx-auto">
@@ -166,10 +167,10 @@
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-6 mb-8">
-                            <input type="hidden" name="account-type" id="account-type">
+                            <input type="hidden" name="type" id="account-type" value="">
                             <!-- Student Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                data-account="student">
+                                 data-account="student" data-type="1">
                                 <div class="flex justify-center">
                                     <svg width="105" height="57" viewBox="0 0 105 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -192,7 +193,7 @@
 
                             <!-- Tutor Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                data-account="tutor">
+                                data-account="tutor"   data-type="2">
                                 <div class="flex justify-center">
                                     <svg width="52" height="57" viewBox="0 0 52 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -262,12 +263,12 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
-                                    <input type="text" placeholder="First Name"
+                                    <input type="text" placeholder="First Name" name="first_name"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
-                                    <input type="text" placeholder="Last Name"
+                                    <input type="text" placeholder="Last Name" name="last_name"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -275,7 +276,7 @@
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
                                 <div class="relative">
-                                    <input id="email" type="email" placeholder="example@gmail.com"
+                                    <input id="email" type="email" placeholder="example@gmail.com" name="email"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
 
@@ -295,7 +296,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Contact
                                         number</label>
-                                    <input type="tel" placeholder="Phone"
+                                    <input type="tel" placeholder="Phone" name="phone"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -306,7 +307,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
                                     <div class="relative">
-                                        <input id="password" type="password" placeholder="Password"
+                                        <input id="password" type="password" placeholder="Password" name="password"
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -415,7 +416,7 @@
 
                                 <div class="relative">
                                     <!-- Input -->
-                                    <input id="dob-input" type="text" readonly
+                                    <input id="dob-input" type="date" readonly name="date_of_birth"
                                         placeholder="Date of birth (yyyy / MMM / DD)"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12 cursor-pointer shadow-sm">
 
@@ -478,7 +479,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
                                     <select
-                                        class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                       name="country" class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Country</option>
                                     </select>
                                 </div>
@@ -545,19 +546,19 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Headline</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="headline"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Interests</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="interests"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Motivation</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="motivation"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
@@ -577,7 +578,7 @@
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Methodology</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="methodology"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
                         </div>
@@ -1152,13 +1153,13 @@
                                     Subject</label>
                                 <select
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
-                                    <option value="">Select a subject</option>
+                                    <option value="subject_id">Select a subject</option>
                                 </select>
                             </div>
 
                             <!-- Certification Name -->
                             <div>
-                                <input type="text" placeholder="Certification Name"
+                                <input type="text" placeholder="Certification Name" name="certificate"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
@@ -1166,24 +1167,24 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
                                     Description</label>
-                                <textarea rows="3" placeholder="Up to 200 characters"
+                                <textarea rows="3" placeholder="Up to 200 characters" name="description"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"></textarea>
                             </div>
 
                             <!-- Certification Issued By -->
                             <div>
-                                <input type="text" placeholder="Certification Issued By"
+                                <input type="text" placeholder="Certification Issued By" name="issued_by"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
                             <!-- Years -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <input type="number" id="yearFrom" placeholder="Certification Year From"
+                                    <input type="number" id="yearFrom" placeholder="Certification Year From" name="years_from"
                                         class="hide-number-spin w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="yearTo" placeholder="Certification Year To"
+                                    <input type="number" id="yearTo" placeholder="Certification Year To" name="years_to"
                                         class="hide-number-spin w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
 
                                     <!-- Up/Down SVG Buttons -->
@@ -1217,7 +1218,7 @@
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
                                     <input type="file" id="certFile"
-                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" name="attachment">
                                     <span id="fileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
                                 </label>
@@ -1253,7 +1254,7 @@
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
                                     <input type="file" accept="video/*" id="videoFile"
-                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" name="video_path">
                                     <span id="videoFileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
                                 </label>
@@ -1283,6 +1284,166 @@
                     </div>
                 </div>
             </form>
+
+            <script>
+(() => {
+  const panes = [...document.querySelectorAll('.pane')];
+  const inputType = document.getElementById('account-type');
+
+  const typeError = document.getElementById('account-type-error');
+  const cards = document.querySelectorAll('.account-card');
+  const btnsContinue = document.querySelectorAll('.btn-continue');
+  const btnsBack = document.querySelectorAll('.btn-back');
+  const btnSubmit = document.querySelector('.btn-submit');
+  const btnContinueStep1 = document.getElementById('continue-step-1');
+
+  let step = 1;        // 1..4
+  let accType = null;  // 1=student, 2=tutor
+
+  // توسيط إظهار/إخفاء البانلز
+  const showStep = (s) => {
+    step = s;
+    panes.forEach(p => p.classList.add('hidden'));
+    const pane = document.querySelector(`.pane[data-step="${step}"]`);
+    if (pane) pane.classList.remove('hidden');
+
+    // منطق إظهار الأزرار بحسب النوع
+    // الطالب: فقط Step1 -> Step2، ثم Submit
+    // المعلم: Step1 -> Step2 -> Step3 -> Step4 -> Submit
+    if (accType === 1) {
+      if (step === 2) {
+        toggleSubmit(true);
+        toggleContinue(false);
+      } else {
+        toggleSubmit(false);
+        toggleContinue(true);
+      }
+    } else if (accType === 2) {
+      if (step === 4) {
+        toggleSubmit(true);
+        toggleContinue(false);
+      } else {
+        toggleSubmit(false);
+        toggleContinue(true);
+      }
+    } else {
+      // ما تم اختيار النوع بعد
+      toggleSubmit(false);
+      toggleContinue(step !== 1);
+    }
+  };
+
+  const toggleSubmit = (on) => {
+    if (on) btnSubmit.classList.remove('hidden'); else btnSubmit.classList.add('hidden');
+  };
+  const toggleContinue = (on) => {
+    btnsContinue.forEach(b => on ? b.classList.remove('hidden') : b.classList.add('hidden'));
+  };
+
+  // اختيار البطاقة (النوع)
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      cards.forEach(c => c.classList.remove('border-primary', 'shadow-lg'));
+      card.classList.add('border-primary', 'shadow-lg');
+      accType = Number(card.dataset.type);
+      inputType.value = accType;
+      // إخفاء رسالة الخطأ إن وُجدت
+      if (typeError) {
+        typeError.classList.remove('opacity-100');
+        typeError.classList.add('opacity-0', 'hidden');
+      }
+    });
+  });
+
+  // متابعة الخطوة 1
+  btnContinueStep1.addEventListener('click', () => {
+    if (!accType) {
+      // أظهر الخطأ
+      typeError.classList.remove('hidden', 'opacity-0');
+      typeError.classList.add('opacity-100');
+      return;
+    }
+    showStep(2);
+  });
+
+  // أزرار المتابعة العامة
+  btnsContinue.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (accType === 1) {
+        // الطالب يتجاوز 3 و 4 مباشرة
+        if (step === 2) { toggleSubmit(true); }
+      } else {
+        // المعلم يسير 2 -> 3 -> 4
+        if (step < 4) showStep(step + 1);
+      }
+    });
+  });
+
+  // أزرار الرجوع
+  btnsBack.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (step > 1) {
+        // للطالب يرجع من 2 إلى 1
+        // للمعلم يرجع خطوة واحدة
+        showStep(step - 1);
+      }
+    });
+  });
+
+  // كشف/إخفاء الباسوورد
+  document.querySelectorAll('.toggle-password').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const input = toggle.parentElement.querySelector('input[type="password"], input[type="text"]');
+      if (!input) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  // تطابق كلمة المرور
+  const pwd = document.getElementById('password');
+  const pwd2 = document.getElementById('confirm-password');
+  const matchErr = document.getElementById('match-error');
+  const validateMatch = () => {
+    if (!pwd || !pwd2) return;
+    const ok = pwd.value && pwd2.value && pwd.value === pwd2.value;
+    if (ok) { matchErr.classList.add('hidden'); matchErr.classList.remove('opacity-100'); }
+    else  { matchErr.classList.remove('hidden'); matchErr.classList.add('opacity-100'); }
+  };
+  if (pwd && pwd2) {
+    pwd.addEventListener('input', validateMatch);
+    pwd2.addEventListener('input', validateMatch);
+  }
+
+  // تفعيل المعاينة للصورة
+  const fileInput = document.getElementById('avatarInput');
+  const img = document.getElementById('avatarImage');
+  const icon = document.getElementById('avatarIcon');
+  const btnUpload = document.getElementById('btnUpload');
+  const preview = document.getElementById('avatarPreview');
+
+  const pickFile = () => fileInput && fileInput.click();
+  if (btnUpload) btnUpload.addEventListener('click', pickFile);
+  if (preview) preview.addEventListener('click', pickFile);
+
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.src = reader.result;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+      };
+      reader.readAsDataURL(f);
+    });
+  }
+
+  // ابدأ من الخطوة 1
+  showStep(1);
+})();
+</script>
+
         </main>
     </div>
 

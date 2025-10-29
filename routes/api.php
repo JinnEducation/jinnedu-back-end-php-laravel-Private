@@ -26,7 +26,7 @@ use App\Http\Controllers\VerificationController;
 Route::post('/forgot-password', [AuthController::class,'forgotPassword'])->name('password.forgot');
 Route::post('/reset-password', [AuthController::class,'passwordUpdate'])->name('password.update');
 
-Route::post('/register', [AuthController::class,'register'])->name('register');
+// Route::post('/register', [AuthController::class,'register'])->name('register');
 Route::post('/check_mail', [AuthController::class,'checkMail']);
 Route::post('/login', [AuthController::class,'login'])->name('login');
 Route::post('/social_login', [AuthController::class,'socialLogin'])->name('social_login');
