@@ -36,7 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // 'provider_name',
         // 'provider_id',
         // 'fcm',
-        'account_type',
+        'type',
         'email',
         'password',
     ];

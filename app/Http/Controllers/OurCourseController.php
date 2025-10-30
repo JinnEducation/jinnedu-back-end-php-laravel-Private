@@ -398,11 +398,13 @@ class OurCourseController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         return $this->storeUpdateRequest($request);
     }
 
     public function update(Request $request, $id)
     {
+        dd($request->all());
         return $this->storeUpdateRequest($request, $id);
     }
 

@@ -18,8 +18,8 @@ class HomeController extends Controller
         // Our Numbers
         $stats = [
             'services' => 8,
-            'students' => DB::table('users')->where('account_type', 'student')->count(),
-            'tutors'   => DB::table('users')->where('account_type', 'tutor')->count(),
+            'students' => DB::table('users')->where('type', 1)->count(),
+            'tutors'   => DB::table('users')->where('type', 2)->count(),
             'courses'  => DB::table('our_courses')->where('status', 1)->count(),
         ];
 
@@ -49,7 +49,7 @@ class HomeController extends Controller
 
         // Popular Tutors
         $tutors = User::query()
-            ->where('account_type', 'tutor')
+            ->where('type', 2)
             ->with([
                 'abouts.country:id,name',
                 'descriptions.specialization:id,name',

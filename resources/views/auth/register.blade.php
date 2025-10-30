@@ -178,7 +178,7 @@
                             <input type="hidden" name="type" id="account-type" value="">
                             <!-- Student Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                 data-account="student" data-type="1">
+                                 data-account="1" data-type="1">
                                 <div class="flex justify-center">
                                     <svg width="105" height="57" viewBox="0 0 105 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -201,7 +201,7 @@
 
                             <!-- Tutor Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                data-account="tutor"   data-type="2">
+                                data-account="2"   data-type="2">
                                 <div class="flex justify-center">
                                     <svg width="52" height="57" viewBox="0 0 52 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">

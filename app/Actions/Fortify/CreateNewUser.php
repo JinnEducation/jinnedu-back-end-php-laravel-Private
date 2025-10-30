@@ -35,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
 
             // ✅ 2. إنشاء المستخدم الأساسي
             $user = User::create([
-                'account_type' => $input['account-type'],
+                'type' => $input['account-type'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ]);

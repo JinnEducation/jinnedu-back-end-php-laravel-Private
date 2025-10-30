@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -15,23 +15,31 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $superadminCheck = User::where('email', '=', 'superadmin@jinnedu.com')->first();
-        if ($superadminCheck === null) {
-            $superadmin = User::factory()->create([
+        // 🔹 SUPERADMIN
+        $superadmin = User::firstOrCreate(
+            ['email' => 'superadmin@jinnedu.com'],
+            [
                 'name' => 'Super Admin',
-                'email' => 'superadmin@jinnedu.com',
-                'password' => bcrypt('12345678')
-            ]);
+                'type' => 0, // أو student لو حابب
+                'password' => Hash::make('12345678'),
+            ]
+        );
+
+        if (method_exists($superadmin, 'assign')) {
             $superadmin->assign('superadmin');
         }
-        //=======================================
-        $adminCheck = User::where('email', '=', 'admin@jinnedu.com')->first();
-        if ($adminCheck === null) {
-            $admin = User::factory()->create([
+
+        // 🔹 ADMIN
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@jinnedu.com'],
+            [
                 'name' => 'Admin',
-                'email' => 'admin@jinnedu.com',
-                'password' => bcrypt('12345678')
-            ]);
+                'type' => 0,
+                'password' => Hash::make('12345678'),
+            ]
+        );
+
+        if (method_exists($admin, 'assign')) {
             $admin->assign('admin');
         }
     }
