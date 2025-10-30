@@ -23,12 +23,12 @@ use App\Http\Controllers\VerificationController;
 
 
 
-Route::post('/forgot-password', [AuthController::class,'forgotPassword'])->name('password.forgot');
-Route::post('/reset-password', [AuthController::class,'passwordUpdate'])->name('password.update');
+Route::post('/forgot-password', [AuthController::class,'forgotPassword'])->name('api.password.forgot');
+Route::post('/reset-password', [AuthController::class,'passwordUpdate'])->name('api.password.update');
 
-Route::post('/register', [AuthController::class,'register'])->name('register');
+Route::post('/register', [AuthController::class,'register'])->name('api.register');
 Route::post('/check_mail', [AuthController::class,'checkMail']);
-Route::post('/login', [AuthController::class,'login'])->name('login');
+Route::post('/login', [AuthController::class,'login'])->name('api.login');
 Route::post('/social_login', [AuthController::class,'socialLogin'])->name('social_login');
 Route::get('/locales/lang/{lang}', [LocalController::class,'localesLang'])->name('localesLang');
 Route::get('/locales/langs', [LocalController::class,'localesLangs'])->name('localesLangs');
@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum','single_login_session'])->group(function () {
         return $request->user();
     });
 
-    Route::post('/logout', [AuthController::class,'logout']);
+    Route::post('/logout', [AuthController::class,'logout'])->name('api.logout');
     Route::post('/change-password', [AuthController::class,'changePassword'])->name('password.change');
     Route::post('/change-email', [AuthController::class,'changeEmail'])->name('email.change');
     Route::post('/change-avatar', [AuthController::class,'changeAvatar'])->name('avatar.change');

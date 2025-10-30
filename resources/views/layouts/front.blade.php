@@ -302,6 +302,7 @@
                     <!-- Auth Section -->
                     <div class="hidden gap-4 items-center lg:flex">
 
+                        @guest
                         <!-- Guest User (Login/Signup) -->
                         <div class="flex items-center guest-auth text-[15px]">
                             <button type="button"
@@ -318,9 +319,11 @@
                                     class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                             </a>
                         </div>
+                        @endguest
 
+                        @auth
                         <!-- Logged In User (Hidden by default) -->
-                        <div class="hidden relative user-menu-mobile">
+                        <div class="relative user-menu-mobile">
                             <button
                                 class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
                                 <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
@@ -349,15 +352,19 @@
                                         <span>Settings</span>
                                     </a>
                                     <hr class="my-2 border-gray-100">
-                                    <a href="#"
+                                    <form action="{{ route('logout') }}" method="post">
+                                        @csrf
+                                        <button type="submit"
                                         class="flex gap-3 items-center px-4 py-3 text-red-600 transition-all duration-300 hover:bg-red-50 hover:ps-6">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span>Logout</span>
-                                    </a>
+                                    </button>
+                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>
-
+                        @endauth
                     </div>
 
                     <!-- Mobile Menu Button -->

@@ -150,7 +150,16 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
-            <form method="post" action="#">
+            @if($errors->any())
+            <div class="text-white rounded-lg bg-danger">
+                <ul>
+                    @foreach ($errors->all() as $key => $error)
+                        <li>{{ $key + 1 . ' - ' . $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            <form method="post" action="{{ route('register') }}" enctype="multipart/form-data">
                 <!-- Step 1: Account Type -->
                 <div class="pane block opacity-100" data-step="1">
                     <div class="mx-auto">
@@ -262,12 +271,12 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
-                                    <input type="text" placeholder="First Name"
+                                    <input type="text" placeholder="First Name" name="first_name"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
-                                    <input type="text" placeholder="Last Name"
+                                    <input type="text" placeholder="Last Name" name="last_name"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -275,7 +284,7 @@
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
                                 <div class="relative">
-                                    <input id="email" type="email" placeholder="example@gmail.com"
+                                    <input id="email" type="email" name="email" placeholder="example@gmail.com"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
 
@@ -289,13 +298,13 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
-                                    <input type="text" placeholder="egypt (+20)"
+                                    <input type="text" placeholder="egypt (+20)" name="country"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Contact
                                         number</label>
-                                    <input type="tel" placeholder="Phone"
+                                    <input type="tel" placeholder="Phone" name="phone"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -306,7 +315,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
                                     <div class="relative">
-                                        <input id="password" type="password" placeholder="Password"
+                                        <input id="password" type="password" placeholder="Password" name="password"
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -337,7 +346,7 @@
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Confirm
                                         password</label>
                                     <div class="relative">
-                                        <input id="confirm-password" type="password" placeholder="Confirm password"
+                                        <input id="confirm-password" type="password" placeholder="Confirm password" name="confirm_password"
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -360,7 +369,7 @@
                             </div>
 
                             <div class="flex items-start gap-2 mb-6">
-                                <input type="checkbox" id="terms"
+                                <input type="checkbox" id="terms" name="confirm_terms"
                                     class="mt-1 w-4 h-4 accent-primary rounded border-gray-300">
                                 <label for="terms" class="text-sm text-gray-600">
                                     Agree Terms <a href="#" class="text-primary hover:underline">Terms And
@@ -415,7 +424,7 @@
 
                                 <div class="relative">
                                     <!-- Input -->
-                                    <input id="dob-input" type="text" readonly
+                                    <input id="dob-input" type="text" readonly name="date_of_birth"
                                         placeholder="Date of birth (yyyy / MMM / DD)"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12 cursor-pointer shadow-sm">
 
@@ -477,7 +486,7 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
-                                    <select
+                                    <select name="countty_tutor"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Country</option>
                                     </select>
@@ -485,7 +494,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Native
                                         Language</label>
-                                    <select
+                                    <select name="language"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Native Language</option>
                                     </select>
@@ -496,7 +505,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
                                         Subject</label>
-                                    <select
+                                    <select name="teaching_subject"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Teaching Subject</option>
                                     </select>
@@ -504,7 +513,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
                                         Experience</label>
-                                    <select
+                                    <select name="teaching_experience"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Teaching Experience</option>
                                     </select>
@@ -514,7 +523,7 @@
 
                             <div class="mb-2">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Situation</label>
-                                <select
+                                <select name="situation"
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     <option>Situation</option>
                                 </select>
@@ -545,25 +554,25 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Headline</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="headline"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Interests</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="interests"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Motivation</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="motivation"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Specializations</label>
-                                <select
+                                <select name="specializations"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     <option></option>
                                 </select>
@@ -571,13 +580,13 @@
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Experience</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="experience"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Methodology</label>
-                                <textarea rows="3"
+                                <textarea rows="3" name="methodology"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
                         </div>
@@ -1119,7 +1128,7 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <!-- <label class="block text-sm font-semibold text-gray-900 mb-2">Hourly Rate</label> -->
-                                <input type="text" placeholder="Hourly Rate"
+                                <input type="text" placeholder="Hourly Rate" name="hourly_rate"
                                     class="w-full px-4 py-8 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:bg-[#F3F5FA] focus:ring-2 focus:ring-primary/20 transition-all">
                             </div>
                         </div>
@@ -1158,7 +1167,7 @@
 
                             <!-- Certification Name -->
                             <div>
-                                <input type="text" placeholder="Certification Name"
+                                <input type="text" placeholder="Certification Name" name="certification_name"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
@@ -1166,24 +1175,24 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
                                     Description</label>
-                                <textarea rows="3" placeholder="Up to 200 characters"
+                                <textarea rows="3" placeholder="Up to 200 characters" name="certification_description"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"></textarea>
                             </div>
 
                             <!-- Certification Issued By -->
                             <div>
-                                <input type="text" placeholder="Certification Issued By"
+                                <input type="text" placeholder="Certification Issued By" name="certification_issued_by"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
                             <!-- Years -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <input type="number" id="yearFrom" placeholder="Certification Year From"
+                                    <input type="number" id="yearFrom" placeholder="Certification Year From" name="certification_year_from"
                                         class="hide-number-spin w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="yearTo" placeholder="Certification Year To"
+                                    <input type="number" id="yearTo" placeholder="Certification Year To" name="certification_year_to"
                                         class="hide-number-spin w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
 
                                     <!-- Up/Down SVG Buttons -->
@@ -1216,7 +1225,7 @@
                                     File</label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
-                                    <input type="file" id="certFile"
+                                    <input type="file" id="certFile" name="certification_file"
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                     <span id="fileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
@@ -1252,7 +1261,7 @@
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Video File</label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
-                                    <input type="file" accept="video/*" id="videoFile"
+                                    <input type="file" accept="video/*" id="videoFile" name="video_file"
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                     <span id="videoFileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
@@ -1261,7 +1270,7 @@
 
                             <!-- Terms & Conditions -->
                             <div class="flex items-center gap-2">
-                                <input id="agreeTerms" type="checkbox"
+                                <input id="agreeTerms" type="checkbox" name="agree_terms" value="1"
                                     class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30">
                                 <label for="agreeTerms" class="text-sm text-gray-700">
                                     Agree Terms <a href="#" class="text-primary hover:underline">Terms And
@@ -1277,7 +1286,8 @@
                             </button>
                             <button type="submit"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                Submit 
+                                <i class="fa-solid fa-send"></i>
                             </button>
                         </div>
                     </div>

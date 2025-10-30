@@ -129,7 +129,7 @@
 
                 <!-- Image Section -->
                 <div class="order-1 lg:order-2 lg:aspect-[1/1] relative">
-                    <div class="flex overflow-hidden justify-center items-center hero-image-container md:items-end">
+                    <div class="flex overflow-hidden justify-center items-center hero-image-container md:items-end  translate-y-[57px]">
 
                         <!-- Slide 1 Image -->
                         <div class="flex justify-center items-center h-full opacity-100 transition-all duration-500 ease-out scale-100 translate-x-0 hero-image"

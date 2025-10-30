@@ -2,26 +2,25 @@
 
 namespace App\Models;
 
+use App\Notifications\PasswordReset;
+use App\Notifications\VerifyEmail;
+use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-use App\Notifications\PasswordReset;
-use App\Notifications\VerifyEmail;
-use Cviebrock\EloquentSluggable\Sluggable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasRolesAndAbilities;
     use HasApiTokens;
     use HasFactory;
+    use HasRolesAndAbilities;
     use Notifiable;
-    use SoftDeletes;
     use Sluggable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -29,14 +28,17 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        // 'name',
+        // 'email',
+        // 'password',
+        // 'type',
+        // 'avatar',
+        // 'provider_name',
+        // 'provider_id',
+        // 'fcm',
+        'account_type',
         'email',
         'password',
-        'type',
-        'avatar',
-        'provider_name',
-        'provider_id',
-        'fcm'
     ];
 
     /**
@@ -50,10 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'created_at',
         'deleted_at',
         'updated_at',
-        'code',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
-        'two_factor_secret'
+        // 'code',
+        // 'two_factor_recovery_codes',
+        // 'two_factor_confirmed_at',
+        // 'two_factor_secret',
     ];
 
     /**
@@ -67,15 +69,13 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Return the sluggable configuration array for this model.
-     *
-     * @return array
      */
     public function sluggable(): array
     {
         return [
             'slug' => [
-                'source' => 'name'
-            ]
+                'source' => 'name',
+            ],
         ];
     }
 
@@ -85,17 +85,17 @@ class User extends Authenticatable implements MustVerifyEmail
      * @param  string  $token
      * @return void
      */
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify(new PasswordReset($token));
-    }
+    // public function sendPasswordResetNotification($token)
+    // {
+    //     $this->notify(new PasswordReset($token));
+    // }
 
-    public function sendEmailVerificationNotification()
-    {
-        $this->notify(new VerifyEmail());
-        //$this->notify(new \App\Notifications\Auth\QueuedVerifyEmail);
-        //\App\Jobs\QueuedVerifyEmailJob::dispatch($this);
-    }
+    // public function sendEmailVerificationNotification()
+    // {
+    //     $this->notify(new VerifyEmail);
+    //     // $this->notify(new \App\Notifications\Auth\QueuedVerifyEmail);
+    //     // \App\Jobs\QueuedVerifyEmailJob::dispatch($this);
+    // }
 
     // public function chatContacts()
     // {
@@ -111,7 +111,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Blog::class);
     }
-
 
     public function cateqblogs()
     {
@@ -132,10 +131,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ChatContact::class, 'user_id', 'id');
     }
-
-
-
-
 
     public function abouts()
     {
@@ -212,7 +207,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(ConferenceReview::class, 'tutor_id');
     }
 
-
     public function studentReviews()
     {
         return $this->hasMany(ConferenceReview::class, 'student_id');
@@ -255,4 +249,15 @@ class User extends Authenticatable implements MustVerifyEmail
     //     return asset(($avatar ?? 'images/default.png'));
 
     // }
+
+    // داخل User model
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function tutorProfile()
+    {
+        return $this->hasOne(TutorProfile::class);
+    }
 }

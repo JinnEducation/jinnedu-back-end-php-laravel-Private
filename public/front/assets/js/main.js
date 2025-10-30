@@ -206,13 +206,13 @@ $(document).ready(function () {
   );
 
   // User Menu Mobile Dropdown
-  // $("header .user-menu-mobile").click(
-  //   function () {
-  //     $(this)
-  //       .find('div[class*="absolute"]')
-  //       .removeClass("opacity-0 invisible translate-y-2");
-  //   }
-  // );
+  $("header .user-menu-mobile").click(
+    function () {
+      $(this)
+        .find('div[class*="absolute"]')
+        .removeClass("opacity-0 invisible translate-y-2");
+    }
+  );
 
   // ==================
   // Search Bar Focus Effects
