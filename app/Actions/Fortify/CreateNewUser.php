@@ -121,5 +121,6 @@ class CreateNewUser implements CreatesNewUsers
             DB::rollBack();
             throw $e;
         }
+        
     }
 }
