@@ -1,5 +1,10 @@
+@php
+    $htmlLocale = str_replace('_', '-', $locale ?? app()->getLocale());
+    $htmlDirection = $direction ?? 'ltr';
+    $currentLangShort = strtoupper($currentLanguage->shortname ?? ($locale ?? app()->getLocale()));
+@endphp
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ $htmlLocale }}" dir="{{ $htmlDirection }}">
 
 <head>
     <meta charset="UTF-8">
@@ -21,9 +26,13 @@
     <link rel="stylesheet" href="{{ asset('front/assets/css/all.min.css') }}">
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/tailwind.css') }}">
+    <script>
+        window.laravelDirection = @json($htmlDirection);
+        window.laravelLocale = @json($locale);
+    </script>
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-50 {{ $htmlDirection === 'rtl' ? 'rtl' : '' }}">
 
     <!-- Universal RTL/LTR Header -->
     <header class="fixed top-0 bottom-0 left-0 z-50 w-full bg-white shadow-sm h-[120px]">
@@ -56,18 +65,30 @@
                         <div class="relative language-dropdown">
                             <button
                                 class="flex gap-1 items-center px-2 py-1 rounded-md transition-colors duration-300 hover:bg-primary-700">
-                                <span class="text-sm font-medium">EN</span>
+                                <span class="text-sm font-medium">{{ $currentLangShort }}</span>
                                 <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down"></i>
                             </button>
                             <div
                                 class="absolute top-full invisible z-50 mt-2 w-32 bg-white rounded-lg border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 end-0">
                                 <div class="py-2">
-                                    <a href="#"
-                                        class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">English</a>
-                                    <a href="#"
-                                        class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">العربية</a>
-                                    <a href="#"
-                                        class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Français</a>
+                                    @forelse ($languages as $language)
+                                        @php
+                                            $isActive = $language->shortname === $locale;
+                                            $optionClasses = $isActive
+                                                ? 'bg-primary-50 text-primary-600 ps-6'
+                                                : 'hover:bg-gray-50 hover:text-primary-600 hover:ps-6';
+                                        @endphp
+                                        <a href="{{ request()->fullUrlWithQuery(['lang' => $language->shortname]) }}"
+                                            data-lang="{{ $language->shortname }}"
+                                            @if (!empty($language->direction)) data-direction="{{ $language->direction }}" @endif
+                                            class="block px-4 py-2 text-gray-700 transition-all duration-300 {{ $optionClasses }}">
+                                            {{ $language->name }}
+                                        </a>
+                                    @empty
+                                        <span class="block px-4 py-2 text-sm text-gray-500">
+                                            {{ __('No languages available') }}
+                                        </span>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
@@ -285,11 +306,21 @@
                             <div
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
-                                    <a href="{{ route('site.pages.show', 'about-us') }}" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">About us</a>
-                                    <a href="our-team.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">How JinnEdu Works</a>
-                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Terms of use</a>
-                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Privacy Policy</a>
-                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Contact Us</a>
+                                    <a href="{{ route('site.pages.show', 'about-us') }}"
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">About
+                                        us</a>
+                                    <a href="{{ route('site.pages.show', 'How-JinnEdu-Works') }}"
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">How
+                                        JinnEdu Works</a>
+                                    <a href="{{ route('site.pages.show', 'terms-of-use') }}"
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Terms
+                                        of use</a>
+                                    <a href="{{ route('site.pages.show', 'Policy') }}"
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Privacy
+                                        Policy</a>
+                                    <a href="#"
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Contact
+                                        Us</a>
                                 </div>
                             </div>
                         </div>
@@ -300,67 +331,66 @@
                     <div class="hidden gap-4 items-center lg:flex">
 
                         @guest
-                        <!-- Guest User (Login/Signup) -->
-                        <div class="flex items-center guest-auth text-[15px]">
-                            <button type="button"
-                                data-open="#loginModal"
-                                class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
-                                <span class="relative z-10">Login</span>
-                                <span
-                                    class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
-                            </button>
-                            <a href="{{route('register')}}"
-                                class="overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 ltr:border-black ltr:border-l-2 hover:text-primary-600 group">
-                                <span class="relative z-10">Sign Up</span>
-                                <span
-                                    class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
-                            </a>
-                        </div>
+                            <!-- Guest User (Login/Signup) -->
+                            <div class="flex items-center guest-auth text-[15px]">
+                                <button type="button" data-open="#loginModal"
+                                    class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
+                                    <span class="relative z-10">Login</span>
+                                    <span
+                                        class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
+                                </button>
+                                <a href="{{ route('register') }}"
+                                    class="overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 ltr:border-black ltr:border-l-2 hover:text-primary-600 group">
+                                    <span class="relative z-10">Sign Up</span>
+                                    <span
+                                        class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
+                                </a>
+                            </div>
                         @endguest
 
                         @auth
-                        <!-- Logged In User (Hidden by default) -->
-                        <div class="relative user-menu-mobile">
-                            <button
-                                class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
-                                <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
-                                    class="w-8 h-8 rounded-full">
-                                <span class="font-medium">John Doe</span>
-                                <i
-                                    class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
-                            </button>
+                            <!-- Logged In User (Hidden by default) -->
+                            <div class="relative user-menu-mobile">
+                                <button
+                                    class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
+                                    <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="font-medium">John Doe</span>
+                                    <i
+                                        class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
+                                </button>
 
-                            <div
-                                class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 end-0">
-                                <div class="py-3">
-                                    <a href="#"
-                                        class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                        <i class="fas fa-user text-primary-600"></i>
-                                        <span>My Profile</span>
-                                    </a>
-                                    <a href="#"
-                                        class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                        <i class="fas fa-book text-primary-600"></i>
-                                        <span>My Courses</span>
-                                    </a>
-                                    <a href="#"
-                                        class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                        <i class="fas fa-cog text-primary-600"></i>
-                                        <span>Settings</span>
-                                    </a>
-                                    <hr class="my-2 border-gray-100">
-                                    <form action="{{ route('logout') }}" method="post">
-                                        @csrf
-                                        <button type="submit"
-                                        class="flex gap-3 items-center px-4 py-3 text-red-600 transition-all duration-300 hover:bg-red-50 hover:ps-6">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        <span>Logout</span>
-                                    </button>
-                                    </form>
-                                    
+                                <div
+                                    class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 end-0">
+                                    <div class="py-3">
+                                        <a href="#"
+                                            class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                            <i class="fas fa-user text-primary-600"></i>
+                                            <span>My Profile</span>
+                                        </a>
+                                        <a href="#"
+                                            class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                            <i class="fas fa-book text-primary-600"></i>
+                                            <span>My Courses</span>
+                                        </a>
+                                        <a href="#"
+                                            class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                            <i class="fas fa-cog text-primary-600"></i>
+                                            <span>Settings</span>
+                                        </a>
+                                        <hr class="my-2 border-gray-100">
+                                        <form action="{{ route('logout') }}" method="post">
+                                            @csrf
+                                            <button type="submit"
+                                                class="flex gap-3 items-center px-4 py-3 text-red-600 transition-all duration-300 hover:bg-red-50 hover:ps-6">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                                <span>Logout</span>
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         @endauth
                     </div>
 
@@ -524,8 +554,7 @@
 
                 <!-- Auth Section -->
                 <div class="pt-4 mt-4 space-y-2 border-t border-gray-100 guest-auth">
-                    <button type="button"
-                        data-open="#loginModal"
+                    <button type="button" data-open="#loginModal"
                         class="flex justify-center items-center px-3 py-2 text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-sign-in-alt text-primary-600 me-2"></i>
                         <span>Login</span>

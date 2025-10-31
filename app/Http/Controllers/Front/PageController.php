@@ -16,7 +16,7 @@ class PageController extends Controller
     public function show(Request $request, string $slug): View
     {
         $page = Page::query()
-            ->with(['langs', 'imageInfo'])
+            ->with(['langs.language', 'imageInfo'])
             ->where('content_type', 2)
             ->where('slug', $slug)
             ->firstOrFail();
@@ -26,12 +26,21 @@ class PageController extends Controller
             ->where('shortname', $locale)
             ->first();
 
-        $pageLang = $language
-            ? $page->langs->firstWhere('language_id', $language->id)
-            : null;
+        $pageLang = null;
+
+        if ($language) {
+            $pageLang = $page->langs->first(function ($lang) use ($language) {
+                $languageId = $lang->language_id
+                    ?? $lang->langid
+                    ?? optional($lang->language)->id;
+
+                return (int) $languageId === (int) $language->id;
+            });
+        }
 
         if (! $pageLang) {
-            $pageLang = $page->langs->first();
+            $pageLang = $page->langs->first(fn ($lang) => (bool) ($lang->main ?? false))
+                ?? $page->langs->first();
         }
 
         return view('front.pages', [
