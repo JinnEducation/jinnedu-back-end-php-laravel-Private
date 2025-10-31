@@ -150,7 +150,7 @@
                     <!-- Desktop Navigation -->
                     <nav class="hidden items-center lg:flex text-[15px]">
                         <!-- Home Link -->
-                        <a href="index.html"
+                        <a href="/"
                             class="px-3 py-2 font-bold rounded-lg transition-all duration-300 text-primary-600 hover:text-primary-600 hover:bg-white hover:shadow-sm">
                             HOME
                         </a>
@@ -181,14 +181,17 @@
                                             class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
                                             <div class="py-2">
                                                 <a href="#"
-                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">Web
-                                                    Development</a>
+                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
+                                                    Web Development
+                                                </a>
                                                 <a href="#"
-                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">Mobile
-                                                    Apps</a>
+                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
+                                                    Mobile Apps
+                                                </a>
                                                 <a href="#"
-                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">Data
-                                                    Science</a>
+                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
+                                                    Data Science
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -206,11 +209,13 @@
                                             class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
                                             <div class="py-2">
                                                 <a href="#"
-                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">UI/UX
-                                                    Design</a>
+                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
+                                                    UI/UX Design
+                                                </a>
                                                 <a href="#"
-                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">Graphic
-                                                    Design</a>
+                                                    class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
+                                                    Graphic Design
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -231,7 +236,7 @@
                         </div>
 
                         <!-- K-12 Link -->
-                        <a href="k-12.html"
+                        <a href="#"
                             class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
                             K-12
                         </a>
@@ -254,14 +259,17 @@
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Live
-                                        Classes</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        Live Classes
+                                    </a>
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Group
-                                        Classes</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        Group Classes
+                                    </a>
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Private
-                                        Classes</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        Private Classes
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -269,14 +277,14 @@
                         <!-- Events Link -->
                         <a href="#"
                             class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
-                            events
+                            {{ label_text('global', 'events', __('auth.events')) }}
                         </a>
 
                         <!-- Help Dropdown -->
                         <div class="relative nav-dropdown">
                             <button
                                 class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
-                                <span>Help</span>
+                                <span>{{ label_text('global', 'helps', __('auth.helps')) }}</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                             </button>
@@ -284,13 +292,15 @@
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Help
-                                        Center</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'help-center', __('auth.help-center')) }}
+                                    </a>
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Contact
-                                        Us</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'contact-us', __('auth.contact-us')) }}
+                                    </a>
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">FAQ</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'FAQ', __('auth.faq')) }}</a>
                                 </div>
                             </div>
                         </div>
@@ -299,7 +309,7 @@
                         <div class="relative nav-dropdown">
                             <button
                                 class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
-                                <span>About</span>
+                                <span>{{ label_text('global', 'about', __('auth.about')) }}</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                             </button>
@@ -307,20 +317,25 @@
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
                                     <a href="{{ route('site.pages.show', 'about-us') }}"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">About
-                                        us</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'about-us', __('auth.about-us')) }}
+                                    </a>
                                     <a href="{{ route('site.pages.show', 'How-JinnEdu-Works') }}"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">How
-                                        JinnEdu Works</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'how-jin-works', __('auth.how-jin-works')) }}
+                                    </a>
                                     <a href="{{ route('site.pages.show', 'terms-of-use') }}"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Terms
-                                        of use</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'terms-of-use', __('auth.terms-of-use')) }}
+                                    </a>
                                     <a href="{{ route('site.pages.show', 'Policy') }}"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Privacy
-                                        Policy</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'privacy-policy', __('auth.privacy-policy')) }}
+                                    </a>
                                     <a href="#"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Contact
-                                        Us</a>
+                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        {{ label_text('global', 'contact-us', __('auth.contact-us')) }}
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -333,14 +348,16 @@
                             <!-- Guest User (Login/Signup) -->
                             <div class="flex items-center guest-auth text-[15px]">
                                 <button type="button" data-open="#loginModal"
-                                    class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
-                                    <span class="relative z-10">Login</span>
+                                    class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all	duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
+                                    <span
+                                        class="relative z-10">{{ label_text('global', 'login', __('auth.login')) }}</span>
                                     <span
                                         class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                                 </button>
                                 <a href="{{ route('register') }}"
                                     class="overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 ltr:border-black ltr:border-l-2 hover:text-primary-600 group">
-                                    <span class="relative z-10">Sign Up</span>
+                                    <span
+                                        class="relative z-10">{{ label_text('global', 'sign-up', __('auth.sign-up')) }}</span>
                                     <span
                                         class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                                 </a>
@@ -773,7 +790,7 @@
                     <div>
                         <ul class="space-y-2">
                             <li>
-                                <a href="terms.html"
+                                <a href="{{ route('site.pages.show', 'Terms-and-conditions') }}"
                                     class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                     <span
                                         class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -895,13 +912,13 @@
     </div>
 
     <!-- Direction Toggle Button -->
-    <div class="fixed bottom-4 z-50 start-4">
+    {{-- <div class="fixed bottom-4 z-50 start-4">
         <button id="direction-toggle"
             class="px-4 py-2 text-white rounded-lg shadow-lg transition-colors duration-300 bg-primary-600 hover:bg-primary-700">
             <i class="fas fa-exchange-alt me-2"></i>
             <span>RTL</span>
         </button>
-    </div>
+    </div> --}}
 
     <!-- ================= Login & Forgot Modal ================= -->
     @include('layouts.partials.login')

@@ -312,3 +312,59 @@ function sendFCMNotification($title, $message, $token, $info = null)
     // FCM response
     //dd($result);
 }
+
+if (! function_exists('label_text')) {
+    /**
+     * Retrieve a translated label stored via Labels Management.
+     *
+     * @param  string  $file    The label group/file name (e.g. "global").
+     * @param  string  $name    The label key (e.g. "login").
+     * @param  string|null $fallback Text to use if no translation is found.
+     */
+    function label_text(string $file, string $name, ?string $fallback = null): string
+    {
+        static $cache = [];
+
+        $locale = strtolower((string) app()->getLocale());
+        $cacheKey = $file.'|'.$name.'|'.$locale;
+
+        if (array_key_exists($cacheKey, $cache)) {
+            return $cache[$cacheKey];
+        }
+
+        if (
+            ! \Illuminate\Support\Facades\Schema::hasTable('labels') ||
+            ! \Illuminate\Support\Facades\Schema::hasTable('translations')
+        ) {
+            return $cache[$cacheKey] = $fallback ?? $name;
+        }
+
+        $language = \App\Models\Language::query()
+            ->whereRaw('LOWER(shortname) = ?', [$locale])
+            ->first();
+
+        if (! $language) {
+            return $cache[$cacheKey] = $fallback ?? $name;
+        }
+
+        $label = \App\Models\Label::query()
+            ->where('file', $file)
+            ->where('name', $name)
+            ->first();
+
+        if (! $label) {
+            return $cache[$cacheKey] = $fallback ?? $name;
+        }
+
+        $translation = $label->translations()
+            ->where('langid', $language->id)
+            ->first();
+
+        if ($translation && $translation->title) {
+            return $cache[$cacheKey] = $translation->title;
+        }
+
+        return $cache[$cacheKey] = $fallback ?? $label->name ?? $name;
+    }
+}
+
