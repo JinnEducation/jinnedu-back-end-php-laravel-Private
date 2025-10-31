@@ -8,11 +8,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Page extends Post
 {
-    //use HasFactory, SoftDeletes;
-
-    //protected $guarded = [];
-    
-    //protected $table = 'posts';
-
-    
+    protected $table = 'posts';
 }

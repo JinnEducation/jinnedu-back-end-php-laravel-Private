@@ -5,6 +5,7 @@ use App\Http\Controllers\MuxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\PageController as FrontPageController;
 use App\Http\Controllers\PaypalCheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\PaymentResponseController;
@@ -49,6 +50,7 @@ Route::prefix('stripe')->name('stripe.')->group(function () {
  //site route
  Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
  Route::get('blog/{slug}', [HomeController::class, 'showBlog'])->name('site.showBlog');
+ Route::get('pages/{slug}', [FrontPageController::class, 'show'])->name('site.pages.show');
 
 
 

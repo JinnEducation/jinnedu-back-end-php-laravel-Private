@@ -285,14 +285,11 @@
                             <div
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
-                                    <a href="about.html"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">About
-                                        Us</a>
-                                    <a href="our-team.html"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Our
-                                        Team</a>
-                                    <a href="careers.html"
-                                        class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Careers</a>
+                                    <a href="{{ route('site.pages.show', 'about-us') }}" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">About us</a>
+                                    <a href="our-team.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">How JinnEdu Works</a>
+                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Terms of use</a>
+                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Privacy Policy</a>
+                                    <a href="careers.html" class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">Contact Us</a>
                                 </div>
                             </div>
                         </div>
