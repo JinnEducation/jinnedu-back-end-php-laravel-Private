@@ -260,4 +260,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(TutorProfile::class);
     }
+
+    /**
+     * تحديد إذا المستخدم معلم
+     */
+    public function isTutor(): bool
+    {
+        return $this->type == 2;
+    }
+
+    /**
+     * تحديد إذا المستخدم طالب
+     */
+    public function isStudent(): bool
+    {
+        return $this->type == 1;
+    }
 }

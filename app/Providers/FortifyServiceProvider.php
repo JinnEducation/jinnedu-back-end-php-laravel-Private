@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
-
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\LogoutResponse;
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -20,7 +21,23 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $request = request();
+        // $locale = app()->getLocale();
+
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+            public function toResponse($request)
+            {
+                return redirect()->intended(route('home'));
+            }
+        });
+
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request)
+            {
+                // $locale = app()->getLocale();
+                return redirect(route('home'));
+            }
+        });
     }
 
     /**
@@ -29,7 +46,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        Fortify::loginView(fn () => view('auth.login'));
+        // Fortify::loginView(fn () => view('auth.login'));
         Fortify::registerView(fn () => view('auth.register'));
         Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
         Fortify::resetPasswordView(fn ($request) => view('auth.reset-password', ['request' => $request]));

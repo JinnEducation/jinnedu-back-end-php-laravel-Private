@@ -150,15 +150,15 @@
                     <!-- Desktop Navigation -->
                     <nav class="hidden items-center lg:flex text-[15px]">
                         <!-- Home Link -->
-                        <a href="/"
-                            class="px-3 py-2 font-bold rounded-lg transition-all duration-300 text-primary-600 hover:text-primary-600 hover:bg-white hover:shadow-sm">
+                        <a href="{{ route('home') }}"
+                            class="nav-link {{ request()->is('/') ? 'active' : '' }}">
                             HOME
                         </a>
 
                         <!-- Categories Dropdown -->
                         <div class="relative nav-dropdown">
                             <button
-                                class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
+                                class="flex gap-1 items-center nav-link group">
                                 <span>Categories</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -237,20 +237,20 @@
 
                         <!-- K-12 Link -->
                         <a href="#"
-                            class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
+                            class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
                             K-12
                         </a>
 
                         <!-- Blog Link -->
                         <a href="{{ route('site.blog') }}"
-                            class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
+                            class="nav-link {{ request()->is('blog') || request()->is('blog/*') ? 'active' : '' }}">
                             Blog
                         </a>
 
                         <!-- Classes Dropdown -->
                         <div class="relative nav-dropdown">
                             <button
-                                class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
+                                class="flex gap-1 items-center nav-link group">
                                 <span>Classes</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -276,14 +276,14 @@
 
                         <!-- Events Link -->
                         <a href="#"
-                            class="px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm">
+                            class="nav-link">
                             {{ label_text('global', 'events', __('auth.events')) }}
                         </a>
 
                         <!-- Help Dropdown -->
                         <div class="relative nav-dropdown">
                             <button
-                                class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
+                                class="flex gap-1 items-center nav-link group">
                                 <span>{{ label_text('global', 'helps', __('auth.helps')) }}</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -308,7 +308,7 @@
                         <!-- About Dropdown -->
                         <div class="relative nav-dropdown">
                             <button
-                                class="flex gap-1 items-center px-3 py-2 font-medium text-gray-700 rounded-lg transition-all duration-300 hover:text-primary hover:font-bold hover:bg-white hover:shadow-sm group">
+                                class="flex gap-1 items-center nav-link group">
                                 <span>{{ label_text('global', 'about', __('auth.about')) }}</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
@@ -365,13 +365,16 @@
                         @endguest
 
                         @auth
+                            @php
+                                $user = Auth::user() ?? null;
+                            @endphp
                             <!-- Logged In User (Hidden by default) -->
                             <div class="relative user-menu-mobile">
                                 <button
                                     class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
-                                    <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
+                                    <img src="{{ optional($user->profile()->first())->avatar_path ? asset('storage/' . optional($user->profile()->first())->avatar_path) : asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
                                         class="w-8 h-8 rounded-full">
-                                    <span class="font-medium">John Doe</span>
+                                    <span class="font-medium">{{ $user->profile()->first()?->first_name . ' ' . $user->profile()->first()?->last_name ?? 'User Name' }}</span>
                                     <i
                                         class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                                 </button>
@@ -379,7 +382,7 @@
                                 <div
                                     class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 end-0">
                                     <div class="py-3">
-                                        <a href="#"
+                                        <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                                             class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                             <i class="fas fa-user text-primary-600"></i>
                                             <span>My Profile</span>

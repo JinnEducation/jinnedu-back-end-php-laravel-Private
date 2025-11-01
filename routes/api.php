@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -7,6 +8,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LocalController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\VerificationController;
+
+use Laravel\Sanctum\PersonalAccessToken;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +35,76 @@ Route::post('/login', [AuthController::class,'login'])->name('api.login');
 Route::post('/social_login', [AuthController::class,'socialLogin'])->name('social_login');
 Route::get('/locales/lang/{lang}', [LocalController::class,'localesLang'])->name('localesLang');
 Route::get('/locales/langs', [LocalController::class,'localesLangs'])->name('localesLangs');
+
+Route::post('/auth/check-token', function (Request $request) {
+    $fullToken = $request->token;
+    $email = $request->email;
+
+    if (!$fullToken || !$email) {
+        return response([
+            'success' => false,
+            'message' => 'Missing parameters'
+        ], 400);
+    }
+
+    // نقسم التوكن إلى جزئين (id | actual token)
+    $parts = explode('|', $fullToken, 2);
+
+    if (count($parts) !== 2) {
+        return response([
+            'success' => false,
+            'message' => 'Malformed token'
+        ], 400);
+    }
+
+    [$tokenId, $plainToken] = $parts;
+
+    // نبحث عن صف التوكن في الجدول
+    $dbToken = PersonalAccessToken::query()->where('id', $tokenId)->first();
+
+    // لو مش موجود → نعيد توليده للمستخدم بدل الخطأ
+    if (!$dbToken) {
+        // نحاول إيجاد المستخدم مباشرة
+        $user = \App\Models\User::where('email', $email)->first();
+
+        if (!$user) {
+            return response(['success' => false, 'message' => 'User not found']);
+        }
+
+        // ✳️ أنشئ توكن جديد مضمون وسجله فورًا
+        $newTokenResult = $user->createToken('auto-generated');
+        $newToken = $newTokenResult->plainTextToken;
+
+        $user->remember_token = $newToken;
+        $user->save();
+
+        return response([
+            'success' => true,
+            'message' => 'New token created automatically',
+            'user'    => $user,
+            'token'   => $newToken
+        ]);
+    }
+
+    // تحقق من الهاش
+    $expectedHash = hash('sha256', $plainToken);
+
+    if (!hash_equals($dbToken->token, $expectedHash)) {
+        return response([
+            'success' => false,
+            'message' => 'Invalid token hash'
+        ], 401);
+    }
+
+    // جلب المستخدم المرتبط بالتوكن
+    $user = $dbToken->tokenable;
+
+    return response([
+        'success' => true,
+        'message' => 'Token verified successfully',
+        'user' => $user
+    ], 200);
+});
 
 Route::get('/tlocales/lang/{lang}', function () {
     echo '123';

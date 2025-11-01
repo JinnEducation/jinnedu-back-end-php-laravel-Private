@@ -40,9 +40,8 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]);
 
-            if (isset($input['avatar']) && $input['avatar'] != null) {
-                $avatar = $input['avatar'];
-                // $avatar = $avatar->store('avatars');
+            if (isset($input['avatar']) && $input['avatar'] instanceof \Illuminate\Http\UploadedFile) {
+                $avatar = $input['avatar']->store('avatars', 'public');
             } else {
                 $avatar = null;
             }
@@ -64,9 +63,8 @@ class CreateNewUser implements CreatesNewUsers
                     ? json_encode($input['availability'])
                     : null;
 
-                if (isset($input['certification_file']) && $input['certification_file'] != null) {
-                    $certification_file = $input['certification_file'];
-                    // $certification_file = $certification_file->store('certification_files');
+                if (isset($input['certification_file']) && $input['certification_file'] instanceof \Illuminate\Http\UploadedFile) {
+                    $certification_file = $input['certification_file']->store('certification_files', 'public');
                 } else {
                     $certification_file = null;
                 }
@@ -83,9 +81,8 @@ class CreateNewUser implements CreatesNewUsers
                     ],
                 ];
 
-                if (isset($input['video_file']) && $input['video_file'] != null) {
-                    $video_path = $input['video_file'];
-                    // $video_path = $video_path->store('video_files');
+                if (isset($input['video_file']) && $input['video_file'] instanceof \Illuminate\Http\UploadedFile) {
+                    $video_path = $input['video_file']->store('video_files', 'public');
                 } else {
                     $video_path = null;
                 }
