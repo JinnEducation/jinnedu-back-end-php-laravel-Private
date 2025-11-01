@@ -24,6 +24,10 @@ use App\Http\Controllers\WalletPaymentTransactionController;
 
 Route::get('/',[HomeController::class,'index'])->name('home');
 
+Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])
+    ->name('redirect.dashboard');
+
+    
 Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('password.reset');
 Route::get('/mux',[MuxController::class,'index']);
 Route::get('/zoom',[ZoomController::class,'index']);

@@ -119,7 +119,7 @@ class MenuController extends Controller
         $menus = Menu::parents()->get();
 
         foreach($menus as $menu) {
-            $isCanAny = false;
+            $isCanAny = true;
             $children = [];
             if(!empty($menu->type)) {
                 $submenus = $menu->childrens()->where('invisible', 0)->where('status', 0)->get();
