@@ -40,7 +40,7 @@ class BlogController extends Controller
 
         $dataBlog = $request->validate([
             'categ_blog_id' => 'required',
-            'image' => 'required',
+            'image' => 'image',
             'date' => 'required',
             'status' => 'required',
             'user_id' => 'required',
