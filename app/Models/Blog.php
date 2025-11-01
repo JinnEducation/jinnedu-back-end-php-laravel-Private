@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Blog extends Model
 {
@@ -15,9 +16,6 @@ class Blog extends Model
     protected $table = 'blog';
     protected $fillable = [
         'categ_blog_id',
-        'title',
-        'slug',
-        'description',
         'image',
         'date',
         'status',
@@ -27,6 +25,18 @@ class Blog extends Model
 
     protected $append = ['image_url'];
 
+
+    public function langs()
+    {
+        $lang = Request::header('lang');
+
+        $language = Language::where('shortname', $lang)->first();
+
+        return $language
+    ? $this->hasMany(BlogLang::class, 'blog_id')->where('language_id', $language->id)
+    : $this->hasMany(BlogLang::class, 'blog_id');
+    }
+    
     public function category()
     {
         return $this->belongsTo(CateqBlog::class, 'categ_blog_id');
