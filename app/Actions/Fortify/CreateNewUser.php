@@ -35,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
 
             // ✅ 2. إنشاء المستخدم الأساسي
             $user = User::create([
-                'type' => $input['account-type'],
+                'type' => $input['type'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ]);
@@ -59,7 +59,7 @@ class CreateNewUser implements CreatesNewUsers
             ]);
 
             // ✅ 4. لو المستخدم معلم، نضيف بيانات المعلم
-            if ($input['account-type'] === 'tutor') {
+            if ($input['type'] === 2) {
                 $availability = isset($input['availability'])
                     ? json_encode($input['availability'])
                     : null;
