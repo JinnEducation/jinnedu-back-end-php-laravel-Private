@@ -15,6 +15,8 @@ class PageController extends Controller
      */
     public function show(Request $request, string $slug): View
     {
+        $slug = (string) $request->route('slug', $slug);
+
         $page = Page::query()
             ->with(['langs.language', 'imageInfo'])
             ->where('content_type', 2)

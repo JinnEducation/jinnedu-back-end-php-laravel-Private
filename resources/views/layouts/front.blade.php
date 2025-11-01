@@ -73,13 +73,15 @@
                                 <div class="py-2">
                                     @forelse ($languages as $language)
                                         @php
-                                            $isActive = $language->shortname === $locale;
+                                            $short = strtolower($language->shortname ?? '');
+                                            $isActive = $short !== '' && $short === strtolower($locale ?? '');
                                             $optionClasses = $isActive
                                                 ? 'bg-primary-50 text-primary-600 ps-6'
                                                 : 'hover:bg-gray-50 hover:text-primary-600 hover:ps-6';
+                                            $switchUrl = $languageUrls[$short] ?? url($short === '' ? '/' : $short);
                                         @endphp
-                                        <a href="{{ request()->fullUrlWithQuery(['lang' => $language->shortname]) }}"
-                                            data-lang="{{ $language->shortname }}"
+                                        <a href="{{ $switchUrl }}"
+                                            data-lang="{{ $short }}"
                                             @if (!empty($language->direction)) data-direction="{{ $language->direction }}" @endif
                                             class="block px-4 py-2 text-gray-700 transition-all duration-300 {{ $optionClasses }}">
                                             {{ $language->name }}
@@ -316,19 +318,19 @@
                             <div
                                 class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                                 <div class="py-3">
-                                    <a href="{{ route('site.pages.show', 'about-us') }}"
+                                    <a href="{{ route('site.pages.show', ['slug' => 'about-us']) }}"
                                         class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         {{ label_text('global', 'about-us', __('auth.about-us')) }}
                                     </a>
-                                    <a href="{{ route('site.pages.show', 'How-JinnEdu-Works') }}"
+                                    <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
                                         class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         {{ label_text('global', 'how-jin-works', __('auth.how-jin-works')) }}
                                     </a>
-                                    <a href="{{ route('site.pages.show', 'terms-of-use') }}"
+                                    <a href="{{ route('site.pages.show', ['slug' => 'terms-of-use']) }}"
                                         class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         {{ label_text('global', 'terms-of-use', __('auth.terms-of-use')) }}
                                     </a>
-                                    <a href="{{ route('site.pages.show', 'Policy') }}"
+                                    <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}"
                                         class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         {{ label_text('global', 'privacy-policy', __('auth.privacy-policy')) }}
                                     </a>
@@ -793,7 +795,7 @@
                     <div>
                         <ul class="space-y-2">
                             <li>
-                                <a href="{{ route('site.pages.show', 'Terms-and-conditions') }}"
+                                <a href="{{ route('site.pages.show', ['slug' => 'Terms-and-conditions']) }}"
                                     class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                     <span
                                         class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>

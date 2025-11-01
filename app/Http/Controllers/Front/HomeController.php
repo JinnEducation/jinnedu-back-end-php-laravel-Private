@@ -98,8 +98,9 @@ class HomeController extends Controller
         return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage'));
     }
 
-    public function showBlog(string $slug)
+    public function showBlog(Request $request, string $slug)
     {
+        $slug = (string) $request->route('slug', $slug);
 
         $blog = Blog::query()
             ->published()                  

@@ -85,7 +85,7 @@
                                         class="text-sm text-gray-800 me-1">{{ number_format($blog->rating ?? 0, 1) }}/5</span>
                                     <span class="text-sm text-gray-500">({{ $blog->reviews_count ?? 0 }})</span>
                                 </div>
-                                <a href="{{ route('site.showBlog', $blog->slug) }}"
+                                <a href="{{ route('site.showBlog', ['slug' => $blog->slug]) }}"
                                     class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">
                                     Load More
                                 </a>
