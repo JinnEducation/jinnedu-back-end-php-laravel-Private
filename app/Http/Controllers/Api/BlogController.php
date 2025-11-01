@@ -16,7 +16,7 @@ class BlogController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        // $this->middleware('auth:sanctum');
     }
 
     public function index(Request $request)
@@ -55,11 +55,11 @@ class BlogController extends Controller
 
 
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('uploads/blogs', 'public');
-            $dataBlog['image'] = $imagePath;
-        }
-        $data['image'] = $imagePath;
+        // if ($request->hasFile('image')) {
+        //     $imagePath = $request->file('image')->store('uploads/blogs', 'public');
+        //     $dataBlog['image'] = $imagePath;
+        // }
+        // $data['image'] = $imagePath;
         $blog = Blog::create($dataBlog);
 
         BlogLang::create([
@@ -97,7 +97,7 @@ class BlogController extends Controller
 
         $dataBlog = $request->validate([
             'categ_blog_id' => ['sometimes', 'required', 'integer', 'exists:categ_blog,id'],
-            'image'         => ['sometimes', 'nullable', 'file', 'mimes:jpg,jpeg,png,webp'],
+            'image'         => ['sometimes', 'nullable'],
             'date'          => ['sometimes', 'required', 'date'],
             'status'        => ['sometimes', 'required'],
             'user_id'       => ['sometimes', 'required', 'integer', 'exists:users,id'],
@@ -112,9 +112,9 @@ class BlogController extends Controller
             'description' => ['sometimes', 'required'],
         ]);
 
-        if ($request->hasFile('image')) {
-            $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
-        }
+        // if ($request->hasFile('image')) {
+        //     $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
+        // }
 
         if (!empty($dataBlog)) {
             $blog->update($dataBlog);
