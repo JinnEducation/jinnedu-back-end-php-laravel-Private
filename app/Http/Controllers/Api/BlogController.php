@@ -14,10 +14,10 @@ class BlogController extends Controller
 {
 
 
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:sanctum');
+    // }
 
     public function index(Request $request)
     {
@@ -40,7 +40,7 @@ class BlogController extends Controller
 
         $dataBlog = $request->validate([
             'categ_blog_id' => 'required',
-            'image' => 'required',
+            'image' => 'image',
             'date' => 'required',
             'status' => 'required',
             'user_id' => 'required',
@@ -60,6 +60,8 @@ class BlogController extends Controller
             $dataBlog['image'] = $imagePath;
         }
         $data['image'] = $imagePath;
+
+        
         $blog = Blog::create($dataBlog);
 
         BlogLang::create([
