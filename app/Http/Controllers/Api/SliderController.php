@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Slider;
+use App\Models\Language;
 use App\Models\SliderLang;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Storage;
 
 class SliderController extends Controller
 {
+
+    public function __construct()
+    {
+         $this->middleware('auth:sanctum');
+    }
     public function index()
     {
         $slider = Slider::with('langs.language')
@@ -21,55 +27,112 @@ class SliderController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'images' => 'image',
-            'langs' => 'required',
-            'langs.*.language_id' => 'required', 'exists:language,id',
-            'langs.*.title' => 'required',
-            'langs.*.sub_title' => 'required',
-            'langs.*.btn_name' => 'required',
+
+    $langShort = $request->header('lang');
+    $language = $langShort
+        ? Language::where('shortname', $langShort)->first()
+        : null;
+
+    $languageId = $language?->id ?? $request->input('language_id');
+
+    
+         $dataSlider = $request->validate([
+            'image' => 'required|file|image', 
             'btn_url' => 'required',
         ]);
 
-     
-        $images = [];
-        if ($request->hasFile('images_files')) {
-            foreach ($request->file('images_files') as $file) {
-                $images[] = $file->store('sliders', 'public');
-            }
+        $dataLang = $request->validate([
+        'title'       => 'required',
+        'sub_title'        => 'required',
+        'btn_name' => 'required',
+    ]);
+
+      if ($request->hasFile('image')) {
+        $file = $request->file('image');
+
+        if (! $file->isValid()) {
+            return response()->json(['message' => 'Uploaded image is not valid.'], 422);
         }
 
-        $slider = Slider::create([
-            'images' => $images,
-            'sort_order' => $data['sort_order'] ?? 0,
-            'is_active' => $data['is_active'] ?? true,
+       
+        $imagePath = $file->store('uploads/blogs', 'public'); 
+         $dataSlider['image'] = $imagePath;
+    }
+
+        $slider = Slider::create( $dataSlider);
+
+        SliderLang::create([
+        'slider_id'      => $slider->id,
+        'language_id'  => $languageId,
+        'title'        => $dataLang['title'],
+        'sub_title'         => $dataLang['sub_title'],
+        'btn_name'  => $dataLang['btn_name'],
+    ]);
+
+        $slider->load('langs');
+
+        return new SliderResource($slider);
+    }
+
+    public function show($id)
+    {
+         $slider = Slider::with('langs')->findOrFail($id);
+         return new SliderResource($slider);
+    }
+
+
+     public function update(Request $request, $id)
+    {
+        $slider = Slider::findOrFail($id);
+
+        $langShort = $request->header('lang');
+        $language = $langShort ? Language::where('shortname', $langShort)->first() : null;
+        $languageId = $language?->id ?? $request->input('language_id');
+
+        $dataSlider = $request->validate([
+            'image'         => ['sometimes', 'nullable'],
+            'btn_url'          => ['sometimes', 'required'],
         ]);
 
-        foreach ($data['langs'] as $langData) {
-            $langData['slider_id'] = $slider->id;
-            SliderLang::create($langData);
+        $dataLang = $request->validate([
+        'title'       => 'sometimes|required',
+        'sub_title'        => 'sometimes|required',
+        'btn_name' => 'sometimes|required',
+        ]);
+
+       
+
+        if (!empty($dataSlider)) {
+            $slider->update( $dataSlider);
         }
 
-        $slider->load('langs.language');
+
+        if (!empty($dataLang)) {
+            $langRow = SliderLang::firstOrNew([
+                'slider_id'     => $slider->id,
+                'language_id' => $languageId,
+            ]);
+
+            if (array_key_exists('title', $dataLang))       $langRow->title = $dataLang['title'];
+            if (array_key_exists('sub_title', $dataLang))        $langRow->sub_title = $dataLang['sub_title'];
+            if (array_key_exists('btn_name', $dataLang)) $langRow->btn_name = $dataLang['btn_name'];
+
+            $langRow->save();
+        }
+
+        $slider->load(['langs']);
 
         return new SliderResource($slider);
     }
 
-    public function show(Slider $slider)
-    {
-        $slider->load('langs.language');
-        return new SliderResource($slider);
-    }
 
-    public function destroy(Slider $slider)
-    {
-        if (is_array($slider->images)) {
-            foreach ($slider->images as $path) {
-                Storage::disk('public')->delete($path);
-            }
-        }
 
-        $slider->delete();
-        return response()->json(['message' => 'Slider deleted successfully']);
+    public function destroy($id)
+    {
+        Slider::destroy($id);
+        return response()->json([
+            'message' => 'Slider deleted successfully',
+
+        ], 204);
     }
 }

@@ -12,7 +12,8 @@ Route::apiResource('blog', BlogController::class);
 // Route::get('/blogs/{blog}', [BlogController::class, 'show']);
 // Route::put('blog/{id}', [BlogController::class, 'update']);
 // Route::patch('blog/{id}', [BlogController::class, 'update']);
-Route::apiResource('cateqblog', CateqBlogController::class); Route::apiResource('slider', SliderController::class);
+Route::apiResource('cateqblog', CateqBlogController::class);
+Route::apiResource('slider', SliderController::class);
 
 
 Route::post('auth/access-tokens', [AccessTokensController::class, 'store'])

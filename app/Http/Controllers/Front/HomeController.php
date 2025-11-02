@@ -124,4 +124,8 @@ class HomeController extends Controller
 
         return view('front.singlebloge', compact('blog'));
     }
+
+    public function contact_us(){
+        return view('front.contact_us');
+    }
 }

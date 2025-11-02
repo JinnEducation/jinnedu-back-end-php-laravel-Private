@@ -21,7 +21,7 @@ class Slider extends Model
         $language = Language::where('shortname', $lang)->first();
 
         return $language
-            ? $this->hasMany(BlogLang::class, 'slider_id')->where('language_id', $language->id)
-            : $this->hasMany(BlogLang::class, 'slider_id');
+            ? $this->hasMany(SliderLang::class, 'slider_id')->where('language_id', $language->id)
+            : $this->hasMany(SliderLang::class, 'slider_id');
     }
 }

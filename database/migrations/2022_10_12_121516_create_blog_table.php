@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('blog', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('categ_blog_id')
+            $table->foreignId('categ_blog_id') 
                 ->nullable()
                 ->constrained('categ_blog')
                 ->nullOnDelete();

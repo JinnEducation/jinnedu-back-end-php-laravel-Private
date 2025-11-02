@@ -14,23 +14,17 @@ class SliderResource extends JsonResource
      */
     public function toArray($request)
     {
+         $translation = $this->whenLoaded('langs', function () {
+            return optional($this->langs->first());
+        });
+
        return [
-            'data' => [
-                'id' => $this->id,
-                'images' => $this->images ?? [],
-    
-                'relations' => [
-                    'langs' => $this->langs->map(fn($lang) => [
-                        'id' => $lang->id,
-                        'language_id' => $lang->language_id,
-                        'language_name' => $lang->language->name ?? null,
-                        'title' => $lang->title,
-                        'sub_title' => $lang->sub_title,
-                        'btn_name' => $lang->btn_name,
-                
-                    ]),
-                ],
-            ],
+            'id' => $this->id,
+            'title'         => $translation?->title,
+            'sub_title'         => $translation?->sub_title,
+            'btn_name'         => $translation?->btn_name,
+            'image' => $this->image_url,
+            'btn_url' => $this->btn_url,
         ];
     }
 }

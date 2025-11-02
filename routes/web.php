@@ -59,6 +59,7 @@ Route::group([
     Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
     Route::get('blog/{slug}', [HomeController::class, 'showBlog'])->name('site.showBlog');
     Route::get('pages/{slug}', [FrontPageController::class, 'show'])->name('site.pages.show');
+     Route::get('contact_us', [HomeController::class, 'contact_us'])->name('site.contact_us');
 });
 
 
