@@ -129,7 +129,8 @@
 
                 <!-- Image Section -->
                 <div class="order-1 lg:order-2 lg:aspect-[1/1] relative">
-                    <div class="flex overflow-hidden justify-center items-center hero-image-container md:items-end  translate-y-[57px]">
+                    <div
+                        class="flex overflow-hidden justify-center items-center hero-image-container md:items-end  translate-y-[57px]">
 
                         <!-- Slide 1 Image -->
                         <div class="flex justify-center items-center h-full opacity-100 transition-all duration-500 ease-out scale-100 translate-x-0 hero-image"
@@ -204,7 +205,7 @@
 
             <!-- Section Title -->
             <div class="mb-12 text-center">
-                <h2 class="mb-4 h-section">Our Numbers</h2>
+                <h2 class="mb-4 h-section">{{ label_text('global', 'Our Numbers', __('auth.Our Numbers')) }}</h2>
             </div>
 
             <!-- Statistics Grid -->
@@ -226,8 +227,9 @@
                                     {{ $stats['services'] }}
                                 </span>
                                 <span
-                                    class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">EDUCATIONAL
-                                    SERVICES</span>
+                                    class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">
+                                    {{ label_text('global', 'EDUCATIONAL SERVICES', __('auth.EDUCATIONAL SERVICES')) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -250,9 +252,9 @@
 
 
                                 </span>
-                                <span
-                                    class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">STUDENTS
-                                    COUNT</span>
+                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
+                                    {{ label_text('global', 'STUDENTS COUNT', __('auth.STUDENTS COUNT')) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -274,8 +276,9 @@
                                     {{ $stats['tutors'] }}
 
                                 </span>
-                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">TUTORS
-                                    COUNT</span>
+                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
+                                    {{ label_text('global', 'TUTORS COUNT', __('auth.TUTORS COUNT')) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -295,12 +298,10 @@
                                 <span
                                     class="text-center lg:text-left lg:rtl:text-right mb-2 text-3xl font-black text-[#EAC634] transition-colors duration-300">
                                     {{ $stats['courses'] }}
-
-
-
                                 </span>
-                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">COURSES
-                                    COUNT</span>
+                                <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
+                                    {{ label_text('global', 'COURSES COUNT', __('auth.COURSES COUNT')) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -314,7 +315,8 @@
     <section class="px-4 py-16">
         <div class="container mx-auto">
             <!-- Section Title -->
-            <h2 class="mb-6 text-center h-section">Recent courses</h2>
+            <h2 class="mb-6 text-center h-section">
+                {{ label_text('global', 'Recent courses', __('auth.Recent courses')) }}</h2>
             <!-- Category Filter -->
             <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
                 <!-- سهم يسار -->
@@ -331,7 +333,7 @@
                     <button
                         class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold"
                         data-type="all">
-                        All categories
+                        {{ label_text('global', 'All categories', __('auth.All categories')) }}
                     </button>
                     @foreach ($categories as $cat)
                         @php
@@ -384,42 +386,43 @@
                             ? asset($course->imageInfo->path)
                             : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
                         $showUrl = route('courses.show', $course->slug ?? $course->id);
-                        $courseCategoryTitle = $categoryTitlesMap[$course->category_id] ?? optional($course->category)->name ?? 'Category';
+                        $courseCategoryTitle =
+                            $categoryTitlesMap[$course->category_id] ??
+                            (optional($course->category)->name ?? 'Category');
                         $shouldHideInitially = $loop->index >= $initialVisibleCount;
                     @endphp
-                                    <!-- Course Card 1 - Design (Original - No Changes) -->
-                <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="{{ $courseCategoryTitle }}" style="{{ $shouldHideInitially ? 'display: none;' : '' }}">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="{{ $img }}"
-                            alt="{{ $title }}" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
-                        <p class="mb-4 text-[13px] text-black">{{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}</p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">{{ $timeLabel }}</span>
+                    <!-- Course Card 1 - Design (Original - No Changes) -->
+                    <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                        data-type="{{ $courseCategoryTitle }}"
+                        style="{{ $shouldHideInitially ? 'display: none;' : '' }}">
+                        <div class="overflow-hidden relative h-48 rounded-sm">
+                            <img src="{{ $img }}" alt="{{ $title }}"
+                                class="object-cover w-full h-full">
+                        </div>
+                        <div class="pt-4">
+                            <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
+                            <p class="mb-4 text-[13px] text-black">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}</p>
+                            <div class="pt-4 border-t border-[#E5E7EB]">
+                                <div
+                                    class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                    <div class="flex gap-2 items-center">
+                                        <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                        <span class="text-sm text-black">{{ $timeLabel }}</span>
+                                    </div>
+                                    <span class="text-lg font-bold text-[#1B449C]">{{ label_text('global', 'Free', __('auth.Free')) }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
+                                <div
+                                    class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                    <a href="#"
+                                        class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                       {{ label_text('global', 'Preview this courses', __('auth.Preview this courses')) }} 
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
                 @endforeach
-
-
             </div>
 
             @if ($courses->count() > $initialVisibleCount)
@@ -427,7 +430,7 @@
                 <div class="text-center">
                     <button id="loadMoreBtn"
                         class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                        <span class="relative z-10">Load More</span>
+                        <span class="relative z-10">{{ label_text('global', 'Load More', __('auth.Load More')) }}</span>
                         <div
                             class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                         </div>
