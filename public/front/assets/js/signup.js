@@ -8,14 +8,11 @@ $(document).ready(function () {
     // Step navigation from sidebar
     $('.step-item, .step-item-mobile').click(function () {
         const step = parseInt($(this).data('step'));
-        // goToStep(step);
+        goToStep(step);
     });
 
     // Continue button
     $(document).on('click', '.btn-continue', function (e) {
-        if (currentStep < 8 && currentStep != 1) {
-            goToStep(currentStep + 1);
-        }
         if (currentStep == 1) {
             e.preventDefault();
             let account_type = $('#account-type').val();
@@ -24,10 +21,11 @@ $(document).ready(function () {
                 return;
             } else {
                 $('#account-type-error').addClass('hidden opacity-0').removeClass('opacity-100 translate-y-0');
-                goToStep(2);
             }
         }
-
+        if (currentStep < 8) {
+            goToStep(currentStep + 1);
+        }
 
     });
 
@@ -84,21 +82,13 @@ $(document).ready(function () {
 // Step 1 
 $(function () {
     // Account type selection
-    let account_type = $('#account-type').val();
-    if (account_type == '' || account_type == null) {
-        $('.step-item, .step-item-mobile').each(function () {
-            const step = $(this).data('step');
-            $(this).addClass('hidden');
-        });
-    }
     $('.account-card').click(function () {
         $('.account-card').removeClass('border-primary bg-blue-50');
         $(this).addClass('border-primary bg-blue-50');
         accountType = $(this).data('account');
         localStorage.setItem('accountType', accountType);
         $('#account-type').val(accountType)
-
-        if (accountType === 1) {
+        if (accountType === 'student') {
             // إخفاء الخطوات 1 و2 فقط
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
@@ -110,7 +100,7 @@ $(function () {
                 }
             });
         }
-        if (accountType === 2) {
+        if (accountType === 'tutor') {
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
                 // $(this).show();
@@ -152,6 +142,8 @@ $(function () {
     const $googleBtn = $("#account-info .btn-google");
     const $continueBtn = $("#account-info .btn-continue");
     const $submitBtn = $("#account-info .btn-submit");
+    const $account_type = localStorage.getItem('accountType');
+
     // اخفِ زر Continue بالبداية
     $continueBtn.hide();
 
@@ -218,12 +210,12 @@ $(function () {
     $fields.on("input blur", function () {
         const filled = allFieldsFilled();
         const passwordsOK = validatePasswords();
-        let account_type = localStorage.getItem('accountType');
 
         // لو كل الحقول مليانة (مش فارغة)
         if (filled && passwordsOK) {
             $googleBtn.fadeOut(200, function () {
-                if(account_type == 1) {
+                console.log($account_type);
+                if($account_type == 'student') {
                     $submitBtn.fadeIn(200);
                 } else {
                     $continueBtn.fadeIn(200);
