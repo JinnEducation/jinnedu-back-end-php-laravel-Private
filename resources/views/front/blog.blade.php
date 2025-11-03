@@ -42,7 +42,7 @@
                     </button>
 
 
-                    @foreach ($categories as $category)
+                   @foreach ($categories as $category)
                         <button
                             class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer {{ $categorySlug === $category->slug ? 'bg-primary text-white' : '' }}"
                             data-type="{{ $category->slug }}">
@@ -65,12 +65,23 @@
 
             <div class="grid grid-cols-1 gap-10 mb-12 md:grid-cols-2 lg:grid-cols-3" id="coursesGridBlogs">
                 @foreach ($blogs as $blog)
+                 @php
+                    
+                    $catLang = null;
+                    if (isset($languageId) && $languageId && $blog->category) {
+                        $catLang = $blog->category->langs->firstWhere('language_id', $languageId);
+                    }
+                    
+                    $blogCategorySlug = $catLang->slug ?? optional($blog->category)->slug ?? '';
+                    $blogCategoryName = $catLang->name ?? optional($blog->category)->name ?? '';
+                @endphp
+
                     <div class="block overflow-hidden bg-white rounded-md shadow-lg transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102"
-                        data-type="{{ optional($blog->category)->slug }}">
+                        data-type="{{ $blogCategorySlug }}">
                         <div class="overflow-hidden relative h-54">
-                            <img src="{{ $blog->image_url ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop' }}"
-                                alt="{{ $blog->title }}" class="object-cover w-full h-full" />
-                        </div>
+                        <img src="{{ $blog->image_url ?? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop' }}"
+                            alt="{{ $blog->title }}" class="object-cover w-full h-full" />
+                    </div>
                         <div class="p-4 pb-0">
                             <h3 class="mb-2 font-semibold text-black text-md">
                                 {{ $blog->title }}
@@ -85,10 +96,21 @@
                                         class="text-sm text-gray-800 me-1">{{ number_format($blog->rating ?? 0, 1) }}/5</span>
                                     <span class="text-sm text-gray-500">({{ $blog->reviews_count ?? 0 }})</span>
                                 </div>
-                                <a href="{{ route('site.showBlog', ['slug' => $blog->slug]) }}"
-                                    class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">
-                                    Load More
-                                </a>
+                               @php
+    $blogSlug = $blog->slug ?? null; // أو $blog->slug ?? optional($blog->slug) ?? null
+@endphp
+
+@if($blogSlug)
+    <a href="{{ route('site.showBlog', ['locale' => app()->getLocale(), 'slug' => $blogSlug]) }}"
+       class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">
+        Load More
+    </a>
+@else
+    {{-- بديل آمن لو الـ slug غير متوفر --}}
+    <a href="#" class="text-sm font-medium text-gray-400 cursor-not-allowed" aria-disabled="true">
+        Load More
+    </a>
+@endif
                             </div>
                             <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                                 <div class="flex justify-between items-center transition-all duration-300">
@@ -121,230 +143,156 @@
             </div>
 
             <!-- Pagination Section -->
-            <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <select id="perPageSelect"
-                            class="py-3.5 pr-10 pl-24 text-black rounded-md border border-gray-200 appearance-none cursor-pointer text-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-32">
-                            <option value="6" {{ (int) $perPage === 6 ? 'selected' : '' }}>6</option>
-                            <option value="9" {{ (int) $perPage === 9 ? 'selected' : '' }}>9</option>
-                            <option value="12" {{ (int) $perPage === 12 ? 'selected' : '' }}>12</option>
-                        </select>
-                        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                            <span class="text-sm font-medium text-gray-700">PER PAGE</span>
-                        </div>
-                        <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="relative">
+                    <select id="perPageSelect"
+                        class="py-3.5 pr-10 pl-24 text-black rounded-md border border-gray-200 appearance-none cursor-pointer text-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-32">
+                        <option value="6" {{ (int) $perPage === 6 ? 'selected' : '' }}>6</option>
+                        <option value="9" {{ (int) $perPage === 9 ? 'selected' : '' }}>9</option>
+                        <option value="12" {{ (int) $perPage === 12 ? 'selected' : '' }}>12</option>
+                    </select>
+                    <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                        <span class="text-sm font-medium text-gray-700">PER PAGE</span>
+                    </div>
+                    <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </div>
                 </div>
-
-                <div class="flex gap-1 justify-center items-center" id="paginationBlogs">
-                    <button
-                        class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
-                        data-page="prev" {{ $blogs->onFirstPage() ? 'disabled' : '' }}>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-
-                    <div id="pagesNumbers" class="flex gap-1">
-                        @for ($i = 1; $i <= $blogs->lastPage(); $i++)
-                            <button
-                                class="flex justify-center items-center w-8 h-8 rounded-full transition-all duration-200 cursor-pointer {{ $i === $blogs->currentPage() ? 'text-white bg-primary' : 'text-black hover:text-white hover:bg-primary' }}"
-                                data-page="{{ $i }}">
-                                {{ $i }}
-                            </button>
-                        @endfor
-                    </div>
-
-                    <button
-                        class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
-                        data-page="next" {{ $blogs->currentPage() === $blogs->lastPage() ? 'disabled' : '' }}>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-
-                <div class="hidden w-32 md:block"></div>
             </div>
-            <!--لهنااااااااااااااااااا-->
+
+            <div class="flex gap-1 justify-center items-center" id="paginationBlogs">
+                <button
+                    class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
+                    data-page="prev" {{ $blogs->onFirstPage() ? 'disabled' : '' }}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div id="pagesNumbers" class="flex gap-1">
+                    @for ($i = 1; $i <= $blogs->lastPage(); $i++)
+                        <button
+                            class="flex justify-center items-center w-8 h-8 rounded-full transition-all duration-200 cursor-pointer {{ $i === $blogs->currentPage() ? 'text-white bg-primary' : 'text-black hover:text-white hover:bg-primary' }}"
+                            data-page="{{ $i }}">
+                            {{ $i }}
+                        </button>
+                    @endfor
+                </div>
+
+                <button
+                    class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
+                    data-page="next" {{ $blogs->currentPage() === $blogs->lastPage() ? 'disabled' : '' }}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="hidden w-32 md:block"></div>
         </div>
-    </section>
+        <!--لهنااااااااااااااااااا-->
+    </div>
+</section>
 
 
-    <script>
-        (() => {
-            const gridSelector = '#coursesGridBlogs';
-            const paginationSelector = '#paginationBlogs';
-            const perPageSelector = '#perPageSelect';
-            const btnsSelector = '#filter-container .category-blogs-btn';
+@php
+    // تأكد أن المتغيرات موجودة (fallback)
+    $currentPage = $blogs->currentPage() ?? 1;
+    $lastPage = $blogs->lastPage() ?? 1;
+    $defaultPerPage = $perPage ?? 9;
+@endphp
 
-            const categoryButtons = document.querySelectorAll(btnsSelector);
-            let perPageSelectEl = null;
+<script>
+(function () {
+   
+    const APP_CURRENT_PAGE = @json($currentPage);
+    const APP_LAST_PAGE = @json($lastPage);
+    const APP_DEFAULT_PER_PAGE = @json($defaultPerPage);
 
-            // جلب قيمة per_page الحالية
-            function getPerPage() {
-                const u = new URL(location.href);
-                const qp = u.searchParams.get('per_page');
-                if (qp) return qp;
-                const sel = document.querySelector(perPageSelector);
-                return sel ? sel.value : '9';
+    
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            if (value === null || value === '') {
+                // remove param
+                return uri.replace(re, function(match, p1, p2) {
+                    // إذا كان يوجد & بعد الباراميتر نرجع الـ separator الأولي وإلا نرجع ''
+                    return p2 === '&' ? p1 : '';
+                }).replace(/(&|\?)$/, '');
             }
+            return uri.replace(re, '$1' + key + "=" + encodeURIComponent(value) + '$2');
+        }
+        if (value === null || value === '') return uri;
+        return uri + separator + key + "=" + encodeURIComponent(value);
+    }
 
-            // تحميل المدونات عبر AJAX
-            async function loadBlogs(url, options = {}) {
-                const {
-                    skipHistory = false
-                } = options;
-                try {
-                    const resp = await fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-                    const html = await resp.text();
-                    const doc = new DOMParser().parseFromString(html, 'text/html');
+    // current url without hash
+    const currentUrl = window.location.href.split('#')[0];
 
-                    const newGrid = doc.querySelector(gridSelector);
-                    const newPagination = doc.querySelector(paginationSelector);
-
-                    const oldGrid = document.querySelector(gridSelector);
-                    const oldPagination = document.querySelector(paginationSelector);
-
-                    if (newGrid && oldGrid) oldGrid.replaceWith(newGrid);
-                    if (newPagination && oldPagination) oldPagination.replaceWith(newPagination);
-
-                    // تحديث العنوان بدون ريفرش
-                    if (!skipHistory) history.pushState({}, '', url);
-
-                    // إعادة ربط الأحداث بعد الاستبدال
-                    bindPerPageSelect();
-                    attachPaginationHandlers();
-                } catch (err) {
-                    console.error('Error loading blogs:', err);
-                }
+    // Category buttons click -> redirect with ?category=slug (preserve per_page)
+    document.querySelectorAll('.category-blogs-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            const slug = this.getAttribute('data-slug') || '';
+            let url = currentUrl.split('?')[0];
+            // preserve per_page if present
+            const params = new URLSearchParams(window.location.search);
+            const perPage = params.get('per_page');
+            if (perPage) url = updateQueryStringParameter(url, 'per_page', perPage);
+            // set or remove category
+            if (slug) {
+                url = updateQueryStringParameter(url, 'category', slug);
+            } else {
+                url = updateQueryStringParameter(url, 'category', '');
             }
+            // go to page 1 when changing category
+            url = updateQueryStringParameter(url, 'page', 1);
+            window.location.href = url;
+        });
+    });
 
-            // بناء رابط مع باراميترات
-            function buildUrl(params = {}) {
-                const u = new URL(location.href);
-                Object.entries(params).forEach(([k, v]) => {
-                    if (v === null || v === undefined || v === '') u.searchParams.delete(k);
-                    else u.searchParams.set(k, v);
-                });
-                // ثبّت per_page الحالي
-                if (!u.searchParams.get('per_page')) {
-                    u.searchParams.set('per_page', getPerPage());
-                }
-                return u.toString();
+    // PER PAGE select -> redirect while preserving category
+    const perPageSelect = document.getElementById('perPageSelect');
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function () {
+            const value = this.value;
+            let url = currentUrl.split('?')[0];
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get('category') || '';
+            if (category) url = updateQueryStringParameter(url, 'category', category);
+            url = updateQueryStringParameter(url, 'per_page', value);
+            url = updateQueryStringParameter(url, 'page', 1);
+            window.location.href = url;
+        });
+    }
+
+    // Pagination buttons (prev/next/pages) -> build URL with page param while preserving per_page & category
+    document.querySelectorAll('#paginationBlogs [data-page]').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const page = this.getAttribute('data-page');
+            const params = new URLSearchParams(window.location.search);
+            let targetPage = null;
+            if (page === 'prev') {
+                const curr = APP_CURRENT_PAGE;
+                targetPage = Math.max(1, curr - 1);
+            } else if (page === 'next') {
+                const curr = APP_CURRENT_PAGE;
+                const last = APP_LAST_PAGE;
+                targetPage = Math.min(last, curr + 1);
+            } else {
+                // page could be string number
+                targetPage = Number(page) || 1;
             }
+            let url = currentUrl.split('?')[0];
+            const category = params.get('category') || '';
+            const perPage = params.get('per_page') || APP_DEFAULT_PER_PAGE;
+            if (category) url = updateQueryStringParameter(url, 'category', category);
+            url = updateQueryStringParameter(url, 'per_page', perPage);
+            url = updateQueryStringParameter(url, 'page', targetPage);
+            window.location.href = url;
+        });
+    });
+})();
+</script>
 
-            // الضغط على تصنيف
-            categoryButtons.forEach(btn => {
-                btn.addEventListener('click', e => {
-                    e.preventDefault();
-
-                    // تفعيل الزر الحالي
-                    categoryButtons.forEach(b => b.classList.remove('bg-primary', 'text-white',
-                        'border-primary'));
-                    btn.classList.add('bg-primary', 'text-white', 'border-primary');
-
-                    const slug = btn.dataset.type || 'all';
-                    const url = buildUrl({
-                        category: slug === 'all' ? null : slug,
-                        page: null
-                    });
-                    loadBlogs(url);
-                });
-            });
-
-            // تغيير عدد العناصر PER PAGE
-            function handlePerPageChange(event) {
-                const select = event.currentTarget;
-                const url = buildUrl({
-                    per_page: select.value,
-                    page: null
-                });
-                loadBlogs(url);
-            }
-
-            function bindPerPageSelect() {
-                const latestSelect = document.querySelector(perPageSelector);
-                if (!latestSelect) return;
-                if (perPageSelectEl === latestSelect) return;
-                if (perPageSelectEl) perPageSelectEl.removeEventListener('change', handlePerPageChange);
-                perPageSelectEl = latestSelect;
-                perPageSelectEl.addEventListener('change', handlePerPageChange);
-            }
-
-            function markActiveButton(slugOrAll = 'all') {
-                document.querySelectorAll(btnsSelector).forEach(b => {
-                    b.classList.remove('bg-primary', 'text-white', 'border-primary');
-                    b.classList.add('text-gray-600', 'border', 'border-gray-200');
-                });
-                const btn = Array.from(document.querySelectorAll(btnsSelector))
-                    .find(b => (b.dataset.type || 'all') === slugOrAll);
-                if (btn) {
-                    btn.classList.remove('text-gray-600', 'border', 'border-gray-200');
-                    btn.classList.add('bg-primary', 'text-white', 'border-primary');
-                }
-            }
-
-            function attachPaginationHandlers() {
-                // أزرار الباجينيشن المولّدة بالسيرفر
-                document.querySelectorAll('#pagesNumbers button[data-page], #paginationBlogs button[data-page]')
-                    .forEach(btn => {
-                        btn.addEventListener('click', e => {
-                            e.preventDefault();
-                            const val = btn.getAttribute('data-page');
-                            const pages = Array.from(document.querySelectorAll(
-                                    '#pagesNumbers button[data-page]'))
-                                .map(b => parseInt(b.dataset.page || '1', 10));
-                            const last = pages.length ? Math.max(...pages) : 1;
-
-                            // الصفحة الحالية من الـURL
-                            const urlNow = new URL(location.href);
-                            const curr = parseInt(urlNow.searchParams.get('page') || '1', 10);
-
-                            let next = curr;
-                            if (val === 'prev') next = Math.max(1, curr - 1);
-                            else if (val === 'next') next = Math.min(last, curr + 1);
-                            else next = parseInt(val || '1', 10);
-
-                            const u = buildUrl({
-                                page: next
-                            });
-                            loadBlogs(u);
-                        });
-                    });
-
-                // روابط الباجينيشن (لو Laravel طابع <a>)
-                document.querySelectorAll('#paginationBlogs a[href]').forEach(a => {
-                    a.addEventListener('click', e => {
-                        e.preventDefault();
-                        const u = new URL(a.href, location.origin);
-                        // ثبّت per_page الحالي
-                        u.searchParams.set('per_page', getPerPage());
-                        loadBlogs(u.toString());
-                    });
-                });
-            }
-
-            // عند الرجوع/التقدّم في الهيستوري
-            window.addEventListener('popstate', () => {
-                // حمّل الحالة الحالية بدون دفعها مرة أخرى للهيستوري
-                loadBlogs(location.href, {
-                    skipHistory: true
-                });
-                // فعّل زر التصنيف الصحيح (إن وُجد)
-                const u = new URL(location.href);
-                markActiveButton(u.searchParams.get('category') || 'all');
-            });
-
-            // تشغيل أولي
-            bindPerPageSelect();
-            attachPaginationHandlers();
-        })();
-    </script>
 </x-front-layout>
