@@ -64,26 +64,6 @@ $(document).ready(function () {
     toggleDirection(newDir);
   });
 
-  // تحديد الاتجاه من dropdown اللغة
-  $("header .language-dropdown a").click(function (e) {
-    e.preventDefault();
-    const selectedLang = $(this).data("lang");
-    const direction = selectedLang === "ar" ? "rtl" : "ltr";
-
-    // تحديث النص في الزر
-    const selectedText =
-      $(this).data("text") || $(this).text().substring(0, 2).toUpperCase();
-    $("header .language-dropdown button span:first").text(selectedText);
-
-    // تغيير الاتجاه
-    toggleDirection(direction);
-
-    // إغلاق القائمة
-    $('header .language-dropdown div[class*="absolute"]').addClass(
-      "opacity-0 invisible translate-y-2"
-    );
-  });
-
   $(document).on("click", "#mobile-search-bar-toggle", function () {
     $("#mobile-search-bar").toggleClass("hidden");
     $(this).find("i").toggleClass("fa-search fa-times");
@@ -222,31 +202,6 @@ $(document).ready(function () {
     });
 
   // ==================
-  // Language/Currency Selection
-
-  // Language Selection
-  $("header .language-dropdown a").click(function (e) {
-    e.preventDefault();
-    const selectedLang = $(this).text().trim();
-    const langCode =
-      selectedLang === "English"
-        ? "EN"
-        : selectedLang === "العربية"
-        ? "AR"
-        : "FR";
-
-    $("header .language-dropdown button span:first").text(langCode);
-    $('header .language-dropdown div[class*="absolute"]').addClass(
-      "opacity-0 invisible translate-y-2"
-    );
-
-    // Smooth transition effect
-    $("header .language-dropdown button").addClass("bg-primary-500");
-    setTimeout(() => {
-      $("header .language-dropdown button").removeClass("bg-primary-500");
-    }, 200);
-  });
-
   // Currency Selection
   $("header .currency-dropdown a").click(function (e) {
     e.preventDefault();

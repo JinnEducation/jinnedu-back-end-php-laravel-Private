@@ -790,7 +790,8 @@ class AuthController extends Controller
 
                 $datePath = date('Y').'/'.date('m').'/'.date('d');
 
-                $destinationDirectory = '/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.$directory.$datePath;
+                $path = public_path('/');
+                $destinationDirectory = $path.$directory.$datePath;
 
                 $moved = move_uploaded_file($tempPath, $destinationDirectory.'/'.$filename);
 

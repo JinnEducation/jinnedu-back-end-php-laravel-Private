@@ -20,7 +20,6 @@ class Blog extends Model
         'date',
         'status',
         'user_id'
-
     ];
 
     protected $append = ['image_url'];
@@ -35,6 +34,11 @@ class Blog extends Model
         return $language
     ? $this->hasMany(BlogLang::class, 'blog_id')->where('language_id', $language->id)
     : $this->hasMany(BlogLang::class, 'blog_id');
+    }
+
+    public function langsAll()
+    {
+        return $this->hasMany(BlogLang::class, 'blog_id');
     }
     
     public function category()
@@ -62,7 +66,7 @@ class Blog extends Model
         if (empty($this->image)) {
             return null;
         }
-        return asset('storage/' . $this->image);
+        return asset($this->image);
     }
 
     public function scopePublished($q)

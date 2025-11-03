@@ -25,8 +25,8 @@ class CateqBlog extends Model
         $language = Language::where('shortname', $lang)->first();
 
         return $language
-    ? $this->hasMany(CategBlogLang::class, 'categ_blog_lang_id')->where('language_id', $language->id)
-    : $this->hasMany(CategBlogLang::class, 'categ_blog_lang_id');
+    ? $this->hasMany(CategBlogLang::class, 'categ_blog_id')->where('language_id', $language->id)
+    : $this->hasMany(CategBlogLang::class, 'categ_blog_id');
     }
 
     public function blogs()

@@ -2,159 +2,154 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Blog;
-use App\Models\BlogLang;
-use App\Models\Language;
-use Illuminate\Http\Request;
-use App\Models\CategBlogLang;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BlogResource;
-use Illuminate\Support\Facades\Response;
+use App\Models\Blog;
+use App\Models\BlogLang;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
-
-
     public function __construct()
     {
-         $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum');
     }
 
     public function index(Request $request)
     {
         $blogs = Blog::filter($request->query())
-            ->with('category:id,name', 'users:id,name', 'courses:id,name', 'langs')
+            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
             ->paginate(10);
 
         return BlogResource::collection($blogs);
     }
 
-    
-
     public function store(Request $request)
-{
-    
-    $langShort = $request->header('lang');
-    $language = $langShort
-        ? Language::where('shortname', $langShort)->first()
-        : null;
+    {
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+            $dataBlog = $request->validate([
+                'categ_blog_id' => 'required|exists:categ_blog,id',
+                'image' => 'required',
+                'date' => 'required|date',
+                'status' => 'required',
+                'user_id' => 'required|exists:users,id',
+            ]);
 
-    $languageId = $language?->id ?? $request->input('language_id');
+            $dataLang = $request->validate([
+                'title.*' => 'required|string',
+                'slug.*' => 'required|string|unique:blog_langs,slug',
+                'description.*' => 'required|string',
+            ]);
 
-   
-    $dataBlog = $request->validate([
-        'categ_blog_id' => 'required|exists:categ_blog,id',
-        'image' => 'required|file|image', 
-        'date' => 'required|date',
-        'status' => 'required',
-        'user_id' => 'required|exists:users,id',
-    ]);
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
 
-   
-    $dataLang = $request->validate([
-        'title'       => 'required|string',
-        'slug'        => 'required|string|unique:blog_langs,slug',
-        'description' => 'required|string',
-    ]);
+                if (! $file->isValid()) {
+                    return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                }
 
-  
-    if ($request->hasFile('image')) {
-        $file = $request->file('image');
+                $imagePath = $file->store('uploads/blogs', 'public');
+                $dataBlog['image'] = $imagePath;
+            } else {
+                $dataBlog['image'] = $request->image ?? null;
+            }
 
-        if (! $file->isValid()) {
-            return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+            // create blog
+            $blog = Blog::create($dataBlog);
+
+            foreach ($languages as $language) {
+                BlogLang::create([
+                    'blog_id' => $blog->id,
+                    'language_id' => $language['id'],
+                    'title' => $request->title[$language['id']],
+                    'slug' => $request->slug[$language['id']],
+                    'description' => $request->description[$language['id']],
+                ]);
+            }
+
+            $blog->load(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language']);
+            DB::commit();
+
+            return response()->json($blog);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
-
-       
-        $imagePath = $file->store('uploads/blogs', 'public'); 
-        $dataBlog['image'] = $imagePath;
     }
-
-    // create blog
-    $blog = Blog::create($dataBlog);
-
-     CategBlogLang::create([
-        'blog_id'      => $blog->id,
-        'language_id'  => $languageId,
-        'title'        => $dataLang['title'],
-        'slug'         => $dataLang['slug'],
-        'description'  => $dataLang['description'],
-    ]);
-
-    $blog->load(['category:id,name', 'users:id,name', 'courses:id,name,blog_id', 'langs']);
-
-    
-    return response()->json($blog);
-}
-
-
 
     public function show($id)
     {
 
-        $blog = Blog::with(['category:id,name', 'users:id,name', 'courses:id,name,blog_id', 'langs'])
+        $blog = Blog::with(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language'])
             ->findOrFail($id);
 
         return new BlogResource($blog);
     }
 
-
     public function update(Request $request, $id)
     {
         $blog = Blog::findOrFail($id);
-
-        $langShort = $request->header('lang');
-        $language = $langShort ? Language::where('shortname', $langShort)->first() : null;
-        $languageId = $language?->id ?? $request->input('language_id');
-
-        $dataBlog = $request->validate([
-            'categ_blog_id' => ['sometimes', 'required', 'integer', 'exists:categ_blog,id'],
-            'image'         => ['sometimes', 'nullable'],
-            'date'          => ['sometimes', 'required', 'date'],
-            'status'        => ['sometimes', 'required'],
-            'user_id'       => ['sometimes', 'required', 'integer', 'exists:users,id'],
-        ]);
-
-        $dataLang = $request->validate([
-            'title'       => ['sometimes', 'required'],
-            'slug'        => [
-                'sometimes',
-                'required',
-            ],
-            'description' => ['sometimes', 'required'],
-        ]);
-
-        // if ($request->hasFile('image')) {
-        //     $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
-        // }
-
-        if (!empty($dataBlog)) {
-            $blog->update($dataBlog);
-        }
-
-
-        if (!empty($dataLang)) {
-            $langRow = BlogLang::firstOrNew([
-                'blog_id'     => $blog->id,
-                'language_id' => $languageId,
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+            $dataBlog = $request->validate([
+                'categ_blog_id' => ['sometimes', 'required', 'integer', 'exists:categ_blog,id'],
+                'image' => ['sometimes', 'nullable'],
+                'date' => ['sometimes', 'required', 'date'],
+                'status' => ['sometimes', 'required'],
+                'user_id' => ['sometimes', 'required', 'integer', 'exists:users,id'],
             ]);
 
-            if (array_key_exists('title', $dataLang))       $langRow->title = $dataLang['title'];
-            if (array_key_exists('slug', $dataLang))        $langRow->slug = $dataLang['slug'];
-            if (array_key_exists('description', $dataLang)) $langRow->description = $dataLang['description'];
+            $dataLang = $request->validate([
+                'title.*' => ['sometimes', 'required'],
+                'slug.*' => [
+                    'sometimes',
+                    'required',
+                ],
+                'description.*' => ['sometimes', 'required'],
+            ]);
 
-            $langRow->save();
+            // if ($request->hasFile('image')) {
+            //     $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
+            // }
+
+            if (! empty($dataBlog)) {
+                $blog->update($dataBlog);
+            }
+
+            if (! empty($dataLang)) {
+                foreach($languages as $language){
+                    BlogLang::updateOrCreate([
+                        'blog_id' => $blog->id,
+                        'language_id' => $language['id'],
+                    ], [
+                        'title' => $request->title[$language['id']],
+                        'slug' => $request->slug[$language['id']],
+                        'description' => $request->description[$language['id']],
+                    ]);
+                }
+            }
+
+            $blog->load(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language']);
+            DB::commit();
+
+            return new BlogResource($blog);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
-
-        $blog->load(['category:id,name', 'users:id,name', 'courses:id,name,blog_id', 'langs']);
-
-        return new BlogResource($blog);
     }
-
 
     public function destroy($id)
     {
         Blog::destroy($id);
+
         return response()->json([
             'message' => 'Blog deleted successfully',
 
