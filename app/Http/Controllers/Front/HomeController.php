@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Front;
 use App\Models\Blog;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Language;
 use App\Models\CateqBlog;
 use App\Models\OurCourse;
 use Illuminate\Http\Request;
+use App\Models\CategBlogLang;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -61,42 +63,62 @@ class HomeController extends Controller
         return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId'));
     }
 
-    public function blog(Request $request)
-    {
-
-        $perPage = (int) $request->input('per_page', 9);
-        $allowedPerPage = [6, 9, 12];
-        if (! in_array($perPage, $allowedPerPage)) {
-            $perPage = 9;
-        }
-
-
-        $categories = CateqBlog::query()
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get();
-
-
-        $categorySlug = $request->query('category');
-
-
-        $blogs = Blog::query()
-            ->with('category')
-            ->published()
-            ->when($categorySlug, function ($q) use ($categorySlug) {
-                $q->whereHas('category', function ($c) use ($categorySlug) {
-                    $c->where('slug', $categorySlug);
-                });
-            })
-            ->orderByDesc('date')
-            ->paginate($perPage)
-            ->withQueryString();
-
-
-
-        return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage'));
+   public function blog(Request $request)
+{
+    $perPage = (int) $request->input('per_page', 9);
+    $allowedPerPage = [6, 9, 12];
+    if (! in_array($perPage, $allowedPerPage)) {
+        $perPage = 9;
     }
+
+ 
+    $locale = app()->getLocale(); 
+    $language = Language::where('shortname', $locale)->first();
+
+    if (! $language) {
+      
+        $language = Language::where('main', 1)->first();
+    }
+
+    if (! $language) {
+       
+        $language = Language::first();
+    }
+
+    $languageId = $language ? $language->id : null;
+
+ 
+    $categoriesQuery = CategBlogLang::query();
+    if ($languageId) {
+        $categoriesQuery->where('language_id', $languageId);
+    }
+    $categories = $categoriesQuery->orderBy('name')->get();
+
+    $categorySlug = $request->query('category');
+
+    $blogsQuery = Blog::query()
+        ->with(['category.langs']) 
+        ->published();
+
+    if ($categorySlug && $languageId) {
+        $blogsQuery->whereHas('category.langs', function ($c) use ($categorySlug, $languageId) {
+            $c->where('slug', $categorySlug)
+              ->where('language_id', $languageId);
+        });
+    } elseif ($categorySlug && ! $languageId) {
+       
+        $blogsQuery->whereHas('category.langs', function ($c) use ($categorySlug) {
+            $c->where('slug', $categorySlug);
+        });
+    }
+
+    $blogs = $blogsQuery
+        ->orderByDesc('date')
+        ->paginate($perPage)
+        ->withQueryString();
+
+    return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage', 'languageId'));
+}
 
     public function showBlog(Request $request, string $slug)
     {
