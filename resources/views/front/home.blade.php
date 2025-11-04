@@ -73,7 +73,6 @@
                     @php
                         $isActive = $index === 0;
                         $imgPath = $slider->image ?? null;
-                        // إذا تستخدمين storage/app/public استعملي التالي، وإلا عدّليه حسب مسارك:
                         $imgUrl = $imgPath ? asset('storage/' . ltrim($imgPath, '/')) : asset('front/assets/imgs/hero/girl1.png');
                     @endphp
 
