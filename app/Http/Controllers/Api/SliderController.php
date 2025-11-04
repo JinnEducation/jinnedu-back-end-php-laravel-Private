@@ -6,6 +6,7 @@ use App\Models\Slider;
 use App\Models\Language;
 use App\Models\SliderLang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SliderResource;
 use Illuminate\Support\Facades\Storage;
@@ -25,55 +26,64 @@ class SliderController extends Controller
         return SliderResource::collection($slider);
     }
 
+    
     public function store(Request $request)
     {
-
-    $langShort = $request->header('lang');
-    $language = $langShort
-        ? Language::where('shortname', $langShort)->first()
-        : null;
-
-    $languageId = $language?->id ?? $request->input('language_id');
-
-    
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+            
          $dataSlider = $request->validate([
             'image' => 'required|file|image', 
             'btn_url' => 'required',
         ]);
 
-        $dataLang = $request->validate([
-        'title'       => 'required',
-        'sub_title'        => 'required',
-        'btn_name' => 'required',
-    ]);
+            $dataLang = $request->validate([
+                'title.*' => 'required|string',
+                'sub_title.*' => 'required|string',
+                'btn_name.*' => 'required|string',
+            ]);
 
-      if ($request->hasFile('image')) {
-        $file = $request->file('image');
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
 
-        if (! $file->isValid()) {
-            return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                if (! $file->isValid()) {
+                    return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                }
+
+                $imagePath = $file->store('uploads/sliders', 'public');
+                $dataBlog['image'] = $imagePath;
+            } else {
+                $dataBlog['image'] = $request->image ?? null;
+            }
+
+            // create blog
+             $slider = Slider::create( $dataSlider);
+
+            foreach ($languages as $language) {
+                SliderLang::create([
+                    'slider_id'      => $slider->id,
+                    'language_id' => $language['id'],
+                    'title' => $request->title[$language['id']],
+                    'sub_title' => $request->sub_title[$language['id']],
+                    'btn_name' => $request->btn_name[$language['id']],
+
+    
+                ]);
+            }
+
+             $slider->load('langs');
+            DB::commit();
+
+            return response()->json($slider);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
-
-       
-        $imagePath = $file->store('uploads/blogs', 'public'); 
-         $dataSlider['image'] = $imagePath;
     }
 
-        $slider = Slider::create( $dataSlider);
-
-        SliderLang::create([
-        'slider_id'      => $slider->id,
-        'language_id'  => $languageId,
-        'title'        => $dataLang['title'],
-        'sub_title'         => $dataLang['sub_title'],
-        'btn_name'  => $dataLang['btn_name'],
-    ]);
-
-        $slider->load('langs');
-
-        return new SliderResource($slider);
-    }
-
+    
     public function show($id)
     {
          $slider = Slider::with('langs')->findOrFail($id);
@@ -81,48 +91,54 @@ class SliderController extends Controller
     }
 
 
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
-        $slider = Slider::findOrFail($id);
-
-        $langShort = $request->header('lang');
-        $language = $langShort ? Language::where('shortname', $langShort)->first() : null;
-        $languageId = $language?->id ?? $request->input('language_id');
-
-        $dataSlider = $request->validate([
+         $slider = Slider::findOrFail($id);
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+                $dataSlider = $request->validate([
             'image'         => ['sometimes', 'nullable'],
             'btn_url'          => ['sometimes', 'required'],
         ]);
-
-        $dataLang = $request->validate([
-        'title'       => 'sometimes|required',
-        'sub_title'        => 'sometimes|required',
-        'btn_name' => 'sometimes|required',
-        ]);
-
-       
-
-        if (!empty($dataSlider)) {
-            $slider->update( $dataSlider);
-        }
-
-
-        if (!empty($dataLang)) {
-            $langRow = SliderLang::firstOrNew([
-                'slider_id'     => $slider->id,
-                'language_id' => $languageId,
+            $dataLang = $request->validate([
+                'title.*' => ['sometimes', 'required'],
+                'sub_title.*' => ['sometimes', 'required'],
+                'btn_name.*' => ['sometimes', 'required'],
             ]);
 
-            if (array_key_exists('title', $dataLang))       $langRow->title = $dataLang['title'];
-            if (array_key_exists('sub_title', $dataLang))        $langRow->sub_title = $dataLang['sub_title'];
-            if (array_key_exists('btn_name', $dataLang)) $langRow->btn_name = $dataLang['btn_name'];
 
-            $langRow->save();
+            // if ($request->hasFile('image')) {
+            //     $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
+            // }
+
+            if (! empty($dataBlog)) {
+                 $slider->update($dataBlog);
+            }
+
+            if (! empty($dataLang)) {
+                foreach($languages as $language){
+                    SliderLang::updateOrCreate([
+                       'slider_id'     => $slider->id,
+                        'language_id' => $language['id'],    
+                    ], [
+                        'title' => $request->title[$language['id']],
+                        'sub_title' => $request->sub_title[$language['id']],
+                        'btn_name' => $request->btn_name[$language['id']],
+                    ]);
+                }
+            }
+
+           $slider->load(['langs']);
+            DB::commit();
+
+           return new SliderResource($slider);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
-
-        $slider->load(['langs']);
-
-        return new SliderResource($slider);
     }
 
 
