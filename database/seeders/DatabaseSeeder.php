@@ -14,19 +14,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
-            MenuSeeder::class,
-            LanguageSeeder::class,
-            LabelSeeder::class,
-            TranslationSeeder::class,
+        // $this->call([
+        //     RoleSeeder::class,
+        //     UserSeeder::class,
+        //     MenuSeeder::class,
+        //     LanguageSeeder::class,
+        //     LabelSeeder::class,
+        //     TranslationSeeder::class,
             
-            LevelSeeder::class,
-            CountrySeeder::class,
-            ExperienceSeeder::class,
-            WeekDaySeeder::class,
-            BlogSeeder::class,
+        //     LevelSeeder::class,
+        //     CountrySeeder::class,
+        //     ExperienceSeeder::class,
+        //     WeekDaySeeder::class,
+        //     BlogSeeder::class,
+        // ]);
+        $this->call([
+            MenuNewSeeder::class,
         ]);
     }
 }
