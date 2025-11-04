@@ -23,7 +23,7 @@ class CateqBlogController extends Controller
         $cateqs = CateqBlog::filter($request->query())
             ->with('users:id,name', 'langs')
             ->paginate();
-        return Response::json($cateqs);
+        return CategBlogResource::collection($cateqs);
     }
 
     public function store(Request $request)

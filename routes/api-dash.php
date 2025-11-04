@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MenuController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\SliderController;
@@ -15,6 +16,8 @@ Route::apiResource('blog', BlogController::class);
 Route::apiResource('cateqblog', CateqBlogController::class);
 Route::apiResource('slider', SliderController::class);
 
+Route::get('/menus/patents', [MenuController::class, 'parents']); // p_id = 0
+Route::apiResource('menus', MenuController::class);
 
 Route::post('auth/access-tokens', [AccessTokensController::class, 'store'])
     ->middleware('guest:sanctum');

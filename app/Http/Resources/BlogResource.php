@@ -14,16 +14,27 @@ class BlogResource extends JsonResource
      */
     public function toArray($request)
     {
-         $translation = $this->whenLoaded('langs', function () {
-            return optional($this->langs->first());
+        // Ensure all languages are included in the mapped result and properly grouped by language_id
+        $languages = $this->langsAll->mapWithKeys(function ($language) {
+            return [
+                $language->language_id => [
+                    'id' => $language->id,
+                    'language_id' => $language->language_id,
+                    'shortname' => $language->language->shortname ?? null,
+                    'title' => $language->title,
+                    'slug' => $language->slug,
+                    'description' => $language->description,
+                ]
+            ];
         });
 
-        
+        // Rather than pluck, build the keys for each field by language_id for all present languages
         return [
             'id' => $this->id,
-            'title'         => $translation?->title,
-            'slug'          => $translation?->slug,
-            'description'   => $translation?->description,
+            'categ_blog_id' => $this->categ_blog_id,
+            'title' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['title']]),
+            'slug' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['slug']]),
+            'description' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['description']]),
             'image' => $this->image_url,
             'date' => $this->date,
             'status' => $this->status,
@@ -33,14 +44,8 @@ class BlogResource extends JsonResource
             'relations' => [
                 'categ_blog_id' => [
                     'id' => $this->category?->id,
-                    'name' => $this->category?->name,
-                ],
-
-               
-
-                'courses' => [
-                    'id' => $this->course?->id,
-                    'name' => $this->course?->name,
+                    'name' => $this->category?->langs?->first()?->name ?? $this->category?->name,
+                    'slug' => $this->category?->langs?->first()?->slug,
                 ],
 
                 'user' => $this->whenLoaded('users', function () {

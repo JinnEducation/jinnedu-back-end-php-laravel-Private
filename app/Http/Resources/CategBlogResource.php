@@ -14,37 +14,17 @@ class CategBlogResource extends JsonResource
      */
     public function toArray($request)
     {
-       $translation = $this->whenLoaded('langs', function () {
-            return optional($this->langs->first());
-        });
+        $translation = $this->relationLoaded('langs') ? optional($this->langs->first()) : null;
 
         
         return [
             'id' => $this->id,
-            'name'         => $translation?->title,
+            'categ_blog_id' => $this->categ_blog_id,
+            'language_id' => $this->language_id,
+            'name'         => $translation?->name,
             'slug'          => $translation?->slug,
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
-           
-
-
-            'relations' => [
-                'blog_id' => [
-                    'id' => $this->blogs?->id,
-                    'name' => $this->blogs?->name,
-                ],
-
-                'user' => $this->whenLoaded('users', function () {
-                    return $this->users
-                        ? [
-                            'id'   => $this->users?->id,
-                            'name' => $this->users?->name,
-                        ]
-                        : null;
-                }),
-
-            
-            ],
         ];
     
     }

@@ -136,6 +136,8 @@ function filterDataTable($items, $request,$take = null,$resource = null)
 
 function uploadMedia($img,$validExtensions,$mainPath)
 {
+    $path = public_path('/');
+    
     set_time_limit(300);
     if(!$img) return null;
     if (!$img->getClientOriginalExtension()){
@@ -148,17 +150,18 @@ function uploadMedia($img,$validExtensions,$mainPath)
     if(!in_array($file_type,$validExtensions)) return null;
     $fileName = $file_type . '-'.time().uniqid().'.' . $img->getClientOriginalExtension();
     $datePath = date('Y').'/'. date('m').'/'. date('d');
-    $img->move('/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.$mainPath.'/'.$datePath,$fileName);
+    $img->move($path.$mainPath.'/'.$datePath,$fileName);
     /*$data['url'] = '/images/'.$fileName;
     $data['type'] = $file_type;*/
-    $optimizePath = optimizeImg('/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.$mainPath.'/'.$datePath.'/' , $fileName , $file_type);
+    $optimizePath = optimizeImg($path.$mainPath.'/'.$datePath.'/' , $fileName , $file_type);
     //return str_replace('/home/jinnedu/public_html/server','',$optimizePath);
-    return ['path'=>str_replace('/home/jinnedu/public_html/jinntest.jinnedu.com/server/','',$optimizePath), 'file'=>$fileName, 'name'=>$fileName, 'type'=> $file_type, 'extention'=>$file_type, 'size'=>0];
+    return ['path'=>str_replace($path,'',$optimizePath), 'file'=>$fileName, 'name'=>$fileName, 'type'=> $file_type, 'extention'=>$file_type, 'size'=>0];
 }
 
 function uploadFile($img,$validExtensions,$mainPath)
 {
     set_time_limit(300);
+    $path = public_path('/');
     //dd($img);
     if(!$img) return null;
     if (!$img->getClientOriginalExtension()){
@@ -171,11 +174,11 @@ function uploadFile($img,$validExtensions,$mainPath)
     if(!in_array($file_type,$validExtensions)) return null;
     $fileName = $file_type . '-'.time().uniqid().'.' . $img->getClientOriginalExtension();
     $datePath = date('Y').'/'. date('m').'/'. date('d');
-    $img->move('/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.$mainPath.'/'.$datePath,$fileName);
+    $img->move($path.$mainPath.'/'.$datePath,$fileName);
     /*$data['url'] = '/images/'.$fileName;
     $data['type'] = $file_type;*/
-    $optimizePath = optimizeImg('/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.$mainPath.'/'.$datePath.'/' , $fileName , $file_type);
-    return str_replace('/home/jinnedu/public_html/jinntest.jinnedu.com/server','',$optimizePath);
+    $optimizePath = optimizeImg($path.$mainPath.'/'.$datePath.'/' , $fileName , $file_type);
+    return str_replace($path,'',$optimizePath);
     //return '/'.$mainPath.'/'.$datePath.'/'.$fileName;
 }
 
@@ -215,6 +218,7 @@ function checkAllowFile($img,$validExtensions,$mainPath)
 
 function uploadImg($img)
 {
+    $path = public_path('/');
     set_time_limit(300);
     if(!$img) return null;
     if (!$img->getClientOriginalExtension()){
@@ -223,10 +227,10 @@ function uploadImg($img)
     $file_type = strtolower($img->getClientOriginalExtension());
     if($file_type=='jpeg') $file_type='jpg';
     $fileName = 'image-'.time().uniqid().'.' . $file_type;
-    $img->move('/home/jinnedu/public_html/jinntest.jinnedu.com/server/'.'images',$fileName);
-    $optimizePath = optimizeImg('/home/jinnedu/public_html/jinntest.jinnedu.com/server/images/' , $fileName , $file_type);
-    return str_replace('/home/jinnedu/public_html/jinntest.jinnedu.com/server','',$optimizePath);
-    $url = '/images/'.$fileName;
+    $img->move($path.'images',$fileName);
+    $optimizePath = optimizeImg($path.'images/' , $fileName , $file_type);
+    return str_replace($path,'',$optimizePath);
+    $url = $path.'images/'.$fileName;
     return $url;
 }
 
