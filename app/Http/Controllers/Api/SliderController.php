@@ -52,12 +52,12 @@ class SliderController extends Controller
                 }
 
                 $imagePath = $file->store('uploads/sliders', 'public');
-                $dataBlog['image'] = $imagePath;
+                $dataSlider['image'] = $imagePath;
             } else {
-                $dataBlog['image'] = $request->image ?? null;
+                $dataSlider['image'] = $request->image ?? null;
             }
 
-            // create blog
+          
              $slider = Slider::create( $dataSlider);
 
             foreach ($languages as $language) {
@@ -108,12 +108,10 @@ class SliderController extends Controller
             ]);
 
 
-            // if ($request->hasFile('image')) {
-            //     $dataBlog['image'] = $request->file('image')->store('uploads/blogs', 'public');
-            // }
+           
 
-            if (! empty($dataBlog)) {
-                 $slider->update($dataBlog);
+            if (! empty($dataSlider)) {
+                 $slider->update($dataSlider);
             }
 
             if (! empty($dataLang)) {
