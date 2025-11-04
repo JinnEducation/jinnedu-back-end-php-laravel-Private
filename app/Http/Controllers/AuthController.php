@@ -790,7 +790,7 @@ class AuthController extends Controller
 
                 $datePath = date('Y').'/'.date('m').'/'.date('d');
 
-                $path = public_path('/');
+                $path = storage_path('app/public/');
                 $destinationDirectory = $path.$directory.$datePath;
 
                 $moved = move_uploaded_file($tempPath, $destinationDirectory.'/'.$filename);

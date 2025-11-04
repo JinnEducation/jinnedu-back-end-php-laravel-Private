@@ -66,7 +66,7 @@ class Blog extends Model
         if (empty($this->image)) {
             return null;
         }
-        return asset($this->image);
+        return asset('storage/'.$this->image);
     }
 
     public function scopePublished($q)

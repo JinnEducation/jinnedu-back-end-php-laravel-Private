@@ -136,7 +136,7 @@ function filterDataTable($items, $request,$take = null,$resource = null)
 
 function uploadMedia($img,$validExtensions,$mainPath)
 {
-    $path = public_path('/');
+    $path = storage_path('app/public/');
     
     set_time_limit(300);
     if(!$img) return null;
@@ -161,7 +161,7 @@ function uploadMedia($img,$validExtensions,$mainPath)
 function uploadFile($img,$validExtensions,$mainPath)
 {
     set_time_limit(300);
-    $path = public_path('/');
+    $path = storage_path('app/public/');
     //dd($img);
     if(!$img) return null;
     if (!$img->getClientOriginalExtension()){
@@ -218,7 +218,7 @@ function checkAllowFile($img,$validExtensions,$mainPath)
 
 function uploadImg($img)
 {
-    $path = public_path('/');
+    $path = storage_path('app/public/');
     set_time_limit(300);
     if(!$img) return null;
     if (!$img->getClientOriginalExtension()){
@@ -230,8 +230,8 @@ function uploadImg($img)
     $img->move($path.'images',$fileName);
     $optimizePath = optimizeImg($path.'images/' , $fileName , $file_type);
     return str_replace($path,'',$optimizePath);
-    $url = $path.'images/'.$fileName;
-    return $url;
+    // $url = $path.'images/'.$fileName;
+    // return $url;
 }
 
 function imageExist($img , $default="uploads/no_images.jpg") {

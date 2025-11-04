@@ -21,7 +21,7 @@ class SliderController extends Controller
     public function index()
     {
         $slider = Slider::with('langs.language')
-            ->get();
+            ->paginate(10);
 
         return SliderResource::collection($slider);
     }
@@ -34,7 +34,7 @@ class SliderController extends Controller
         try {
             
          $dataSlider = $request->validate([
-            'image' => 'required|file|image', 
+            'image' => 'required', 
             'btn_url' => 'required',
         ]);
 
@@ -106,6 +106,19 @@ class SliderController extends Controller
                 'sub_title.*' => ['sometimes', 'required'],
                 'btn_name.*' => ['sometimes', 'required'],
             ]);
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+
+                if (! $file->isValid()) {
+                    return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                }
+
+                $imagePath = $file->store('uploads/sliders', 'public');
+                $dataSlider['image'] = $imagePath;
+            } else {
+                $dataSlider['image'] = $request->image ?? $slider->image;
+            }
 
 
            
