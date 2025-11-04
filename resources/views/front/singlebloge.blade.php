@@ -1,5 +1,4 @@
 <x-front-layout>
-
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] py-5 md:py-10">
         <!-- Main Container -->
@@ -35,9 +34,7 @@
 
             <!-- Section Title -->
             <h2 class="mb-6 text-3xl font-bold">{{ $blog->langs?->first()?->title }}</h2>
-
-            <div
-                class="flex flex-wrap lg:flex-nowrap relative gap-10 whitespace-nowrap py-4 mt-3 border-t border-[#E5E7EB]">
+            <div class="flex flex-wrap lg:flex-nowrap relative gap-10 whitespace-nowrap py-4 mt-3 border-t border-[#E5E7EB]">
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-clock text-primary"></i>
                     <span class="text-sm text-gray-400">{{ $blog->langs?->first()?->title }}</span>

@@ -7,85 +7,98 @@
         </div>
 
         <!-- Background Shape 2 - Top Right -->
-        <div class="absolute -top-[10px] right-0 w-auto pointer-none:nter-events-none h-shape1 animate-float-reverse"
-            id="shape2">
+        <div class="absolute -top-[10px] right-0 w-auto pointer-events-none h-shape1 animate-float-reverse" id="shape2">
             <img src="{{ asset('front/assets/imgs/hero/shape1.png') }}" alt="" class="h-full">
-
         </div>
 
-       <!-- Main Container -->
-<div class="container z-10 px-4 mx-auto w-full">
-    <div class="hero-main-container grid gap-8 lg:gap-12 items-center min-h-[600px]">
+        <!-- Main Container -->
+        <div class="container z-10 px-4 mx-auto w-full">
+            <div class="hero-main-container grid gap-8 lg:gap-12 items-center min-h-[600px]">
 
-        <!-- Text Content Section -->
-        <div class="order-2 lg:order-1">
-            <div class="hero-text-container relative h-[330px] overflow-hidden">
-                @foreach($sliders as $index => $slider)
-                    @php
-                        $isActive = $index === 0;
+                <!-- Text Content Section -->
+                <div class="order-2 lg:order-1">
+                    <div class="hero-text-container relative h-[330px] overflow-hidden">
+                        @foreach ($sliders as $index => $slider)
+                            @php
+                                $isActive = $index === 0;
 
-                        $langRow = null;
-                        if (isset($languageId) && $languageId) {
-                            $langRow = $slider->langs->firstWhere('language_id', $languageId);
-                        }
-                        $title = $langRow->title ?? '';
-                        $sub = $langRow->sub_title ?? '';
-                        $btnName = $langRow->btn_name ?? null;
-                        $btnUrl = $slider->btn_url ?? '#';
-                    @endphp
+                                $langRow = null;
+                                if (isset($languageId) && $languageId) {
+                                    $langRow = $slider->langs->firstWhere('language_id', $languageId);
+                                }
+                                $title = $langRow->title ?? '';
+                                $sub = $langRow->sub_title ?? '';
+                                $btnName = $langRow->btn_name ?? null;
+                                $btnUrl = $slider->btn_url ?? '#';
+                            @endphp
 
-                    <div class="flex absolute inset-0 justify-center items-center transition-opacity transition-transform duration-700 ease-out hero-slide lg:justify-start rtl:lg:justify-end {{ $isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16 hidden' }}"
-                        data-slide="{{ $index }}">
-                        <div class="slide-inner w-[75%] lg:w-full mx-auto lg:mx-0 text-center lg:text-left rtl:lg:text-right">
-                            <h1 class="mb-6 text-[25px] font-black leading-[1.5] text-gray-900 lg:text-5xl">
-                                {!! $title !!}
-                            </h1>
-                            <p class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
-                                {!! $sub !!}
-                            </p>
+                            <div class="flex absolute inset-0 justify-center items-center transition-opacity transition-transform duration-700 ease-out hero-slide lg:justify-start rtl:lg:justify-end {{ $isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16 hidden' }}"
+                                data-slide="{{ $index }}">
+                                <div
+                                    class="slide-inner w-[75%] lg:w-full mx-auto lg:mx-0 text-center lg:text-left rtl:lg:text-right">
+                                    <h1 class="mb-6 text-[25px] font-black leading-[1.5] text-gray-900 lg:text-5xl">
+                                        {!! $title !!}
+                                    </h1>
+                                    <p class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
+                                        {!! $sub !!}
+                                    </p>
 
-                            @if($index === 0)
-                                <div class="flex z-20 gap-2 justify-center my-4 lg:hidden dots-container">
-                                    @foreach($sliders as $i => $_s)
-                                        <button class="w-2 h-2 rounded-full transition-all duration-300 hero-dot {{ $i === 0 ? 'bg-primary' : 'bg-gray-300' }}" data-slide="{{ $i }}"></button>
-                                    @endforeach
+                                    @if ($index === 0)
+                                        <div class="flex z-20 gap-2 justify-center my-4 lg:hidden dots-container">
+                                            @foreach ($sliders as $i => $_s)
+                                                <button
+                                                    class="w-2 h-2 rounded-full transition-all duration-300 hero-dot {{ $i === 0 ? 'bg-primary' : 'bg-gray-300' }}"
+                                                    data-slide="{{ $i }}"></button>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    <div class="hero-cta">
+                                        @if ($btnName)
+                                            <a href="{{ $btnUrl }}"
+                                                class="overflow-hidden relative inline-block px-10 py-2 text-lg font-semibold text-white rounded-lg transition-all duration-300 transform md:px-12 md:py-4 bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
+                                                <span class="relative z-10">{!! $btnName !!}</span>
+                                                <div
+                                                    class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                                                </div>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
-                            @endif
-
-                            <div class="hero-cta">
-                                @if($btnName)
-                                    <a href="{{ $btnUrl }}" class="overflow-hidden relative inline-block px-10 py-2 text-lg font-semibold text-white rounded-lg transition-all duration-300 transform md:px-12 md:py-4 bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
-                                        <span class="relative z-10">{!! $btnName !!}</span>
-                                        <div class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10"></div>
-                                    </a>
-                                @endif
                             </div>
-                        </div>
+                        @endforeach
                     </div>
-                @endforeach
+                </div>
+
+                <!-- Image Section -->
+                <div class="order-1 lg:order-2 lg:aspect-[1/1] relative">
+                    <div
+                        class="flex overflow-hidden justify-center items-center hero-image-container md:items-end translate-y-[57px]">
+                        @foreach ($sliders as $index => $slider)
+                            @php
+                                $isActive = $index === 0;
+                                $imgPath = $slider->image ?? null;
+                                $imgUrl = $imgPath
+                                    ? asset('storage/' . ltrim($imgPath, '/'))
+                                    : asset('front/assets/imgs/hero/girl1.png');
+                                $langRow = null;
+                                if (isset($languageId) && $languageId) {
+                                    $langRow = $slider->langs->firstWhere('language_id', $languageId);
+                                }
+                                $slideTitle = $langRow->title ?? ($slider->title ?? 'Slider');
+                            @endphp
+
+                            <div class="flex justify-center items-center h-full transition-all duration-500 ease-out hero-image {{ $isActive ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-95 hidden' }}"
+                                data-slide="{{ $index }}">
+                                <img src="{{ $imgUrl }}" alt="{{ $slideTitle }}"
+                                    class="object-contain w-full max-w-full h-full">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
             </div>
         </div>
-
-        <!-- Image Section -->
-        <div class="order-1 lg:order-2 lg:aspect-[1/1] relative">
-            <div class="flex overflow-hidden justify-center items-center hero-image-container md:items-end translate-y-[57px]">
-                @foreach($sliders as $index => $slider)
-                    @php
-                        $isActive = $index === 0;
-                        $imgPath = $slider->image ?? null;
-                        $imgUrl = $imgPath ? asset('storage/' . ltrim($imgPath, '/')) : asset('front/assets/imgs/hero/girl1.png');
-                    @endphp
-
-                    <div class="flex justify-center items-center h-full transition-all duration-500 ease-out hero-image {{ $isActive ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-95 hidden' }}"
-                         data-slide="{{ $index }}">
-                        <img src="{{ $imgUrl }}" alt="{{ $title ?? 'slider' }}" class="object-contain w-full max-w-full h-full">
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
-    </div>
-</div>
 
 
         <!-- Navigation Buttons -->
@@ -117,12 +130,11 @@
         <!-- Dots Indicators -->
         <div
             class="hidden absolute left-1/2 z-20 gap-2 transform -translate-x-1/2 lg:flex bottom-37 md:bottom-8 dots-container">
-            <button class="w-2 h-2 rounded-full transition-all duration-300 bg-primary hero-dot"
-                data-slide="0"></button>
-            <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
-                data-slide="1"></button>
-            <button class="w-2 h-2 bg-gray-300 rounded-full transition-all duration-300 hero-dot"
-                data-slide="2"></button>
+            @foreach ($sliders as $i => $_slider)
+                <button
+                    class="w-2 h-2 rounded-full transition-all duration-300 hero-dot {{ $i === 0 ? 'bg-primary' : 'bg-gray-300' }}"
+                    data-slide="{{ $i }}"></button>
+            @endforeach
         </div>
     </section>
 
@@ -130,12 +142,12 @@
     <section class="py-16 bg-[#fcfcfc]">
         <div class="container mx-auto">
             @php
-            $initialVisibleCount = 4;
+                $initialVisibleCount = 4;
             @endphp
 
             <!-- Section Title -->
             <div class="mb-12 text-center">
-                <h2 class="mb-4 h-section">{{ label_text('global', 'Our Numbers', __('auth.Our Numbers')) }}</h2>
+                <h2 class="mb-4 h-section">{{ label_text('global', 'Our-Numbers', __('auth.Our Numbers')) }}</h2>
             </div>
 
             <!-- Statistics Grid -->
@@ -148,7 +160,7 @@
                         <div class="flex-none mr-4 rtl:mr-0 rtl:ml-4">
                             <!-- <i class="text-4xl transition-colors duration-300 text-primary fas fa-cog group-hover:text-primary-700"></i> -->
                             <img src="{{ asset('front/assets/imgs/our_number/approve.png') }}"
-                                alt="Educational Services">
+                                alt="{{ label_text('global', 'EDUCATIONAL-SERVICES', __('auth.EDUCATIONAL SERVICES')) }}">
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
@@ -156,9 +168,8 @@
                                     class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0">
                                     {{ $stats['services'] }}
                                 </span>
-                                <span
-                                    class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">
-                                    {{ label_text('global', 'EDUCATIONAL SERVICES', __('auth.EDUCATIONAL SERVICES')) }}
+                                <span class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">
+                                    {{ label_text('global', 'EDUCATIONAL-SERVICES', __('auth.EDUCATIONAL SERVICES')) }}
                                 </span>
                             </div>
                         </div>
@@ -183,7 +194,7 @@
 
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'STUDENTS COUNT', __('auth.STUDENTS COUNT')) }}
+                                    {{ label_text('global', 'STUDENTS-COUNT', __('auth.STUDENTS COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -207,7 +218,7 @@
 
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'TUTORS COUNT', __('auth.TUTORS COUNT')) }}
+                                    {{ label_text('global', 'TUTORS-COUNT', __('auth.TUTORS COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -230,7 +241,7 @@
                                     {{ $stats['courses'] }}
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'COURSES COUNT', __('auth.COURSES COUNT')) }}
+                                    {{ label_text('global', 'COURSES-COUNT', __('auth.COURSES COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -246,8 +257,7 @@
         <div class="container mx-auto">
             <!-- Section Title -->
             <h2 class="mb-6 text-center h-section">
-                {{ label_text('global', 'Recent courses', __('auth.Recent courses')) }}
-            </h2>
+                {{ label_text('global', 'Recent-courses', __('auth.Recent courses')) }}</h2>
             <!-- Category Filter -->
             <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
                 <!-- سهم يسار -->
@@ -264,18 +274,18 @@
                     <button
                         class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold"
                         data-type="all">
-                        {{ label_text('global', 'All categories', __('auth.All categories')) }}
+                        {{ label_text('global', 'All-categories', __('auth.All categories')) }}
                     </button>
                     @foreach ($categories as $cat)
-                    @php
-                    $catTitle = $cat->langs->first()->title ?? ($cat->name ?? 'Category');
-                    $isActive = (int) $categoryId === (int) $cat->id;
-                    @endphp
-                    <button
-                        class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="{{ $catTitle }}">
-                        {{ $catTitle }}
-                    </button>
+                        @php
+                            $catTitle = $cat->langs->first()->title ?? ($cat->name ?? 'Category');
+                            $isActive = (int) $categoryId === (int) $cat->id;
+                        @endphp
+                        <button
+                            class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
+                            data-type="{{ $catTitle }}">
+                            {{ $catTitle }}
+                        </button>
                     @endforeach
                 </div>
 
@@ -292,82 +302,84 @@
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
                 @php
-                $categoryTitlesMap = $categories->mapWithKeys(function ($cat) {
-                $title = optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
-                return [$cat->id => $title];
-                });
+                    $categoryTitlesMap = $categories->mapWithKeys(function ($cat) {
+                        $title = optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
+                        return [$cat->id => $title];
+                    });
                 @endphp
                 @foreach ($courses as $course)
-                @php
-                $langRow = $course->langs->first();
-                $title = $course->name ?? 'Course';
-                $about = $langRow->about ?? '';
+                    @php
+                        $langRow = $course->langs->first();
+                        $title = $course->name ?? 'Course';
+                        $about = $langRow->about ?? '';
 
-                $lessons = (int) ($course->lessons ?? 0);
-                $classLength = (int) ($course->class_length ?? 0);
-                $totalMinutes = $lessons * $classLength;
-                if ($totalMinutes >= 60) {
-                $h = intdiv($totalMinutes, 60);
-                $m = $totalMinutes % 60;
-                $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
-                } else {
-                $timeLabel = "{$totalMinutes} minutes";
-                }
-                $img = $course->imageInfo?->path
-                ? asset($course->imageInfo->path)
-                : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
-                $showUrl = route('courses.show', $course->slug ?? $course->id);
-                $courseCategoryTitle =
-                $categoryTitlesMap[$course->category_id] ??
-                (optional($course->category)->name ?? 'Category');
-                $shouldHideInitially = $loop->index >= $initialVisibleCount;
-                @endphp
-                <!-- Course Card 1 - Design (Original - No Changes) -->
-                <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="{{ $courseCategoryTitle }}"
-                    style="{{ $shouldHideInitially ? 'display: none;' : '' }}">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="{{ $img }}" alt="{{ $title }}"
-                            class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
-                        <p class="mb-4 text-[13px] text-black">
-                            {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">{{ $timeLabel }}</span>
+                        $lessons = (int) ($course->lessons ?? 0);
+                        $classLength = (int) ($course->class_length ?? 0);
+                        $totalMinutes = $lessons * $classLength;
+                        if ($totalMinutes >= 60) {
+                            $h = intdiv($totalMinutes, 60);
+                            $m = $totalMinutes % 60;
+                            $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
+                        } else {
+                            $timeLabel = "{$totalMinutes} minutes";
+                        }
+                        $img = $course->imageInfo?->path
+                            ? asset($course->imageInfo->path)
+                            : 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop';
+                        $showUrl = route('courses.show', $course->slug ?? $course->id);
+                        $courseCategoryTitle =
+                            $categoryTitlesMap[$course->category_id] ??
+                            (optional($course->category)->name ?? 'Category');
+                        $shouldHideInitially = $loop->index >= $initialVisibleCount;
+                    @endphp
+                    <!-- Course Card 1 - Design (Original - No Changes) -->
+                    <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                        data-type="{{ $courseCategoryTitle }}"
+                        style="{{ $shouldHideInitially ? 'display: none;' : '' }}">
+                        <div class="overflow-hidden relative h-48 rounded-sm">
+                            <img src="{{ $img }}" alt="{{ $title }}"
+                                class="object-cover w-full h-full">
+                        </div>
+                        <div class="pt-4">
+                            <h3 class="mb-2 text-lg font-bold text-black text-[18px]">{{ $title }}</h3>
+                            <p class="mb-4 text-[13px] text-black">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($about), 110) }}
+                            </p>
+                            <div class="pt-4 border-t border-[#E5E7EB]">
+                                <div
+                                    class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                    <div class="flex gap-2 items-center">
+                                        <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                        <span class="text-sm text-black">{{ $timeLabel }}</span>
+                                    </div>
+                                    <span
+                                        class="text-lg font-bold text-[#1B449C]">{{ label_text('global', 'Free', __('auth.Free')) }}</span>
                                 </div>
-                                <span class="text-lg font-bold text-[#1B449C]">{{ label_text('global', 'Free', __('auth.Free')) }}</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    {{ label_text('global', 'Preview this courses', __('auth.Preview this courses')) }}
-                                </a>
+                                <div
+                                    class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                    <a href="#"
+                                        class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                        {{ label_text('global', 'Preview this courses', __('auth.Preview this courses')) }}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
 
             @if ($courses->count() > $initialVisibleCount)
-            <!-- Load More Button -->
-            <div class="text-center">
-                <button id="loadMoreBtn"
-                    class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                    <span class="relative z-10">{{ label_text('global', 'Load More', __('auth.Load More')) }}</span>
-                    <div
-                        class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
-                    </div>
-                </button>
-            </div>
+                <!-- Load More Button -->
+                <div class="text-center">
+                    <button id="loadMoreBtn"
+                        class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
+                        <span
+                            class="relative z-10">{{ label_text('global', 'Load More', __('auth.Load More')) }}</span>
+                        <div
+                            class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                        </div>
+                    </button>
+                </div>
             @endif
 
         </div>
@@ -662,84 +674,84 @@
                         <div class="swiper-wrapper">
                             <!-- Tutor Cards -->
                             @forelse($tutors as $tutor)
-                            @php
-                            // الصورة
-                            $avatar = $tutor->avatar
-                            ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
-                            ? $tutor->avatar
-                            : asset($tutor->avatar))
-                            : asset('front/assets/imgs/tutors/1.jpg');
+                                @php
+                                    // الصورة
+                                    $avatar = $tutor->avatar
+                                        ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
+                                            ? $tutor->avatar
+                                            : asset($tutor->avatar))
+                                        : asset('front/assets/imgs/tutors/1.jpg');
 
-                            // الدولة
-                            $country = $tutor->abouts?->country?->name ?? '—';
+                                    // الدولة
+                                    $country = $tutor->abouts?->country?->name ?? '—';
 
-                            // التخصص (أول وصف)
-                            $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
+                                    // التخصص (أول وصف)
+                                    $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
 
-                            // تقييم "ستاتيك" مؤقتًا
-                            $avg = 4.0;
-                            $maxStars = 5;
-                            $fullStars = (int) floor($avg);
-                            @endphp
+                                    // تقييم "ستاتيك" مؤقتًا
+                                    $avg = 4.0;
+                                    $maxStars = 5;
+                                    $fullStars = (int) floor($avg);
+                                @endphp
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
-                                    <div class="flex justify-center mb-6">
-                                        <img src="{{ $avatar }}" alt="{{ $tutor->name }}"
-                                            class="object-cover rounded-full w-31 h-31">
-                                    </div>
-
-                                    <div class="text-left rtl:text-left">
-                                        <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
-                                        <p class="mb-4 font-medium text-black">{{ $spec }}</p>
-
-                                        <div class="flex items-center mb-4 text-gray-500">
-                                            <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
-                                                <svg width="14" height="22" viewBox="0 0 14 22"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
-                                                        fill="#1B449C" />
-                                                </svg>
-                                            </i>
-                                            <span class="text-sm">{{ $country }}</span>
+                                <div class="swiper-slide">
+                                    <div
+                                        class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+                                        <div class="flex justify-center mb-6">
+                                            <img src="{{ $avatar }}" alt="{{ $tutor->name }}"
+                                                class="object-cover rounded-full w-31 h-31">
                                         </div>
 
-                                        <div class="flex flex-col items-left rtl:items-right">
-                                            <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
-                                                @for ($i = 1; $i <= $maxStars; $i++)
-                                                    @if ($i <=$fullStars)
-                                                    <i class="mr-1 fas fa-star text-[#FFC700]"></i>
-                                                    @else
-                                                    <i class="mr-1 fas fa-star text-gray-300"></i>
-                                                    @endif
-                                                    @endfor
+                                        <div class="text-left rtl:text-left">
+                                            <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
+                                            <p class="mb-4 font-medium text-black">{{ $spec }}</p>
+
+                                            <div class="flex items-center mb-4 text-gray-500">
+                                                <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
+                                                    <svg width="14" height="22" viewBox="0 0 14 22"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M11.6667 6.38C11.6667 5.50976 11.393 4.65907 10.8802 3.93549C10.3674 3.21192 9.63858 2.64796 8.78586 2.31493C7.93313 1.9819 6.99482 1.89477 6.08958 2.06454C5.18433 2.23432 4.35281 2.65338 3.70017 3.26873C3.04752 3.88408 2.60307 4.66809 2.423 5.5216C2.24294 6.37512 2.33535 7.25981 2.68856 8.06381C3.04177 8.8678 3.63991 9.55499 4.40734 10.0385C5.17477 10.5219 6.07702 10.78 7 10.78C8.23724 10.7787 9.42341 10.3147 10.2983 9.48981C11.1731 8.66493 11.6653 7.54655 11.6667 6.38ZM3.26667 6.38C3.26667 5.68381 3.48562 5.00325 3.89585 4.42439C4.30607 3.84553 4.88914 3.39437 5.57131 3.12794C6.25349 2.86152 7.00414 2.79182 7.72834 2.92764C8.45253 3.06346 9.11775 3.3987 9.63986 3.89098C10.162 4.38327 10.5175 5.01047 10.6616 5.69328C10.8057 6.3761 10.7317 7.08385 10.4492 7.72705C10.1666 8.37024 9.68807 8.91999 9.07413 9.30677C8.46019 9.69356 7.73838 9.9 7 9.9C6.01021 9.89893 5.06128 9.52773 4.36139 8.86783C3.6615 8.20794 3.2678 7.31323 3.26667 6.38ZM8.86895 19.4734C11.3704 16.5803 14 9.2752 14 6.6C14 4.84957 13.2625 3.17084 11.9497 1.9331C10.637 0.695355 8.85651 0 7 0C5.14348 0 3.36301 0.695355 2.05025 1.9331C0.737498 3.17084 0 4.84957 0 6.6C0 9.2752 2.62957 16.5806 5.13105 19.4734C4.01954 19.6165 2.8 19.9412 2.8 20.68C2.8 21.9364 6.29865 22 7 22C7.70135 22 11.2 21.9364 11.2 20.68C11.2 19.9408 9.98046 19.6165 8.86895 19.4734ZM7 0.88C8.60842 0.881712 10.1504 1.4849 11.2878 2.55724C12.4251 3.62958 13.0649 5.08349 13.0667 6.6C13.0667 10.3009 8.70077 19.8 7 19.8C5.29923 19.8 0.933333 10.3009 0.933333 6.6C0.935149 5.08349 1.5749 3.62958 2.71222 2.55724C3.84955 1.4849 5.39158 0.881712 7 0.88ZM7 21.12C5.93405 21.1682 4.8684 21.0192 3.86321 20.6813C4.53795 20.4336 5.25266 20.2965 5.97641 20.2761C6.26171 20.5124 6.62119 20.6543 7 20.68C7.37881 20.6543 7.73829 20.5124 8.02359 20.2761C8.74734 20.2966 9.46203 20.4336 10.1368 20.6813C9.1316 21.0192 8.06595 21.1682 7 21.12Z"
+                                                            fill="#1B449C" />
+                                                    </svg>
+                                                </i>
+                                                <span class="text-sm">{{ $country }}</span>
                                             </div>
-                                            <span class="mt-2 text-sm text-gray-500">
-                                                {{ number_format($avg, 1) }} / 5
-                                            </span>
-                                        </div>
 
-                                        <div class="flex gap-2 justify-between my-3">
-                                            <button
-                                                class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
-                                                Trial Lesson
-                                            </button>
-                                            <button
-                                                class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
-                                                Message
-                                            </button>
+                                            <div class="flex flex-col items-left rtl:items-right">
+                                                <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
+                                                    @for ($i = 1; $i <= $maxStars; $i++)
+                                                        @if ($i <= $fullStars)
+                                                            <i class="mr-1 fas fa-star text-[#FFC700]"></i>
+                                                        @else
+                                                            <i class="mr-1 fas fa-star text-gray-300"></i>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+                                                <span class="mt-2 text-sm text-gray-500">
+                                                    {{ number_format($avg, 1) }} / 5
+                                                </span>
+                                            </div>
+
+                                            <div class="flex gap-2 justify-between my-3">
+                                                <button
+                                                    class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
+                                                    Trial Lesson
+                                                </button>
+                                                <button
+                                                    class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
+                                                    Message
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             @empty
-                            <div class="swiper-slide">
-                                <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
-                                    لا يوجد مدرّسون لعرضهم حالياً.
+                                <div class="swiper-slide">
+                                    <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
+                                        لا يوجد مدرّسون لعرضهم حالياً.
+                                    </div>
                                 </div>
-                            </div>
 
                             @endforelse
                         </div>
