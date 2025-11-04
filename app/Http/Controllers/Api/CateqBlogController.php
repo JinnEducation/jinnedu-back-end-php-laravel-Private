@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Language;
-use App\Models\CateqBlog;
-use Illuminate\Http\Request;
-use App\Models\CategBlogLang;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Response;
 use App\Http\Resources\CategBlogResource;
+use App\Models\CateqBlog;
+use App\Models\CategBlogLang;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CateqBlogController extends Controller
 {
@@ -19,114 +18,115 @@ class CateqBlogController extends Controller
 
     public function index(Request $request)
     {
-
         $cateqs = CateqBlog::filter($request->query())
-            ->with('users:id,name', 'langs')
-            ->paginate();
+            ->with('users:id,name', 'langsAll.language')
+            ->paginate(10);
+
         return CategBlogResource::collection($cateqs);
     }
 
     public function store(Request $request)
     {
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+            $dataCateqBlog = $request->validate([
+                'is_active' => 'required',
+                'sort_order' => 'required',
+                'user_id' => 'required|exists:users,id',
+            ]);
 
-        $langShort = $request->header('lang');
-        $language = $langShort
-            ? Language::where('shortname', $langShort)->first()
-            : null;
+            $dataLang = $request->validate([
+                'name.*' => 'required|string',
+                'slug.*' => 'required|string|unique:categ_blog_langs,slug',
+            ]);
 
-        $languageId = $language?->id ?? $request->input('language_id');
+            // create categblog
+            $categblog = CateqBlog::create($dataCateqBlog);
 
-      $dataCategBlog =  $request->validate([
-            'sort_order' => 'required',
-            'is_active' => 'required',
-            'user_id' => 'required',
-        ]);
+            foreach ($languages as $language) {
+                CategBlogLang::create([
+                    'language_id' => $language['id'],
+                    'categ_blog_id'      => $categblog->id,
+                    'name'        => $dataLang['name'][$language['id']],
+                    'slug'         => $dataLang['slug'][$language['id']],
+                ]);
+            }
 
-         $dataCategBlogLang = $request->validate([
-        'name'       => 'required|string',
-        'slug'        => 'required|string|unique:categ_blog_langs,slug',
-       
-    ]);
+            $categblog->load(['users:id,name', 'langsAll.language']);
+            DB::commit();
 
-    // create blog
-    $categblog = CateqBlog::create($dataCategBlog);
+            return response()->json($categblog);
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-    CategBlogLang::create([
-        'categ_blog_id'      => $categblog->id,
-        'language_id'  => $languageId,
-        'name'        => $dataCategBlogLang['name'],
-        'slug'         => $dataCategBlogLang['slug'],
-    ]);
-
-    $categblog->load(['users:id,name','blog_id', 'langs']);
-
-    
-    return response()->json( $categblog);
-
-        
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
-
-
 
     public function show($id)
     {
 
-        $cateq = CateqBlog::findOrFail($id);
-        return Response::json($cateq);
-    }
-
-
-    public function update(Request $request, $id)
-    {
-
-        $categblog = CateqBlog::findOrFail($id);
-
-        $langShort = $request->header('lang');
-        $language = $langShort ? Language::where('shortname', $langShort)->first() : null;
-        $languageId = $language?->id ?? $request->input('language_id');
-
-        $dataCategBlog = $request->validate([
-            'sort_order'  => ['sometimes', 'required'],
-            'is_active'  => ['sometimes', 'required'],
-            'user_id'       => ['sometimes', 'required', 'integer', 'exists:users,id'],
-        ]);
-
-        $dataCategBlogLang = $request->validate([
-            'name'       => ['sometimes', 'required'],
-            'slug'        => ['sometimes', 'required'],
-           
-        ]);
-
-
-        if (!empty($dataCategBlog)) {
-            $categblog->update($dataCategBlog);
-        }
-
-
-        if (!empty($dataCategBlogLang)) {
-            $langRow = CategBlogLang::firstOrNew([
-                'categ_blog_id'     => $categblog->id,
-                'language_id' => $languageId,
-            ]);
-
-            if (array_key_exists('name', $dataCategBlogLang))       $langRow->title = $dataCategBlogLang['title'];
-            if (array_key_exists('slug',$dataCategBlogLang))        $langRow->slug = $dataCategBlogLang['slug'];
-           
-
-            $langRow->save();
-        }
-
-       $categblog->load(['users:id,name', 'blogs', 'langs']);
+        $categblog = CateqBlog::with(['users:id,name', 'langsAll.language'])
+            ->findOrFail($id);
 
         return new CategBlogResource($categblog);
     }
 
+    public function update(Request $request, $id)
+    {
+        $categblog = CateqBlog::findOrFail($id);
+        $languages = $request->langs;
+        DB::beginTransaction();
+        try {
+            $dataCateqBlog = $request->validate([
+                'is_active' => ['sometimes', 'required'],
+                'sort_order' => ['sometimes', 'required'],
+                'user_id' => ['sometimes', 'required', 'integer', 'exists:users,id'],
+            ]);
+
+            $dataLang = $request->validate([
+                'name.*' => ['sometimes', 'required'],
+                'slug.*' => [
+                    'sometimes',
+                    'required',
+                ],
+            ]);
+
+            if (! empty($dataCateqBlog)) {
+                $categblog->update($dataCateqBlog);
+            }
+
+            if (! empty($dataLang)) {
+                foreach($languages as $language){
+                    CategBlogLang::updateOrCreate([
+                        'categ_blog_id' => $categblog->id,
+                        'language_id' => $language['id'],
+                    ], [
+                        'name' => $dataLang['name'][$language['id']],
+                        'slug' => $dataLang['slug'][$language['id']],
+                    ]);
+                }
+            }
+
+            $categblog->load(['users:id,name', 'langsAll.language']);
+            DB::commit();
+
+            return new CategBlogResource($categblog);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 
     public function destroy($id)
     {
         CateqBlog::destroy($id);
+
         return response()->json([
-            'message' => 'Cateqory Blog deleted successfully',
+            'message' => 'CateqBlog deleted successfully',
 
         ], 204);
     }

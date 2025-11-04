@@ -14,15 +14,24 @@ class CategBlogResource extends JsonResource
      */
     public function toArray($request)
     {
-        $translation = $this->relationLoaded('langs') ? optional($this->langs->first()) : null;
+        // Ensure all languages are included in the mapped result and properly grouped by language_id
+        $languages = $this->langsAll->mapWithKeys(function ($language) {
+            return [
+                $language->language_id => [
+                    'id' => $language->id,
+                    'language_id' => $language->language_id,
+                    'shortname' => $language->language->shortname ?? null,
+                    'name' => $language->name,
+                    'slug' => $language->slug,
+                ]
+            ];
+        });
 
-        
+        // Rather than pluck, build the keys for each field by language_id for all present languages
         return [
             'id' => $this->id,
-            'categ_blog_id' => $this->categ_blog_id,
-            'language_id' => $this->language_id,
-            'name'         => $translation?->name,
-            'slug'          => $translation?->slug,
+            'name' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['name']]),
+            'slug' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['slug']]),
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
         ];

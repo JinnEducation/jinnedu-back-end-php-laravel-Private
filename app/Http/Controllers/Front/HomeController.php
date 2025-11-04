@@ -102,68 +102,75 @@ class HomeController extends Controller
         $languageId = $language ? $language->id : null;
 
 
-        $categoriesQuery = CategBlogLang::query();
+        $categoriesQuery = CateqBlog::with('langsAll.language');
+
         if ($languageId) {
-            $categoriesQuery->where('language_id', $languageId);
+            $categoriesQuery->whereHas('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            });
         }
-        $categories = $categoriesQuery->orderBy('name')->get();
+        $categories = $categoriesQuery->get();
 
         $categorySlug = $request->query('category');
 
-        $blogsQuery = Blog::query()
-            ->with(['category.langs'])
+        $blogsQuery = Blog::filter($request->query())
+            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
             ->published();
 
-        if ($categorySlug && $languageId) {
-            $blogsQuery->whereHas('category.langs', function ($c) use ($categorySlug, $languageId) {
-                $c->where('slug', $categorySlug)
-                    ->where('language_id', $languageId);
-            });
-        } elseif ($categorySlug && ! $languageId) {
-
-            $blogsQuery->whereHas('category.langs', function ($c) use ($categorySlug) {
-                $c->where('slug', $categorySlug);
+        if ($languageId) {
+            $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
             });
         }
 
-        $blogs = $blogsQuery
-            ->orderByDesc('date')
-            ->paginate($perPage)
-            ->withQueryString();
-
-        return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'perPage', 'allowedPerPage', 'languageId'));
+        $blogs = $blogsQuery->get();
+        return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'languageId'));
     }
 
     public function showBlog(Request $request, string $slug)
     {
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+
+        if (! $language) {
+
+            $language = Language::where('main', 1)->first();
+        }
+
+        if (! $language) {
+
+            $language = Language::first();
+        }
+
+        $languageId = $language ? $language->id : null;
+
         $slug = (string) $request->route('slug', $slug);
 
-        $blog = Blog::query()
-            ->published()
-            ->where('slug', $slug)
-            ->with([
-                'category:id,name,slug',
-                'users:id,name',
-                'courses' => function ($q) {
-                    $q->select(
-                        'id',
-                        'name',
-                        'image',
-                        'lessons',
-                        'class_length',
-                        'category_id',
-                        'blog_id',
-                        'publish',
-                        'publish_date'
-                    )
-                        ->where('publish', 1)
-                        ->orderByDesc('publish_date');
-                    $q->with(['category:id,name']);
-                },
-            ])
-            ->firstOrFail();
+        $blogQuery = Blog::with('category', 'category.langs', 'users:id,name', 'langsAll.language');
 
-        return view('front.singlebloge', compact('blog'));
+        if ($languageId) {
+            $blogQuery->whereHas('langsAll', function ($query) use ($languageId,$slug) {
+                $query->where('language_id', $languageId);
+                $query->where('slug', $slug);
+            });
+        }
+
+        $blog = $blogQuery->first();
+
+        $blogsQuery = Blog::filter($request->query())
+            // ->where('id', '!=', $blog->id)
+            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+            ->published();
+
+        if ($languageId) {
+            $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            });
+        }
+
+        $blogs = $blogsQuery->get();
+
+        return view('front.singlebloge', compact('blog','blogs'));
     }
 
     public function contact_us()

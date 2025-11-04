@@ -28,23 +28,23 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-gray-900">{{ $blog->title }}</span>
+                        <span class="text-gray-900">{{ $blog->langs?->first()?->title }}</span>
                     </li>
                 </ul>
             </nav>
 
             <!-- Section Title -->
-            <h2 class="mb-6 text-3xl font-bold">{{ $blog->title }}</h2>
+            <h2 class="mb-6 text-3xl font-bold">{{ $blog->langs?->first()?->title }}</h2>
 
             <div
                 class="flex flex-wrap lg:flex-nowrap relative gap-10 whitespace-nowrap py-4 mt-3 border-t border-[#E5E7EB]">
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-clock text-primary"></i>
-                    <span class="text-sm text-gray-400">{{ $blog->title }}</span>
+                    <span class="text-sm text-gray-400">{{ $blog->langs?->first()?->title }}</span>
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-clock text-primary"></i>
-                    <span class="text-sm text-gray-400">Category : {{ $blog->category->name }}</span>
+                    <span class="text-sm text-gray-400">Category : {{ $blog->category->langs?->first()?->title }}</span>
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-user text-primary"></i>
@@ -60,18 +60,17 @@
             <div class="grid grid-cols-1 gap-12 md:mb-12 md:gap-20 md:grid-cols-3" id="coursesGridBlogs">
                 <div class="flex flex-col gap-4 items-start text-justify md:col-span-2 md:text-start">
                     <p>
-                        {!! $blog->description !!}
+                        {!! $blog->langs?->first()?->description !!}
                     </p>
                 </div>
                 <div class="md:px-6 md:col-span-1">
                     <h3 class="mb-4 text-2xl font-bold">Explore Related Courses</h3>
-                    <!-- Courses Grid -->
                     <div class="grid grid-cols-1 gap-7 mb-12 md:gap-5" id="coursesGridBlog">
-                        @foreach ($blog->courses as $course)
+                        @foreach ($blogs as $blog)
                             <div
                                 class="block overflow-hidden bg-white rounded-md shadow-md transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102">
                                 <div class="overflow-hidden relative h-67 group">
-                                    <img src="{{ $course->image }}" alt="{{ $course->name }}"
+                                    <img src="{{ $blog->image_url }}" alt="{{ $blog->langs?->first()?->title }}"
                                         class="object-cover w-full h-full">
                                     <div class="absolute right-2 top-4">
                                         <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">Free
@@ -80,16 +79,16 @@
                                     <div
                                         class="absolute top-0 left-0 w-full h-full opacity-0 transition-all duration-300 bg-black/50 group-hover:opacity-100">
                                         <div class="flex justify-center items-center h-full">
-                                            <a href="#"
+                                            <a href="{{ route('site.showBlog', $blog->langs?->first()?->slug) }}"
                                                 class="px-8 py-4 text-lg text-white rounded-lg bg-primary">Load
                                                 More</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="p-4 pb-0">
-                                    <h3 class="mb-2 font-semibold text-black text-md">{{ $course->name }}</h3>
+                                    <h3 class="mb-2 font-semibold text-black text-md">{{ $blog->langs?->first()?->title }}</h3>
                                     <p class="my-6 text-[13px] text-gray-700">
-                                        {{ \Illuminate\Support\Str::limit($course->metadata, 120) }}
+                                        {{ \Illuminate\Support\Str::limit($blog->langs?->first()?->description, 120) }}
                                     </p>
                                     <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                                         <div class="flex justify-between items-center transition-all duration-300">
@@ -103,14 +102,13 @@
                                                     </svg>
                                                 </i>
                                                 <span class="text-sm text-gray-400">level :
-                                                    {{ $course->lessons }}</span>
+                                                    {{ $blog->lessons }}</span>
                                             </div>
 
                                             <div class="flex gap-1 items-center">
                                                 <i class="text-lg fas fa-clock text-primary"></i>
                                                 <span
-                                                    class="text-sm font-bold text-gray-400">{{ $course->class_length }}
-                                                    learning hours</span>
+                                                    class="text-sm font-bold text-gray-400">{{ $blog->date }}</span>
                                             </div>
                                         </div>
                                     </div>
