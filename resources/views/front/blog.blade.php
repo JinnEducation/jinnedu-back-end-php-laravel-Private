@@ -85,7 +85,7 @@
                             {{ $blog->langsAll?->first()?->title }}
                         </h3>
                         <p class="mb-4 text-[13px] text-gray-400">
-                            {!! $blog->langsAll?->first()?->description !!}
+                            {!! \Illuminate\Support\Str::limit($blog->langsAll?->first()?->description, 120) !!}
                         </p>
                         <div class="flex justify-between items-center">
                             <div class="flex gap-2 items-center">
