@@ -79,13 +79,6 @@ class HomeController extends Controller
 
     public function blog(Request $request)
     {
-        $perPage = (int) $request->input('per_page', 9);
-        $allowedPerPage = [6, 9, 12];
-        if (! in_array($perPage, $allowedPerPage)) {
-            $perPage = 9;
-        }
-
-
         $locale = app()->getLocale();
         $language = Language::where('shortname', $locale)->first();
 
@@ -101,33 +94,58 @@ class HomeController extends Controller
 
         $languageId = $language ? $language->id : null;
 
+        // جلب جميع الفئات مع كل الترجمات
+        $categories = CateqBlog::with('langsAll')->get();
 
-        $categoriesQuery = CateqBlog::with('langsAll.language');
+        // لكل فئة، نحدد الترجمة المناسبة للعرض
+        $categories->each(function ($category) use ($languageId) {
+            // نحاول الحصول على الترجمة باللغة الحالية
+            $translation = $category->langsAll->where('language_id', $languageId)->first();
+            
+            // إذا لم نجد ترجمة باللغة الحالية، نأخذ أول ترجمة متاحة
+            if (!$translation) {
+                $translation = $category->langsAll->first();
+            }
+            
+            // نستبدل langsAll بـ collection يحتوي على ترجمة واحدة فقط
+            $category->setRelation('langsAll', collect([$translation]));
+        });
 
-        if ($languageId) {
-            $categoriesQuery->whereHas('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            });
-        }
-        $categories = $categoriesQuery->get();
-        $categorySlug = $request->query('category');
 
+        // جلب جميع المدونات المنشورة مع كل الترجمات
         $blogsQuery = Blog::filter($request->query())
-            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+            ->with('category', 'category.langsAll', 'users:id,name', 'langsAll')
             ->published();
 
-        if ($languageId) {
-            $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            });
-        }
-
         $blogs = $blogsQuery->get();
-        return view('front.blog', compact('categories', 'blogs', 'categorySlug', 'languageId'));
+
+        // لكل مدونة، نحدد الترجمة المناسبة للعرض
+        $blogs->each(function ($blog) use ($languageId) {
+            // نحاول الحصول على الترجمة باللغة الحالية
+            $translation = $blog->langsAll->where('language_id', $languageId)->first();
+            
+            // إذا لم نجد ترجمة باللغة الحالية، نأخذ أول ترجمة متاحة
+            if (!$translation) {
+                $translation = $blog->langsAll->first();
+            }
+            
+            // نستبدل langsAll بـ collection يحتوي على ترجمة واحدة فقط
+            $blog->setRelation('langsAll', collect([$translation]));
+
+            // نفس الشيء للفئة الخاصة بالمدونة
+            if ($blog->category) {
+                $categoryTranslation = $blog->category->langsAll->where('language_id', $languageId)->first();
+                
+                if (!$categoryTranslation) {
+                    $categoryTranslation = $blog->category->langsAll->first();
+                }
+                
+                // نستبدل langsAll للفئة بـ collection يحتوي على ترجمة واحدة فقط
+                $blog->category->setRelation('langsAll', collect([$categoryTranslation]));
+            }
+        });
+
+        return view('front.blog', compact('categories', 'blogs', 'languageId'));
     }
 
     public function showBlog(Request $request, string $slug)
@@ -148,35 +166,70 @@ class HomeController extends Controller
         $languageId = $language ? $language->id : null;
         $slug = (string) $request->route('slug', $slug);
 
-        $blogQuery = Blog::with('category', 'category.langs', 'users:id,name', 'langsAll.language');
+        // البحث عن المدونة بناءً على slug في علاقة langsAll
+        $blog = Blog::with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+            ->whereHas('langsAll', function ($query) use ($slug) {
+                $query->where('slug', $slug);
+            })
+            ->first();
 
-        if ($languageId) {
-            $blogQuery->whereHas('langsAll', function ($query) use ($languageId,$slug) {
-                $query->where('language_id', $languageId);
-                $query->where('slug', $slug);
-            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId,$slug) {
-                $query->where('language_id', $languageId);
-                $query->where('slug', $slug);
-            });;
+        // إذا لم نجد المدونة نهائياً، نرجع 404
+        if (!$blog) {
+            abort(404);
         }
 
-        $blog = $blogQuery->first();
-        $blogsQuery = Blog::filter($request->query())
+        // إذا وجدنا المدونة، نتحقق من اللغة الحالية
+        // إذا كانت اللغة الحالية مختلفة عن لغة الـ slug، نعيد تحميل البيانات باللغة الصحيحة
+        $currentSlugLang = $blog->langsAll->where('slug', $slug)->first();
+        
+        if ($currentSlugLang && $languageId && $currentSlugLang->language_id != $languageId) {
+            // نبحث عن الترجمة باللغة الحالية
+            $translationInCurrentLang = $blog->langsAll->where('language_id', $languageId)->first();
             
-            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
-            ->published();
-
-        if ($languageId) {
-            $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
-                $query->where('language_id', $languageId);
-            });;
-
+            if ($translationInCurrentLang && $translationInCurrentLang->slug) {
+                // إعادة توجيه للـ slug الصحيح باللغة الحالية
+                return redirect()->route('site.showBlog', $translationInCurrentLang->slug);
+            }
         }
-        $blogsQuery->where('id', '!=', $blog?->id);
 
-        $blogs = $blogsQuery->get();
+        // نتأكد من تحميل البيانات باللغة الصحيحة
+        $blog->load(['langsAll' => function($query) use ($languageId) {
+            if ($languageId) {
+                $query->where('language_id', $languageId);
+            }
+        }]);
+
+        // إذا لم نجد بيانات باللغة الحالية، نجيب أول لغة متاحة
+        if ($blog->langsAll->isEmpty()) {
+            $blog->load(['langsAll' => function($query) {
+                $query->orderBy('id', 'asc')->limit(1);
+            }]);
+        }
+
+        // جلب المدونات الأخرى (باستثناء المدونة الحالية)
+        $blogsQuery = Blog::filter($request->query())
+            ->with(['category', 'category.langs', 'users:id,name', 'langsAll' => function($query) use ($languageId) {
+                // نجيب اللغة المطلوبة أولاً
+                if ($languageId) {
+                    $query->where('language_id', $languageId);
+                }
+            }, 'langsAll.language'])
+            ->published()
+            ->where('id', '!=', $blog->id);
+
+        $blogs = $blogsQuery->take(5)->get();
+
+        // لو المدونات ما فيها بيانات باللغة المطلوبة، نجيب أول لغة متاحة
+        $blogs = $blogs->map(function($blogItem) use ($languageId) {
+            // إذا ما في بيانات باللغة الحالية
+            if ($blogItem->langsAll->isEmpty() || !$blogItem->langsAll->where('language_id', $languageId)->first()) {
+                // نجيب أول لغة متاحة
+                $blogItem->load(['langsAll' => function($query) {
+                    $query->orderBy('id', 'asc')->limit(1);
+                }]);
+            }
+            return $blogItem;
+        });
 
         return view('front.singlebloge', compact('blog','blogs'));
     }

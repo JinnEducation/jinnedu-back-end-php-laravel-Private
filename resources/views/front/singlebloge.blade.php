@@ -88,7 +88,7 @@
                                 <div class="p-4 pb-0">
                                     <h3 class="mb-2 font-semibold text-black text-md">{{ $blog->langsAll?->first()?->title }}</h3>
                                     <p class="my-6 text-[13px] text-gray-700">
-                                        {{ \Illuminate\Support\Str::limit($blog->langsAll?->first()?->description, 120) }}
+                                        {!! \Illuminate\Support\Str::limit($blog->langsAll?->first()?->description, 120) !!}
                                     </p>
                                     <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                                         <div class="flex justify-between items-center transition-all duration-300">
@@ -137,5 +137,9 @@
             </div>
         </div>
     </section>
+
+    @push('scripts')
+        <script src="{{ asset('front/assets/js/article.js') }}"></script>
+    @endpush
 
 </x-front-layout>
