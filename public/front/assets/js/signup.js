@@ -88,7 +88,7 @@ $(function () {
         accountType = $(this).data('account');
         localStorage.setItem('accountType', accountType);
         $('#account-type').val(accountType)
-        if (accountType === 'student') {
+        if (accountType === 1) {
             // إخفاء الخطوات 1 و2 فقط
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
@@ -100,7 +100,7 @@ $(function () {
                 }
             });
         }
-        if (accountType === 'tutor') {
+        if (accountType === 2) {
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
                 // $(this).show();
@@ -215,7 +215,7 @@ $(function () {
         if (filled && passwordsOK) {
             $googleBtn.fadeOut(200, function () {
                 console.log($account_type);
-                if($account_type == 'student') {
+                if($account_type == 1) {
                     $submitBtn.fadeIn(200);
                 } else {
                     $continueBtn.fadeIn(200);
