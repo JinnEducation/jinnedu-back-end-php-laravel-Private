@@ -540,53 +540,63 @@
                 </div>
             </div>
 
-            <!-- Auth Section -->
-            <div class="pt-4 mt-4 space-y-2 border-t border-gray-100 guest-auth">
-                <button type="button" data-open="#loginModal"
-                    class="flex justify-center items-center px-3 py-2 text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
-                    <i class="fas fa-sign-in-alt text-primary-600 me-2"></i>
-                    <span>Login</span>
-                </button>
-                <a href="./signup.html"
-                    class="flex justify-center items-center px-3 py-2 text-white rounded-lg transition-colors duration-200 bg-primary-600 hover:bg-primary-700">
-                    <i class="fas fa-user-plus me-2"></i>
-                    <span>Sign Up</span>
-                </a>
-
-            </div>
-
-            <div class="hidden mobile-dropdown user-menu-mobile">
-                <button
-                    class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group mobile-dropdown-btn">
-                    <img src="{{ asset('front/assets/imgs/user-avatar.jpg') }}" alt="User"
-                        class="w-8 h-8 rounded-full">
-                    <span class="font-medium">John Doe</span>
-                    <i
-                        class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
-                </button>
-                <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="fas fa-user text-primary-600"></i>
-                        <span>My Profile</span>
-                    </a>
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="fas fa-book text-primary-600"></i>
-                        <span>My Courses</span>
-                    </a>
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="fas fa-cog text-primary-600"></i>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
+            @guest
+                <div class="pt-4 mt-4 space-y-2 border-t border-gray-100 guest-auth">
+                    <button type="button" data-open="#loginModal"
+                        class="flex justify-center items-center w-full px-3 py-2 text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-sign-in-alt text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'login', __('auth.login')) }}</span>
+                    </button>
+                    <a href="{{ route('register') }}"
+                        class="flex justify-center items-center px-3 py-2 text-white rounded-lg transition-colors duration-200 bg-primary-600 hover:bg-primary-700">
+                        <i class="fas fa-user-plus me-2"></i>
+                        <span>{{ label_text('global', 'sign-up', __('auth.sign-up')) }}</span>
                     </a>
                 </div>
-            </div>
+            @endguest
+
+            @auth
+                @php
+                    $user = Auth::user() ?? null;
+                @endphp
+                <div class="mobile-dropdown user-menu-mobile">
+                    <button
+                        class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group mobile-dropdown-btn">
+                        <img src="{{ optional($user->profile()->first())->avatar_path ? asset('storage/' . optional($user->profile()->first())->avatar_path) : asset('front/assets/imgs/user-avatar.jpg') }}"
+                            alt="User" class="w-8 h-8 rounded-full">
+                        <span
+                            class="font-medium">{{ $user->profile()->first()?->first_name . ' ' . $user->profile()->first()?->last_name ?? 'User Name' }}</span>
+                        <i
+                            class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
+                    </button>
+                    <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
+                        <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
+                            class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                            <i class="fas fa-user text-primary-600"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#"
+                            class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                            <i class="fas fa-book text-primary-600"></i>
+                            <span>My Courses</span>
+                        </a>
+                        <a href="#"
+                            class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                            <i class="fas fa-cog text-primary-600"></i>
+                            <span>Settings</span>
+                        </a>
+                        <hr class="my-2 border-gray-100">
+                        <form action="{{ route('logout') }}" method="post">
+                            @csrf
+                            <button type="submit"
+                                class="flex gap-3 items-center px-3 py-2 text-red-600 rounded-lg transition-colors duration-200 hover:bg-red-50 nav-mobile-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endauth
 
             <!-- Language Toggle (Mobile Only) -->
             <div class="pt-4 mt-4 border-t border-gray-100">
