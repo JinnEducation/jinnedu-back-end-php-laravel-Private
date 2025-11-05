@@ -48,8 +48,8 @@
                     @foreach ($categories as $category)
                     <button
                         class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="{{ $category->langs?->first()?->slug }}">
-                        {{ $category->langs?->first()?->name }}
+                        data-type="{{ $category->langsAll?->first()?->slug }}">
+                        {{ $category->langsAll?->first()?->name }}
                     </button>
                     @endforeach
                     
@@ -75,17 +75,17 @@
             <div class="grid grid-cols-1 gap-10 mb-12 md:grid-cols-2 lg:grid-cols-3" id="coursesGridBlogs">
                 @foreach ($blogs as $blog)
                 <div class="block overflow-hidden bg-white rounded-md shadow-lg transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102"
-                    data-type="{{ $blog->category->langs?->first()?->slug }}">
+                    data-type="{{ $blog->category->langsAll?->first()?->slug }}">
                     <div class="overflow-hidden relative h-54">
                         <img src="{{ $blog->image_url }}"
                             alt="Design Course" class="object-cover w-full h-full" />
                     </div>
                     <div class="p-4 pb-0">
                         <h3 class="mb-2 font-bold text-black text-[15px]">
-                            {{ $blog->langs?->first()?->title }}
+                            {{ $blog->langsAll?->first()?->title }}
                         </h3>
                         <p class="mb-4 text-[13px] text-gray-400">
-                            {!! $blog->langs?->first()?->description !!}
+                            {!! $blog->langsAll?->first()?->description !!}
                         </p>
                         <div class="flex justify-between items-center">
                             <div class="flex gap-2 items-center">
@@ -93,7 +93,7 @@
                                 <span class="text-sm text-gray-800 me-1">0/5</span>
                                 <span class="text-sm text-gray-500">(0)</span>
                             </div>
-                            <a href="{{ route('site.showBlog', $blog->langs?->first()?->slug) }}"
+                            <a href="{{ route('site.showBlog', $blog->langsAll?->first()?->slug) }}"
                                 class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">Read More</a>
                         </div>
                         <div class="py-2 mt-3 border-t border-[#E5E7EB]">

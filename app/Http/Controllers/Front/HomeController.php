@@ -107,10 +107,11 @@ class HomeController extends Controller
         if ($languageId) {
             $categoriesQuery->whereHas('langsAll', function ($query) use ($languageId) {
                 $query->where('language_id', $languageId);
+            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
             });
         }
         $categories = $categoriesQuery->get();
-
         $categorySlug = $request->query('category');
 
         $blogsQuery = Blog::filter($request->query())
@@ -119,6 +120,8 @@ class HomeController extends Controller
 
         if ($languageId) {
             $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
                 $query->where('language_id', $languageId);
             });
         }
@@ -143,7 +146,6 @@ class HomeController extends Controller
         }
 
         $languageId = $language ? $language->id : null;
-
         $slug = (string) $request->route('slug', $slug);
 
         $blogQuery = Blog::with('category', 'category.langs', 'users:id,name', 'langsAll.language');
@@ -152,21 +154,27 @@ class HomeController extends Controller
             $blogQuery->whereHas('langsAll', function ($query) use ($languageId,$slug) {
                 $query->where('language_id', $languageId);
                 $query->where('slug', $slug);
-            });
+            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId,$slug) {
+                $query->where('language_id', $languageId);
+                $query->where('slug', $slug);
+            });;
         }
 
         $blog = $blogQuery->first();
-
         $blogsQuery = Blog::filter($request->query())
-            // ->where('id', '!=', $blog->id)
+            
             ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
             ->published();
 
         if ($languageId) {
             $blogsQuery->whereHas('langsAll', function ($query) use ($languageId) {
                 $query->where('language_id', $languageId);
-            });
+            })->orWhereDoesntHave('langsAll', function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            });;
+
         }
+        $blogsQuery->where('id', '!=', $blog?->id);
 
         $blogs = $blogsQuery->get();
 
