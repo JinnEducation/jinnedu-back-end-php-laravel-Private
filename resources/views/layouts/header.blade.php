@@ -382,10 +382,10 @@
         <div class="px-4 py-4 space-y-2 h-[calc(100vh-120px)] overflow-y-auto">
 
             <!-- Home Link -->
-            <a href="index.html"
+            <a href="{{ route('home') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-home text-primary-600 me-2"></i>
-                <span>الرئيسية</span>
+                <span>{{ label_text('global', 'Home', __('auth.Home')) }}</span>
             </a>
 
             <!-- Categories Dropdown -->
@@ -394,7 +394,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-th-large text-primary-600 me-2"></i>
-                        <span>الفئات</span>
+                        <span>{{ label_text('global', 'Categories', __('auth.Categories')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -402,17 +402,22 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-code text-primary-600 me-2"></i>
-                        <span>البرمجة</span>
+                        <span>{{ label_text('global', 'Programming', __('auth.Programming')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-palette text-primary-600 me-2"></i>
-                        <span>التصميم</span>
+                        <span>Design</span>
+                    </a>
+                    <a href="#"
+                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                        <i class="w-5 text-center fas fa-briefcase text-primary-600 me-2"></i>
+                        <span>Business</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-language text-primary-600 me-2"></i>
-                        <span>اللغات</span>
+                        <span>Languages</span>
                     </a>
                 </div>
             </div>
@@ -428,7 +433,7 @@
             <a href="{{ route('site.blog') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-article text-primary-600 me-2"></i>
-                <span>المدونة</span>
+                <span>Blog</span>
             </a>
 
             <!-- Classes Dropdown -->
@@ -437,7 +442,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-chalkboard-teacher text-primary-600 me-2"></i>
-                        <span>الفصول</span>
+                        <span>Classes</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -445,17 +450,17 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-video text-primary-600 me-2"></i>
-                        <span>فصول مباشرة</span>
+                        <span>Live Classes</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>فصول جماعية</span>
+                        <span>Group Classes</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-user text-primary-600 me-2"></i>
-                        <span>فصول خاصة</span>
+                        <span>Private Classes</span>
                     </a>
                 </div>
             </div>
@@ -464,7 +469,7 @@
             <a href="#"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-calendar-alt text-primary-600 me-2"></i>
-                <span>الأحداث</span>
+                <span>{{ label_text('global', 'events', __('auth.events')) }}</span>
             </a>
 
             <!-- Help Dropdown -->
@@ -473,7 +478,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-question-circle text-primary-600 me-2"></i>
-                        <span>المساعدة</span>
+                        <span>{{ label_text('global', 'helps', __('auth.helps')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -481,17 +486,17 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-life-ring text-primary-600 me-2"></i>
-                        <span>مركز المساعدة</span>
+                        <span>{{ label_text('global', 'help-center', __('auth.help-center')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
-                        <span>اتصل بنا</span>
+                        <span>{{ label_text('global', 'contact-us', __('auth.contact-us')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-question text-primary-600 me-2"></i>
-                        <span>الأسئلة الشائعة</span>
+                        <span>{{ label_text('global', 'FAQ', __('auth.faq')) }}</span>
                     </a>
                 </div>
             </div>
@@ -502,25 +507,35 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-info-circle text-primary-600 me-2"></i>
-                        <span>حولنا</span>
+                        <span>{{ label_text('global', 'about', __('auth.about')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
+                    <a href="{{ route('site.pages.show', ['slug' => 'about-us']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-building text-primary-600 me-2"></i>
-                        <span>من نحن</span>
+                        <span>{{ label_text('global', 'about-us', __('auth.about-us')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>فريقنا</span>
+                        <span>{{ label_text('global', 'how-jin-works', __('auth.how-jin-works')) }}</span>
+                    </a>
+                    <a href="{{ route('site.pages.show', ['slug' => 'terms-of-use']) }}"
+                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                        <i class="w-5 text-center fas fa-file-alt text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'terms-of-use', __('auth.terms-of-use')) }}</span>
+                    </a>
+                    <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}"
+                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                        <i class="w-5 text-center fas fa-shield-alt text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'privacy-policy', __('auth.privacy-policy')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="w-5 text-center fas fa-briefcase text-primary-600 me-2"></i>
-                        <span>الوظائف</span>
+                        <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'contact-us', __('auth.contact-us')) }}</span>
                     </a>
                 </div>
             </div>
