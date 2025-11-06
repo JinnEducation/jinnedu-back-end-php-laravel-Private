@@ -598,15 +598,40 @@
                 </div>
             @endauth
 
-            <!-- Language Toggle (Mobile Only) -->
-            <div class="pt-4 mt-4 border-t border-gray-100">
-                <button id="mobile-direction-toggle"
-                    class="flex justify-center items-center px-3 py-2 w-full text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
-                    <i class="fas fa-globe text-primary-600 me-2"></i>
-                    <span>English</span>
+            <!-- Language Dropdown -->
+            <div class="mobile-dropdown pt-4 mt-4 border-t border-gray-100">
+                <button
+                    class="flex justify-center items-center px-3 py-2 w-full text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
+                    <div class="flex items-center">
+                        <i class="w-5 text-center fas fa-globe text-primary-600 me-2"></i>
+                        <span>{{ $currentLangShort }}</span>
+                    </div>
+                    <i class="absolute right-[35px] text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
+                <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
+                    @forelse ($languages as $language)
+                        @php
+                            $short = strtolower($language->shortname ?? '');
+                            $isActive = $short !== '' && $short === strtolower($locale ?? '');
+                            $optionClasses = $isActive
+                                ? 'bg-primary-50 text-primary-600 ps-6'
+                                : 'hover:bg-gray-50 hover:text-primary-600 hover:ps-6';
+                            $switchUrl = $languageUrls[$short] ?? url($short === '' ? '/' : $short);
+                        @endphp
+                        <a href="{{ $switchUrl }}" data-lang="{{ $short }}"
+                            @if (!empty($language->direction)) data-direction="{{ $language->direction }}" @endif
+                            class="{{ $optionClasses }} flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                            <i class="w-5 text-center fas fa-globe text-primary-600 me-2"></i>
+                            <span>{{ $language->name }}</span>
+                        </a>
+                    @empty
+                        <span class="block px-4 py-2 text-sm text-gray-500">
+                            {{ __('No languages available') }}
+                        </span>
+                    @endforelse
+                </div>
             </div>
-
+    
         </div>
     </div>
 </header>
