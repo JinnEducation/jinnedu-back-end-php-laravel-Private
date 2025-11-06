@@ -60,6 +60,9 @@ Route::group([
     Route::get('blog/{slug}', [HomeController::class, 'showBlog'])->name('site.showBlog');
     Route::get('pages/{slug}', [FrontPageController::class, 'show'])->name('site.pages.show');
      Route::get('contact_us', [HomeController::class, 'contact_us'])->name('site.contact_us');
+
+    Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
+    Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
 });
 
 

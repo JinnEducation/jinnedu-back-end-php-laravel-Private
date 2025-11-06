@@ -41,6 +41,11 @@ class GroupClass extends Model
                 $this->hasMany(GroupClassLang::class,'classid')->where('language_id', $language->id) 
                 : $this->hasMany(GroupClassLang::class,'classid');
     }
+
+    public function langsAll()
+    {
+        return $this->hasMany(GroupClassLang::class, 'classid');
+    }
     
     public function reviews()
     {

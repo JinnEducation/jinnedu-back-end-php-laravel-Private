@@ -112,7 +112,12 @@ class CreateNewUser implements CreatesNewUsers
                 ]);
             }
 
+            if (method_exists($user, 'assign')) {
+                $user->assign($input['type'] == 2 ? 'tutor' : 'student');
+            }
+            
             DB::commit();
+
             return $user;
         }catch(\Exception $e){
             DB::rollBack();

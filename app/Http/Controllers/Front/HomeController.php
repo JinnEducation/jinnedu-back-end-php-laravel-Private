@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Models\Blog;
+use App\Models\GroupClass;
 use App\Models\User;
 use App\Models\Slider;
 use App\Models\Category;
@@ -237,5 +238,164 @@ class HomeController extends Controller
     public function contact_us()
     {
         return view('front.contact_us');
+    }
+
+    public function online_group_classes()
+    {
+        // Resolve current language (same logic used in blog())
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+        if (!$language) {
+            $language = Language::where('main', 1)->first();
+        }
+        if (!$language) {
+            $language = Language::first();
+        }
+        $languageId = $language ? $language->id : null;
+
+        // Fetch classes (light payload) prepared for listing page
+        $classes = GroupClass::query()
+            ->with([
+                'langsAll.language',
+                'imageInfo',
+                'dates' => function ($q) { $q->orderBy('class_date'); },
+                'reviews:id,class_id,stars',
+                'tutor:id,name',
+                'tutor.hourlyPrices:id,price',
+            ])
+            ->where('status', 1)
+            ->latest('id')
+            ->get();
+
+        foreach ($classes as $class) {
+            // Keep only current language translation
+            $translation = $class->langsAll->where('language_id', $languageId)->first();
+            if (!$translation) {
+                $translation = $class->langsAll->first();
+            }
+            $class->setRelation('langsAll', collect([$translation]));
+
+            // Rating and reviews count
+            $class->rating = round((float) $class->reviews()->avg('stars'), 2);
+            $class->reviews_count = (int) $class->reviews()->count('id');
+
+            // First session date/time
+            $firstDate = optional($class->dates->first())->class_date;
+            if ($firstDate) {
+                $class->first_date = date('Y-m-d', strtotime($firstDate));
+                $class->first_time = date('h:i A', strtotime($firstDate));
+            } else {
+                $class->first_date = null;
+                $class->first_time = null;
+            }
+
+            // Tutor summary
+            if ($class->tutor) {
+                $class->tutor->email = null;
+                $class->tutor_name = $class->tutor->name;
+                $class->tutor_price = $class->tutor->hourlyPrices()->first()->price ?? 0;
+            } else {
+                $class->tutor_name = null;
+                $class->tutor_price = 0;
+            }
+        }
+
+        return view('front.online_group_classes', compact('classes', 'languageId'));
+    }
+    
+    public function groupClassDetails(string $locale, string|int $id)
+    {
+        // Resolve current language (same approach as blog())
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+        if (!$language) {
+            $language = Language::where('main', 1)->first();
+        }
+        if (!$language) {
+            $language = Language::first();
+        }
+        $languageId = $language ? $language->id : null;
+
+        // Load group class with relations
+        $group_class = GroupClass::with([
+            'level',
+            'category', 'category.langsAll',
+            'langsAll.language',
+            'dates',
+            'reviews.user',
+            'tutor',
+            'tutor.hourlyPrices',
+            'tutor.reviews',
+            'tutor.descriptions',
+            'tutor.abouts.language',
+            'tutor.abouts.subject',
+            'tutor.videos',
+            'imageInfo',
+            'attachment',
+        ])->find($id);
+
+        if (!$group_class) {
+            abort(404);
+        }
+
+        // Pick only the current language translation for the class
+        $classTranslation = $group_class->langsAll->where('language_id', $languageId)->first();
+        if (!$classTranslation) {
+            $classTranslation = $group_class->langsAll->first();
+        }
+        $group_class->setRelation('langsAll', collect([$classTranslation]));
+
+        // Category translation limited to current language
+        if ($group_class->category) {
+            $catTranslation = $group_class->category->langsAll->where('language_id', $languageId)->first();
+            if (!$catTranslation) {
+                $catTranslation = $group_class->category->langsAll->first();
+            }
+            $group_class->category->setRelation('langsAll', collect([$catTranslation]));
+        }
+
+        // Compute rating
+        $group_class->rating = round((float) $group_class->reviews()->avg('stars'), 2);
+
+        // Tutor derived fields
+        if ($group_class->tutor) {
+            $group_class->tutor->email = null;
+            $group_class->tutor->price = $group_class->tutor->hourlyPrices()->first()->price ?? 0;
+            $tutorAbout = $group_class->tutor->abouts()->first();
+            if ($tutorAbout) {
+                $group_class->tutor->language = optional($tutorAbout->language()->first())->name;
+                $group_class->tutor->subject = optional($tutorAbout->subject()->first())->name;
+            } else {
+                $group_class->tutor->language = null;
+                $group_class->tutor->subject = null;
+            }
+        }
+
+        // Suggestions (same category), each limited to current language
+        $suggestions = GroupClass::with([
+            'langsAll.language',
+            'dates',
+            'reviews',
+            'tutor',
+            'imageInfo',
+        ])
+        ->where('category_id', $group_class->category_id)
+        ->where('id', '<>', $group_class->id)
+        ->limit(6)
+        ->get();
+
+        foreach ($suggestions as $suggestion) {
+            $sTrans = $suggestion->langsAll->where('language_id', $languageId)->first();
+            if (!$sTrans) {
+                $sTrans = $suggestion->langsAll->first();
+            }
+            $suggestion->setRelation('langsAll', collect([$sTrans]));
+            $suggestion->rating = $suggestion->reviews()->avg('stars');
+            if ($suggestion->tutor) {
+                $suggestion->tutor->email = null;
+            }
+        }
+        // dd($group_class,$suggestions,$languageId);
+        return view('front.class_details', compact('group_class', 'suggestions', 'languageId'));
     }
 }

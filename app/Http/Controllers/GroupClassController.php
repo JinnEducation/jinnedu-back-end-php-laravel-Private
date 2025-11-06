@@ -829,7 +829,6 @@ class GroupClassController extends Controller
                 Rule::unique('group_classes')->ignore($id)->whereNull('deleted_at'),
             ],
         ]);
-
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -1106,7 +1105,8 @@ class GroupClassController extends Controller
         $item->category;
         if($item->category) $item->category->langs = $item->category->langs()->get();
         
-        $item->langs = $item->langs()->get();
+        $item->langs = $item->langsAll()->get();
+
         $item->dates = $item->dates()->get();
         $item->reviews = $item->reviews()->get();
         if($item->reviews) foreach($item->reviews as $review) {
