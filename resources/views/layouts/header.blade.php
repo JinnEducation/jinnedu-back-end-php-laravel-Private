@@ -447,21 +447,17 @@
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
+                    <a href="{{ route('site.online_group_classes') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-video text-primary-600 me-2"></i>
-                        <span>Live Classes</span>
+                        <span>Online Group Classes</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.group_class_details', ['id' => 1]) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
                         <span>Group Classes</span>
                     </a>
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="w-5 text-center fas fa-user text-primary-600 me-2"></i>
-                        <span>Private Classes</span>
-                    </a>
+
                 </div>
             </div>
 
