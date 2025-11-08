@@ -208,24 +208,19 @@
                     <!-- Classes Dropdown -->
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
-                            <span>Classes</span>
-                            <i
-                                class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
+                            <span>{{ label_text('global', 'Classes', __('auth.Classes')) }}</span>
+                            <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                             <div class="py-3">
-                                <a href="#"
+                                <a href="{{ route('site.online_group_classes') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    Live Classes
+                                    {{ label_text('global', 'online-group-classes', __('auth.online group classes')) }}
                                 </a>
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    Group Classes
-                                </a>
-                                <a href="#"
-                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    Private Classes
+                                    {{ label_text('global', 'Private-Classes', __('auth.Private Classes')) }}
                                 </a>
                             </div>
                         </div>
@@ -339,17 +334,17 @@
                                     <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-user text-primary-600"></i>
-                                        <span>My Profile</span>
+                                        <span>{{ label_text('global', 'my-profile', __('auth.My Profile')) }}</span>
                                     </a>
                                     <a href="#"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
-                                        <span>My Courses</span>
+                                        <span>{{ label_text('global', 'My-Courses', __('auth.My Courses')) }}</span>
                                     </a>
                                     <a href="#"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-cog text-primary-600"></i>
-                                        <span>Settings</span>
+                                        <span>{{ label_text('global', 'Settings', __('auth.Settings')) }}</span>
                                     </a>
                                     <hr class="my-2 border-gray-100">
                                     <form action="{{ route('logout') }}" method="post">
@@ -357,7 +352,7 @@
                                         <button type="submit"
                                             class="flex gap-3 items-center px-4 py-3 text-red-600 transition-all duration-300 hover:bg-red-50 hover:ps-6">
                                             <i class="fas fa-sign-out-alt"></i>
-                                            <span>Logout</span>
+                                            <span>{{ label_text('global', 'Logout', __('auth.Logout')) }}</span>
                                         </button>
                                     </form>
 
@@ -407,17 +402,17 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-palette text-primary-600 me-2"></i>
-                        <span>Design</span>
+                        <span>{{ label_text('global', 'Design', __('auth.Design')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-briefcase text-primary-600 me-2"></i>
-                        <span>Business</span>
+                        <span>{{ label_text('global', 'Business', __('auth.Business')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-language text-primary-600 me-2"></i>
-                        <span>Languages</span>
+                        <span>{{ label_text('global', 'Languages', __('auth.Languages')) }}</span>
                     </a>
                 </div>
             </div>
@@ -426,14 +421,14 @@
             <a href="#"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-graduation-cap text-primary-600 me-2"></i>
-                <span>K-12</span>
+                <span>{{ label_text('global', 'K-12', __('auth.K-12')) }}</span>
             </a>
 
             <!-- Blog Link -->
             <a href="{{ route('site.blog') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-article text-primary-600 me-2"></i>
-                <span>Blog</span>
+                <span>{{ label_text('global', 'Blog', __('auth.Blog')) }}</span>
             </a>
 
             <!-- Classes Dropdown -->
@@ -442,7 +437,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-chalkboard-teacher text-primary-600 me-2"></i>
-                        <span>Classes</span>
+                        <span>{{ label_text('global', 'Classes', __('auth.Classes')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -450,12 +445,12 @@
                     <a href="{{ route('site.online_group_classes') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-video text-primary-600 me-2"></i>
-                        <span>Online Group Classes</span>
+                        <span>{{ label_text('global', 'Online-Group-Classes', __('auth.Online Group Classes')) }}</span>
                     </a>
                     <a href="{{ route('site.group_class_details', ['id' => 1]) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>Group Classes</span>
+                        <span>{{ label_text('global', 'Group-Classes', __('auth.Group Classes')) }}</span>
                     </a>
 
                 </div>
@@ -569,17 +564,17 @@
                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-user text-primary-600"></i>
-                            <span>My Profile</span>
+                            <span>{{ label_text('global', 'My-Profile', __('auth.My Profile')) }}</span>
                         </a>
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-book text-primary-600"></i>
-                            <span>My Courses</span>
+                            <span>{{ label_text('global', 'My-Courses', __('auth.My Courses')) }}</span>
                         </a>
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-cog text-primary-600"></i>
-                            <span>Settings</span>
+                            <span>{{ label_text('global', 'Settings', __('auth.Settings')) }}</span>
                         </a>
                         <hr class="my-2 border-gray-100">
                         <form action="{{ route('logout') }}" method="post">
@@ -587,7 +582,7 @@
                             <button type="submit"
                                 class="flex gap-3 items-center px-3 py-2 text-red-600 rounded-lg transition-colors duration-200 hover:bg-red-50 nav-mobile-link">
                                 <i class="fas fa-sign-out-alt"></i>
-                                <span>Logout</span>
+                                <span>{{ label_text('global', 'Logout', __('auth.Logout')) }}</span>
                             </button>
                         </form>
                     </div>
@@ -627,7 +622,7 @@
                     @endforelse
                 </div>
             </div>
-    
+
         </div>
     </div>
 </header>
