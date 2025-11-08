@@ -1,5 +1,11 @@
 <x-front-layout>
 
+    @php
+        $currentLocale = app()->getLocale();
+        $blogTranslation = $blog->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->langsAll?->first();
+        $categoryTranslation = $blog->category?->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->category?->langsAll?->first();
+    @endphp
+
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] py-5 md:py-10">
         <!-- Main Container -->
@@ -10,7 +16,7 @@
                     <!-- Home -->
                     <li>
                         <a href="{{ route('home') }}"
-                            class="transition-colors text-primary-600 hover:text-primary-700">Home</a>
+                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -19,7 +25,7 @@
                     </li>
                     <li>
                         <a href="{{ route('site.blog') }}"
-                            class="transition-colors text-primary-600 hover:text-primary-700">Blog</a>
+                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Blog', __('auth.Blog')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -28,13 +34,13 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-gray-900">{{ $blog->langsAll?->first()?->title }}</span>
+                        <span class="text-gray-900">{{ $blogTranslation?->title ?? '' }}</span>
                     </li>
                 </ul>
             </nav>
 
             <!-- Section Title -->
-            <h2 class="mb-6 text-3xl font-bold">{{ $blog->langsAll?->first()?->title }}</h2>
+            <h2 class="mb-6 text-3xl font-bold">{{ $blogTranslation?->title ?? '' }}</h2>
 
             <div
                 class="flex flex-wrap lg:flex-nowrap relative gap-10 whitespace-nowrap py-4 mt-3 border-t border-[#E5E7EB]">
@@ -44,11 +50,12 @@
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-clock text-primary"></i>
-                    <span class="text-sm text-gray-400">Category : {{ $blog->category->langsAll?->first()?->name }}</span>
+                    <span class="text-sm text-gray-400">{{ label_text('global', 'Category', __('auth.Category')) }} :
+                        {{ $categoryTranslation?->name ?? '' }}</span>
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-user text-primary"></i>
-                    <span class="text-sm text-gray-400">Posted by : {{ $blog->users?->name ?? '' }}</span>
+                    <span class="text-sm text-gray-400">{{ label_text('global', 'Posted-By', __('auth.Posted by')) }} : {{ $blog->users?->name ?? '' }}</span>
                 </div>
             </div>
         </div>
@@ -60,35 +67,41 @@
             <div class="grid grid-cols-1 gap-12 md:mb-12 md:gap-20 md:grid-cols-3" id="coursesGridBlogs">
                 <div class="flex flex-col gap-4 items-start text-justify md:col-span-2 md:text-start">
                     <p>
-                        {!! $blog->langsAll?->first()?->description !!}
+                        {!! nl2br(e(strip_tags($blogTranslation?->description ?? ''))) !!}
                     </p>
                 </div>
                 <div class="md:px-6 md:col-span-1">
-                    <h3 class="mb-4 text-2xl font-bold">Explore Related Courses</h3>
+                    <h3 class="mb-4 text-2xl font-bold">{{ label_text('global', 'Explore-Related-Courses', __('auth.Explore Related Courses')) }}</h3>
                     <div class="grid grid-cols-1 gap-7 mb-12 md:gap-5" id="coursesGridBlog">
-                        @foreach ($blogs as $blog)
+                        @foreach ($blogs as $relatedBlog)
+                            @php
+                                $relatedTranslation = $relatedBlog->langsAll?->firstWhere('lang', $currentLocale) ?? $relatedBlog->langsAll?->first();
+                                $relatedSlug = $relatedTranslation?->slug;
+                            @endphp
+
+                            @continue(!$relatedTranslation || !$relatedSlug)
+
                             <div
                                 class="block overflow-hidden bg-white rounded-md shadow-md transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102">
                                 <div class="overflow-hidden relative h-67 group">
-                                    <img src="{{ $blog->image_url }}" alt="{{ $blog->langsAll?->first()?->title }}"
+                                    <img src="{{ $relatedBlog->image_url }}" alt="{{ $relatedTranslation->title }}"
                                         class="object-cover w-full h-full">
                                     <div class="absolute right-2 top-4">
-                                        <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">Free
-                                            Learn</span>
+                                        <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">{{ label_text('global', 'Free-Learn', __('auth.Free Learn')) }}</span>
                                     </div>
                                     <div
                                         class="absolute top-0 left-0 w-full h-full opacity-0 transition-all duration-300 bg-black/50 group-hover:opacity-100">
                                         <div class="flex justify-center items-center h-full">
-                                            <a href="{{ route('site.showBlog', $blog->langsAll?->first()?->slug) }}"
-                                                class="px-8 py-4 text-lg text-white rounded-lg bg-primary">Load
-                                                More</a>
+                                            <a href="{{ route('site.showBlog', $relatedSlug) }}"
+                                                class="px-8 py-4 text-lg text-white rounded-lg bg-primary">{{ label_text('global', 'Load-More', __('auth.Load More')) }}</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="p-4 pb-0">
-                                    <h3 class="mb-2 font-semibold text-black text-md">{{ $blog->langsAll?->first()?->title }}</h3>
+                                    <h3 class="mb-2 font-semibold text-black text-md">
+                                        {{ $relatedTranslation->title }}</h3>
                                     <p class="my-6 text-[13px] text-gray-700">
-                                        {!! \Illuminate\Support\Str::limit($blog->langsAll?->first()?->description, 120) !!}
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($relatedTranslation->description ?? ''), 120) }}
                                     </p>
                                     <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                                         <div class="flex justify-between items-center transition-all duration-300">
@@ -101,14 +114,14 @@
                                                             fill="#1B449C" />
                                                     </svg>
                                                 </i>
-                                                <span class="text-sm text-gray-400">level :
-                                                    {{ $blog->lessons }}</span>
+                                                <span class="text-sm text-gray-400">{{ label_text('global', 'Level', __('auth.Level')) }} :
+                                                    {{ $relatedBlog->lessons }}</span>
                                             </div>
 
                                             <div class="flex gap-1 items-center">
                                                 <i class="text-lg fas fa-clock text-primary"></i>
                                                 <span
-                                                    class="text-sm font-bold text-gray-400">{{ $blog->date }}</span>
+                                                    class="text-sm font-bold text-gray-400">{{ $relatedBlog->date }}</span>
                                             </div>
                                         </div>
                                     </div>

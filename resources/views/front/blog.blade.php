@@ -1,5 +1,9 @@
 <x-front-layout>
 
+    @php
+        $currentLocale = app()->getLocale();
+    @endphp
+
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] py-10">
         <!-- Main Container -->
@@ -9,7 +13,7 @@
                 <ul class="flex items-center space-x-1 text-sm font-light">
                     <!-- Home -->
                     <li>
-                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">Home</a>
+                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -18,13 +22,13 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-gray-900">Blog</span>
+                        <span class="text-gray-900">{{ label_text('global', 'Blog', __('auth.Blog')) }}</span>
                     </li>
                 </ul>
             </nav>
 
             <!-- Section Title -->
-            <h2 class="mb-7 text-3xl font-bold">Explore Our Blogs !</h2>
+            <h2 class="mb-7 text-3xl font-bold">{{ label_text('global', 'Explore-Our-Blogs', __('auth.Explore Our Blogs')) }}</h2>
 
             <!-- Category Filter -->
             <div class="relative mx-[-30px]" dir="ltr">
@@ -43,13 +47,19 @@
                     <button
                         class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-white bg-primary border border-primary transition-all duration-300 text-md category-blogs-btn active hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
                         data-type="all" id="all-blogs-btn">
-                        All
+                        {{ label_text('global', 'All', __('auth.All')) }}
                     </button>
                     @foreach ($categories as $category)
+                    @php
+                        $categoryTranslation = $category->langsAll?->firstWhere('lang', $currentLocale) ?? $category->langsAll?->first();
+                    @endphp
+
+                    @continue(!$categoryTranslation)
+
                     <button
                         class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
-                        data-type="{{ $category->langsAll?->first()?->slug }}">
-                        {{ $category->langsAll?->first()?->name }}
+                        data-type="{{ $categoryTranslation->slug }}">
+                        {{ $categoryTranslation->name }}
                     </button>
                     @endforeach
                     
@@ -73,19 +83,27 @@
         <div class="container mx-auto">
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-10 mb-12 md:grid-cols-2 lg:grid-cols-3" id="coursesGridBlogs">
-                @foreach ($blogs as $blog)
+                @forelse ($blogs as $blog)
+                @php
+                    $blogTranslation = $blog->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->langsAll?->first();
+                    $categoryTranslation = $blog->category?->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->category?->langsAll?->first();
+                    $categorySlug = $categoryTranslation?->slug;
+                @endphp
+
+                @continue(!$categorySlug || !$blogTranslation)
+
                 <div class="block overflow-hidden bg-white rounded-md shadow-lg transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102"
-                    data-type="{{ $blog->category->langsAll?->first()?->slug }}">
+                    data-type="{{ $categorySlug }}">
                     <div class="overflow-hidden relative h-54">
                         <img src="{{ $blog->image_url }}"
-                            alt="Design Course" class="object-cover w-full h-full" />
+                            alt="{{ $blogTranslation->title }}" class="object-cover w-full h-full" />
                     </div>
                     <div class="p-4 pb-0">
                         <h3 class="mb-2 font-bold text-black text-[15px]">
-                            {{ $blog->langsAll?->first()?->title }}
+                            {{ $blogTranslation->title }}
                         </h3>
                         <p class="mb-4 text-[13px] text-gray-400">
-                            {!! \Illuminate\Support\Str::limit($blog->langsAll?->first()?->description, 120) !!}
+                            {{ \Illuminate\Support\Str::limit(strip_tags($blogTranslation->description ?? ''), 120) }}
                         </p>
                         <div class="flex justify-between items-center">
                             <div class="flex gap-2 items-center">
@@ -93,8 +111,8 @@
                                 <span class="text-sm text-gray-800 me-1">0/5</span>
                                 <span class="text-sm text-gray-500">(0)</span>
                             </div>
-                            <a href="{{ route('site.showBlog', $blog->langsAll?->first()?->slug) }}"
-                                class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">Read More</a>
+                            <a href="{{ route('site.showBlog', $blogTranslation->slug) }}"
+                                class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">{{ label_text('global', 'Read More', __('auth.Read More')) }}</a>
                         </div>
                         <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                             <div class="flex justify-between items-center transition-all duration-300">
@@ -123,7 +141,17 @@
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="flex flex-col col-span-full justify-center items-center py-16 text-center bg-gray-50 rounded-md">
+                    <p class="mb-4 text-lg font-semibold text-gray-700">
+                        {{ label_text('global', 'No-Blogs-Available', __('auth.No blogs available at the moment.')) }}
+                    </p>
+                    <a href="{{ url('/') }}"
+                        class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-primary rounded-md shadow hover:bg-primary/90 transition-colors">
+                        {{ label_text('global', 'Back-To-Home', __('auth.Back to home')) }}
+                    </a>
+                </div>
+                @endforelse
 
             </div>
 
@@ -140,7 +168,7 @@
                         </select>
                         <!-- PER PAGE من الشمال -->
                         <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                            <span class="text-sm font-medium text-gray-700">PER PAGE</span>
+                            <span class="text-sm font-medium text-gray-700">{{ label_text('global', 'Per-Page', __('auth.PER PAGE')) }}</span>
                         </div>
                         <!-- السهم من اليمين -->
                         <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">

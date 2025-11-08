@@ -196,13 +196,13 @@
 
                     <!-- K-12 Link -->
                     <a href="#" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
-                        K-12
+                        {{ label_text('global', 'K-12', __('auth.K-12')) }}
                     </a>
 
                     <!-- Blog Link -->
                     <a href="{{ route('site.blog') }}"
                         class="nav-link {{ request()->is('blog') || request()->is('blog/*') ? 'active' : '' }}">
-                        Blog
+                        {{ label_text('global', 'Blog', __('auth.Blog')) }}
                     </a>
 
                     <!-- Classes Dropdown -->
