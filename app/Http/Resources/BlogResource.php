@@ -39,6 +39,7 @@ class BlogResource extends JsonResource
             'date' => $this->date,
             'status' => $this->status,
             'published_at' => $this->published_at,
+            'author' => $this->users?->name,
 
 
             'relations' => [
