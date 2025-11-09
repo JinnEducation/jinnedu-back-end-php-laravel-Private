@@ -248,7 +248,6 @@ class AuthController extends Controller
 
             $user->roles[$index]->permissions = $menus;
         }
-
         return response([
             'success' => true,
             'message' => 'Login Successfully',

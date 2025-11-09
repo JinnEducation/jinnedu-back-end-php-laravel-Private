@@ -18,9 +18,25 @@ class BlogController extends Controller
 
     public function index(Request $request)
     {
-        $blogs = Blog::filter($request->query())
-            ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
-            ->paginate(10);
+        $user = $request->user();
+        $type = $user->type;
+        if($type == 1) {
+            $blogs = Blog::filter($request->query())
+                ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+                ->paginate(10);
+        } 
+        elseif($type == 2) {
+            $blogs = Blog::filter($request->query())
+                ->where('user_id', $user->id)
+                ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+                ->paginate(10);
+        }
+        else {
+            return response()->json(['message' => 'You are not a tutor to access this resource.'], 403);
+        }
+        // $blogs = Blog::filter($request->query())
+        //     ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
+        //     ->paginate(10);
 
         return BlogResource::collection($blogs);
     }
