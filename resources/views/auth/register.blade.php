@@ -17,17 +17,18 @@
     <link rel="stylesheet" href="{{ asset('front/assets/css/all.min.css') }}">
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/assets/css/style.css') }}">
 </head>
 
 <body class="bg-gray-50 font-sans">
     <div class="flex min-h-screen flex-col md:flex-row">
         <!-- Sidebar Desktop -->
         <aside
-            class="hidden md:block w-100 bg-primary text-white p-10 sticky top-0 h-screen overflow-y-auto  scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            class="block relative h-full w-100 bg-primary text-white p-10 md:sticky top-0 md:h-screen overflow-y-auto  scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <!-- Logo -->
             <div>
                 <div class="my-12 flex justify-center items-center">
-                    <img src="./assets/imgs/logo-white.png" alt="" width="45%">
+                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="" width="45%">
                 </div>
                 <div class="flex justify-center items-center gap-4 text-sm mb-12">
                     <a href="index.html" class="hover:underline">Home</a>
@@ -116,7 +117,7 @@
                 <a href="#" class="underline hover:text-white">Privacy Policies</a>
             </div>
         </aside>
-
+{{-- 
         <!-- Mobile Sidebar -->
         <div class="md:hidden w-full bg-primary text-white p-4">
             <details class="bg-primary" open>
@@ -146,7 +147,7 @@
                     <div class="step-item-mobile cursor-pointer hover:underline" data-step="8">8. Profile Video</div>
                 </div>
             </details>
-        </div>
+        </div> --}}
 
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
@@ -175,7 +176,7 @@
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-6 mb-8">
-                            <input type="hidden" name="type" id="account-type" value="">
+                            <input type="hidden" name="type" id="account-type" value="" required>
                             <!-- Student Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
                                  data-account="1" data-type="1">
@@ -261,7 +262,7 @@
                                 </button>
 
                                 <!-- Hidden File Input -->
-                                <input type="file" id="avatarInput" name="avatar" accept="image/*"
+                                <input type="file" id="avatarInput" name="avatar" accept="image/*" required
                                     class="hidden" />
                             </div>
                         </div>
@@ -271,14 +272,12 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
-                                    <input type="text" placeholder="First Name" name="first_name"
-                                    <input type="text" placeholder="First Name" name="first_name"
+                                    <input type="text" placeholder="First Name" name="first_name" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
-                                    <input type="text" placeholder="Last Name" name="last_name"
-                                    <input type="text" placeholder="Last Name" name="last_name"
+                                    <input type="text" placeholder="Last Name" name="last_name" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -286,7 +285,7 @@
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
                                 <div class="relative">
-                                    <input id="email" type="email" name="email" placeholder="example@gmail.com"
+                                    <input id="email" type="email" name="email" placeholder="example@gmail.com" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
 
@@ -300,14 +299,13 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
-                                    <input type="text" placeholder="egypt (+20)" name="country"
+                                    <input type="text" placeholder="egypt (+20)" name="country" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Contact
                                         number</label>
-                                    <input type="tel" placeholder="Phone" name="phone"
-                                    <input type="tel" placeholder="Phone" name="phone"
+                                    <input type="tel" placeholder="Phone" name="phone" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -318,8 +316,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
                                     <div class="relative">
-                                        <input id="password" type="password" placeholder="Password" name="password"
-                                        <input id="password" type="password" placeholder="Password" name="password"
+                                        <input id="password" type="password" placeholder="Password" name="password" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -350,7 +347,7 @@
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Confirm
                                         password</label>
                                     <div class="relative">
-                                        <input id="confirm-password" type="password" placeholder="Confirm password" name="confirm_password"
+                                        <input id="confirm-password" type="password" placeholder="Confirm password" name="confirm_password" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -373,7 +370,7 @@
                             </div>
 
                             <div class="flex items-start gap-2 mb-6">
-                                <input type="checkbox" id="terms" name="confirm_terms"
+                                <input type="checkbox" id="terms" name="confirm_terms" required
                                     class="mt-1 w-4 h-4 accent-primary rounded border-gray-300">
                                 <label for="terms" class="text-sm text-gray-600">
                                     Agree Terms <a href="#" class="text-primary hover:underline">Terms And
@@ -428,7 +425,7 @@
 
                                 <div class="relative">
                                     <!-- Input -->
-                                    <input id="dob-input" type="text" readonly name="date_of_birth"
+                                    <input id="dob-input" type="text" readonly name="date_of_birth" required
                                         placeholder="Date of birth (yyyy / MMM / DD)"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12 cursor-pointer shadow-sm">
 
@@ -473,7 +470,7 @@
 
                                 <!-- Date Dropdown -->
                                 <div id="dob-dropdown"
-                                    class="hidden absolute top-full left-0 w-1/3 bg-white border border-gray-200 rounded-xl shadow-lg mt-2 z-50 p-4 transition-all duration-200">
+                                    class="hidden absolute top-full left-0 w-full md:w-1/3 bg-white border border-gray-200 rounded-xl shadow-lg mt-2 z-50 p-4 transition-all duration-200">
                                     <div class="flex items-center justify-between mb-3">
                                         <button type="button" id="prevMonth"
                                             class="text-gray-500 hover:text-primary transition px-2 py-1 rounded-lg">&lt;</button>
@@ -490,7 +487,7 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
-                                    <select name="countty_tutor"
+                                    <select name="countty_tutor" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Country</option>
                                     </select>
@@ -498,7 +495,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Native
                                         Language</label>
-                                    <select name="language"
+                                    <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Native Language</option>
                                     </select>
@@ -509,7 +506,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
                                         Subject</label>
-                                    <select name="teaching_subject"
+                                    <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Teaching Subject</option>
                                     </select>
@@ -517,7 +514,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
                                         Experience</label>
-                                    <select name="teaching_experience"
+                                    <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <option>Teaching Experience</option>
                                     </select>
@@ -527,7 +524,7 @@
 
                             <div class="mb-2">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Situation</label>
-                                <select name="situation"
+                                <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     <option>Situation</option>
                                 </select>
@@ -558,28 +555,25 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Headline</label>
-                                <textarea rows="3" name="headline"
-                                <textarea rows="3" name="headline"
+                                <textarea rows="3" name="headline" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Interests</label>
-                                <textarea rows="3" name="interests"
-                                <textarea rows="3" name="interests"
+                                <textarea rows="3" name="interests" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Motivation</label>
-                                <textarea rows="3" name="motivation"
-                                <textarea rows="3" name="motivation"
+                                <textarea rows="3" name="motivation" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Specializations</label>
-                                <select name="specializations"
+                                <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     <option></option>
                                 </select>
@@ -587,14 +581,13 @@
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Experience</label>
-                                <textarea rows="3" name="experience"
+                                <textarea rows="3" name="experience" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Methodology</label>
-                                <textarea rows="3" name="methodology"
-                                <textarea rows="3" name="methodology"
+                                <textarea rows="3" name="methodology" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
                         </div>
@@ -640,7 +633,7 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4">
+                                <div class="ranges space-y-4 w-full md:w-3/4">
                                     <!-- range row -->
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
@@ -648,7 +641,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
-                                                <input type="time" value="09:00"
+                                                <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -666,7 +659,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">To</label>
                                             <div class="relative">
-                                                <input type="time" value="19:00"
+                                                <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -727,13 +720,13 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4">
+                                <div class="ranges space-y-4 w-full md:w-3/4">
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
-                                                <input type="time" value="09:00"
+                                                <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -749,7 +742,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">To</label>
                                             <div class="relative">
-                                                <input type="time" value="19:00"
+                                                <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -809,7 +802,7 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4 hidden"></div>
+                                <div class="ranges space-y-4 w-full md:w-3/4 hidden"></div>
 
                                 <div class="empty-state">
                                     <div
@@ -844,13 +837,13 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4">
+                                <div class="ranges space-y-4 w-full md:w-3/4">
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
-                                                <input type="time" value="09:00"
+                                                <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -866,7 +859,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">To</label>
                                             <div class="relative">
-                                                <input type="time" value="19:00"
+                                                <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -925,14 +918,14 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4">
+                                <div class="ranges space-y-4 w-full md:w-3/4">
                                     <!-- row 1 -->
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
-                                                <input type="time" value="09:00"
+                                                <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -948,7 +941,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">To</label>
                                             <div class="relative">
-                                                <input type="time" value="19:00"
+                                                <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -981,7 +974,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
-                                                <input type="time" value="09:00"
+                                                <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -997,7 +990,7 @@
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">To</label>
                                             <div class="relative">
-                                                <input type="time" value="19:00"
+                                                <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -1057,7 +1050,7 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4 hidden"></div>
+                                <div class="ranges space-y-4 w-full md:w-3/4 hidden"></div>
 
                                 <div class="empty-state">
                                     <div
@@ -1092,7 +1085,7 @@
                                     </button>
                                 </header>
 
-                                <div class="ranges space-y-4 w-3/4 hidden"></div>
+                                <div class="ranges space-y-4 w-full md:w-3/4 hidden"></div>
 
                                 <div class="empty-state">
                                     <div
@@ -1136,7 +1129,7 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <!-- <label class="block text-sm font-semibold text-gray-900 mb-2">Hourly Rate</label> -->
-                                <input type="text" placeholder="Hourly Rate" name="hourly_rate"
+                                <input type="text" placeholder="Hourly Rate" name="hourly_rate" required
                                     class="w-full px-4 py-8 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:bg-[#F3F5FA] focus:ring-2 focus:ring-primary/20 transition-all">
                             </div>
                         </div>
@@ -1167,7 +1160,7 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
                                     Subject</label>
-                                <select
+                                <select required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
                                     <option value="subject_id">Select a subject</option>
                                 </select>
@@ -1175,7 +1168,7 @@
 
                             <!-- Certification Name -->
                             <div>
-                                <input type="text" placeholder="Certification Name" name="certification_name"
+                                <input type="text" placeholder="Certification Name" name="certification_name" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
@@ -1183,24 +1176,24 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
                                     Description</label>
-                                <textarea rows="3" placeholder="Up to 200 characters" name="certification_description"
+                                <textarea rows="3" placeholder="Up to 200 characters" name="certification_description" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"></textarea>
                             </div>
 
                             <!-- Certification Issued By -->
                             <div>
-                                <input type="text" placeholder="Certification Issued By" name="certification_issued_by"
+                                <input type="text" placeholder="Certification Issued By" name="certification_issued_by" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
                             <!-- Years -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <input type="number" id="yearFrom" placeholder="Certification Year From" name="certification_year_from"
+                                    <input type="number" id="yearFrom" placeholder="Certification Year From" name="certification_year_from" required
                                         class="hide-number-spin w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="yearTo" placeholder="Certification Year To" name="certification_year_to"
+                                    <input type="number" id="yearTo" placeholder="Certification Year To" name="certification_year_to" required
                                         class="hide-number-spin w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
 
                                     <!-- Up/Down SVG Buttons -->
@@ -1233,7 +1226,7 @@
                                     File</label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
-                                    <input type="file" id="certFile" name="certification_file"
+                                    <input type="file" id="certFile" name="certification_file" required
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                     <span id="fileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
@@ -1269,7 +1262,7 @@
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Video File</label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
-                                    <input type="file" accept="video/*" id="videoFile" name="video_file"
+                                    <input type="file" accept="video/*" id="videoFile" name="video_file" required
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                     <span id="videoFileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
                                         file</span>
@@ -1278,7 +1271,7 @@
 
                             <!-- Terms & Conditions -->
                             <div class="flex items-center gap-2">
-                                <input id="agreeTerms" type="checkbox" name="agree_terms" value="1"
+                                <input id="agreeTerms" type="checkbox" name="agree_terms" value="1" required
                                     class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30">
                                 <label for="agreeTerms" class="text-sm text-gray-700">
                                     Agree Terms <a href="#" class="text-primary hover:underline">Terms And

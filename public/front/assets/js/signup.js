@@ -1,14 +1,15 @@
 $(document).ready(function () {
-    let currentStep = parseInt(localStorage.getItem('currentStep')) || 1;
+    let currentStep = 1;
     let accountType = localStorage.getItem('accountType') || '';
 
     // Initialize
     goToStep(currentStep);
 
-    // Step navigation from sidebar
     $('.step-item, .step-item-mobile').click(function () {
         const step = parseInt($(this).data('step'));
-        goToStep(step);
+        if (step < currentStep) {
+            goToStep(step);
+        }
     });
 
     // Continue button
@@ -361,7 +362,7 @@ $(function () {
           <div>
             <label class="block text-[13px] text-gray-800 mb-1">From</label>
             <div class="relative">
-              <input type="time" value="09:00" class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
+              <input type="time" value="09:00" required class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z" fill="#1B449C"/></svg>
               </span>
@@ -370,7 +371,7 @@ $(function () {
           <div>
             <label class="block text-[13px] text-gray-800 mb-1">To</label>
             <div class="relative">
-              <input type="time" value="19:00" class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
+              <input type="time" value="19:00" required class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z" fill="#1B449C"/></svg>
               </span>
