@@ -5,11 +5,12 @@ use App\Http\Controllers\MuxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\Front\HomeController;
-use App\Http\Controllers\Front\PageController as FrontPageController;
+use App\Http\Controllers\Front\MailController;
 use App\Http\Controllers\PaypalCheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\PaymentResponseController;
 use App\Http\Controllers\WalletPaymentTransactionController;
+use App\Http\Controllers\Front\PageController as FrontPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,8 +60,12 @@ Route::group([
     Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
     Route::get('blog/{slug}', [HomeController::class, 'showBlog'])->name('site.showBlog');
     Route::get('pages/{slug}', [FrontPageController::class, 'show'])->name('site.pages.show');
-     Route::get('contact_us', [HomeController::class, 'contact_us'])->name('site.contact_us');
+    //  Route::get('contact_us', [HomeController::class, 'contact_us'])->name('site.contact_us');
 
+    Route::get('send-mail', [MailController::class, 'send']);
+    Route::get('contact', [MailController::class, 'contact'])->name('site.contact');
+    Route::post('contact', [MailController::class, 'contact_data'])->name('site.contact_data');
+    
     Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
 });
