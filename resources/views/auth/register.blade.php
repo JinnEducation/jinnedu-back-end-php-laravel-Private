@@ -27,14 +27,14 @@
             <!-- Logo -->
             <div>
                 <div class="my-12 flex justify-center items-center">
-                    <img src="./assets/imgs/logo-white.png" alt="" width="45%">
+                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="JINN Education" width="45%">
                 </div>
                 <div class="flex justify-center items-center gap-4 text-sm mb-12">
-                    <a href="index.html" class="hover:underline">Home</a>
+                    <a href="{{route('home')}}" class="hover:underline"> {{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     <span>|</span>
-                    <a href="index.html" class="hover:underline">Login</a>
+                    <a href="{{ route('home') }}" class="hover:underline"> {{ label_text('global', 'Login', __('auth.Login')) }} </a>
                     <span>|</span>
-                    <a href="contact.html" class="hover:underline">Contact Us</a>
+                    <a href="{{ route('site.contact') }}" class="hover:underline"> {{ label_text('global', 'Contact Us', __('admin.Contact Us')) }} </a>
                 </div>
             </div>
 
