@@ -35,9 +35,9 @@
                                 if (isset($languageId) && $languageId) {
                                     $langRow = $slider->langs->firstWhere('language_id', $languageId);
                                 }
-                                $title = $langRow->title ?? '';
-                                $sub = $langRow->sub_title ?? '';
-                                $btnName = $langRow->btn_name ?? null;
+                                $title = $langRow->title ?? ($slider->title ?? '');
+                                $sub = $langRow->sub_title ?? ($slider->sub_title ?? '');
+                                $btnName = $langRow->btn_name ?? ($slider->btn_name ?? null);
                                 $btnUrl = $slider->btn_url ?? '#';
                             @endphp
 
@@ -46,10 +46,10 @@
                                 <div
                                     class="slide-inner w-[75%] lg:w-full mx-auto lg:mx-0 text-center lg:text-left rtl:lg:text-right">
                                     <h1 class="mb-6 text-[25px] font-black leading-[1.5] text-gray-900 lg:text-5xl">
-                                        {!! $title !!}
+                                        {{ $title }}
                                     </h1>
                                     <p class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
-                                        {!! $sub !!}
+                                        {{ $sub }}
                                     </p>
 
                                     @if ($index === 0)
@@ -66,7 +66,7 @@
                                         @if ($btnName)
                                             <a href="{{ $btnUrl }}"
                                                 class="overflow-hidden relative inline-block px-10 py-2 text-lg font-semibold text-white rounded-lg transition-all duration-300 transform md:px-12 md:py-4 bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
-                                                <span class="relative z-10">{!! $btnName !!}</span>
+                                                <span class="relative z-10">{{ $btnName }}</span>
                                                 <div
                                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                                 </div>
@@ -287,7 +287,8 @@
                     </button>
                     @foreach ($categories as $cat)
                         @php
-                            $catTitle = $cat->langs->first()->title ?? ($cat->name ?? 'Category');
+                            $catLang = isset($languageId) && $languageId ? $cat->langs->firstWhere('language_id', $languageId) : null;
+                            $catTitle = optional($catLang)->title ?? optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
                             $isActive = (int) $categoryId === (int) $cat->id;
                         @endphp
                         <button
@@ -311,16 +312,22 @@
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
                 @php
-                    $categoryTitlesMap = $categories->mapWithKeys(function ($cat) {
-                        $title = optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
+                    $categoryTitlesMap = $categories->mapWithKeys(function ($cat) use ($languageId) {
+                        $catLang = isset($languageId) && $languageId
+                            ? $cat->langs->firstWhere('language_id', $languageId)
+                            : null;
+                        $title = optional($catLang)->title ?? optional($cat->langs->first())->title ?? ($cat->name ?? 'Category');
                         return [$cat->id => $title];
                     });
                 @endphp
                 @foreach ($courses as $course)
                     @php
-                        $langRow = $course->langs->first();
-                        $title = $course->name ?? 'Course';
-                        $about = $langRow->about ?? '';
+                        $langRow = isset($languageId) && $languageId
+                            ? $course->langs->firstWhere('language_id', $languageId)
+                            : null;
+                        $langRow = $langRow ?? $course->langs->first();
+                        $title = optional($langRow)->title ?? ($course->name ?? 'Course');
+                        $about = optional($langRow)->about ?? '';
 
                         $lessons = (int) ($course->lessons ?? 0);
                         $classLength = (int) ($course->class_length ?? 0);
@@ -328,9 +335,14 @@
                         if ($totalMinutes >= 60) {
                             $h = intdiv($totalMinutes, 60);
                             $m = $totalMinutes % 60;
-                            $timeLabel = $m ? "{$h} total hours" : "{$h} total hours";
+                            $parts = [];
+                            $parts[] = $h . ' ' . \Illuminate\Support\Str::plural('hour', $h);
+                            if ($m > 0) {
+                                $parts[] = $m . ' ' . \Illuminate\Support\Str::plural('minute', $m);
+                            }
+                            $timeLabel = implode(' ', $parts);
                         } else {
-                            $timeLabel = "{$totalMinutes} minutes";
+                            $timeLabel = $totalMinutes . ' ' . \Illuminate\Support\Str::plural('minute', $totalMinutes);
                         }
                         $img = $course->imageInfo?->path
                             ? asset($course->imageInfo->path)
@@ -659,9 +671,9 @@
             <div class="container relative z-10 py-16 mx-auto">
                 <!-- Section Header -->
                 <div class="flex justify-end items-center pr-3 mb-2">
-                    <a href="#"
+                    <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
                         class="text-lg font-medium underline transition-all duration-300 text-primary-700 hover:text-primary hover:scale-105">
-                        Load More
+                        {{ label_text('global', 'view-all-tutors', __('View all tutors')) }}
                     </a>
                 </div>
 
@@ -684,23 +696,29 @@
                             <!-- Tutor Cards -->
                             @forelse($tutors as $tutor)
                                 @php
-                                    // الصورة
                                     $avatar = $tutor->avatar
                                         ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
                                             ? $tutor->avatar
                                             : asset($tutor->avatar))
                                         : asset('front/assets/imgs/tutors/1.jpg');
 
-                                    // الدولة
-                                    $country = $tutor->abouts?->country?->name ?? '—';
-
-                                    // التخصص (أول وصف)
-                                    $spec = optional($tutor->descriptions->first()?->specialization)->name ?? '—';
-
-                                    // تقييم "ستاتيك" مؤقتًا
+                                    $notAvailable = label_text('global', 'not-available', __('Not available'));
+                                    $country = $tutor->abouts?->country?->name ?? $notAvailable;
+                                    $spec = optional($tutor->descriptions->first()?->specialization)->name ?? $notAvailable;
                                     $avg = 4.0;
                                     $maxStars = 5;
                                     $fullStars = (int) floor($avg);
+                                    $locale = app()->getLocale();
+                                    $trialLessonUrl = route('site.contact', [
+                                        'locale' => $locale,
+                                        'tutor' => $tutor->id,
+                                        'type' => 'trial',
+                                    ]);
+                                    $messageUrl = route('site.contact', [
+                                        'locale' => $locale,
+                                        'tutor' => $tutor->id,
+                                        'type' => 'message',
+                                    ]);
                                 @endphp
 
                                 <div class="swiper-slide">
@@ -737,20 +755,20 @@
                                                         @endif
                                                     @endfor
                                                 </div>
-                                                <span class="mt-2 text-sm text-gray-500">
+                                                <span class="mt-2 text-sm text-gray-600">
                                                     {{ number_format($avg, 1) }} / 5
                                                 </span>
                                             </div>
 
                                             <div class="flex gap-2 justify-between my-3">
-                                                <button
-                                                    class="text-[12px] px-3 py-3 w-full font-medium text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
-                                                    Trial Lesson
-                                                </button>
-                                                <button
-                                                    class="text-[12px] px-3 py-3 w-full font-medium rounded-lg border-1 transition-all duration-300 border-[#1B449C] text-[#1B449C] hover:bg-[#1B449C] hover:text-white">
-                                                    Message
-                                                </button>
+                                                <a href="{{ $trialLessonUrl }}"
+                                                    class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
+                                                    {{ label_text('global', 'trial-lesson', __('Trial Lesson')) }}
+                                                </a>
+                                                <a href="{{ $messageUrl }}"
+                                                    class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
+                                                    {{ label_text('global', 'message-tutor', __('Message')) }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -758,7 +776,13 @@
                             @empty
                                 <div class="swiper-slide">
                                     <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
-                                        لا يوجد مدرّسون لعرضهم حالياً.
+                                        <p class="mb-4">
+                                            {{ label_text('global', 'no-tutors-available', __('No tutors available at the moment.')) }}
+                                        </p>
+                                        <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
+                                            class="text-primary font-medium underline">
+                                            {{ label_text('global', 'contact-us', __('Contact Us')) }}
+                                        </a>
                                     </div>
                                 </div>
 
