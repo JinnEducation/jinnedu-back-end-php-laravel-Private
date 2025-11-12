@@ -134,7 +134,7 @@ class GroupClassController extends Controller
         $items = paginate($items, $limit);
 
         foreach($items as $tutor){
-            $tutor->price = $tutor->hourlyPrices()->first()->price ?? 0;
+            $tutor->price = optional($tutor->hourlyPrices()?->first())->price ?? 0;
             $tutor->rating = $tutor->reviews()->avg('stars');
                     
             $tutor->specialization =  $tutor->descriptions()->first()->specialization ?? '';
@@ -263,7 +263,7 @@ class GroupClassController extends Controller
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
                                 
-                $items->tutor->price =  $items->tutor->hourlyPrices()->first()->price ?? 0;
+                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
                 $tutor_about =  $items->tutor->abouts()->first();
                 if($tutor_about){
@@ -421,7 +421,7 @@ class GroupClassController extends Controller
                 $item->rating = $item->reviews()->avg('stars');
                 $item->tutor;
                                 
-                $item->tutor->price =  $item->tutor->hourlyPrices()->first()->price ?? 0;
+                $item->tutor->price =  $item->tutor->hourlyPrices()?->first()?->price ?? 0;
                 $tutor_about =  $item->tutor->abouts()->first();
 
                 if($tutor_about){
@@ -590,7 +590,7 @@ class GroupClassController extends Controller
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
                                 
-                $items->tutor->price =  $items->tutor->hourlyPrices()->first()->price ?? 0;
+                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
                 $tutor_about =  $items->tutor->abouts()->first();
                 if($tutor_about){
@@ -617,7 +617,7 @@ class GroupClassController extends Controller
                 $items->appliedTutors;
                 foreach($items->appliedTutors as $appliedTutor){
                     $appliedTutor->tutor;
-                    $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()->first()->price ?? 0;
+                    $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
                     $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
                                         
                     $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
@@ -760,11 +760,13 @@ class GroupClassController extends Controller
                 $item->appliedTutors;
                 foreach($item->appliedTutors as $appliedTutor){
                     $appliedTutor->tutor;
-                    $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()->first()->price ?? 0;
-                    $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
+                    if ($appliedTutor->tutor) {
+                        $price = $appliedTutor->tutor?->hourlyPrices()?->first()?->price ?? 0;
+                        $appliedTutor->tutor->setAttribute('price', $price);
+                        $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
+                        $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
+                    }
                     
-                    $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
-
                 }
                 $item->tutor_status = GroupClassTutor::where('group_class_id', $item->id)->where('tutor_id', $user->id)->first() ? 1 : 0;
                 
@@ -837,7 +839,7 @@ class GroupClassController extends Controller
             ], 200);
         }
         
-        $data = $request->only(['name','category_id','price','level_id','classes','class_length','frequency_id','min_size','metadata','embed','image','attachment','status','publish','publish_date', 'start_month', 'sessions_hour']);//'tutor_id'
+        $data = $request->only(['name','category_id','price','level_id','classes','class_length','total_classes_length','frequency_id','min_size','metadata','embed','image','attachment','status','publish','publish_date', 'start_month', 'sessions_hour']);//'tutor_id'
         $user = Auth::user();
         $data['user_id'] = $user->id;
         $data['ipaddress'] = $request->ip();
@@ -1140,7 +1142,7 @@ class GroupClassController extends Controller
         $item->appliedTutors;
         foreach($item->appliedTutors as $appliedTutor){
             $appliedTutor->tutor;
-            $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()->first()->price ?? 0;
+            $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
             $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
                                 
             $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';

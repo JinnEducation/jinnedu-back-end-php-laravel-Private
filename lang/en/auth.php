@@ -18,4 +18,19 @@ return [
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
     'Logout' => 'Logout',
+
+    // new
+    'Programming' => 'Programming',
+    'Design' => 'Design',
+    'Business' => 'Business',
+    'K-12' => 'K-12',
+    'Web Development' => 'Web Development',
+    'Mobile Apps' => 'Mobile Apps',
+    'Data Science' => 'Data Science',
+    'My Courses' => 'My Courses',
+    'Free' => 'Free',
+    'Preview this courses' => 'Preview this courses',
+    'Load More' => 'Load More',
+    'Read More' => 'Read More',
+    'Explore Our Blogs' => 'Explore Our Blogs',
 ];
