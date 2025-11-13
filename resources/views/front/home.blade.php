@@ -86,10 +86,8 @@
                         @foreach ($sliders as $index => $slider)
                             @php
                                 $isActive = $index === 0;
-                                $imgPath = $slider->image ?? null;
-                                $imgUrl = $imgPath
-                                    ? asset('storage/' . ltrim($imgPath, '/'))
-                                    : asset('front/assets/imgs/hero/girl1.png');
+                                $imgPath = $slider->image_url ?? null;
+                                $imgUrl = $imgPath ?? asset('front/assets/imgs/hero/girl1.png');
                                 $langRow = null;
                                 if (isset($languageId) && $languageId) {
                                     $langRow = $slider->langs->firstWhere('language_id', $languageId);

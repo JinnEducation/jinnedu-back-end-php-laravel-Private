@@ -125,7 +125,9 @@ class GroupClassController extends Controller
 
         $items = paginate($items, $limit);
 
-        foreach ($items as $tutor) {
+
+        foreach($items as $tutor){
+
             $tutor->price = optional($tutor->hourlyPrices()?->first())->price ?? 0;
             $tutor->rating = $tutor->reviews()->avg('stars');
 
@@ -264,6 +266,10 @@ class GroupClassController extends Controller
                 }
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
+
+                                
+                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
+
 
                 $items->tutor->price = $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
@@ -434,6 +440,11 @@ class GroupClassController extends Controller
                 // $item->reviews = $item->reviews()->get();
                 $item->rating = $item->reviews()->avg('stars');
                 $item->tutor;
+
+                                
+                $item->tutor->price =  $item->tutor->hourlyPrices()?->first()?->price ?? 0;
+                $tutor_about =  $item->tutor->abouts()->first();
+
 
                 $item->tutor->price = $item->tutor->hourlyPrices()?->first()?->price ?? 0;
                 $tutor_about = $item->tutor->abouts()->first();
@@ -618,6 +629,10 @@ class GroupClassController extends Controller
                 }
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
+
+                                
+                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
+
 
                 $items->tutor->price = $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
@@ -806,8 +821,10 @@ class GroupClassController extends Controller
                         $price = $appliedTutor->tutor?->hourlyPrices()?->first()?->price ?? 0;
                         $appliedTutor->tutor->setAttribute('price', $price);
                         $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
-                        $appliedTutor->tutor->specialization = $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
+
+                        $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
                     }
+                    
 
                 }
                 $item->tutor_status = GroupClassTutor::where('group_class_id', $item->id)->where('tutor_id', $user->id)->first() ? 1 : 0;
@@ -867,6 +884,7 @@ class GroupClassController extends Controller
 
     public function storeUpdateRequest($request, $id = 0)
     {
+
         DB::beginTransaction();
         try {
 
@@ -883,6 +901,7 @@ class GroupClassController extends Controller
                     'message' => $validator->errors()->first(),
                     'msg-code' => 'validation-error',
                 ], 200);
+
             }
 
             $data = $request->only(['name', 'category_id', 'price', 'level_id', 'classes', 'class_length', 'total_classes_length', 'frequency_id', 'min_size', 'metadata', 'embed', 'image', 'attachment', 'status', 'publish', 'publish_date', 'start_month', 'sessions_hour']); // 'tutor_id'
