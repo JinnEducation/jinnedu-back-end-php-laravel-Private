@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'timezone' => 'Asia/Gaza',
+    'approval_type' => 1,
+    'audio' => 'both',
     'auto_recording' => true,
     'api_key' => env('ZOOM_CLIENT_KEY'),
     'api_secret' => env('ZOOM_CLIENT_SECRET'),
