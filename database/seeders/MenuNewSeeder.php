@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Blog;
 use App\Models\CateqBlog;
+use App\Models\Slider;
 use Illuminate\Support\Facades\DB;
 //use App\Models\Report;
 use App\Models\Menu;
@@ -22,11 +23,11 @@ class MenuNewSeeder extends Seeder
 
     public function run()
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('menus')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // DB::table('menus')->truncate();
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         //================================================
-        $this->id=0;
+        $this->id = Menu::query()->max('id') ?? 0;
 
         $this->createMenuSubMenus([
             'type' => '', 
@@ -36,8 +37,8 @@ class MenuNewSeeder extends Seeder
             'children' =>[
                 [
                     'type' => Menu::class, 
-                    'name' => 'menu.show',
-                    'title' => 'menu-show',
+                    'name' => 'menu.index',
+                    'title' => 'menu-index',
                     'indexTitle' => ['menu-list',1],
                     'createTitle' => ['add-menu',1],
                     'editTitle' => ['update-menu',1],
@@ -49,6 +50,8 @@ class MenuNewSeeder extends Seeder
                     'type' => Menu::class, 
                     'name' => 'menu.create',
                     'title' => 'menu-create',
+                    'createTitle' => ['add-menu',1],
+                    'editTitle' => ['update-menu',1],
                     'svg' => '',
                 ],
             ]
@@ -61,8 +64,8 @@ class MenuNewSeeder extends Seeder
             'children' =>[
                 [
                     'type' => Blog::class, 
-                    'name' => 'blog.show',
-                    'title' => 'menu-show',
+                    'name' => 'blog.index',
+                    'title' => 'blog-index',
                     'indexTitle' => ['blog-list',1],
                     'createTitle' => ['add-blog',1],
                     'editTitle' => ['update-blog',1],
@@ -74,6 +77,8 @@ class MenuNewSeeder extends Seeder
                     'type' => Blog::class, 
                     'name' => 'blog.create',
                     'title' => 'blog-create',
+                    'createTitle' => ['add-blog',1],
+                    'editTitle' => ['update-blog',1],
                     'svg' => '',
                 ],
                 [
@@ -89,7 +94,34 @@ class MenuNewSeeder extends Seeder
                 ],
             ]
         ]);
-        
+        $this->createMenuSubMenus([
+            'type' => '', 
+            'name' => 'slider',
+            'title' => 'slider-management',
+            'svg' => 'Home/Globe.svg',
+            'children' =>[
+                [
+                    'type' => Slider::class, 
+                    'name' => 'slider.index',
+                    'title' => 'slider-index',
+                    'indexTitle' => ['slider-list',1],
+                    'createTitle' => ['add-slider',1],
+                    'editTitle' => ['update-slider',1],
+                    'showTitle' => ['view-slider',1],
+                    'destroyTitle' => ['delete-slider',1],
+                    'svg' => '',
+                ],
+                [
+                    'type' => Slider::class, 
+                    'name' => 'slider.create',
+                    'title' => 'slider-create',
+                    'createTitle' => ['add-slider',1],
+                    'editTitle' => ['update-slider',1],
+                    'svg' => '',
+                ],
+                
+            ]
+        ]);
         //================================================
     }
 
