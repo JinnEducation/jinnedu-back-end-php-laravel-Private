@@ -24,9 +24,10 @@ class GroupClassController extends Controller
 {
     public function registerAsTutor(Request $request, $group_class_id)
     {
-        $user = Auth::user();
-
+        $user = Auth::user() ?? $request->user()->id;
+        
         $tutor = Tutor::find($user->id);
+
         if (! $tutor) {
             return response([
                 'success' => false,

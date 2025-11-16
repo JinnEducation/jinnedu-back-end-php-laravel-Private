@@ -799,6 +799,7 @@ class ConferenceController extends Controller
         
         
         $response = json_decode($conference->response);
+        $response = $response->data;
         if(!$response) return response([
                 'success' => false,
                 'message' => 'response-dose-not-exist',
@@ -818,7 +819,7 @@ class ConferenceController extends Controller
 	    $conferenceLink->order_id=$conference->order_id;
 	    $conferenceLink->conference_id=$conference->id;
 	    
-	    $conferenceLink->class_id=$response->class_id;
+	    $conferenceLink->class_id=$conference->ref_id;
 	    $conferenceLink->user_name=$user->name;
 	    
 	    $conferenceLink->is_teacher=1;
