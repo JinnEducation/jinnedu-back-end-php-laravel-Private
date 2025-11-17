@@ -536,7 +536,7 @@ class ConferenceController extends Controller
     {
         $user = Auth::user();
         
-        $conference = Conference::where('id',$id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>30 and student_change_date=0 and student_id=? and student_id<>0 and order_id<>0 and ref_type<>1',[$user->id])->first();
+        $conference = Conference::where('id',$id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>60 and student_change_date=0 and student_id=? and student_id<>0 and order_id<>0 and ref_type<>1',[$user->id])->first();
         if(!$conference) return response([
                 'success' => false,
                 'message' => 'change-date-dose-not-allow',
@@ -616,6 +616,25 @@ class ConferenceController extends Controller
         $conference->response = $braincert->conferenceCreate($postValues);
         //$conference->notes = json_encode($postValues);
         $conference->save();
+        
+        // إرسال إشعار للمدرّس بأن الطالب غيّر الموعد
+        if($conference->tutor_id) {
+            $tutor = User::find($conference->tutor_id);
+            if($tutor && $tutor->fcm) {
+                $info = [
+                    'type' => 'schedule_change',
+                    'conference_id' => $conference->id,
+                    'new_date' => $conference->date,
+                    'new_time' => $conference->start_time . ' - ' . $conference->end_time
+                ];
+                sendFCMNotification(
+                    'Schedule Changed', 
+                    'Student has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time, 
+                    $tutor->fcm, 
+                    $info
+                );
+            }
+        }
             
          return response([
                 'success' => true,
@@ -628,7 +647,7 @@ class ConferenceController extends Controller
     {
         $user = Auth::user();
         
-        $conference = Conference::where('id',$id)->where('tutor_id',$user->id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>30 and tutor_change_date=0 and student_id>0 and student_id<>0 and order_id<>0 and ref_type<>1',[])->first();
+        $conference = Conference::where('id',$id)->where('tutor_id',$user->id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>60 and tutor_change_date=0 and student_id>0 and student_id<>0 and order_id<>0 and ref_type<>1',[])->first();
         if(!$conference) return response([
                 'success' => false,
                 'message' => 'change-date-dose-not-allow',
@@ -709,6 +728,25 @@ class ConferenceController extends Controller
         $conference->response = $braincert->conferenceCreate($postValues);
         //$conference->notes = json_encode($postValues);
         $conference->save();
+        
+        // إرسال إشعار للطالب بأن المدرّس غيّر الموعد
+        if($conference->student_id) {
+            $student = User::find($conference->student_id);
+            if($student && $student->fcm) {
+                $info = [
+                    'type' => 'schedule_change',
+                    'conference_id' => $conference->id,
+                    'new_date' => $conference->date,
+                    'new_time' => $conference->start_time . ' - ' . $conference->end_time
+                ];
+                sendFCMNotification(
+                    'Schedule Changed', 
+                    'Your tutor has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time, 
+                    $student->fcm, 
+                    $info
+                );
+            }
+        }
             
          return response([
                 'success' => true,
@@ -1023,5 +1061,71 @@ class ConferenceController extends Controller
                 'success' => true,
                 'message' => 'attendance successfully',
         ] , 200);
+    }
+
+    public function cancelConference(Request $request, $id)
+    {
+        $user = Auth::user();
+        
+        // السماح بالإلغاء فقط للطالب قبل 60 دقيقة من بدء الحصة
+        $conference = Conference::where('id', $id)
+            ->where('student_id', $user->id)
+            ->whereRaw('TIMESTAMPDIFF(MINUTE, NOW(), `start_date_time`) > 60')
+            ->whereIn('ref_type', [2, 4]) // private lessons only
+            ->first();
+            
+        if(!$conference) {
+            return response([
+                'success' => false,
+                'message' => 'Cancellation not allowed. Conference not found or less than 1 hour before start.',
+                'msg-code' => '111'
+            ], 200);
+        }
+        
+        // حذف أو تعطيل الحصة
+        $conference->cancelled = 1;
+        $conference->save();
+        
+        // إرجاع الرسوم للطالب (إلى المحفظة)
+        if($conference->order_id) {
+            $order = \App\Models\Order::find($conference->order_id);
+            if($order) {
+                $wallet = $user->wallets()->first();
+                if(!$wallet) {
+                    $wallet = new \App\Models\UserWallet;
+                    $wallet->user_id = $user->id;
+                    $wallet->balance = $order->price;
+                    $wallet->save();
+                } else {
+                    $wallet->balance += $order->price;
+                    $wallet->save();
+                }
+                
+                // حذف TutorFinance المرتبط
+                TutorFinance::where('order_id', $order->id)->delete();
+            }
+        }
+        
+        // إرسال إشعار للمدرّس
+        if($conference->tutor_id) {
+            $tutor = User::find($conference->tutor_id);
+            if($tutor && $tutor->fcm) {
+                $info = [
+                    'type' => 'lesson_cancelled',
+                    'conference_id' => $conference->id
+                ];
+                sendFCMNotification(
+                    'Lesson Cancelled', 
+                    'Student has cancelled the lesson scheduled for ' . $conference->date . ' at ' . $conference->start_time, 
+                    $tutor->fcm, 
+                    $info
+                );
+            }
+        }
+        
+        return response([
+            'success' => true,
+            'message' => 'Conference cancelled successfully and amount refunded.',
+        ], 200);
     }
 }
