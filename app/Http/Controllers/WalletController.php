@@ -304,13 +304,13 @@ class WalletController extends Controller
                     $order->save();
                     
                     //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
-                    // $this->addTutorFinance($order,$groupClass->tutor_id, 1);
+                    $this->addTutorFinance($order,$groupClass->tutor_id, 1);
         	    } else {
         	        $wallet->balance -= $order->price;
         	        $wallet->save();
         	        
         	        //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
-                    // $this->addTutorFinance($order,$groupClass->tutor_id, 1);
+                    $this->addTutorFinance($order,$groupClass->tutor_id, 1);
         	    }
                 
         	    //=====================================================================

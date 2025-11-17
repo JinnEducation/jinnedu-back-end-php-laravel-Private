@@ -40,6 +40,20 @@ class TransferTutorFees extends Command
 
         foreach ($tutor_finances as $tutor_finance) {
 
+            // للـ group classes: التأكد من انتهاء كل الجلسات
+            if($tutor_finance->ref_type == 1) {
+                $lastConference = Conference::where('ref_type', 1)
+                    ->where('ref_id', $tutor_finance->ref_id)
+                    ->orderBy('end_date_time', 'desc')
+                    ->first();
+                
+                // إذا لم تنته آخر جلسة بعد، تجاوز هذا الـ TutorFinance
+                if($lastConference && $lastConference->end_date_time && 
+                   Carbon::parse($lastConference->end_date_time)->addHours(2)->isFuture()) {
+                    continue;
+                }
+            }
+
             // Check complaint
             $check_complaint = $this->checkComplaintForTransfer($tutor_finance);
 
@@ -79,9 +93,15 @@ class TransferTutorFees extends Command
                 return ConferenceComplaint::whereIn('conference_id', $groupClassConferenceIds)->count();
             case 4:
                 $conference = Conference::where('order_id', $tutor_finance->order_id)->first();
+                
+                // إذا كانت الحصة ملغاة، لا نحول الرسوم (يُفترض أنها أرجعت للطالب)
+                if($conference && $conference->cancelled) {
+                    return true; // نرجع true لمنع التحويل
+                }
+                
                 return ConferenceComplaint::where('conference_id', $conference->id)->count();
             default:
-                Log::warning("Unexpected ref_type in TutorFinance: " . $tutor_finance->ref_type);
+                \Illuminate\Support\Facades\Log::warning("Unexpected ref_type in TutorFinance: " . $tutor_finance->ref_type);
                 return false;
         }
     }

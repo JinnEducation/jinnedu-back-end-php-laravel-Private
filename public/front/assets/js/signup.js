@@ -277,7 +277,8 @@ $(function () {
 
 // Step 3
 $(function () {
-    const $input = $("#dob-input");
+    const $input = $("#dob-input"); // Display input
+    const $valueInput = $("#dob-value"); // Hidden input for actual value
     const $dropdown = $("#dob-dropdown");
     const $monthLabel = $("#monthLabel");
     const $grid = $("#calendarGrid");
@@ -316,8 +317,14 @@ $(function () {
             if (isToday) $cell.addClass("bg-primary/10 font-bold text-primary");
 
             $cell.on("click", function () {
-                const formatted = `${year} / ${date.toLocaleString("default", { month: "short" })} / ${String(d).padStart(2, "0")}`;
-                $input.val(formatted);
+                // Format for display (yyyy / MMM / DD)
+                const displayFormatted = `${year} / ${date.toLocaleString("default", { month: "short" })} / ${String(d).padStart(2, "0")}`;
+                $input.val(displayFormatted);
+                
+                // Format for database (yyyy-MM-DD)
+                const dbFormatted = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+                $valueInput.val(dbFormatted);
+                
                 hideDropdown();
             });
 

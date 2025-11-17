@@ -137,9 +137,104 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserAbout::class, 'user_id');
     }
 
+    /**
+     * Unified availabilities accessor.
+     *
+     * بدلاً من الاعتماد على جدول user_availabilities فقط، هذه الدالة تقرأ
+     * من حقل JSON الجديد الموجود في جدول tutor_profiles.availability_json
+     * وتُرجِع بيانات بنفس الشكل الذي كان يرجع من موديل UserAvailability تقريباً،
+     * مع دعم الاستدعاء الحالي في المشروع:
+     *
+     *   $tutor->availabilities()->get();
+     *
+     * حيث أن:
+     *   - availabilities() ترجع كائن بسيط يحتوي على دالة get()
+     *   - get() ترجع Collection من كائنات فيها:
+     *       $slot->day->name  (Sunday, Monday, ...)
+     *       $slot->day->id    (1..7 تقريبياً)
+     *       $slot->hour_from  (09:00)
+     *       $slot->hour_to    (19:00)
+     */
     public function availabilities()
     {
-        return $this->hasMany(UserAvailability::class, 'user_id');
+        $user = $this;
+
+        return new class($user)
+        {
+            protected $user;
+
+            public function __construct(User $user)
+            {
+                $this->user = $user;
+            }
+
+            /**
+             * يحاكي استدعاء الـ Eloquent: $user->availabilities()->get()
+             */
+            public function get()
+            {
+                $profile = $this->user->tutorProfile;
+
+                // لو عندنا JSON جديد في tutor_profiles نستخدمه
+                if ($profile && is_array($profile->availability_json)) {
+                    $result = [];
+
+                    // خريطة أيام الأسبوع إلى أرقام تقريبية مثل جدول week_days
+                    $dayIds = [
+                        'sunday' => 1,
+                        'monday' => 2,
+                        'tuesday' => 3,
+                        'wednesday' => 4,
+                        'thursday' => 5,
+                        'friday' => 6,
+                        'saturday' => 7,
+                    ];
+
+                    foreach ($profile->availability_json as $dayKey => $slots) {
+                        if (! is_array($slots)) {
+                            continue;
+                        }
+
+                        $normalizedKey = strtolower((string) $dayKey);
+                        $dayName = ucfirst($normalizedKey); // Sunday, Monday, ...
+                        $dayId = $dayIds[$normalizedKey] ?? 0;
+
+                        $dayObject = (object) [
+                            'id' => $dayId,
+                            'name' => $dayName,
+                        ];
+
+                        foreach ($slots as $slot) {
+                            if (! is_array($slot)) {
+                                continue;
+                            }
+
+                            $from = $slot['from'] ?? null;
+                            $to = $slot['to'] ?? null;
+
+                            if (! $from || ! $to) {
+                                continue;
+                            }
+
+                            $result[] = (object) [
+                                'day' => $dayObject,
+                                'hour_from' => $from,
+                                'hour_to' => $to,
+                                // لم يعد لدينا موديل timezone هنا، فنضعه null للتوافق
+                                'timezone' => null,
+                            ];
+                        }
+                    }
+
+                    return collect($result);
+                }
+
+                // في حال عدم وجود JSON نرجع للجدول القديم (لو ما زال مستخدماً)
+                return UserAvailability::where('user_id', $this->user->id)
+                    ->with(['timezone', 'day'])
+                    ->get();
+            }
+        };
     }
 
     public function certifications()

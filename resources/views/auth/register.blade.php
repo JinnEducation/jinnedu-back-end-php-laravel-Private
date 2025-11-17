@@ -169,6 +169,7 @@
             $subjects = App\Models\Subject::get();
             $experiences = App\Models\Experience::get();
             $situations = App\Models\Situation::get();
+            $specializations = App\Models\Specialization::get();
 
 
             @endphp
@@ -436,8 +437,11 @@
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Date of birth</label>
 
                                 <div class="relative">
-                                    <!-- Input -->
-                                    <input id="dob-input" type="text" readonly name="date_of_birth" required
+                                    <!-- Hidden input for actual date value -->
+                                    <input id="dob-value" type="hidden" name="date_of_birth" required>
+                                    
+                                    <!-- Display input for user -->
+                                    <input id="dob-input" type="text" readonly
                                         placeholder="Date of birth (yyyy / MMM / DD)"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12 cursor-pointer shadow-sm">
 
@@ -502,7 +506,7 @@
                                     <select name="countty_tutor" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $countries as $country)
-                                        <option value="{{ $country->name }}">{{ $country->name}}</option>
+                                        <option value=" {{$country->name}} ">{{$country->name}}</option>
                                          @endforeach
                                     </select>
                                 </div>
@@ -512,7 +516,7 @@
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $languages as $language)
-                                 <option value=" {{$language->name}} ">{{$language->name}}"></option>
+                                 <option value=" {{$language->name}} ">{{$language->name}}</option>
                                          @endforeach
                                     </select>
                                 </div>
@@ -525,7 +529,7 @@
                                     <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $subjects as $subject)
-                                        <option value=" {{$subject->name}} ">{{$subject->name}}"></option>
+                                        <option value=" {{$subject->name}} ">{{$subject->name}}</option>
                                          @endforeach
                                     </select>
                                 </div>
@@ -535,7 +539,7 @@
                                     <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                            @foreach ( $experiences as $experience)
-                                     <option value=" {{$experience->name}} ">{{$experience->name}}"></option>
+                                     <option value=" {{$experience->name}} ">{{$experience->name}}</option>
                                         @endforeach 
                                     </select>
                                     <p class="text-[#AAAAAA]">e.g., 1–2 years, 3–5 years, 5–7 years…</p>
@@ -547,7 +551,7 @@
                                 <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     @foreach ( $situations as $situation)
-                                    <option value=" {{$situation->name}} ">{{$situation->name}}"></option>
+                                    <option value=" {{$situation->name}} ">{{$situation->name}}</option>
                                    @endforeach
                                 </select>
                             </div>
@@ -597,7 +601,9 @@
                                 <label class="block text-sm font-semibold text-gray-900 mb-2">Specializations</label>
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
-                                    <option></option>
+                                    @foreach ($specializations as $specialization)
+                                    <option value="{{$subject->name}}">{{$subject->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
