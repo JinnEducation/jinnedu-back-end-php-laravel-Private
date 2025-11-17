@@ -383,6 +383,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
 
         Route::post('/student-change-date/{id}', [ConferenceController::class, 'studentChangeDate'])->name('student-change-date')->middleware('can:student-change-date,App\\Models\\' . $routeModel);
         Route::post('/tutor-change-date/{id}', [ConferenceController::class, 'tutorChangeDate'])->name('tutor-change-date')->middleware('can:tutor-change-date,App\\Models\\' . $routeModel);
+        Route::post('/cancel-conference/{id}', [ConferenceController::class, 'cancelConference'])->name('cancel-conference')->middleware('can:student-change-date,App\\Models\\' . $routeModel);
 
         Route::get('/admin-card/{id}', [ConferenceController::class, 'adminCard'])->name('admin-card')->middleware('can:admin-index,App\\Models\\' . $routeModel);
         Route::get('/tutor-card/{id}', [ConferenceController::class, 'tutorCard'])->name('tutor-card')->middleware('can:tutor-index,App\\Models\\' . $routeModel);

@@ -198,6 +198,28 @@ class GroupClassController extends Controller
 
         Conference::where('ref_type', 1)->where('ref_id', $group_class->id)->update(['tutor_id' => $request->tutor_id]);
 
+        // إرسال إشعار للطلاب المسجلين بتعيين المدرّس
+        $studentIds = GroupClassStudent::where('class_id', $group_class->id)->pluck('student_id');
+        $tutor = User::find($request->tutor_id);
+        if($tutor && $studentIds->isNotEmpty()) {
+            foreach($studentIds as $studentId) {
+                $student = User::find($studentId);
+                if($student && $student->fcm) {
+                    $info = [
+                        'type' => 'tutor_assigned',
+                        'group_class_id' => $group_class->id,
+                        'tutor_name' => $tutor->name
+                    ];
+                    sendFCMNotification(
+                        'Tutor Assigned', 
+                        'A tutor has been assigned to your group class: ' . $group_class->name, 
+                        $student->fcm, 
+                        $info
+                    );
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Tutor assigned successfully.',
@@ -228,11 +250,49 @@ class GroupClassController extends Controller
             ], 200);
         }
 
+        // حفظ معلومات المدرّس قبل الحذف للإشعار
+        $oldTutorId = $group_class->tutor_id;
+        
         GroupClassTutor::where('group_class_id', $group_class->id)->where('tutor_id', $group_class->tutor_id)->update(['status' => 'rejected']);
 
         Conference::where('ref_type', 1)->where('ref_id', $group_class->id)->update(['tutor_id' => null]);
 
         $group_class->update(['tutor_id' => null]);
+
+        // إرسال إشعار للطلاب المسجلين بإلغاء تعيين المدرّس
+        $studentIds = GroupClassStudent::where('class_id', $group_class->id)->pluck('student_id');
+        if($studentIds->isNotEmpty()) {
+            foreach($studentIds as $studentId) {
+                $student = User::find($studentId);
+                if($student && $student->fcm) {
+                    $info = [
+                        'type' => 'tutor_unassigned',
+                        'group_class_id' => $group_class->id
+                    ];
+                    sendFCMNotification(
+                        'Tutor Removed', 
+                        'The tutor has been removed from your group class: ' . $group_class->name, 
+                        $student->fcm, 
+                        $info
+                    );
+                }
+            }
+        }
+        
+        // إرسال إشعار للمدرّس السابق
+        $oldTutor = User::find($oldTutorId);
+        if($oldTutor && $oldTutor->fcm) {
+            $info = [
+                'type' => 'removed_from_class',
+                'group_class_id' => $group_class->id
+            ];
+            sendFCMNotification(
+                'Removed from Class', 
+                'You have been removed from group class: ' . $group_class->name, 
+                $oldTutor->fcm, 
+                $info
+            );
+        }
 
         return response()->json([
             'success' => true,
@@ -1299,6 +1359,43 @@ class GroupClassController extends Controller
                 'message' => 'item-dose-not-exist',
                 'msg-code' => '111',
             ], 200);
+        }
+
+        // إرسال إشعارات للطلاب والمدرّس قبل حذف الكلاس
+        $studentIds = GroupClassStudent::where('class_id', $item->id)->pluck('student_id');
+        if($studentIds->isNotEmpty()) {
+            foreach($studentIds as $studentId) {
+                $student = User::find($studentId);
+                if($student && $student->fcm) {
+                    $info = [
+                        'type' => 'class_cancelled',
+                        'group_class_id' => $item->id
+                    ];
+                    sendFCMNotification(
+                        'Class Cancelled', 
+                        'The group class "' . $item->name . '" has been cancelled', 
+                        $student->fcm, 
+                        $info
+                    );
+                }
+            }
+        }
+        
+        // إشعار للمدرّس
+        if($item->tutor_id) {
+            $tutor = User::find($item->tutor_id);
+            if($tutor && $tutor->fcm) {
+                $info = [
+                    'type' => 'class_cancelled',
+                    'group_class_id' => $item->id
+                ];
+                sendFCMNotification(
+                    'Class Cancelled', 
+                    'The group class "' . $item->name . '" has been cancelled', 
+                    $tutor->fcm, 
+                    $info
+                );
+            }
         }
 
         $item->delete();

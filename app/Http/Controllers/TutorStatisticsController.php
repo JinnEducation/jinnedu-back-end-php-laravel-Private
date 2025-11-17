@@ -193,6 +193,7 @@ class TutorStatisticsController extends Controller
         $limit = setDataTablePerPageLimit($request->limit);
 
         $conferences = Conference::where('tutor_id', $tutor->id)
+                ->where('cancelled', 0) // استبعاد الحصص الملغاة
                 ->doesntHave('complaints')
                 ->where('end_date_time', '<', now())
                 ->whereHas('attendances', function ($query) {
