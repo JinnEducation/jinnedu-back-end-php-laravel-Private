@@ -17,13 +17,17 @@
         <!-- Body -->
         <div class="px-8 py-16">
             <!-- Title -->
-            <h2 class="text-2xl font-bold text-center mb-6">Log in</h2>
+            <h2 class="text-2xl font-bold text-center mb-6">
+                {{ label_text('global', 'site.login-title', __('site.Log in')) }}
+            </h2>
             <form action="{{ route('login') }}" method="POST">
                 @csrf
 
                 <!-- Email -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ label_text('global', 'site.Email', __('site.Email')) }}
+                    </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                             <svg width="17" height="15" viewBox="0 0 17 15" fill="none" class="w-5 h-5"
@@ -33,14 +37,17 @@
                                     fill="#AAAAAA" />
                             </svg>
                         </span>
-                        <input type="email" name="email" id="email" placeholder="name@email.com"
+                        <input type="email" name="email" id="email"
+                            placeholder="{{ label_text('global', 'site.email-placeholder', __('site.name@email.com')) }}"
                             class="w-full h-11 pl-10 pr-3 rounded-lg border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                     </div>
                 </div>
 
                 <!-- Password -->
                 <div class="mb-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ label_text('global', 'site.Password', __('site.Password')) }}
+                    </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                             <svg width="16" height="21" class="w-5 h-5" viewBox="0 0 16 21" fill="none"
@@ -58,7 +65,7 @@
                         </span>
                         <input type="password" name="password" id="password"
                             class="w-full h-11 pl-10 pr-10 rounded-lg border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                            placeholder="Password">
+                            placeholder="{{ label_text('global', 'site.Password', __('site.Password')) }}">
                         <button type="button" data-toggle-password="#password"
                             class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700">
                             <svg class="eye w-5 h-5 hidden" width="17" height="17" viewBox="0 0 17 17"
@@ -87,25 +94,28 @@
 
                 <!-- Remember & Forgot -->
                 <div class="flex items-center justify-between mb-5">
-                    <button type="button" class="text-sm text-primary hover:underline" data-open="#forgotModal">Forgot
-                        Password ?</button>
+                    <button type="button" class="text-sm text-primary hover:underline" data-open="#forgotModal">
+                        {{ label_text('global', 'site.forgot-password-button', __('site.Forgot Password ?')) }}
+                    </button>
                     <label class="inline-flex items-center gap-2 text-sm text-gray-700">
                         <input type="checkbox" name="remember_me" class="rounded border-gray-300 text-primary focus:ring-primary">
-                        Remember Me
+                        {{ label_text('global', 'site.remember-me', __('site.Remember Me')) }}
                     </label>
                 </div>
 
                 <!-- Login Button -->
                 <button type="submit"
                     class="w-full h-11 rounded-lg bg-primary text-white font-semibold hover:brightness-95 transition-all duration-150">
-                    login
+                    {{ label_text('global', 'site.login', __('site.login')) }}
                 </button>
 
             </form>
             <!-- Separator -->
             <div class="flex items-center my-4">
                 <div class="flex-1 h-px bg-gray-300"></div>
-                <span class="px-3 text-sm font-bold text-black">Or</span>
+                <span class="px-3 text-sm font-bold text-black">
+                    {{ label_text('global', 'site.or', __('site.Or')) }}
+                </span>
                 <div class="flex-1 h-px bg-gray-300"></div>
             </div>
 
@@ -114,12 +124,15 @@
                 class="relative w-full h-11 rounded-lg border border-gray-300 hover:bg-primary hover:text-white flex items-center justify-center font-medium text-gray-700 transition-all duration-350 courser-p">
                 <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google"
                     class="w-5 h-5 absolute left-4">
-                Sign in with Google
+                {{ label_text('global', 'site.sign-in-google', __('site.Sign in with Google')) }}
             </button>
 
             <!-- Sign Up -->
             <p class="mt-5 text-center text-sm text-gray-600">
-                New To Jinn? <a href="./signup.html" class="text-primary hover:underline">Sign Up</a>
+                {{ label_text('global', 'site.new-to-jinn', __('site.New To Jinn?')) }}
+                <a href="./signup.html" class="text-primary hover:underline">
+                    {{ label_text('global', 'site.sign-up', __('site.sign-up')) }}
+                </a>
             </p>
         </div>
     </div>
@@ -144,14 +157,18 @@
         <!-- Body -->
         <div class="px-8 py-16">
             <!-- Title -->
-            <h2 class="text-2xl font-bold text-center mb-2">Forgot password</h2>
+            <h2 class="text-2xl font-bold text-center mb-2">
+                {{ label_text('global', 'site.forgot-password-title', __('site.Forgot password')) }}
+            </h2>
             <p class="text-sm text-center font-light mb-4">
-                Enter the email address you use on Jinn. We'll send you a link to reset your password.
+                {{ label_text('global', 'site.forgot-password-text', __("site.Enter the email address you use on Jinn. We'll send you a link to reset your password.")) }}
             </p>
 
             <!-- Email -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ label_text('global', 'site.Email', __('site.Email')) }}
+                </label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         <svg width="17" height="15" viewBox="0 0 17 15" fill="none" class="w-5 h-5"
@@ -161,7 +178,8 @@
                                 fill="#AAAAAA" />
                         </svg>
                     </span>
-                    <input type="email" id="email" placeholder="name@email.com"
+                    <input type="email" id="email"
+                        placeholder="{{ label_text('global', 'site.email-placeholder', __('site.name@email.com')) }}"
                         class="w-full h-11 pl-10 pr-3 rounded-lg border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                 </div>
             </div>
@@ -169,27 +187,30 @@
             <!-- Login Button -->
             <button
                 class="w-full h-11 rounded-lg bg-primary text-white font-semibold hover:brightness-95 transition-all duration-150">
-                login
+                {{ label_text('global', 'site.login', __('site.login')) }}
             </button>
 
             <!-- Separator -->
             <div class="flex items-center my-4">
                 <div class="flex-1 h-px bg-gray-300"></div>
-                <span class="px-3 text-sm font-bold text-black">Or</span>
+                <span class="px-3 text-sm font-bold text-black">
+                    {{ label_text('global', 'site.or', __('site.Or')) }}
+                </span>
                 <div class="flex-1 h-px bg-gray-300"></div>
             </div>
 
             <!-- Google Button -->
             <button
                 class="relative w-full h-11 rounded-lg border border-gray-300 hover:bg-primary hover:text-white flex items-center justify-center font-medium text-gray-700 transition-all duration-350 courser-p">
-                eMAIL ME A LOGIN LINK
+                {{ label_text('global', 'site.email-login-link', __('site.eMAIL ME A LOGIN LINK')) }}
             </button>
 
             <!-- Sign Up -->
             <p class="mt-5 text-center text-sm text-gray-600">
-                Back to
-                <button type="button" class="text-primary hover:underline" data-open="#loginModal">Log
-                    in</button>
+                {{ label_text('global', 'site.back-to', __('site.Back to')) }}
+                <button type="button" class="text-primary hover:underline" data-open="#loginModal">
+                    {{ label_text('global', 'site.Log-in', __('site.Log in')) }}
+                </button>
             </p>
         </div>
     </div>

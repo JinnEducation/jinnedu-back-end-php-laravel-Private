@@ -6,7 +6,8 @@
                 <!-- Search Bar -->
                 <div class="flex-1 max-w-[285px]">
                     <div class="relative group">
-                        <input type="text" placeholder="search what you need"
+                        <input type="text"
+                            placeholder="{{ label_text('global', 'site.search-what-you-need', __('site.search-what-you-need')) }}"
                             class="py-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-200 transition-all duration-300 transform placeholder:text-secondary placeholder:text-[12px] placeholder:font-light ps-4 pe-12 focus:outline-none focus:ring-2 focus:ring-white focus:shadow-lg">
                         <button
                             class="flex absolute inset-y-0 items-center transition-colors duration-300 cursor-pointer end-0 pe-4 group-focus-within:bg-primary-50 rounded-e-lg">
@@ -58,21 +59,26 @@
                     <div class="relative currency-dropdown">
                         <button
                             class="flex gap-1 items-center px-2 py-1 rounded-md transition-colors duration-300 hover:bg-primary-700">
-                            <span class="text-sm font-medium">USD</span>
+                            <span class="text-sm font-medium">
+                                {{ label_text('global', 'site.currency-usd', __('site.USD')) }}
+                            </span>
                             <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down"></i>
                         </button>
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-32 bg-white rounded-lg border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 end-0">
                             <div class="py-2">
                                 <a href="#"
-                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">USD
-                                    ($)</a>
+                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                    {{ label_text('global', 'site.currency-usd-symbol', __('site.USD ($)')) }}
+                                </a>
                                 <a href="#"
-                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">EUR
-                                    (€)</a>
+                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                    {{ label_text('global', 'site.currency-eur-symbol', __('site.EUR (€)')) }}
+                                </a>
                                 <a href="#"
-                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">GBP
-                                    (£)</a>
+                                    class="block px-4 py-2 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                    {{ label_text('global', 'site.currency-gbp-symbol', __('site.GBP (£)')) }}
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -86,7 +92,8 @@
                 </button>
                 <div class="hidden flex-1 max-w-full" id="mobile-search-bar">
                     <div class="relative group">
-                        <input type="text" placeholder="Search what you need"
+                        <input type="text"
+                            placeholder="{{ label_text('global', 'site.search-what-you-need', __('site.Search what you need')) }}"
                             class="py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-200 transition-all duration-300 transform ps-4 pe-12 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent focus:shadow-lg">
                         <button
                             class="absolute inset-y-0 px-4 border-l-2 border-[#727475] transition-colors duration-300 end-0 group-focus-within:bg-primary-50 rounded-e-lg">
@@ -105,20 +112,21 @@
 
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <img src="{{ asset('front/assets/imgs/logo.png') }}" alt="JINN Education" class="w-auto h-10">
+                    <img src="{{ asset('front/assets/imgs/logo.png') }}"
+                        alt="{{ label_text('global', 'site.logo-alt', __('site.JINN Education')) }}" class="w-auto h-10">
                 </div>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden items-center lg:flex text-[15px]">
                     <!-- Home Link -->
                     <a href="{{ route('home') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
-                        {{ label_text('global', 'Home', __('auth.Home')) }}
+                        {{ label_text('global', 'site.Home', __('site.Home')) }}
                     </a>
 
                     <!-- Categories Dropdown -->
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
-                            <span>{{ label_text('global', 'Categories', __('auth.Categories')) }}</span>
+                            <span>{{ label_text('global', 'site.Categories', __('site.Categories')) }}</span>
                             <i
                                 class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
@@ -131,7 +139,7 @@
                                     <a href="#"
                                         class="flex justify-between items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:font-bold hover:ps-6 group hover:rounded-xl">
                                         <div class="flex gap-3 items-center">
-                                            <span>{{ label_text('global', 'Programming', __('auth.Programming')) }}</span>
+                                            <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                                         </div>
                                         <i class="text-xs fas fa-chevron-right group-hover:text-white"></i>
                                     </a>
@@ -141,20 +149,20 @@
                                         <div class="py-2">
                                             <a href="#"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'Web Development', __('auth.Web Development')) }}
+                                                {{ label_text('global', 'site.Web Development', __('site.Web Development')) }}
                                             </a>
                                             <a href="#"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'Mobile Apps', __('auth.Mobile Apps')) }}
+                                                {{ label_text('global', 'site.Mobile Apps', __('site.Mobile Apps')) }}
                                             </a>
                                             <a href="#"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'Data Science', __('auth.Data Science')) }}
+                                                {{ label_text('global', 'site.Data Science', __('site.Data Science')) }}
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-
+{{-- 
                                 <!-- Design with Subcategory -->
                                 <div class="relative border-b border-gray-100 subcategory-item group/sub">
                                     <a href="#"
@@ -177,18 +185,18 @@
                                             </a>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <!-- Business -->
                                 <a href="#"
                                     class="flex gap-3 items-center px-4 py-3 text-black border-b border-gray-100 transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
-                                    <span>Business</span>
+                                    <span>{{ label_text('global', 'site.Business', __('site.Business')) }}</span>
                                 </a>
 
                                 <!-- Languages -->
                                 <a href="#"
                                     class="flex gap-3 items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
-                                    <span>Languages</span>
+                                    <span>{{ label_text('global', 'site.Languages', __('site.Languages')) }}</span>
                                 </a>
                             </div>
                         </div>
@@ -196,19 +204,19 @@
 
                     <!-- K-12 Link -->
                     <a href="#" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
-                        {{ label_text('global', 'K-12', __('auth.K-12')) }}
+                        {{ label_text('global', 'site.K-12', __('site.K-12')) }}
                     </a>
 
                     <!-- Blog Link -->
                     <a href="{{ route('site.blog') }}"
                         class="nav-link {{ request()->is('blog') || request()->is('blog/*') ? 'active' : '' }}">
-                        {{ label_text('global', 'Blog', __('auth.Blog')) }}
+                        {{ label_text('global', 'site.Blog', __('site.Blog')) }}
                     </a>
 
                     <!-- Classes Dropdown -->
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
-                            <span>{{ label_text('global', 'Classes', __('auth.Classes')) }}</span>
+                            <span>{{ label_text('global', 'site.Classes', __('site.Classes')) }}</span>
                             <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
                         <div
@@ -216,11 +224,11 @@
                             <div class="py-3">
                                 <a href="{{ route('site.online_group_classes') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'online-group-classes', __('auth.online group classes')) }}
+                                    {{ label_text('global', 'site.online-group-classes', __('site.online group classes')) }}
                                 </a>
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'Private-Classes', __('auth.Private Classes')) }}
+                                    {{ label_text('global', 'site.Private-Classes', __('site.Private Classes')) }}
                                 </a>
                             </div>
                         </div>
@@ -228,13 +236,13 @@
 
                     <!-- Events Link -->
                     <a href="#" class="nav-link">
-                        {{ label_text('global', 'events', __('auth.events')) }}
+                        {{ label_text('global', 'site.events', __('site.events')) }}
                     </a>
 
                     <!-- Help Dropdown -->
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
-                            <span>{{ label_text('global', 'helps', __('auth.helps')) }}</span>
+                            <span>{{ label_text('global', 'site.helps', __('site.helps')) }}</span>
                             <i
                                 class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
@@ -243,14 +251,14 @@
                             <div class="py-3">
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'help-center', __('auth.help-center')) }}
+                                    {{ label_text('global', 'site.help-center', __('site.help-center')) }}
                                 </a>
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'contact-us', __('auth.contact-us')) }}
+                                    {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
                                 <a href="#"
-                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'FAQ', __('auth.faq')) }}</a>
+                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'site.faq', __('site.faq')) }}</a>
                             </div>
                         </div>
                     </div>
@@ -258,7 +266,7 @@
                     <!-- About Dropdown -->
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
-                            <span>{{ label_text('global', 'about', __('auth.about')) }}</span>
+                            <span>{{ label_text('global', 'site.about', __('site.about')) }}</span>
                             <i
                                 class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
@@ -267,23 +275,23 @@
                             <div class="py-3">
                                 <a href="{{ route('site.pages.show', ['slug' => 'about-us']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'about-us', __('auth.about-us')) }}
+                                    {{ label_text('global', 'site.about-us', __('site.about-us')) }}
                                 </a>
                                 <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'how-jin-works', __('auth.how-jin-works')) }}
+                                    {{ label_text('global', 'site.how-jin-works', __('site.how-jin-works')) }}
                                 </a>
                                 <a href="{{ route('site.pages.show', ['slug' => 'terms-of-use']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'terms-of-use', __('auth.terms-of-use')) }}
+                                    {{ label_text('global', 'site.terms-of-use', __('site.terms-of-use')) }}
                                 </a>
                                 <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'privacy-policy', __('auth.privacy-policy')) }}
+                                    {{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}
                                 </a>
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'contact-us', __('auth.contact-us')) }}
+                                    {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
                             </div>
                         </div>
@@ -298,14 +306,14 @@
                         <div class="flex items-center guest-auth text-[15px]">
                             <button type="button" data-open="#loginModal"
                                 class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all	duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
-                                <span class="relative z-10">{{ label_text('global', 'login', __('auth.login')) }}</span>
+                                <span class="relative z-10">{{ label_text('global', 'site.login', __('site.login')) }}</span>
                                 <span
                                     class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                             </button>
                             <a href="{{ route('register') }}"
                                 class="overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all duration-300 ltr:border-black ltr:border-l-2 hover:text-primary-600 group">
                                 <span
-                                    class="relative z-10">{{ label_text('global', 'sign-up', __('auth.sign-up')) }}</span>
+                                    class="relative z-10">{{ label_text('global', 'site.sign-up', __('site.sign-up')) }}</span>
                                 <span
                                     class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                             </a>
@@ -323,7 +331,7 @@
                                 <img src="{{ optional($user->profile()->first())->avatar_path ? asset('storage/' . optional($user->profile()->first())->avatar_path) : asset('front/assets/imgs/user-avatar.jpg') }}"
                                     alt="User" class="w-8 h-8 rounded-full">
                                 <span
-                                    class="font-medium">{{ $user->profile()->first()?->first_name . ' ' . $user->profile()->first()?->last_name ?? 'User Name' }}</span>
+                                    class="font-medium">{{ $user->profile()->first()?->first_name . ' ' . $user->profile()->first()?->last_name ?? label_text('global', 'site.user-name-default', __('site.User Name')) }}</span>
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                             </button>
@@ -334,17 +342,17 @@
                                     <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-user text-primary-600"></i>
-                                        <span>{{ label_text('global', 'my-profile', __('auth.My Profile')) }}</span>
+                                        <span>{{ label_text('global', 'site.my-profile', __('site.My Profile')) }}</span>
                                     </a>
                                     <a href="#"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
-                                        <span>{{ label_text('global', 'My-Courses', __('auth.My Courses')) }}</span>
+                                        <span>{{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}</span>
                                     </a>
                                     <a href="#"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-cog text-primary-600"></i>
-                                        <span>{{ label_text('global', 'Settings', __('auth.Settings')) }}</span>
+                                        <span>{{ label_text('global', 'site.Settings', __('site.Settings')) }}</span>
                                     </a>
                                     <hr class="my-2 border-gray-100">
                                     <form action="{{ route('logout') }}" method="post">
@@ -352,7 +360,7 @@
                                         <button type="submit"
                                             class="flex gap-3 items-center px-4 py-3 text-red-600 transition-all duration-300 hover:bg-red-50 hover:ps-6">
                                             <i class="fas fa-sign-out-alt"></i>
-                                            <span>{{ label_text('global', 'Logout', __('auth.Logout')) }}</span>
+                                            <span>{{ label_text('global', 'site.Logout', __('site.Logout')) }}</span>
                                         </button>
                                     </form>
 
@@ -380,7 +388,7 @@
             <a href="{{ route('home') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-home text-primary-600 me-2"></i>
-                <span>{{ label_text('global', 'Home', __('auth.Home')) }}</span>
+                <span>{{ label_text('global', 'site.Home', __('site.Home')) }}</span>
             </a>
 
             <!-- Categories Dropdown -->
@@ -389,7 +397,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-th-large text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Categories', __('auth.Categories')) }}</span>
+                        <span>{{ label_text('global', 'site.Categories', __('site.Categories')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -397,22 +405,22 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-code text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Programming', __('auth.Programming')) }}</span>
+                        <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-palette text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Design', __('auth.Design')) }}</span>
+                        <span>{{ label_text('global', 'site.Design', __('site.Design')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-briefcase text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Business', __('auth.Business')) }}</span>
+                        <span>{{ label_text('global', 'site.Business', __('site.Business')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-language text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Languages', __('auth.Languages')) }}</span>
+                        <span>{{ label_text('global', 'site.Languages', __('site.Languages')) }}</span>
                     </a>
                 </div>
             </div>
@@ -421,14 +429,14 @@
             <a href="#"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-graduation-cap text-primary-600 me-2"></i>
-                <span>{{ label_text('global', 'K-12', __('auth.K-12')) }}</span>
+                <span>{{ label_text('global', 'site.K-12', __('site.K-12')) }}</span>
             </a>
 
             <!-- Blog Link -->
             <a href="{{ route('site.blog') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-article text-primary-600 me-2"></i>
-                <span>{{ label_text('global', 'Blog', __('auth.Blog')) }}</span>
+                <span>{{ label_text('global', 'site.Blog', __('site.Blog')) }}</span>
             </a>
 
             <!-- Classes Dropdown -->
@@ -437,7 +445,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-chalkboard-teacher text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Classes', __('auth.Classes')) }}</span>
+                        <span>{{ label_text('global', 'site.Classes', __('site.Classes')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -445,12 +453,12 @@
                     <a href="{{ route('site.online_group_classes') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-video text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Online-Group-Classes', __('auth.Online Group Classes')) }}</span>
+                        <span>{{ label_text('global', 'site.Online-Group-Classes', __('site.Online Group Classes')) }}</span>
                     </a>
                     <a href="{{ route('site.group_class_details', ['id' => 1]) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'Group-Classes', __('auth.Group Classes')) }}</span>
+                        <span>{{ label_text('global', 'site.Group-Classes', __('site.Group Classes')) }}</span>
                     </a>
 
                 </div>
@@ -460,7 +468,7 @@
             <a href="#"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-calendar-alt text-primary-600 me-2"></i>
-                <span>{{ label_text('global', 'events', __('auth.events')) }}</span>
+                <span>{{ label_text('global', 'site.events', __('site.events')) }}</span>
             </a>
 
             <!-- Help Dropdown -->
@@ -469,7 +477,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-question-circle text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'helps', __('auth.helps')) }}</span>
+                        <span>{{ label_text('global', 'site.helps', __('site.helps')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -477,17 +485,17 @@
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-life-ring text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'help-center', __('auth.help-center')) }}</span>
+                        <span>{{ label_text('global', 'site.help-center', __('site.help-center')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'contact-us', __('auth.contact-us')) }}</span>
+                        <span>{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-question text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'FAQ', __('auth.faq')) }}</span>
+                        <span>{{ label_text('global', 'site.faq', __('site.faq')) }}</span>
                     </a>
                 </div>
             </div>
@@ -498,7 +506,7 @@
                     class="flex justify-between items-center px-3 py-2 w-full text-gray-700 rounded-lg transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50 mobile-dropdown-btn">
                     <div class="flex items-center">
                         <i class="w-5 text-center fas fa-info-circle text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'about', __('auth.about')) }}</span>
+                        <span>{{ label_text('global', 'site.about', __('site.about')) }}</span>
                     </div>
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
@@ -506,27 +514,27 @@
                     <a href="{{ route('site.pages.show', ['slug' => 'about-us']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-building text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'about-us', __('auth.about-us')) }}</span>
+                        <span>{{ label_text('global', 'site.about-us', __('site.about-us')) }}</span>
                     </a>
                     <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'how-jin-works', __('auth.how-jin-works')) }}</span>
+                        <span>{{ label_text('global', 'site.how-jin-works', __('site.how-jin-works')) }}</span>
                     </a>
                     <a href="{{ route('site.pages.show', ['slug' => 'terms-of-use']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-file-alt text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'terms-of-use', __('auth.terms-of-use')) }}</span>
+                        <span>{{ label_text('global', 'site.terms-of-use', __('site.terms-of-use')) }}</span>
                     </a>
                     <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-shield-alt text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'privacy-policy', __('auth.privacy-policy')) }}</span>
+                        <span>{{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'contact-us', __('auth.contact-us')) }}</span>
+                        <span>{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
                     </a>
                 </div>
             </div>
@@ -536,12 +544,12 @@
                     <button type="button" data-open="#loginModal"
                         class="flex justify-center items-center w-full px-3 py-2 text-gray-700 rounded-lg border border-gray-200 transition-colors duration-200 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-sign-in-alt text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'login', __('auth.login')) }}</span>
+                        <span>{{ label_text('global', 'site.login', __('site.login')) }}</span>
                     </button>
                     <a href="{{ route('register') }}"
                         class="flex justify-center items-center px-3 py-2 text-white rounded-lg transition-colors duration-200 bg-primary-600 hover:bg-primary-700">
                         <i class="fas fa-user-plus me-2"></i>
-                        <span>{{ label_text('global', 'sign-up', __('auth.sign-up')) }}</span>
+                        <span>{{ label_text('global', 'site.sign-up', __('site.sign-up')) }}</span>
                     </a>
                 </div>
             @endguest
@@ -564,17 +572,17 @@
                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-user text-primary-600"></i>
-                            <span>{{ label_text('global', 'My-Profile', __('auth.My Profile')) }}</span>
+                            <span>{{ label_text('global', 'site.My-Profile', __('site.My Profile')) }}</span>
                         </a>
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-book text-primary-600"></i>
-                            <span>{{ label_text('global', 'My-Courses', __('auth.My Courses')) }}</span>
+                            <span>{{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}</span>
                         </a>
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-cog text-primary-600"></i>
-                            <span>{{ label_text('global', 'Settings', __('auth.Settings')) }}</span>
+                            <span>{{ label_text('global', 'site.Settings', __('site.Settings')) }}</span>
                         </a>
                         <hr class="my-2 border-gray-100">
                         <form action="{{ route('logout') }}" method="post">
@@ -582,7 +590,7 @@
                             <button type="submit"
                                 class="flex gap-3 items-center px-3 py-2 text-red-600 rounded-lg transition-colors duration-200 hover:bg-red-50 nav-mobile-link">
                                 <i class="fas fa-sign-out-alt"></i>
-                                <span>{{ label_text('global', 'Logout', __('auth.Logout')) }}</span>
+                                <span>{{ label_text('global', 'site.Logout', __('site.Logout')) }}</span>
                             </button>
                         </form>
                     </div>
@@ -617,7 +625,7 @@
                         </a>
                     @empty
                         <span class="block px-4 py-2 text-sm text-gray-500">
-                            {{ __('No languages available') }}
+                            {{ label_text('global', 'site.No-languages-available', __('site.No languages available')) }}
                         </span>
                     @endforelse
                 </div>

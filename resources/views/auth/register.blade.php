@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - JINN EDU</title>
+    <title>{{ label_text('global', 'site.register-title', __('site.Create Account - JINN EDU')) }}</title>
 
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,16 +28,22 @@
             <!-- Logo -->
             <div>
                 <div class="my-12 flex justify-center items-center">
-
-                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="JINN Education" width="45%">
-
+                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}"
+                        alt="{{ label_text('global', 'site.register-logo-alt', __('site.JINN Education')) }}"
+                        width="45%">
                 </div>
                 <div class="flex justify-center items-center gap-4 text-sm mb-12">
-                    <a href="{{route('home')}}" class="hover:underline"> {{ label_text('global', 'Home', __('auth.Home')) }}</a>
+                    <a href="{{ route('home') }}" class="hover:underline">
+                        {{ label_text('global', 'site.Home', __('site.Home')) }}
+                    </a>
                     <span>|</span>
-                    <a href="{{ route('home') }}" class="hover:underline"> {{ label_text('global', 'Login', __('auth.Login')) }} </a>
+                    <a href="{{ route('home') }}" class="hover:underline">
+                        {{ label_text('global', 'site.login', __('site.login')) }}
+                    </a>
                     <span>|</span>
-                    <a href="{{ route('site.contact') }}" class="hover:underline"> {{ label_text('global', 'Contact Us', __('admin.Contact Us')) }} </a>
+                    <a href="{{ route('site.contact') }}" class="hover:underline">
+                        {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
+                    </a>
                 </div>
             </div>
 
@@ -52,7 +58,9 @@
                 <div class="step-item" data-step="1">
                     <div class="step-circle active" data-circle="1">1</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Account Type</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step1-title', __('site.Account Type')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -60,7 +68,9 @@
                 <div class="step-item" data-step="2">
                     <div class="step-circle" data-circle="2">2</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Account Information</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step2-title', __('site.Account Information')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -68,7 +78,9 @@
                 <div class="step-item hidden" data-step="3">
                     <div class="step-circle" data-circle="3">3</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Personal Information</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step3-title', __('site.Personal Information')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -76,7 +88,9 @@
                 <div class="step-item hidden" data-step="4">
                     <div class="step-circle" data-circle="4">4</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Tutor's Biography</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step4-title', __('site.Tutor\'s Biography')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -84,7 +98,9 @@
                 <div class="step-item hidden" data-step="5">
                     <div class="step-circle" data-circle="5">5</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Tutor's Availability</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step5-title', __('site.Tutor\'s Availability')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -92,7 +108,9 @@
                 <div class="step-item hidden" data-step="6">
                     <div class="step-circle" data-circle="6">6</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Tutor's Hourly Rate</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step6-title', __('site.Tutor\'s Hourly Rate')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -100,7 +118,9 @@
                 <div class="step-item hidden" data-step="7">
                     <div class="step-circle" data-circle="7">7</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Tutor's Qualifications & Certificates</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step7-title', __('site.Tutor\'s Qualifications & Certificates')) }}
+                        </h3>
                     </div>
                 </div>
 
@@ -108,15 +128,21 @@
                 <div class="step-item hidden" data-step="8">
                     <div class="step-circle" data-circle="8">8</div>
                     <div class="flex-1 pt-2">
-                        <h3 class="font-semibold text-base">Tutor Profile Video</h3>
+                        <h3 class="font-semibold text-base">
+                            {{ label_text('global', 'site.register-step8-title', __('site.Tutor Profile Video')) }}
+                        </h3>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="mt-12 text-xs text-white/70">
-                <p>© 2024 - 2025 JINNEDU. All rights reserved.</p>
-                <a href="#" class="underline hover:text-white">Privacy Policies</a>
+                <p>
+                    {{ label_text('global', 'site.register-footer-copy', __('site.© 2024 - 2025 JINNEDU. All rights reserved.')) }}
+                </p>
+                <a href="#" class="underline hover:text-white">
+                    {{ label_text('global', 'site.register-privacy-policies', __('site.Privacy Policies')) }}
+                </a>
             </div>
         </aside>
 {{-- 
@@ -178,13 +204,16 @@
                 <div class="pane block opacity-100" data-step="1">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Create A New Account</h1>
-                            <p class="text-gray-600 mb-8">Choose the type of account you want to create to continue.
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-create-account-title', __('site.Create A New Account')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-create-account-text', __('site.Choose the type of account you want to create to continue.')) }}
                             </p>
                             <!-- Error Message -->
                             <p id="account-type-error"
                                 class="hidden text-sm text-red-500 mt-2 opacity-0 transition-all duration-300">
-                                Please Choose Account Type
+                                {{ label_text('global', 'site.register-account-type-error', __('site.Please Choose Account Type')) }}
                             </p>
                         </div>
 
@@ -207,10 +236,12 @@
                                             fill="#1B449C" />
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-900 my-6">Student Account Card</h3>
-                                <p class="text-gray-600 text-sm">Create a student account to access lessons and
-                                    learning
-                                    resources.</p>
+                                <h3 class="text-xl font-bold text-gray-900 my-6">
+                                    {{ label_text('global', 'site.register-student-card-title', __('site.Student Account')) }}
+                                </h3>
+                                <p class="text-gray-600 text-sm">
+                                    {{ label_text('global', 'site.register-student-card-text', __('site.Create a student account to access lessons and learning resources.')) }}
+                                </p>
                             </div>
 
                             <!-- Tutor Card -->
@@ -224,16 +255,19 @@
                                             stroke="#1B449C" stroke-width="2" />
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-900 my-6">Tutor Account</h3>
-                                <p class="text-gray-600 text-sm">Create a tutor account to share your expertise with
-                                    students.</p>
+                                <h3 class="text-xl font-bold text-gray-900 my-6">
+                                    {{ label_text('global', 'site.register-tutor-card-title', __('site.Tutor Account')) }}
+                                </h3>
+                                <p class="text-gray-600 text-sm">
+                                    {{ label_text('global', 'site.register-tutor-card-text', __('site.Create a tutor account to share your expertise with students.')) }}
+                                </p>
                             </div>
                         </div>
 
                         <div class="flex justify-center">
                             <button type="button" id="continue-step-1"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -243,8 +277,12 @@
                 <div class="pane hidden" data-step="2">
                     <div class="mx-auto" id="account-info">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Account Information</h1>
-                            <p class="text-gray-600 mb-8">Set up your account basic information</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step2-heading', __('site.Account Information')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step2-subtitle', __('site.Set up your account basic information')) }}
+                            </p>
                         </div>
 
                         <!-- Profile Picture -->
@@ -284,41 +322,60 @@
                         <div class="mb-6">
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
-                                    <input type="text" placeholder="First Name" name="first_name" required
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-first-name-label', __('site.First Name')) }}
+                                    </label>
+                                    <input type="text"
+                                        placeholder="{{ label_text('global', 'site.register-first-name-placeholder', __('site.First Name')) }}"
+                                        name="first_name" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
-                                    <input type="text" placeholder="Last Name" name="last_name" required
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-last-name-label', __('site.Last Name')) }}
+                                    </label>
+                                    <input type="text"
+                                        placeholder="{{ label_text('global', 'site.register-last-name-placeholder', __('site.Last Name')) }}"
+                                        name="last_name" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.Email', __('site.Email')) }}
+                                </label>
                                 <div class="relative">
-                                    <input id="email" type="email" name="email" placeholder="example@gmail.com" required
+                                    <input id="email" type="email" name="email"
+                                        placeholder="{{ label_text('global', 'site.register-email-placeholder', __('site.example@gmail.com')) }}"
+                                        required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
 
                                 <!-- Email Validation Message -->
                                 <p id="email-msg"
                                     class="text-xs text-gray-500 mt-1 opacity-0 transition-all duration-300">
-                                    Please enter a valid email address
+                                    {{ label_text('global', 'site.register-email-msg', __('site.Please enter a valid email address')) }}
                                 </p>
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
-                                    <input type="text" placeholder="egypt (+20)" name="country" required
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.Country', __('site.Country')) }}
+                                    </label>
+                                    <input type="text"
+                                        placeholder="{{ label_text('global', 'site.register-country-placeholder', __('site.egypt (+20)')) }}"
+                                        name="country" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Contact
-                                        number</label>
-                                    <input type="tel" placeholder="Phone" name="phone" required
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-contact-number-label', __('site.Contact number')) }}
+                                    </label>
+                                    <input type="tel"
+                                        placeholder="{{ label_text('global', 'site.register-phone-placeholder', __('site.Phone')) }}"
+                                        name="phone" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
@@ -327,9 +384,13 @@
                             <div class="grid md:grid-cols-2 gap-6 mb-6">
                                 <!-- Password -->
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.Password', __('site.Password')) }}
+                                    </label>
                                     <div class="relative">
-                                        <input id="password" type="password" placeholder="Password" name="password" required
+                                        <input id="password" type="password"
+                                            placeholder="{{ label_text('global', 'site.Password', __('site.Password')) }}"
+                                            name="password" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -351,16 +412,19 @@
                                     </div>
 
                                     <p class="text-xs text-gray-500 mt-1">
-                                        Please enter a password containing 8 letters, numbers and symbols
+                                        {{ label_text('global', 'site.register-password-help', __('site.Please enter a password containing 8 letters, numbers and symbols')) }}
                                     </p>
                                 </div>
 
                                 <!-- Confirm Password -->
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Confirm
-                                        password</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-confirm-password-label', __('site.Confirm password')) }}
+                                    </label>
                                     <div class="relative">
-                                        <input id="confirm-password" type="password" placeholder="Confirm password" name="confirm_password" required
+                                        <input id="confirm-password" type="password"
+                                            placeholder="{{ label_text('global', 'site.register-confirm-password-placeholder', __('site.Confirm password')) }}"
+                                            name="confirm_password" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
@@ -377,7 +441,7 @@
                                     <!-- Error Message -->
                                     <p id="match-error"
                                         class="hidden text-sm text-red-500 mt-2 opacity-0 transition-all duration-300">
-                                        Passwords do not match
+                                        {{ label_text('global', 'site.register-passwords-not-match', __('site.Passwords do not match')) }}
                                     </p>
                                 </div>
                             </div>
@@ -386,8 +450,10 @@
                                 <input type="checkbox" id="terms" name="confirm_terms" required
                                     class="mt-1 w-4 h-4 accent-primary rounded border-gray-300">
                                 <label for="terms" class="text-sm text-gray-600">
-                                    Agree Terms <a href="#" class="text-primary hover:underline">Terms And
-                                        Conditions</a>
+                                    {{ label_text('global', 'site.register-agree-terms', __('site.Agree Terms')) }}
+                                    <a href="#" class="text-primary hover:underline">
+                                        {{ label_text('global', 'site.register-terms-and-conditions', __('site.Terms And Conditions')) }}
+                                    </a>
                                 </label>
                             </div>
                         </div>
@@ -395,7 +461,7 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-google flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
@@ -409,15 +475,15 @@
                                     <path fill="#EA4335"
                                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                                 </svg>
-                                Google
+                                {{ label_text('global', 'site.sign-in-google-short', __('site.Google')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer hidden btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                             <button type="submit"
                                 class="cursor-pointer hidden btn-submit bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Submit
+                                {{ label_text('global', 'site.register-submit', __('site.Submit')) }}
                             </button>
                         </div>
                     </div>
@@ -427,14 +493,20 @@
                 <div class="pane hidden" data-step="3">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Personal Information</h1>
-                            <p class="text-gray-600 mb-8">Set up your account basic information</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step3-heading', __('site.Personal Information')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step3-subtitle', __('site.Set up your account basic information')) }}
+                            </p>
                         </div>
 
                         <div class="mb-6">
                             <!-- Date of Birth -->
                             <div class="mb-2 relative font-inter">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Date of birth</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-dob-label', __('site.Date of birth')) }}
+                                </label>
 
                                 <div class="relative">
                                     <!-- Hidden input for actual date value -->
@@ -442,7 +514,7 @@
                                     
                                     <!-- Display input for user -->
                                     <input id="dob-input" type="text" readonly
-                                        placeholder="Date of birth (yyyy / MMM / DD)"
+                                        placeholder="{{ label_text('global', 'site.register-dob-placeholder', __('site.Date of birth (yyyy / MMM / DD)')) }}"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all pr-12 cursor-pointer shadow-sm">
 
                                     <!-- Icon -->
@@ -502,7 +574,9 @@
 
                             <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Country</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.Country', __('site.Country')) }}
+                                    </label>
                                     <select name="countty_tutor" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $countries as $country)
@@ -511,8 +585,9 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Native
-                                        Language</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.Native-Language', __('site.Native Language')) }}
+                                    </label>
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $languages as $language)
@@ -524,8 +599,9 @@
 
                             <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
-                                        Subject</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-teaching-subject-label', __('site.Teaching Subject')) }}
+                                    </label>
                                     <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $subjects as $subject)
@@ -534,20 +610,25 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-900 mb-2">Teaching
-                                        Experience</label>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        {{ label_text('global', 'site.register-teaching-experience-label', __('site.Teaching Experience')) }}
+                                    </label>
                                     <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                            @foreach ( $experiences as $experience)
                                      <option value=" {{$experience->name}} ">{{$experience->name}}</option>
                                         @endforeach 
                                     </select>
-                                    <p class="text-[#AAAAAA]">e.g., 1–2 years, 3–5 years, 5–7 years…</p>
+                                    <p class="text-[#AAAAAA]">
+                                        {{ label_text('global', 'site.register-teaching-experience-help', __('site.e.g., 1–2 years, 3–5 years, 5–7 years…')) }}
+                                    </p>
                                 </div>
                             </div>
 
                             <div class="mb-2">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Situation</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-situation-label', __('site.Situation')) }}
+                                </label>
                                 <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     @foreach ( $situations as $situation)
@@ -560,11 +641,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -574,31 +655,43 @@
                 <div class="pane hidden" data-step="4">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Biography Information</h1>
-                            <p class="text-gray-600 mb-8">Set up your account basic information</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step4-heading', __('site.Biography Information')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step4-subtitle', __('site.Set up your account basic information')) }}
+                            </p>
                         </div>
 
                         <div class="mb-6">
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Headline</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-headline-label', __('site.Headline')) }}
+                                </label>
                                 <textarea rows="3" name="headline" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Interests</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-interests-label', __('site.Interests')) }}
+                                </label>
                                 <textarea rows="3" name="interests" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Motivation</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-motivation-label', __('site.Motivation')) }}
+                                </label>
                                 <textarea rows="3" name="motivation" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Specializations</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.Specializations', __('site.Specializations')) }}
+                                </label>
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     @foreach ($specializations as $specialization)
@@ -608,13 +701,17 @@
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Experience</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-experience-label', __('site.Experience')) }}
+                                </label>
                                 <textarea rows="3" name="experience" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Methodology</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-methodology-label', __('site.Methodology')) }}
+                                </label>
                                 <textarea rows="3" name="methodology" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all"></textarea>
                             </div>
@@ -623,11 +720,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -637,8 +734,12 @@
                 <div class="pane hidden" data-step="5">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Daily Availability Time</h1>
-                            <p class="text-gray-600 mb-8">Set up your daily time availability</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step5-heading', __('site.Daily Availability Time')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step5-subtitle', __('site.Set up your daily time availability')) }}
+                            </p>
                         </div>
                         <div class="mx-auto">
                             <!-- ========== DAY CARD (REUSABLE) ========== -->
@@ -647,9 +748,13 @@
                                 data-day="sunday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Sunday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Sunday', __('site.Sunday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">Available</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">
+                                            {{ label_text('global', 'site.Available', __('site.Available')) }}
+                                        </span>
                                     </div>
 
                                     <!-- toggle -->
@@ -667,7 +772,9 @@
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <!-- From -->
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">From</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.From', __('site.From')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -685,7 +792,9 @@
                                         </div>
                                         <!-- To -->
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">To</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.To', __('site.To')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -715,20 +824,21 @@
                                     </div>
                                 </div>
 
-                                <div class="empty-state hidden">
-                                    <div
-                                        class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
-                                    </div>
-                                </div>
+                                        <div class="empty-state hidden">
+                                            <div
+                                                class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
+                                                {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
+                                            </div>
+                                        </div>
 
                                 <!-- Add Range -->
-                                <div class="mt-4">
-                                    <button type="button"
-                                        class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
-                                        <span class="text-xl">+</span> Add time range
-                                    </button>
-                                </div>
+                                        <div class="mt-4">
+                                            <button type="button"
+                                                class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
+                                                <span class="text-xl">+</span>
+                                                {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
+                                            </button>
+                                        </div>
                             </section>
 
                             <!-- Monday (ON + sample ranges) -->
@@ -736,9 +846,13 @@
                                 data-day="monday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Monday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Monday', __('site.Monday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">Available</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">
+                                            {{ label_text('global', 'site.Available', __('site.Available')) }}
+                                        </span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-primary"
@@ -752,7 +866,9 @@
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">From</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.From', __('site.From')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -768,7 +884,9 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">To</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.To', __('site.To')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -835,7 +953,7 @@
                                 <div class="empty-state">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
@@ -843,7 +961,8 @@
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-400 border border-gray-200 rounded-lg px-4 py-2 cursor-not-allowed"
                                         disabled>
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -853,9 +972,13 @@
                                 data-day="wednesday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Wednesday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Wednesday', __('site.Wednesday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">Available</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">
+                                            {{ label_text('global', 'site.Available', __('site.Available')) }}
+                                        </span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-primary"
@@ -869,7 +992,9 @@
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">From</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.From', __('site.From')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -885,7 +1010,9 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">To</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.To', __('site.To')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -917,14 +1044,15 @@
                                 <div class="empty-state hidden">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
                                 <div class="mt-4">
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -934,9 +1062,13 @@
                                 data-day="thursday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Thursday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Thursday', __('site.Thursday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">Available</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-blue-100 text-primary">
+                                            {{ label_text('global', 'site.Available', __('site.Available')) }}
+                                        </span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-primary"
@@ -951,7 +1083,9 @@
                                     <div
                                         class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">From</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.From', __('site.From')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="09:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -967,7 +1101,9 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[13px] text-gray-800 mb-1">To</label>
+                                            <label class="block text-[13px] text-gray-800 mb-1">
+                                                {{ label_text('global', 'site.To', __('site.To')) }}
+                                            </label>
                                             <div class="relative">
                                                 <input type="time" value="19:00" required
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
@@ -1049,14 +1185,15 @@
                                 <div class="empty-state hidden">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
                                 <div class="mt-4">
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -1066,9 +1203,13 @@
                                 data-day="friday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Friday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Friday', __('site.Friday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">Unavailable</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">
+                                            {{ label_text('global', 'site.Unavailable', __('site.Unavailable')) }}
+                                        </span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-gray-300"
@@ -1083,7 +1224,7 @@
                                 <div class="empty-state">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
@@ -1091,7 +1232,8 @@
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-400 border border-gray-200 rounded-lg px-4 py-2 cursor-not-allowed"
                                         disabled>
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -1101,9 +1243,13 @@
                                 data-day="saturday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Saturday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">
+                                            {{ label_text('global', 'site.Saturday', __('site.Saturday')) }}
+                                        </h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">Unavailable</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">
+                                            {{ label_text('global', 'site.Unavailable', __('site.Unavailable')) }}
+                                        </span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-gray-300"
@@ -1118,7 +1264,7 @@
                                 <div class="empty-state">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
@@ -1126,7 +1272,8 @@
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-400 border border-gray-200 rounded-lg px-4 py-2 cursor-not-allowed"
                                         disabled>
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -1136,11 +1283,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -1150,14 +1297,20 @@
                 <div class="pane hidden" data-step="6">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Price Information</h1>
-                            <p class="text-gray-600 mb-8">Set up your account basic information</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step6-heading', __('site.Price Information')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step6-subtitle', __('site.Set up your account basic information')) }}
+                            </p>
                         </div>
 
                         <div class="mb-6">
                             <div class="mb-6">
                                 <!-- <label class="block text-sm font-semibold text-gray-900 mb-2">Hourly Rate</label> -->
-                                <input type="text" placeholder="Hourly Rate" name="hourly_rate" required
+                                <input type="text"
+                                    placeholder="{{ label_text('global', 'site.register-hourly-rate-placeholder', __('site.Hourly Rate')) }}"
+                                    name="hourly_rate" required
                                     class="w-full px-4 py-8 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:bg-[#F3F5FA] focus:ring-2 focus:ring-primary/20 transition-all">
                             </div>
                         </div>
@@ -1165,11 +1318,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -1179,15 +1332,20 @@
                 <div class="pane hidden" data-step="7">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Certification Information</h1>
-                            <p class="text-gray-600 mb-8">Set up your certification information</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step7-heading', __('site.Certification Information')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step7-subtitle', __('site.Set up your certification information')) }}
+                            </p>
                         </div>
                         <!-- Certification Form -->
                         <div class="mb-6 space-y-6">
                             <!-- Certification Subject -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
-                                    Subject</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-cert-subject-label', __('site.Certification Subject')) }}
+                                </label>
                                 <select required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
                                     @foreach ($subjects as $subject )
@@ -1199,32 +1357,43 @@
 
                             <!-- Certification Name -->
                             <div>
-                                <input type="text" placeholder="Certification Name" name="certification_name" required
+                                <input type="text"
+                                    placeholder="{{ label_text('global', 'site.register-cert-name-placeholder', __('site.Certification Name')) }}"
+                                    name="certification_name" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
                             <!-- Certification Description -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
-                                    Description</label>
-                                <textarea rows="3" placeholder="Up to 200 characters" name="certification_description" required
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-cert-description-label', __('site.Certification Description')) }}
+                                </label>
+                                <textarea rows="3"
+                                    placeholder="{{ label_text('global', 'site.register-cert-description-placeholder', __('site.Up to 200 characters')) }}"
+                                    name="certification_description" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"></textarea>
                             </div>
 
                             <!-- Certification Issued By -->
                             <div>
-                                <input type="text" placeholder="Certification Issued By" name="certification_issued_by" required
+                                <input type="text"
+                                    placeholder="{{ label_text('global', 'site.register-cert-issued-by-placeholder', __('site.Certification Issued By')) }}"
+                                    name="certification_issued_by" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                             </div>
 
                             <!-- Years -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <input type="number" id="yearFrom" placeholder="Certification Year From" name="certification_year_from" required
+                                    <input type="number" id="yearFrom"
+                                        placeholder="{{ label_text('global', 'site.register-cert-year-from-placeholder', __('site.Certification Year From')) }}"
+                                        name="certification_year_from" required
                                         class="hide-number-spin w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="yearTo" placeholder="Certification Year To" name="certification_year_to" required
+                                    <input type="number" id="yearTo"
+                                        placeholder="{{ label_text('global', 'site.register-cert-year-to-placeholder', __('site.Certification Year To')) }}"
+                                        name="certification_year_to" required
                                         class="hide-number-spin w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
 
                                     <!-- Up/Down SVG Buttons -->
@@ -1253,14 +1422,16 @@
 
                             <!-- Certification File -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Certification
-                                    File</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-cert-file-label', __('site.Certification File')) }}
+                                </label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
                                     <input type="file" id="certFile" name="certification_file" required
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                    <span id="fileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
-                                        file</span>
+                                    <span id="fileName" class="block px-4 py-3 text-sm text-gray-500">
+                                        {{ label_text('global', 'site.register-cert-file-placeholder', __('site.Choose the file')) }}
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -1269,11 +1440,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="button"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Continue →
+                                {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                         </div>
                     </div>
@@ -1283,20 +1454,26 @@
                 <div class="pane hidden" data-step="8">
                     <div class="mx-auto">
                         <div class="text-center">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Tutor Video</h1>
-                            <p class="text-gray-600 mb-8">Upload a video that introduce you as a teacher. What can you
-                                offer, and why students should choose you as their teacher</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                                {{ label_text('global', 'site.register-step8-heading', __('site.Tutor Video')) }}
+                            </h1>
+                            <p class="text-gray-600 mb-8">
+                                {{ label_text('global', 'site.register-step8-subtitle', __('site.Upload a video that introduce you as a teacher. What can you offer, and why students should choose you as their teacher')) }}
+                            </p>
                         </div>
                         <div class="mb-6 space-y-6">
                             <!-- Video File -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-900 mb-2">Video File</label>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    {{ label_text('global', 'site.register-video-file-label', __('site.Video File')) }}
+                                </label>
                                 <label
                                     class="relative block w-full cursor-pointer border border-gray-300 rounded-lg overflow-hidden hover:border-primary transition">
                                     <input type="file" accept="video/*" id="videoFile" name="video_file" required
                                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                    <span id="videoFileName" class="block px-4 py-3 text-sm text-gray-500">Choose the
-                                        file</span>
+                                    <span id="videoFileName" class="block px-4 py-3 text-sm text-gray-500">
+                                        {{ label_text('global', 'site.register-video-file-placeholder', __('site.Choose the file')) }}
+                                    </span>
                                 </label>
                             </div>
 
@@ -1305,8 +1482,10 @@
                                 <input id="agreeTerms" type="checkbox" name="agree_terms" value="1" required
                                     class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/30">
                                 <label for="agreeTerms" class="text-sm text-gray-700">
-                                    Agree Terms <a href="#" class="text-primary hover:underline">Terms And
-                                        Conditions</a>
+                                    {{ label_text('global', 'site.register-agree-terms', __('site.Agree Terms')) }}
+                                    <a href="#" class="text-primary hover:underline">
+                                        {{ label_text('global', 'site.register-terms-and-conditions', __('site.Terms And Conditions')) }}
+                                    </a>
                                 </label>
                             </div>
                         </div>
@@ -1314,11 +1493,11 @@
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
                             <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
-                                ← Back
+                                {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
                             <button type="submit"
                                 class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
-                                Submit 
+                                {{ label_text('global', 'site.register-submit', __('site.Submit')) }}
                                 <i class="fa-solid fa-send"></i>
                             </button>
                         </div>

@@ -6,11 +6,12 @@
             <!-- العمود الأول: الشعار والوصف -->
             <div class="col-span-1 text-center md:col-span-2 md:text-left rtl:md:text-right">
                 <div class="flex justify-center mb-4 lg:justify-start">
-                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}" alt="Jinn Education Logo" class="w-32">
+                    <img src="{{ asset('front/assets/imgs/logo-white.png') }}"
+                        alt="{{ label_text('global', 'site.footer-logo-alt', __('site.JINN Education Logo')) }}"
+                        class="w-32">
                 </div>
                 <p class="text-sm leading-relaxed text-gray-300 md:text-[13px]">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                    labore et dolore magna aliqua. Ut enim ad minim veniam.
+                    {{ label_text('global', 'site.footer-description', __('site.Subscribe to our newsletter description')) }}
                 </p>
             </div>
 
@@ -19,35 +20,27 @@
                 <div>
                     <ul class="space-y-2">
                         <li>
-                            <a href="index.html"
+                            <a href="{{ route('home') }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Home
+                                {{ label_text('global', 'site.Home', __('site.Home')) }}
                             </a>
                         </li>
                         <li>
-                            <a href="about.html"
+                            <a href="{{ route('site.pages.show', ['slug' => 'about-us']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                About Us
+                                {{ label_text('global', 'site.about-us', __('site.about-us')) }}
                             </a>
                         </li>
                         <li>
-                            <a href="how-jinn-edu-works.html"
+                            <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                How JINN Works
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
-                                <span
-                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Live Private Classes
+                                {{ label_text('global', 'site.how-jin-works', __('site.how-jin-works')) }}
                             </a>
                         </li>
                         <li>
@@ -55,7 +48,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Live Group Classes
+                                {{ label_text('global', 'site.Live-Private-Classes', __('site.Live Private Classes')) }}
                             </a>
                         </li>
                         <li>
@@ -63,15 +56,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Categories
-                            </a>
-                        </li>
-                        <li>
-                            <a href="k-12.html"
-                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
-                                <span
-                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                K-12
+                                {{ label_text('global', 'site.Live-Group-Classes', __('site.Live Group Classes')) }}
                             </a>
                         </li>
                         <li>
@@ -79,7 +64,23 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Contact Us
+                                {{ label_text('global', 'site.Categories', __('site.Categories')) }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
+                                <span
+                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
+                                {{ label_text('global', 'site.K-12', __('site.K-12')) }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
+                                <span
+                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
+                                {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                             </a>
                         </li>
                     </ul>
@@ -87,11 +88,11 @@
                 <div>
                     <ul class="space-y-2">
                         <li>
-                            <a href="get-in-touch.html"
+                            <a href="#"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Get In Touch
+                                {{ label_text('global', 'site.Get-In-Touch', __('site.Get In Touch')) }}
                             </a>
                         </li>
                         <li>
@@ -99,7 +100,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Help For Tutor
+                                {{ label_text('global', 'site.Help-For-Tutor', __('site.Help For Tutor')) }}
                             </a>
                         </li>
                         <li>
@@ -107,7 +108,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Student Guide
+                                {{ label_text('global', 'site.Student-Guide', __('site.Student Guide')) }}
                             </a>
                         </li>
                         <li>
@@ -115,7 +116,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Tutor Guide
+                                {{ label_text('global', 'site.Tutor-Guide', __('site.Tutor Guide')) }}
                             </a>
                         </li>
                         <li>
@@ -123,7 +124,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Help Center
+                                {{ label_text('global', 'site.help-center', __('site.help-center')) }}
                             </a>
                         </li>
                         <li>
@@ -131,7 +132,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Technical Support
+                                {{ label_text('global', 'site.Technical-Support', __('site.Technical Support')) }}
                             </a>
                         </li>
                         <li>
@@ -139,7 +140,7 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Free Courses
+                                {{ label_text('global', 'site.Free-Courses', __('site.Free Courses')) }}
                             </a>
                         </li>
 
@@ -152,23 +153,15 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Terms and Conditions
+                                {{ label_text('global', 'site.Terms-and-Conditions', __('site.Terms and Conditions')) }}
                             </a>
                         </li>
                         <li>
-                            <a href="privacy-policy.html"
+                            <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Privacy and Usage Policy
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
-                                <span
-                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Intellectual Property and Copyrights
+                                {{ label_text('global', 'site.Privacy-and-Usage-Policy', __('site.Privacy and Usage Policy')) }}
                             </a>
                         </li>
                         <li>
@@ -176,7 +169,15 @@
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
-                                Refund Policy
+                                {{ label_text('global', 'site.Intellectual-Property-and-Copyrights', __('site.Intellectual Property and Copyrights')) }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
+                                <span
+                                    class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
+                                {{ label_text('global', 'site.Refund-Policy', __('site.Refund Policy')) }}
                             </a>
                         </li>
 
@@ -187,16 +188,17 @@
             <!-- العمود الثالث: النشرة الإخبارية -->
             <div class="col-span-1 text-center md:col-span-2 md:text-left rtl:md:text-right">
                 <p class="mb-6 text-sm text-gray-300 md:text-base">
-                    Subscribe to our newsletter Updated digest of what's new and exciting from JINN EDU.
+                    {{ label_text('global', 'site.newsletter-text', __("site.Subscribe to our newsletter Updated digest of what's new and exciting from JINN EDU.")) }}
                 </p>
                 <!-- نموذج الاشتراك -->
                 <div class="flex gap-3 mx-auto max-w-md md:mx-0">
-                    <input type="email" placeholder="Enter your email"
+                    <input type="email"
+                        placeholder="{{ label_text('global', 'site.enter-your-email', __('site.Enter your email')) }}"
                         class="flex-1 px-4 py-3 min-w-0 placeholder-gray-400 text-black bg-white rounded-lg border border-gray-500 transition-all duration-300 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50" />
 
                     <button
                         class="px-6 py-3 font-medium text-white rounded-lg transition-all duration-300 transform bg-primary hover:bg-primary-700 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50">
-                        Subscribe
+                        {{ label_text('global', 'site.Subscribe', __('site.Subscribe')) }}
                     </button>
                 </div>
 
@@ -213,7 +215,7 @@
             <!-- حقوق النشر -->
             <div class="flex items-center text-sm text-gray-400">
                 <i class="mr-2 far fa-copyright rtl:ml-2 rtl:mr-0"></i>
-                2025 JINN EDU. All rights reserved.
+                {{ label_text('global', 'site.footer-copy', __('site.2025 JINN EDU. All rights reserved.')) }}
             </div>
 
             <!-- أيقونات السوشال ميديا -->

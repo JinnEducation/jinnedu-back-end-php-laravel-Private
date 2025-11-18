@@ -26,7 +26,7 @@
 
                 <!-- Text Content Section -->
                 <div class="order-2 lg:order-1">
-                    <div class="hero-text-container relative h-[330px] overflow-hidden">
+                    <div class="hero-text-container relative h-[330px]">
                         @foreach ($sliders as $index => $slider)
                             @php
                                 $isActive = $index === 0;
@@ -154,7 +154,9 @@
 
             <!-- Section Title -->
             <div class="mb-12 text-center">
-                <h2 class="mb-4 h-section">{{ label_text('global', 'Our-Numbers', __('auth.Our Numbers')) }}</h2>
+                <h2 class="mb-4 h-section">
+                    {{ label_text('global', 'site.Our-Numbers', __('site.Our Numbers')) }}
+                </h2>
             </div>
 
             <!-- Statistics Grid -->
@@ -167,7 +169,7 @@
                         <div class="flex-none mr-4 rtl:mr-0 rtl:ml-4">
                             <!-- <i class="text-4xl transition-colors duration-300 text-primary fas fa-cog group-hover:text-primary-700"></i> -->
                             <img src="{{ asset('front/assets/imgs/our_number/approve.png') }}"
-                                alt="{{ label_text('global', 'EDUCATIONAL-SERVICES', __('auth.EDUCATIONAL SERVICES')) }}">
+                                alt="{{ label_text('global', 'site.EDUCATIONAL-SERVICES', __('site.EDUCATIONAL SERVICES')) }}">
                         </div>
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
@@ -176,7 +178,7 @@
                                     {{ $stats['services'] }}
                                 </span>
                                 <span class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">
-                                    {{ label_text('global', 'EDUCATIONAL-SERVICES', __('auth.EDUCATIONAL SERVICES')) }}
+                                    {{ label_text('global', 'site.EDUCATIONAL-SERVICES', __('site.EDUCATIONAL SERVICES')) }}
                                 </span>
                             </div>
                         </div>
@@ -201,7 +203,7 @@
 
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'STUDENTS-COUNT', __('auth.STUDENTS COUNT')) }}
+                                    {{ label_text('global', 'site.STUDENTS-COUNT', __('site.STUDENTS COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -225,7 +227,7 @@
 
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'TUTORS-COUNT', __('auth.TUTORS COUNT')) }}
+                                    {{ label_text('global', 'site.TUTORS-COUNT', __('site.TUTORS COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -248,7 +250,7 @@
                                     {{ $stats['courses'] }}
                                 </span>
                                 <span class="text-lg font-medium tracking-wide text-black uppercase md:text-sm">
-                                    {{ label_text('global', 'COURSES-COUNT', __('auth.COURSES COUNT')) }}
+                                    {{ label_text('global', 'site.COURSES-COUNT', __('site.COURSES COUNT')) }}
                                 </span>
                             </div>
                         </div>
@@ -264,7 +266,8 @@
         <div class="container mx-auto">
             <!-- Section Title -->
             <h2 class="mb-6 text-center h-section">
-                {{ label_text('global', 'Recent-courses', __('auth.Recent courses')) }}</h2>
+                {{ label_text('global', 'site.Recent-courses', __('site.Recent courses')) }}
+            </h2>
             <!-- Category Filter -->
             <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
                 <!-- سهم يسار -->
@@ -281,7 +284,7 @@
                     <button
                         class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold"
                         data-type="all">
-                        {{ label_text('global', 'All-categories', __('auth.All categories')) }}
+                        {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
                     </button>
                     @foreach ($categories as $cat)
                         @php
@@ -371,14 +374,15 @@
                                         <i class="text-sm fas fa-clock text-[#1B449C]"></i>
                                         <span class="text-sm text-black">{{ $timeLabel }}</span>
                                     </div>
-                                    <span
-                                        class="text-lg font-bold text-[#1B449C]">{{ label_text('global', 'Free', __('auth.Free')) }}</span>
+                                    <span class="text-lg font-bold text-[#1B449C]">
+                                        {{ label_text('global', 'site.Free', __('site.Free')) }}
+                                    </span>
                                 </div>
                                 <div
                                     class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
                                     <a href="#"
                                         class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                        {{ label_text('global', 'Preview this courses', __('auth.Preview this courses')) }}
+                                        {{ label_text('global', 'site.Preview-this-courses', __('site.Preview this courses')) }}
                                     </a>
                                 </div>
                             </div>
@@ -392,8 +396,9 @@
                 <div class="text-center">
                     <button id="loadMoreBtn"
                         class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                        <span
-                            class="relative z-10">{{ label_text('global', 'Load More', __('auth.Load More')) }}</span>
+                        <span class="relative z-10">
+                            {{ label_text('global', 'site.Load-More', __('site.Load More')) }}
+                        </span>
                         <div
                             class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                         </div>
@@ -416,7 +421,7 @@
 
                     <!-- Text Section with Grid Background -->
                     <div
-                        class="flex relative order-2 col-span-3 items-center p-3 md:p-8 lg:p-12 lg:order-1 rtl:order-3">
+                        class="flex relative order-2 col-span-3 items-center p-3 md:p-8 lg:p-12 lg:order-1">
                         <!-- Grid Pattern Background -->
                         <!-- Grid Lines Background -->
                         <div class="absolute inset-0 pattern-skills-section"></div>
@@ -424,17 +429,19 @@
                         <!-- Text Content -->
                         <div class="relative z-10 max-w-lg">
                             <h2 class="mb-6 text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-                                Upgrade Your Skills with<br>
-                                Free Courses
+                                {{ label_text('global', 'site.upgrade-skills-title-line1', __('site.Upgrade Your Skills with')) }}<br>
+                                {{ label_text('global', 'site.upgrade-skills-title-line2', __('site.Free Courses')) }}
                             </h2>
 
                             <p class="mb-8 text-lg leading-relaxed text-black">
-                                Learn anytime, anywhere with expert-led courses designed for you.
+                                {{ label_text('global', 'site.upgrade-skills-text', __('site.Learn anytime, anywhere with expert-led courses designed for you.')) }}
                             </p>
 
                             <button
                                 class="overflow-hidden relative px-8 py-4 text-lg text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
-                                <span class="relative z-10">Explore 400+ Free Courses</span>
+                                <span class="relative z-10">
+                                    {{ label_text('global', 'site.upgrade-skills-cta', __('site.Explore 400+ Free Courses')) }}
+                                </span>
                                 <div
                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                 </div>
@@ -443,9 +450,9 @@
                     </div>
 
                     <!-- Image Section -->
-                    <div class="overflow-hidden relative order-1 col-span-2 lg:order-2 rtl:order-1">
+                    <div class="overflow-hidden relative order-1 col-span-2 lg:order-2">
                         <img src="{{ asset('front/assets/imgs/Skills/Rectangle 19041.png') }}"
-                            alt="Student learning online"
+                            alt="{{ label_text('global', 'site.upgrade-skills-image-alt', __('site.Student learning online')) }}"
                             class="w-full h-full object-cover min-h-[200px] md:min-h-[300px] lg:min-h-[400px]">
 
                         <!-- Gradient Overlay for better text readability on mobile -->
@@ -468,23 +475,38 @@
                 <!-- Section Title -->
                 <div class="flex items-center mb-8">
                     <i class="mr-3 text-xl text-primary fas fa-search rtl:mr-0 rtl:ml-3"></i>
-                    <h2 class="text-2xl font-bold text-gray-900">Find a Tutor</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        {{ label_text('global', 'site.find-tutor-title', __('site.Find a Tutor')) }}
+                    </h2>
                 </div>
                 <div class="grid grid-cols-2 gap-6 mb-6 md:grid-cols-3 lg:grid-cols-5">
 
                     <!-- What to Learn -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">What to
-                            Learn?</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.find-tutor-what-to-learn', __('site.What to Learn?')) }}
+                        </label>
                         <div class="relative">
                             <select
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Subject</option>
-                                <option>Mathematics</option>
-                                <option>English</option>
-                                <option>Science</option>
-                                <option>History</option>
-                                <option>Programming</option>
+                                <option>
+                                    {{ label_text('global', 'site.find-tutor-subject', __('site.Subject')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.find-tutor-mathematics', __('site.Mathematics')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.find-tutor-english', __('site.English')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.find-tutor-science', __('site.Science')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.find-tutor-history', __('site.History')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Programming', __('site.Programming')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -493,17 +515,30 @@
 
                     <!-- Price Range -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Price
-                            Range</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.find-tutor-price-range', __('site.Price Range')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>5 USD - 50 USD</option>
-                                <option>Under 10 USD</option>
-                                <option>10 USD - 25 USD</option>
-                                <option>25 USD - 50 USD</option>
-                                <option>50 USD - 100 USD</option>
-                                <option>100 USD+</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.price-5-50', __('site.5 USD - 50 USD')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.price-under-10', __('site.Under 10 USD')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.price-10-25', __('site.10 USD - 25 USD')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.price-25-50', __('site.25 USD - 50 USD')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.price-50-100', __('site.50 USD - 100 USD')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.price-100-plus', __('site.100 USD+')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -512,18 +547,33 @@
 
                     <!-- Native Language -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Native
-                            Language</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.find-tutor-native-language', __('site.Native Language')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Native Language</option>
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                                <option>German</option>
-                                <option>Arabic</option>
-                                <option>Chinese</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.native-language', __('site.Native Language')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.English', __('site.English')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Spanish', __('site.Spanish')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.French', __('site.French')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.German', __('site.German')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Arabic', __('site.Arabic')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Chinese', __('site.Chinese')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -532,17 +582,30 @@
 
                     <!-- Availability Time -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Availability
-                            Time</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.find-tutor-availability-time', __('site.Availability Time')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Any Time</option>
-                                <option>Morning (6AM - 12PM)</option>
-                                <option>Afternoon (12PM - 6PM)</option>
-                                <option>Evening (6PM - 10PM)</option>
-                                <option>Night (10PM - 6AM)</option>
-                                <option>Weekends Only</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.any-time', __('site.Any Time')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.morning', __('site.Morning (6AM - 12PM)')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.afternoon', __('site.Afternoon (12PM - 6PM)')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.evening', __('site.Evening (6PM - 10PM)')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.night', __('site.Night (10PM - 6AM)')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.weekends-only', __('site.Weekends Only')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -550,16 +613,30 @@
                     </div>
                     <!-- Specializations -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Specializations</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.Specializations', __('site.Specializations')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Specializations</option>
-                                <option>Test Preparation</option>
-                                <option>Academic Support</option>
-                                <option>Language Learning</option>
-                                <option>Professional Development</option>
-                                <option>Creative Arts</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.Specializations', __('site.Specializations')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Test-Preparation', __('site.Test Preparation')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Academic-Support', __('site.Academic Support')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Language-Learning', __('site.Language Learning')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Professional-Development', __('site.Professional Development')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Creative-Arts', __('site.Creative Arts')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -568,18 +645,36 @@
 
                     <!-- Country -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Country</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.Country', __('site.Country')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Country</option>
-                                <option>United States</option>
-                                <option>United Kingdom</option>
-                                <option>Canada</option>
-                                <option>Australia</option>
-                                <option>Germany</option>
-                                <option>France</option>
-                                <option>Other</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.Country', __('site.Country')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.United-States', __('site.United States')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.United-Kingdom', __('site.United Kingdom')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Canada', __('site.Canada')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Australia', __('site.Australia')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Germany', __('site.Germany')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.France', __('site.France')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Other', __('site.Other')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -588,18 +683,36 @@
 
                     <!-- Also Speaks -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Also Speaks</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.Also-Speaks', __('site.Also Speaks')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Also Speaks</option>
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                                <option>German</option>
-                                <option>Arabic</option>
-                                <option>Chinese</option>
-                                <option>Japanese</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.Also-Speaks', __('site.Also Speaks')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.English', __('site.English')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Spanish', __('site.Spanish')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.French', __('site.French')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.German', __('site.German')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Arabic', __('site.Arabic')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Chinese', __('site.Chinese')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Japanese', __('site.Japanese')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -608,17 +721,33 @@
 
                     <!-- Sort By -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Sort By</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.Sort-By', __('site.Sort By')) }}
+                        </label>
                         <div class="relative">
                             <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Sort By</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                                <option>Rating: High to Low</option>
-                                <option>Most Popular</option>
-                                <option>Newest First</option>
-                                <option>Experience</option>
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                                <option>
+                                    {{ label_text('global', 'site.Sort-By', __('site.Sort By')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Price-low-high', __('site.Price: Low to High')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Price-high-low', __('site.Price: High to Low')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Rating-high-low', __('site.Rating: High to Low')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Most-Popular', __('site.Most Popular')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Newest-First', __('site.Newest First')) }}
+                                </option>
+                                <option>
+                                    {{ label_text('global', 'site.Experience', __('site.Experience')) }}
+                                </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -626,10 +755,13 @@
                     </div>
 
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Tutor full name</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            {{ label_text('global', 'site.Tutor-full-name', __('site.Tutor full name')) }}
+                        </label>
                         <div class="relative">
                             <input type="text"
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                placeholder="{{ label_text('global', 'site.Tutor-full-name-placeholder', __('site.Enter tutor full name')) }}"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
                         </div>
                     </div>
 
@@ -640,7 +772,9 @@
                     <button id="search-button"
                         class="overflow-hidden relative px-8 py-4 text-lg text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
                         <i class="mr-2 fas fa-search rtl:mr-0 rtl:ml-2"></i>
-                        <span class="relative z-10">Search Tutors</span>
+                        <span class="relative z-10">
+                            {{ label_text('global', 'site.Search-Tutors', __('site.Search Tutors')) }}
+                        </span>
                         <div
                             class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                         </div>
@@ -654,7 +788,9 @@
 
     <!-- Popular Tutors Section -->
     <section class="overflow-hidden relative px-0 py-16 bg-white">
-        <h2 class="mb-12 text-center h-section">Popular Tutors</h2>
+        <h2 class="mb-12 text-center h-section">
+            {{ label_text('global', 'site.Popular-Tutors', __('site.Popular Tutors')) }}
+        </h2>
         <div class="bg-[#1B449C08] overflow-hidden relative px-4">
             <!-- Background Shape 1 - Bottom Left -->
             <div class="absolute -top-2 left-0 pointer-events-none animate-float rotate-x-[180deg]" id="shape1">
@@ -671,7 +807,7 @@
                 <div class="flex justify-end items-center pr-3 mb-2">
                     <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
                         class="text-lg font-medium underline transition-all duration-300 text-primary-700 hover:text-primary hover:scale-105">
-                        {{ label_text('global', 'view-all-tutors', __('View all tutors')) }}
+                        {{ label_text('global', 'site.view-all-tutors', __('site.View all tutors')) }}
                     </a>
                 </div>
 
@@ -700,7 +836,7 @@
                                             : asset($tutor->avatar))
                                         : asset('front/assets/imgs/tutors/1.jpg');
 
-                                    $notAvailable = label_text('global', 'not-available', __('Not available'));
+                                    $notAvailable = label_text('global', 'site.not-available', __('site.Not available'));
                                     $country = $tutor->abouts?->country?->name ?? $notAvailable;
                                     $spec = optional($tutor->descriptions->first()?->specialization)->name ?? $notAvailable;
                                     $avg = 4.0;
@@ -761,11 +897,11 @@
                                             <div class="flex gap-2 justify-between my-3">
                                                 <a href="{{ $trialLessonUrl }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
-                                                    {{ label_text('global', 'trial-lesson', __('Trial Lesson')) }}
+                                                    {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>
                                                 <a href="{{ $messageUrl }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
-                                                    {{ label_text('global', 'message-tutor', __('Message')) }}
+                                                    {{ label_text('global', 'site.message-tutor', __('site.Message')) }}
                                                 </a>
                                             </div>
                                         </div>
@@ -775,11 +911,11 @@
                                 <div class="swiper-slide">
                                     <div class="p-8 bg-white rounded-xl text-center text-gray-500 shadow">
                                         <p class="mb-4">
-                                            {{ label_text('global', 'no-tutors-available', __('No tutors available at the moment.')) }}
+                                            {{ label_text('global', 'site.no-tutors-available', __('site.No tutors available at the moment.')) }}
                                         </p>
                                         <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
                                             class="text-primary font-medium underline">
-                                            {{ label_text('global', 'contact-us', __('Contact Us')) }}
+                                            {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                         </a>
                                     </div>
                                 </div>
@@ -807,10 +943,10 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 lg:h-[400px]">
 
                     <!-- Image Section -->
-                    <div class="overflow-hidden relative order-1 rounded-lg lg:order-1 rtl:order-2">
+                    <div class="overflow-hidden relative order-1 rounded-lg lg:order-1">
                         <!-- Main Image -->
                         <img src="{{ asset('front/assets/imgs/become_tutor/imgs.png') }}"
-                            alt="Professional tutor working"
+                            alt="{{ label_text('global', 'site.become-tutor-image-alt', __('site.Professional tutor working')) }}"
                             class="h-full object-cover min-h-[200px] md:min-h-[400px] lg:min-h-auto">
 
                         <!-- Gradient Overlay for depth -->
@@ -832,13 +968,12 @@
 
                             <!-- Main Title -->
                             <h2 class="mb-6 text-3xl font-bold leading-tight text-gray-900 md:text-xl lg:text-2xl">
-                                Become a Tutor
+                                {{ label_text('global', 'site.Become-a-Tutor', __('site.Become a Tutor')) }}
                             </h2>
 
                             <!-- Description -->
                             <p class="mb-8 text-lg leading-relaxed text-gray-900 md:text-base">
-                                Raise income by sharing your expertise with students. Register to begin online tutoring
-                                with JINN EDU
+                                {{ label_text('global', 'site.become-tutor-text', __('site.Raise income by sharing your expertise with students. Register to begin online tutoring with JINN EDU')) }}
                             </p>
 
                             <!-- Features List -->
@@ -854,8 +989,9 @@
                                                 fill="#EECD29" />
                                         </svg>
                                     </i>
-                                    <span class="font-bold text-gray-900 text-md lg:font-medium">Find new
-                                        students</span>
+                                    <span class="font-bold text-gray-900 text-md lg:font-medium">
+                                        {{ label_text('global', 'site.find-new-students', __('site.Find new students')) }}
+                                    </span>
                                 </div>
 
                                 <!-- Feature 2 -->
@@ -869,8 +1005,9 @@
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </i>
-                                    <span class="font-bold text-gray-900 text-md lg:font-medium">Grow your
-                                        business</span>
+                                    <span class="font-bold text-gray-900 text-md lg:font-medium">
+                                        {{ label_text('global', 'site.grow-your-business', __('site.Grow your business')) }}
+                                    </span>
                                 </div>
 
                                 <!-- Feature 3 -->
@@ -884,8 +1021,9 @@
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </i>
-                                    <span class="font-bold text-gray-900 text-md lg:font-medium">Get paid
-                                        securely</span>
+                                    <span class="font-bold text-gray-900 text-md lg:font-medium">
+                                        {{ label_text('global', 'site.get-paid-securely', __('site.Get paid securely')) }}
+                                    </span>
                                 </div>
 
                             </div>
@@ -893,7 +1031,9 @@
                             <!-- Call to Action Button -->
                             <button
                                 class="overflow-hidden relative px-16 py-3.5 w-full text-2xl font-bold text-white rounded-lg transition-all duration-300 transform lg:w-auto bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
-                                <span class="relative z-10">Get Started</span>
+                                <span class="relative z-10">
+                                    {{ label_text('global', 'site.Get-Started', __('site.Get Started')) }}
+                                </span>
                                 <div
                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                 </div>
@@ -915,21 +1055,23 @@
         <div class="mx-auto lg:container">
             <!-- First Image Container -->
             <div class="w-full">
-                <img src="{{ asset('front/assets/imgs/steps/img1.png') }}" alt="Student learning with laptop"
+                <img src="{{ asset('front/assets/imgs/steps/img1.png') }}"
+                    alt="{{ label_text('global', 'site.steps-image1-alt', __('site.Student learning with laptop')) }}"
                     class="object-cover w-full h-auto">
             </div>
 
             <!-- Blue Message Container -->
             <div class="py-8 w-full text-center" style="background-color: #1B449C;">
                 <h2 class="font-bold text-white text-md lg:text-[25px]">
-                    3 Simple Steps To Start Learning With JINNEDU
+                    {{ label_text('global', 'site.steps-title', __('site.3 Simple Steps To Start Learning With JINNEDU')) }}
                 </h2>
             </div>
 
             <!-- Second Image Container -->
             <div class="w-full">
                 <div class="px-4 mx-auto max-w-full lg:max-w-[90%]">
-                    <img src="{{ asset('front/assets/imgs/steps/img2.png') }}" alt="Learning steps infographic"
+                    <img src="{{ asset('front/assets/imgs/steps/img2.png') }}"
+                        alt="{{ label_text('global', 'site.steps-image2-alt', __('site.Learning steps infographic')) }}"
                         class="object-cover w-full h-auto">
                 </div>
             </div>

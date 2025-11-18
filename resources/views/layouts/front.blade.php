@@ -23,7 +23,7 @@
         <!-- رسالة التوضيح من الجانب -->
         <div
             class="absolute top-1/2 right-full px-3 py-2 mr-3 text-sm text-white whitespace-nowrap bg-gray-800 rounded-lg shadow-lg opacity-0 transition-all duration-300 transform -translate-y-1/2 pointer-events-none rtl:left-full rtl:right-auto rtl:ml-3 rtl:mr-0 group-hover:opacity-100">
-            تواصل معنا عبر واتساب
+            {{ label_text('global', 'site.contact-whatsapp', __('site.Contact us on WhatsApp')) }}
             <!-- السهم الجانبي -->
             <div
                 class="absolute top-1/2 left-full w-0 h-0 border-t-4 border-b-4 border-l-4 border-transparent transform -translate-y-1/2 rtl:right-full rtl:left-auto rtl:border-r-4 rtl:border-l-0 border-l-gray-800 rtl:border-r-gray-800">
