@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="{{ asset('front/assets/css/all.min.css') }}">
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('front/assets/css/tailwind.css') }}">
+    
+    
+    <link rel="stylesheet" href="{{ asset('front/assets/css/style.css') }}">
     <script>
         window.laravelDirection = @json($htmlDirection);
         window.laravelLocale = @json($locale);

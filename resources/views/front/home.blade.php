@@ -174,7 +174,7 @@
                         <div class="flex flex-1 justify-start text-center md:text-left md:rtl:text-right">
                             <div class="flex flex-col justify-center">
                                 <span
-                                    class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0">
+                                class="mb-2 text-3xl font-black text-center text-[#1B449C] transition-colors duration-300 lg:text-left lg:rtl:text-right translate-x-[-28px] md:translate-x-0 rtl:translate-x-[18px]">
                                     {{ $stats['services'] }}
                                 </span>
                                 <span class="text-[16px] md:text-[12px] font-medium tracking-wide text-black uppercase">
@@ -947,7 +947,7 @@
                         <!-- Main Image -->
                         <img src="{{ asset('front/assets/imgs/become_tutor/imgs.png') }}"
                             alt="{{ label_text('global', 'site.become-tutor-image-alt', __('site.Professional tutor working')) }}"
-                            class="h-full object-cover min-h-[200px] md:min-h-[400px] lg:min-h-auto">
+                            class="h-full object-cover min-h-[200px] md:min-h-[400px] lg:min-h-auto transition-transform rtl:scale-x-[-1]">
 
                         <!-- Gradient Overlay for depth -->
                         <div

@@ -6,3 +6,22 @@ main form div:has(textarea[required]) > label::after {
   margin-inline-start: 0.25rem;
   font-weight: 500;
 }
+
+
+@font-face {
+  font-family: 'AlarabyTelevision';
+  src: url('../fonts/Alaraby Television Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* الخط الافتراضي لكل الصفحة (LTR) */
+body {
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+/* أي نص عربي في الصفحة يأخذ الخط العربي (مع استثناء أيقونات Font Awesome) */
+:lang(ar):not(.fa):not(.fas):not(.far):not(.fal):not(.fab),
+:lang(ar-SA):not(.fa):not(.fas):not(.far):not(.fal):not(.fab) {
+  font-family: 'AlarabyTelevision', 'Poppins', system-ui, sans-serif;
+}
