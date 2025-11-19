@@ -16,7 +16,8 @@ class SiteTranslationsSeeder extends Seeder
         sort($keys, SORT_STRING | SORT_FLAG_CASE);
 
         foreach ($keys as $key) {
-            $name = mb_strtolower($key, 'UTF-8');
+            // نخزّن الـ key في قاعدة البيانات كما هو بدون أي تعديل
+            $name = $key;
             $enTitle = $en[$key] ?? '';
             $arTitle = $ar[$key] ?? '';
 
