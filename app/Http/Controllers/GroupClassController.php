@@ -13,6 +13,7 @@ use App\Models\GroupClassTutor;
 use App\Models\Order;
 use App\Models\Tutor;
 use App\Models\User;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -502,25 +503,19 @@ class GroupClassController extends Controller
                 $item->rating = $item->reviews()->avg('stars');
                 $item->tutor;
 
-                                
-                $item->tutor->price =  $item->tutor->hourlyPrices()?->first()?->price ?? 0;
-                $tutor_about =  $item->tutor->abouts()->first();
-
-
-                $item->tutor->price = $item->tutor->hourlyPrices()?->first()?->price ?? 0;
-                $tutor_about = $item->tutor->abouts()->first();
-
-                if ($tutor_about) {
-                    $item->tutor->language = $tutor_about->language()->first()->name ?? null;
-                    $item->tutor->subject = $tutor_about->subject()->first()->name ?? null;
-                } else {
-                    $item->tutor->language = null;
-                    $item->tutor->subject = null;
-                }
-
-                $item->tutor->videos = $item->tutor->videos()->get();
-
                 if ($item->tutor) {
+                    $item->tutor->price = $item->tutor->hourlyPrices()?->first()?->price ?? 0;
+                    $tutor_about = $item->tutor->abouts()->first();
+
+                    if ($tutor_about) {
+                        $item->tutor->language = $tutor_about->language()->first()->name ?? null;
+                        $item->tutor->subject = $tutor_about->subject()->first()->name ?? null;
+                    } else {
+                        $item->tutor->language = null;
+                        $item->tutor->subject = null;
+                    }
+
+                    $item->tutor->videos = $item->tutor->videos()->get();
                     $item->tutor->email = null;
                 }
 
@@ -550,17 +545,16 @@ class GroupClassController extends Controller
             'message' => 'item-listed-successfully',
             'result' => $items,
         ];
+        // $responsejson = json_encode($data);
+        // $gzipData = gzencode($responsejson, 9);
 
-        $responsejson = json_encode($data);
-        $gzipData = gzencode($responsejson, 9);
-
-        return response($gzipData)->withHeaders([
-            'Access-Control-Allow-Origin' => '*',
-            'Access-Control-Allow-Methods' => 'GET',
-            'Content-type' => 'application/json; charset=utf-8',
-            'Content-Length' => strlen($gzipData),
-            'Content-Encoding' => 'gzip',
-        ]);
+        // return response($gzipData)->withHeaders([
+        //     'Access-Control-Allow-Origin' => '*',
+        //     'Access-Control-Allow-Methods' => 'GET',
+        //     'Content-type' => 'application/json; charset=utf-8',
+        //     'Content-Length' => strlen($gzipData),
+        //     'Content-Encoding' => 'gzip',
+        // ]);
 
         return response($data, 200);
     }
@@ -993,7 +987,7 @@ class GroupClassController extends Controller
             foreach ($request->dates as $date) {
 
                 $originalDate = new DateTime($date['class_date']);
-                $newMonth = $request->start_month;
+                $newMonth = Carbon::parse($request->start_month)->month;
 
                 // Change the month
                 $originalDate->setDate($originalDate->format('Y'), $newMonth, $originalDate->format('d'));
@@ -1302,11 +1296,12 @@ class GroupClassController extends Controller
         $item->appliedTutors;
         foreach ($item->appliedTutors as $appliedTutor) {
             $appliedTutor->tutor;
-            $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
-            $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
+            if($appliedTutor->tutor) {
+                $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
+                $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
 
-            $appliedTutor->tutor->specialization = $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
-
+                $appliedTutor->tutor->specialization = $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
+            }
         }
         $suggestions = GroupClass::where('category_id', $item->category_id)->where('id', '<>', $item->id)->limit(6)->get();
         foreach ($suggestions as $suggestion) {

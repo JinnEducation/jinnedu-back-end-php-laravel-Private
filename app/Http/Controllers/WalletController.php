@@ -235,11 +235,11 @@ class WalletController extends Controller
         $user = Auth::user();
         
         $wallet = $user->wallets()->first();
-        if(!$wallet) return response([
-                'success' => false,
-                'message' => 'wallet-dose-not-exist',
-                'msg-code' => '111'
-        ] , 200);
+        // if(!$wallet) return response([
+        //         'success' => false,
+        //         'message' => 'wallet-dose-not-exist',
+        //         'msg-code' => '111'
+        // ] , 200);
         
         $order=Order::where('id' , $orderid)->where('user_id' , $user->id)->whereIn('status',[0,2])->first();
         if(!$order) return response([
@@ -248,30 +248,30 @@ class WalletController extends Controller
                 'msg-code' => '222'
         ] , 200);
         
-        if($order->price>$wallet->balance && $order->ref_type==1 && $wallet->group_class_count==0) 
-            return response([
-                    'success' => false,
-                    'message' => 'wallet-balance-is-not-enough',
-                    'msg-code' => '333'
-            ] , 200);
-        else if($order->price>$wallet->balance && $order->ref_type==2 && $wallet->our_course_count==0) 
-            return response([
-                    'success' => false,
-                    'message' => 'wallet-balance-is-not-enough',
-                    'msg-code' => '333'
-            ] , 200);
-        else if($order->price>$wallet->balance && $order->ref_type==4 && $wallet->private_lesson_count==0) 
-            return response([
-                    'success' => false,
-                    'message' => 'wallet-balance-is-not-enough',
-                    'msg-code' => '333'
-            ] , 200);
-        else if($order->price>$wallet->balance && $order->ref_type==7) 
-            return response([
-                    'success' => false,
-                    'message' => 'wallet-balance-is-not-enough',
-                    'msg-code' => '333'
-            ] , 200);
+        // if($order->price>$wallet->balance && $order->ref_type==1 && $wallet->group_class_count==0) 
+        //     return response([
+        //             'success' => false,
+        //             'message' => 'wallet-balance-is-not-enough',
+        //             'msg-code' => '333'
+        //     ] , 200);
+        // else if($order->price>$wallet->balance && $order->ref_type==2 && $wallet->our_course_count==0) 
+        //     return response([
+        //             'success' => false,
+        //             'message' => 'wallet-balance-is-not-enough',
+        //             'msg-code' => '333'
+        //     ] , 200);
+        // else if($order->price>$wallet->balance && $order->ref_type==4 && $wallet->private_lesson_count==0) 
+        //     return response([
+        //             'success' => false,
+        //             'message' => 'wallet-balance-is-not-enough',
+        //             'msg-code' => '333'
+        //     ] , 200);
+        // else if($order->price>$wallet->balance && $order->ref_type==7) 
+        //     return response([
+        //             'success' => false,
+        //             'message' => 'wallet-balance-is-not-enough',
+        //             'msg-code' => '333'
+        //     ] , 200);
         
  
         if(true){
@@ -296,22 +296,22 @@ class WalletController extends Controller
             if($order->ref_type==1){
                 $groupClass = GroupClass::find($order->ref_id);
                 
-                if($wallet->group_class_count > 0) {
-                    $wallet->group_class_count -=1; 
-                    $wallet->save();
+                // if($wallet->group_class_count > 0) {
+                //     $wallet->group_class_count -=1; 
+                //     $wallet->save();
                     
-                    $order->payment = 'wallet-package';
-                    $order->save();
+                //     $order->payment = 'wallet-package';
+                //     $order->save();
                     
-                    //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
-                    $this->addTutorFinance($order,$groupClass->tutor_id, 1);
-        	    } else {
-        	        $wallet->balance -= $order->price;
-        	        $wallet->save();
+                //     //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
+                //     $this->addTutorFinance($order,$groupClass->tutor_id, 1);
+        	    // } else {
+        	    //     $wallet->balance -= $order->price;
+        	    //     $wallet->save();
         	        
-        	        //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
-                    $this->addTutorFinance($order,$groupClass->tutor_id, 1);
-        	    }
+        	    //     //$this->addTutorTransferToHisWallet($order,$groupClass->tutor_id);
+                //     $this->addTutorFinance($order,$groupClass->tutor_id, 1);
+        	    // }
                 
         	    //=====================================================================
                 

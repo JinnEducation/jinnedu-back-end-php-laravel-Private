@@ -1,5 +1,9 @@
+@php
+    $htmlLocale = str_replace('_', '-', app()->getLocale());
+    $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->first()->direction;
+@endphp
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="{{ $htmlLocale }}" dir="{{ $htmlDirection }}">
 
 <head>
     <meta charset="UTF-8">

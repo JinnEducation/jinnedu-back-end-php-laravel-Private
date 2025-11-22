@@ -130,7 +130,7 @@
             <!-- Sign Up -->
             <p class="mt-5 text-center text-sm text-gray-600">
                 {{ label_text('global', 'site.new-to-jinn', __('site.New To Jinn?')) }}
-                <a href="./signup.html" class="text-primary hover:underline">
+                <a href="{{ route('register') }}" class="text-primary hover:underline">
                     {{ label_text('global', 'site.sign-up', __('site.sign-up')) }}
                 </a>
             </p>

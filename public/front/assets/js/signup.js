@@ -82,6 +82,47 @@ $(document).ready(function () {
 
 // Step 1 
 $(function () {
+    // دالة لحفظ الحقول المطلوبة الأصلية (تُستدعى مرة واحدة عند التحميل)
+    let requiredFieldsSaved = false;
+    
+    function saveOriginalRequiredFields() {
+        if (requiredFieldsSaved) return;
+        
+        const stepsToManage = [3, 4, 5, 6, 7, 8];
+        stepsToManage.forEach(function(step) {
+            const $pane = $(`.pane[data-step="${step}"]`);
+            $pane.find('input[required], select[required], textarea[required]').each(function() {
+                $(this).attr('data-was-required', 'true');
+            });
+        });
+        requiredFieldsSaved = true;
+    }
+
+    // دالة لإدارة الحقول المطلوبة بناءً على نوع الحساب
+    function manageRequiredFields(accountType) {
+        // حفظ الحقول المطلوبة الأصلية أولاً
+        saveOriginalRequiredFields();
+        
+        // الحصول على جميع الحقول في الخطوات 3-8
+        const stepsToManage = [3, 4, 5, 6, 7, 8];
+        
+        stepsToManage.forEach(function(step) {
+            const $pane = $(`.pane[data-step="${step}"]`);
+            
+            if (accountType == 1) {
+                // طالب: إزالة required من جميع الحقول في هذه الخطوات
+                $pane.find('[data-was-required="true"]').each(function() {
+                    $(this).removeAttr('required');
+                });
+            } else if (accountType == 2) {
+                // معلم: إعادة required للحقول التي كانت مطلوبة أصلاً
+                $pane.find('[data-was-required="true"]').each(function() {
+                    $(this).attr('required', 'required');
+                });
+            }
+        });
+    }
+
     // Account type selection
     $('.account-card').click(function () {
         $('.account-card').removeClass('border-primary bg-blue-50');
@@ -89,27 +130,48 @@ $(function () {
         accountType = $(this).data('account');
         localStorage.setItem('accountType', accountType);
         $('#account-type').val(accountType)
+        console.log(accountType);
         if (accountType === 1) {
-            // إخفاء الخطوات 1 و2 فقط
+            // إخفاء الخطوات 3-8
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
                 if ([1, 2].includes(step)) {
                     $(this).removeClass('hidden');
                 } else {
                     $(this).addClass('hidden');
-                    // $(this).hide();
                 }
             });
+            // إزالة required من الحقول في الخطوات المخفية
+            manageRequiredFields(1);
         }
         if (accountType === 2) {
             $('.step-item, .step-item-mobile').each(function () {
                 const step = $(this).data('step');
-                // $(this).show();
                 $(this).removeClass('hidden');
             });
+            // إعادة required للحقول في الخطوات
+            manageRequiredFields(2);
         }
-
     });
+
+    // عند تحميل الصفحة: تطبيق الإعدادات إذا كان هناك نوع حساب محفوظ
+    const savedAccountType = localStorage.getItem('accountType');
+    if (savedAccountType) {
+        if (savedAccountType == 1) {
+            $('.step-item, .step-item-mobile').each(function () {
+                const step = $(this).data('step');
+                if (![1, 2].includes(step)) {
+                    $(this).addClass('hidden');
+                }
+            });
+            manageRequiredFields(1);
+        } else if (savedAccountType == 2) {
+            manageRequiredFields(2);
+        }
+    } else {
+        // حتى لو لم يكن هناك نوع حساب محفوظ، نحفظ الحقول المطلوبة الأصلية
+        saveOriginalRequiredFields();
+    }
 });
 
 // Step 2

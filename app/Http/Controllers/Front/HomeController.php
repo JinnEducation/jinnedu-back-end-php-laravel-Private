@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\Blog;
-use App\Models\GroupClass;
-use App\Models\User;
-use App\Models\Slider;
-use App\Models\Category;
-use App\Models\Language;
-use App\Models\CateqBlog;
-use App\Models\OurCourse;
-use Illuminate\Http\Request;
-use App\Models\CategBlogLang;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\GroupClassController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WalletController;
+use App\Models\Blog;
+use App\Models\Category;
+use App\Models\CateqBlog;
+use App\Models\GroupClass;
+use App\Models\GroupClassTutor;
+use App\Models\Language;
+use App\Models\OurCourse;
+use App\Models\Slider;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
 
-        //Slider
+        // Slider
         $locale = app()->getLocale();
         $language = Language::where('shortname', $locale)->first();
         if (! $language) {
@@ -36,11 +40,11 @@ class HomeController extends Controller
         $stats = [
             'services' => 8,
             'students' => DB::table('users')->where('type', 1)->count(),
-            'tutors'   => DB::table('users')->where('type', 2)->count(),
-            'courses'  => DB::table('our_courses')->where('status', 1)->count(),
+            'tutors' => DB::table('users')->where('type', 2)->count(),
+            'courses' => DB::table('our_courses')->where('status', 1)->count(),
         ];
 
-        //our course
+        // our course
         $categoryId = $request->query('category_id');
         $categories = Category::query()
             ->with('langs')
@@ -49,7 +53,6 @@ class HomeController extends Controller
             // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
             ->orderBy('id')
             ->get();
-
 
         $coursesQuery = OurCourse::query()
             ->with(['langs', 'imageInfo', 'category:id,name'])
@@ -60,7 +63,6 @@ class HomeController extends Controller
         if ($categoryId) {
             $coursesQuery->where('category_id', $categoryId);
         }
-
 
         $courses = $coursesQuery->limit(12)->get();
 
@@ -75,7 +77,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
 
-        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId','sliders', 'languageId'));
+        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId'));
     }
 
     public function blog(Request $request)
@@ -102,16 +104,15 @@ class HomeController extends Controller
         $categories->each(function ($category) use ($languageId) {
             // نحاول الحصول على الترجمة باللغة الحالية
             $translation = $category->langsAll->where('language_id', $languageId)->first();
-            
+
             // إذا لم نجد ترجمة باللغة الحالية، نأخذ أول ترجمة متاحة
-            if (!$translation) {
+            if (! $translation) {
                 $translation = $category->langsAll->first();
             }
-            
+
             // نستبدل langsAll بـ collection يحتوي على ترجمة واحدة فقط
             $category->setRelation('langsAll', collect([$translation]));
         });
-
 
         // جلب جميع المدونات المنشورة مع كل الترجمات
         $blogsQuery = Blog::filter($request->query())
@@ -124,23 +125,23 @@ class HomeController extends Controller
         $blogs->each(function ($blog) use ($languageId) {
             // نحاول الحصول على الترجمة باللغة الحالية
             $translation = $blog->langsAll->where('language_id', $languageId)->first();
-            
+
             // إذا لم نجد ترجمة باللغة الحالية، نأخذ أول ترجمة متاحة
-            if (!$translation) {
+            if (! $translation) {
                 $translation = $blog->langsAll->first();
             }
-            
+
             // نستبدل langsAll بـ collection يحتوي على ترجمة واحدة فقط
             $blog->setRelation('langsAll', collect([$translation]));
 
             // نفس الشيء للفئة الخاصة بالمدونة
             if ($blog->category) {
                 $categoryTranslation = $blog->category->langsAll->where('language_id', $languageId)->first();
-                
-                if (!$categoryTranslation) {
+
+                if (! $categoryTranslation) {
                     $categoryTranslation = $blog->category->langsAll->first();
                 }
-                
+
                 // نستبدل langsAll للفئة بـ collection يحتوي على ترجمة واحدة فقط
                 $blog->category->setRelation('langsAll', collect([$categoryTranslation]));
             }
@@ -175,18 +176,18 @@ class HomeController extends Controller
             ->first();
 
         // إذا لم نجد المدونة نهائياً، نرجع 404
-        if (!$blog) {
+        if (! $blog) {
             abort(404);
         }
 
         // إذا وجدنا المدونة، نتحقق من اللغة الحالية
         // إذا كانت اللغة الحالية مختلفة عن لغة الـ slug، نعيد تحميل البيانات باللغة الصحيحة
         $currentSlugLang = $blog->langsAll->where('slug', $slug)->first();
-        
+
         if ($currentSlugLang && $languageId && $currentSlugLang->language_id != $languageId) {
             // نبحث عن الترجمة باللغة الحالية
             $translationInCurrentLang = $blog->langsAll->where('language_id', $languageId)->first();
-            
+
             if ($translationInCurrentLang && $translationInCurrentLang->slug) {
                 // إعادة توجيه للـ slug الصحيح باللغة الحالية
                 return redirect()->route('site.showBlog', $translationInCurrentLang->slug);
@@ -194,7 +195,7 @@ class HomeController extends Controller
         }
 
         // نتأكد من تحميل البيانات باللغة الصحيحة
-        $blog->load(['langsAll' => function($query) use ($languageId) {
+        $blog->load(['langsAll' => function ($query) use ($languageId) {
             if ($languageId) {
                 $query->where('language_id', $languageId);
             }
@@ -202,14 +203,14 @@ class HomeController extends Controller
 
         // إذا لم نجد بيانات باللغة الحالية، نجيب أول لغة متاحة
         if ($blog->langsAll->isEmpty()) {
-            $blog->load(['langsAll' => function($query) {
+            $blog->load(['langsAll' => function ($query) {
                 $query->orderBy('id', 'asc')->limit(1);
             }]);
         }
 
         // جلب المدونات الأخرى (باستثناء المدونة الحالية)
         $blogsQuery = Blog::filter($request->query())
-            ->with(['category', 'category.langs', 'users:id,name', 'langsAll' => function($query) use ($languageId) {
+            ->with(['category', 'category.langs', 'users:id,name', 'langsAll' => function ($query) use ($languageId) {
                 // نجيب اللغة المطلوبة أولاً
                 if ($languageId) {
                     $query->where('language_id', $languageId);
@@ -221,18 +222,19 @@ class HomeController extends Controller
         $blogs = $blogsQuery->take(5)->get();
 
         // لو المدونات ما فيها بيانات باللغة المطلوبة، نجيب أول لغة متاحة
-        $blogs = $blogs->map(function($blogItem) use ($languageId) {
+        $blogs = $blogs->map(function ($blogItem) use ($languageId) {
             // إذا ما في بيانات باللغة الحالية
-            if ($blogItem->langsAll->isEmpty() || !$blogItem->langsAll->where('language_id', $languageId)->first()) {
+            if ($blogItem->langsAll->isEmpty() || ! $blogItem->langsAll->where('language_id', $languageId)->first()) {
                 // نجيب أول لغة متاحة
-                $blogItem->load(['langsAll' => function($query) {
+                $blogItem->load(['langsAll' => function ($query) {
                     $query->orderBy('id', 'asc')->limit(1);
                 }]);
             }
+
             return $blogItem;
         });
 
-        return view('front.singlebloge', compact('blog','blogs'));
+        return view('front.singlebloge', compact('blog', 'blogs'));
     }
 
     public function contact_us()
@@ -245,32 +247,69 @@ class HomeController extends Controller
         // Resolve current language (same logic used in blog())
         $locale = app()->getLocale();
         $language = Language::where('shortname', $locale)->first();
-        if (!$language) {
+        if (! $language) {
             $language = Language::where('main', 1)->first();
         }
-        if (!$language) {
+        if (! $language) {
             $language = Language::first();
         }
         $languageId = $language ? $language->id : null;
 
-        // Fetch classes (light payload) prepared for listing page
-        $classes = GroupClass::query()
-            ->with([
-                'langsAll.language',
-                'imageInfo',
-                'dates' => function ($q) { $q->orderBy('class_date'); },
-                'reviews:id,class_id,stars',
-                'tutor:id,name',
-                'tutor.hourlyPrices:id,price',
-            ])
-            ->where('status', 1)
-            ->latest('id')
-            ->get();
+        $groupClassController = new GroupClassController;
+        $request = new Request;
+        $request->limit = 1000;
+        $response = $groupClassController->getAssignedGroupClass($request, null);
+        $original = $response->getOriginalContent();
+
+        $classes = collect($original['result']->items());  // تحويل المصفوفة إلى Collection
+
+        // تصفية الكلاسات حسب الشروط المطلوبة
+        $now = Carbon::now();
+        $classes = $classes->filter(function ($class) use ($now) {
+            // 1. التحقق من أن الكلاس فعال (status = 1)
+            if ($class->status != 1) {
+                return false;
+            }
+
+            // 2. التحقق من وجود معلم مرتبط بالكلاس
+            if (! $class->tutor_id) {
+                return false;
+            }
+
+            // 3. التحقق من أن المعلم موافق عليه في group_class_tutors
+            $tutorApproved = GroupClassTutor::where('group_class_id', $class->id)
+                ->where('tutor_id', $class->tutor_id)
+                ->where('status', 'approved')
+                ->exists();
+
+            if (! $tutorApproved) {
+                return false;
+            }
+
+            // 4. التحقق من أن جميع الحصص لم تنتهي (class_date > now)
+            if ($class->dates->isEmpty()) {
+                return false;
+            }
+
+            // تحقق إذا الحصة اليوم أو إذا فقط في حصة واحدة، باقي الحصص لازم تكون بعد الآن أو اليوم نفسه
+            $allSessionsValid = $class->dates->every(function ($date) use ($now) {
+                $dateObj = Carbon::parse($date->class_date);
+
+                // إذا الحصة اليوم تعتبر مقبولة أيضاً
+                return $dateObj->isAfter($now) || $dateObj->isSameDay($now);
+            });
+
+            if (! $allSessionsValid) {
+                return false;
+            }
+
+            return true;
+        });
 
         foreach ($classes as $class) {
             // Keep only current language translation
             $translation = $class->langsAll->where('language_id', $languageId)->first();
-            if (!$translation) {
+            if (! $translation) {
                 $translation = $class->langsAll->first();
             }
             $class->setRelation('langsAll', collect([$translation]));
@@ -302,16 +341,16 @@ class HomeController extends Controller
 
         return view('front.online_group_classes', compact('classes', 'languageId'));
     }
-    
+
     public function groupClassDetails(string $locale, string|int $id)
     {
         // Resolve current language (same approach as blog())
         $locale = app()->getLocale();
         $language = Language::where('shortname', $locale)->first();
-        if (!$language) {
+        if (! $language) {
             $language = Language::where('main', 1)->first();
         }
-        if (!$language) {
+        if (! $language) {
             $language = Language::first();
         }
         $languageId = $language ? $language->id : null;
@@ -334,13 +373,13 @@ class HomeController extends Controller
             'attachment',
         ])->find($id);
 
-        if (!$group_class) {
+        if (! $group_class) {
             abort(404);
         }
 
         // Pick only the current language translation for the class
         $classTranslation = $group_class->langsAll->where('language_id', $languageId)->first();
-        if (!$classTranslation) {
+        if (! $classTranslation) {
             $classTranslation = $group_class->langsAll->first();
         }
         $group_class->setRelation('langsAll', collect([$classTranslation]));
@@ -348,7 +387,7 @@ class HomeController extends Controller
         // Category translation limited to current language
         if ($group_class->category) {
             $catTranslation = $group_class->category->langsAll->where('language_id', $languageId)->first();
-            if (!$catTranslation) {
+            if (! $catTranslation) {
                 $catTranslation = $group_class->category->langsAll->first();
             }
             $group_class->category->setRelation('langsAll', collect([$catTranslation]));
@@ -370,32 +409,132 @@ class HomeController extends Controller
                 $group_class->tutor->subject = null;
             }
         }
-
-        // Suggestions (same category), each limited to current language
-        $suggestions = GroupClass::with([
-            'langsAll.language',
-            'dates',
-            'reviews',
-            'tutor',
-            'imageInfo',
-        ])
-        ->where('category_id', $group_class->category_id)
-        ->where('id', '<>', $group_class->id)
-        ->limit(6)
-        ->get();
-
-        foreach ($suggestions as $suggestion) {
-            $sTrans = $suggestion->langsAll->where('language_id', $languageId)->first();
-            if (!$sTrans) {
-                $sTrans = $suggestion->langsAll->first();
+        $dates = $group_class->dates->filter(function ($date) {
+            if ($date->class_date < Carbon::now()) {
+                return false;
             }
-            $suggestion->setRelation('langsAll', collect([$sTrans]));
-            $suggestion->rating = $suggestion->reviews()->avg('stars');
-            if ($suggestion->tutor) {
-                $suggestion->tutor->email = null;
+
+            return true;
+        });
+        $group_class->dates = $dates;
+        // // Suggestions (same category), each limited to current language
+        // $suggestions = GroupClass::with([
+        //     'langsAll.language',
+        //     'dates',
+        //     'reviews',
+        //     'tutor',
+        //     'imageInfo',
+        // ])
+        // ->where('category_id', $group_class->category_id)
+        // ->where('id', '<>', $group_class->id)
+        // ->limit(6)
+        // ->get();
+
+        // foreach ($suggestions as $suggestion) {
+        //     $sTrans = $suggestion->langsAll->where('language_id', $languageId)->first();
+        //     if (!$sTrans) {
+        //         $sTrans = $suggestion->langsAll->first();
+        //     }
+        //     $suggestion->setRelation('langsAll', collect([$sTrans]));
+        //     $suggestion->rating = $suggestion->reviews()->avg('stars');
+        //     if ($suggestion->tutor) {
+        //         $suggestion->tutor->email = null;
+        //     }
+        // }
+        $groupClassController = new GroupClassController;
+        $request = new Request;
+        $request->limit = 1000;
+        $response = $groupClassController->getAssignedGroupClass($request, null);
+        $original = $response->getOriginalContent();
+
+        $suggestions = collect($original['result']->items());  // تحويل المصفوفة إلى Collection
+
+        // تصفية الكلاسات حسب الشروط المطلوبة
+        $now = Carbon::now();
+        $suggestions = $suggestions->filter(function ($class) use ($now, $id) {
+
+            if ($class->id == $id) {
+                return false;
             }
-        }
+
+            // 1. التحقق من أن الكلاس فعال (status = 1)
+            if ($class->status != 1) {
+                return false;
+            }
+
+            // 2. التحقق من وجود معلم مرتبط بالكلاس
+            if (! $class->tutor_id) {
+                return false;
+            }
+
+            // 3. التحقق من أن المعلم موافق عليه في group_class_tutors
+            $tutorApproved = GroupClassTutor::where('group_class_id', $class->id)
+                ->where('tutor_id', $class->tutor_id)
+                ->where('status', 'approved')
+                ->exists();
+
+            if (! $tutorApproved) {
+                return false;
+            }
+
+            // 4. التحقق من أن جميع الحصص لم تنتهي (class_date > now)
+            if ($class->dates->isEmpty()) {
+                return false;
+            }
+
+            // تحقق إذا الحصة اليوم أو إذا فقط في حصة واحدة، باقي الحصص لازم تكون بعد الآن أو اليوم نفسه
+            $allSessionsValid = $class->dates->every(function ($date) use ($now) {
+                $dateObj = Carbon::parse($date->class_date);
+
+                // إذا الحصة اليوم تعتبر مقبولة أيضاً
+                return $dateObj->isAfter($now) || $dateObj->isSameDay($now);
+            });
+
+            // إذا يوجد فقط حصة واحدة نسمح بعرضها حتى ولو كانت اليوم
+            if ($class->dates->count() == 1) {
+                $allSessionsValid = true;
+            }
+
+            if (! $allSessionsValid) {
+                return false;
+            }
+
+            return true;
+        });
+
         // dd($group_class,$suggestions,$languageId);
         return view('front.class_details', compact('group_class', 'suggestions', 'languageId'));
+    }
+
+    public function groupClassOrder(string $locale, Request $request, string|int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $class = GroupClass::where('id', $id)->first();
+            if (! $class) {
+                return redirect()->back()->with('error', 'Class not found');
+            }
+            $orderController = new OrderController;
+            $response = $orderController->groupClass($request, $id);
+            $original = $response->getOriginalContent();
+
+            if ($original['success']) {
+                $walletController = new WalletController();
+                $responseCheckout = $walletController->checkout($original['order_id']);
+                $originalCheckout = $responseCheckout->getOriginalContent();                
+                
+                if($originalCheckout['success']){
+                    DB::commit();
+                    return redirect()->route('redirect.dashboard')->with('success', $originalCheckout['message']);
+                }
+
+            } else {
+                return redirect()->back()->with('error', $original['message']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

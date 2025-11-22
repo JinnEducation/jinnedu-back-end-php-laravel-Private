@@ -491,7 +491,8 @@ class ConferenceController extends Controller
             $item->tutor;
             $item->rating =  $item->reviews()->avg('stars');
             $item->is_available = strtotime($item->date . ' ' . $item->start_time) >= time();
-            $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id, 'status'=>1])->exists();
+            // $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id, 'status'=>1])->exists();
+            $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id])->exists();
             
             if($item->ref_type == 1){
                 $item->group_class = GroupClass::select('id', 'name', 'slug')->where('id', $item->ref_id)->first();
@@ -774,11 +775,11 @@ class ConferenceController extends Controller
                 'msg-code' => '222'
         ] , 200);
         
-        if($response->status!='ok') return response([
-                'success' => false,
-                'message' => 'status-dose-not-ok',
-                'msg-code' => '333'
-        ] , 200);
+        // if($response->status!='ok') return response([
+        //         'success' => false,
+        //         'message' => 'status-dose-not-ok',
+        //         'msg-code' => '333'
+        // ] , 200);
         
         $conferenceLink = new ConferenceLink;
 	    
@@ -787,7 +788,7 @@ class ConferenceController extends Controller
 	    $conferenceLink->order_id=$conference->order_id;
 	    $conferenceLink->conference_id=$conference->id;
 	    
-	    $conferenceLink->class_id=$response->class_id;
+	    $conferenceLink->class_id=$conference->class_id;
 	    $conferenceLink->user_name=$user->name;
 	    
 	    $conferenceLink->is_teacher=0;
@@ -844,11 +845,11 @@ class ConferenceController extends Controller
                 'msg-code' => '222'
         ] , 200);
         
-        if($response->status!='ok') return response([
-                'success' => false,
-                'message' => 'status-dose-not-ok',
-                'msg-code' => '333'
-        ] , 200);
+        // if($response->status!='ok') return response([
+        //         'success' => false,
+        //         'message' => 'status-dose-not-ok',
+        //         'msg-code' => '333'
+        // ] , 200);
         
         $conferenceLink = new ConferenceLink;
 	    

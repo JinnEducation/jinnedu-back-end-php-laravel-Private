@@ -33,6 +33,8 @@ $(document).ready(function () {
             date: $(this).find('span:first').text(),
             time: $(this).find('span:last').text()
         };
+
+        $('#date_id').val(selectedSlot.id);
         
         console.log('Selected slot:', selectedSlot);
     });

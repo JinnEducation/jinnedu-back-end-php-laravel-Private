@@ -27,7 +27,10 @@ Route::group([
     'prefix' => '{locale?}',
     'where' => ['locale' => '[a-zA-Z]{2}(?:-[a-zA-Z0-9]{2,4})?'],
 ], function () {
+    require __DIR__.'/fortify.php';
+    
     Route::get('/',[HomeController::class,'index'])->name('home');
+
 
     Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])
         ->name('redirect.dashboard');
@@ -68,6 +71,7 @@ Route::group([
     
     Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
+    Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->name('site.group_class_order');
 });
 
 

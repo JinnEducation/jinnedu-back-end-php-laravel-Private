@@ -107,7 +107,7 @@
                     <!-- Instructor Section -->
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
                         <div class="flex gap-4 items-center mb-4">
-                            <img src="{{ asset('storage/'.$group_class->tutor?->imageInfo?->path) }}" alt="{{ $group_class->tutor?->name }}"
+                            <img src="{{ asset('storage/'.$group_class->tutor?->avatar) }}" alt="{{ $group_class->tutor?->name }}"
                                 class="object-cover w-21 h-21 rounded-full">
                             <div>
                                 <h3 class="text-sm font-semibold text-black">{{ $group_class->tutor?->name }}</h3>
@@ -209,29 +209,43 @@
                             </div>
                         </div>
 
-                        <!-- Price -->
-                        <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
-                            <span class="text-[15px] font-semibold text-black">Price</span>
-                            <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD/session</span>
-                        </div>
+                        <form action="{{ route('site.group_class_order', ['locale' => app()->getLocale(), 'id' => $group_class->id]) }}" method="post">
+                            @csrf
 
-                        <!-- Date/Time Selection -->
-                        <div class="mb-4 space-y-3">
-                            @foreach($group_class->dates as $date)
-                            <div class="time-slot flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50"
-                                data-slot="{{ $date->id }}">
-                                <span class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }} , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
-                                <span class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
+                            <!-- Price -->
+                            <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
+                                <span class="text-[15px] font-semibold text-black">Price</span>
+                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD/session</span>
                             </div>
-                            @endforeach
-                        </div>
 
-                        <!-- Book Now Button -->
-                        <button id="bookNowBtn"
-                            class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                            Book Now
-                        </button>
+                            <!-- Date/Time Selection -->
+                            <div class="mb-4 space-y-3">
+                                <input type="hidden" name="group_class_id" value="{{ $group_class->id }}">
+                                @foreach($group_class->dates as $date)
+                                    <div class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
+                                        <span class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }} , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
+                                        <span class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
 
+                            <!-- Book Now Button -->
+                            @auth
+                            <button type="submit"
+                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                Book Now
+                            </button>
+                            @endauth
+                                
+                            @guest
+                            <button type="button" data-open="#loginModal"
+                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                Book Now
+                            </button>                            
+                            @endguest
+
+                            
+                        </form>
                         <p class="text-xs text-center text-gray-500">
                             Secure payment — Free cancellation up to 12h
                         </p>

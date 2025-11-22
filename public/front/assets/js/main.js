@@ -124,7 +124,7 @@ $(document).ready(function () {
   }
 
   // تشغيل التهيئة
-  initializeDirection();
+  // initializeDirection();
 
   // ==================
   // Laravel Integration Helper
