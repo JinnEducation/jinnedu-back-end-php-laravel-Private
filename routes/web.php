@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Front\CheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MuxController;
 use App\Http\Controllers\AuthController;
@@ -72,6 +73,11 @@ Route::group([
     Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
     Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->name('site.group_class_order');
+
+
+    // checkout
+    Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+    Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
 });
 
 
