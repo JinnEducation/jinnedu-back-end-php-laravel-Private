@@ -11,6 +11,8 @@ class WalletPaymentTransaction extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     protected $casts = [
         'payment_status' => TransactionPaymentStatus::class,
         'status' => TransactionStatus::class,

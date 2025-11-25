@@ -7,33 +7,98 @@
             <!-- Page Title -->
             <div class="mb-6 mt-14 text-center">
                 <h1 class="mb-3 text-2xl font-bold text-black md:text-3xl">
-                    Complete checkout
+                    @if($checkoutType === 'pay')
+                        Complete Payment
+                    @else
+                        Complete checkout
+                    @endif
                 </h1>
                 <div class="inline-block px-4 py-1.5 mb-3 text-xs text-black border border-gray-200 rounded-md">
-                    Your wallet : {{ $user->wallets()?->first()?->balance ?? 0 }} USD
+                    Your wallet : <span id="wallet-balance">{{ number_format($walletBalance, 2) }}</span> USD
                 </div>
                 <p class="text-xs text-gray-500">
-                    Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.
+                    @if($checkoutType === 'pay')
+                        Complete your payment: 1) Review items 2) Choose a payment method.
+                    @else
+                        Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.
+                    @endif
                 </p>
             </div>
 
             <!-- Main Card -->
             <div class="max-w-2xl mx-auto bg-white rounded-md border border-gray-200 shadow-md p-6 md:p-8">
 
+                <!-- Hidden Fields -->
+                <input type="hidden" name="checkout_type" id="checkout-type" value="{{ $checkoutType }}" data-checkout-url="{{ route('checkout.checkout') }}">
+                <input type="hidden" name="order_ids" id="order-ids" value="{{ $orders->pluck('id')->implode(',') }}">
+
+                <!-- Items Section (for payment mode) -->
+                @if($checkoutType === 'pay')
+                    @if($orders->isNotEmpty())
+                    <div class="mb-6 bg-white border border-gray-300 rounded-lg">
+                        <div class="flex justify-between items-center mb-4 bg-[#E9EDF6] p-4 border-b border-gray-300 rounded-t-lg">
+                            <h3 class="text-base font-bold text-black">Items</h3>
+                            <h3 class="text-base font-bold text-black">Price</h3>
+                        </div>
+                        <div class="space-y-4 px-4 pb-4" id="element">
+                            @foreach($orders as $order)
+                            <div class="flex justify-between items-center element-item" data-price="{{ $order->price }}">
+                                <div class="flex flex-col">
+                                    <span class="text-base text-black font-medium">Order #{{ $order->id }}</span>
+                                    @if($order->status == 1)
+                                        <span class="text-xs text-green-600">(Already Paid)</span>
+                                    @elseif($order->status == 2)
+                                        <span class="text-xs text-red-600">(Failed)</span>
+                                    @else
+                                        <span class="text-xs text-blue-600">(Pending)</span>
+                                    @endif
+                                </div>
+                                <span class="text-base text-black font-semibold">{{ number_format($order->price, 2) }}$</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @else
+                    {{-- Show message if no orders found --}}
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="text-sm text-red-800 mb-2">
+                            <strong>⚠️ No orders found or orders are already paid.</strong>
+                        </p>
+                        @if(request()->has('order_ids'))
+                        <p class="text-xs text-red-600">
+                            Requested Order IDs: {{ request()->get('order_ids') }}
+                        </p>
+                        @endif
+                        <p class="text-xs text-red-600 mt-2">
+                            Please check your order status or contact support.
+                        </p>
+                    </div>
+                    @endif
+                @endif
+
                 <!-- Wallet Amount -->
                 <div class="mb-6">
                     <label class="block mb-2 text-base font-bold text-black">
-                        Wallet amount
+                        @if($checkoutType === 'pay')
+                            Total Amount
+                        @else
+                            Wallet amount
+                        @endif
                     </label>
                     <div class="flex gap-3 items-center mb-3 relative">
-                        <input type="number" id="wallet-amount" value="10" min="0"
-                            class="flex-1 px-4 py-3 text-base text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                        <input type="number" 
+                            id="wallet-amount" 
+                            value="{{ $checkoutType === 'pay' ? number_format($totalAmount, 2, '.', '') : 10 }}" 
+                            min="0"
+                            {{ $checkoutType === 'pay' ? 'readonly' : '' }}
+                            class="flex-1 px-4 py-3 text-base text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 {{ $checkoutType === 'pay' ? 'bg-gray-50' : '' }}">
                         <span
                             class="px-4 py-3 text-base font-medium text-black bg-white absolute top-[1px] right-0 border-r border-gray-300 rounded-lg">
                             USD
                         </span>
                     </div>
-                    <!-- Preset Amount Buttons -->
+                    <!-- Preset Amount Buttons (only for topup) -->
+                    @if($checkoutType === 'topup')
                     <div class="flex gap-2 flex-wrap">
                         <button
                             class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
@@ -56,24 +121,8 @@
                             +100
                         </button>
                     </div>
+                    @endif
                 </div>
-
-                {{-- <div class="mb-6 bg-white border border-gray-300 rounded-lg">
-                    <div class="flex justify-between items-center mb-4 bg-[#E9EDF6] p-4 border-b border-gray-300 rounded-t-lg">
-                        <h3 class="text-base font-bold text-black">Element</h3>
-                        <h3 class="text-base font-bold text-black">Price</h3>
-                    </div>
-                    <div class="space-y-4 px-4 pb-4" id="element">
-                        <div class="flex justify-between items-center element-item" data-price="20">
-                            <span class="text-base text-black">Lorem ipsum dolor sit</span>
-                            <span class="text-base text-black">20$</span>
-                        </div>
-                        <div class="flex justify-between items-center element-item" data-price="15">
-                            <span class="text-base text-black">Lorem ipsum</span>
-                            <span class="text-base text-black">15$</span>
-                        </div>
-                    </div>
-                </div> --}}
 
                 <!-- Country Select -->
                 <div class="mb-6">
@@ -99,13 +148,25 @@
                         Payment method
                     </label>
                     <input type="hidden" name="payment_gateway" id="payment-gateway">
+                    
+                    
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4" id="payment-gateway-container">
                         @foreach($paymentGateways as $gatewayCode => $gateway)
-                            <div class="payment-gateway shadow-md cursor-pointer border-2 border-gray-200 rounded-md p-2.5 hover:border-primary transition-all duration-200"
+                            <div class="payment-gateway shadow-md cursor-pointer border-2 border-gray-200 rounded-md p-2.5 hover:border-primary transition-all duration-200 {{ $gatewayCode === 'my-wallet' && $checkoutType === 'pay' && $walletBalance < $totalAmount ? 'opacity-50 cursor-not-allowed' : '' }}"
                                 data-gateway="{{ $gatewayCode }}"
                                 data-countries="{{ json_encode($gateway['countries']) }}"
+                                data-min-balance="{{ $gatewayCode === 'my-wallet' && $checkoutType === 'pay' ? $totalAmount : 0 }}"
                                 id="{{ $gatewayCode }}-gateway">
-                                <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg">
+                                @if($gatewayCode === 'my-wallet' && $checkoutType === 'pay' && $walletBalance < $totalAmount)
+                                    <div class="relative">
+                                        <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg opacity-50">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <span class="text-xs font-bold text-red-600 bg-white px-2 py-1 rounded">Insufficient</span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg">
+                                @endif
                             </div>
                         @endforeach
                     </div>

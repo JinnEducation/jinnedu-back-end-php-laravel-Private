@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\CheckoutController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\MuxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZoomController;
@@ -76,8 +77,47 @@ Route::group([
 
 
     // checkout
-    Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
-    Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
+    Route::middleware(['auth'])->group(function() {
+        Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+        Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
+        Route::get('checkout-complete', [CheckoutController::class, 'checkoutComplete'])->name('checkout-complete');
+        Route::get('checkout-response/{id}/{status}', [CheckoutController::class, 'handlePaymentResponse'])->name('checkout-response-get');
+        
+        // Local test payment (for development)
+        Route::get('local-payment-test', function(Request $request) {
+            $referenceId = $request->get('reference_id');
+            $transaction = \App\Models\WalletPaymentTransaction::where('reference_id', $referenceId)->first();
+            
+            if(!$transaction) {
+                abort(404, 'Transaction not found');
+            }
+            
+            return view('front.local-payment-test', compact('transaction'));
+        })->name('local-payment-test');
+        
+        Route::post('local-payment-test/complete', function(Request $request) {
+            $referenceId = $request->get('reference_id');
+            $transaction = \App\Models\WalletPaymentTransaction::where('reference_id', $referenceId)->first();
+            
+            if(!$transaction) {
+                return response()->json(['success' => false, 'message' => 'Transaction not found'], 404);
+            }
+
+            
+            // Process payment through LocalTestService
+            $service = new \App\Services\Payment\LocalTestService();
+            $result = $service->success($request);
+            if($result->getData()->success ?? false) {
+                return redirect()->route('checkout-response-get', [
+                    'id' => $transaction->id,
+                    'status' => 'success'
+                ]);
+            }
+            
+            return redirect()->route('checkout')
+                ->with('error', 'Payment processing failed');
+        })->name('local-payment-test-complete');
+    });
 });
 
 

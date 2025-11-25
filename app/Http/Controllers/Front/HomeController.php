@@ -12,11 +12,13 @@ use App\Models\CateqBlog;
 use App\Models\GroupClass;
 use App\Models\GroupClassTutor;
 use App\Models\Language;
+use App\Models\Order;
 use App\Models\OurCourse;
 use App\Models\Slider;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -514,6 +516,7 @@ class HomeController extends Controller
             if (! $class) {
                 return redirect()->back()->with('error', 'Class not found');
             }
+            
             $orderController = new OrderController;
             $response = $orderController->groupClass($request, $id);
             $original = $response->getOriginalContent();
@@ -523,17 +526,62 @@ class HomeController extends Controller
                 $responseCheckout = $walletController->checkout($original['order_id']);
                 $originalCheckout = $responseCheckout->getOriginalContent();                
                 
-                if($originalCheckout['success']){
+                if(!$originalCheckout['success']){
+                    return redirect()->back()->with('error', $originalCheckout['message']);
+                }
+                
+                $orderId = $original['order_id'];
+                $order = Order::find($orderId);
+                
+                if (!$order) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'Order not found');
+                }
+
+                // Check if user wants to pay directly from wallet or go to checkout
+                $payDirectly = $request->get('pay_directly', false); // يمكن إرسالها من الـ frontend
+                
+                // Check wallet balance
+                $user = Auth::user();
+                $wallet = $user->wallets()->first();
+                $walletBalance = $wallet ? $wallet->balance : 0;
+                $hasEnoughBalance = $walletBalance >= $order->price;
+
+                // If user wants to pay directly AND has enough balance
+                if ($payDirectly && $hasEnoughBalance) {
+                    // Pay directly from wallet
+                    $walletController = new WalletController();
+                    $responseCheckout = $walletController->checkout($orderId);
+                    $originalCheckout = $responseCheckout->getOriginalContent();                
+                    
+                    if($originalCheckout['success']){
+                        DB::commit();
+                        return redirect()->route('redirect.dashboard')->with('success', $originalCheckout['message']);
+                    } else {
+                        DB::rollBack();
+                        // If direct payment failed, redirect to checkout
+                        return redirect()->route('checkout', [
+                            'type' => 'pay',
+                            'order_ids' => $orderId
+                        ])->with('error', $originalCheckout['message'] ?? 'Payment failed');
+                    }
+                } else {
+                    // Redirect to checkout page to choose payment method
                     DB::commit();
-                    return redirect()->route('redirect.dashboard')->with('success', $originalCheckout['message']);
+                    return redirect()->route('checkout', [
+                        'type' => 'pay',
+                        'order_ids' => $orderId
+                    ])->with('info', $hasEnoughBalance 
+                        ? 'You can pay from your wallet or choose another payment method' 
+                        : 'Please complete payment to finish your order');
                 }
 
             } else {
+                DB::rollBack();
                 return redirect()->back()->with('error', $original['message']);
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            throw $e;
             return redirect()->back()->with('error', $e->getMessage());
         }
     }

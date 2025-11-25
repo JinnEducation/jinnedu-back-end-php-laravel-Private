@@ -143,7 +143,7 @@ class WalletPaymentTransactionController extends Controller
         }
 
         $transaction = WalletPaymentTransaction::findOrFail($transactionId);
-
+        
         $gateway = PaymentManager::driver($transaction->payment_channel);
 
         return $status === 'success'

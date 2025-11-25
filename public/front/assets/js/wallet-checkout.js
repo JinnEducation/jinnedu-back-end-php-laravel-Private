@@ -61,7 +61,18 @@ $(document).ready(function() {
     // ============================================
     function updatePaymentGateways(country) {
         $('.payment-gateway').each(function() {
-            const gatewayCountries = $(this).data('countries');
+            let gatewayCountries = $(this).data('countries');
+            
+            // Parse JSON string if it's a string
+            if (typeof gatewayCountries === 'string') {
+                try {
+                    gatewayCountries = JSON.parse(gatewayCountries);
+                } catch (e) {
+                    console.error('Error parsing countries data:', e);
+                    gatewayCountries = [];
+                }
+            }
+            
             // Check if gateway is available for all countries ('all') or for specific country
             const isAvailable = gatewayCountries && (
                 gatewayCountries.includes('all') || 
@@ -92,6 +103,29 @@ $(document).ready(function() {
     $('.payment-gateway').on('click', function() {
         // Check if gateway is visible
         if (!$(this).is(':visible')) {
+            return;
+        }
+        
+        // Check if gateway is disabled (insufficient balance)
+        if ($(this).hasClass('opacity-50') && $(this).hasClass('cursor-not-allowed')) {
+            const checkoutType = $('#checkout-type').val();
+            if (checkoutType === 'pay') {
+                const minBalance = parseFloat($(this).data('min-balance')) || 0;
+                const walletBalance = parseFloat($('#wallet-balance').text().replace(/[^0-9.]/g, '')) || 0;
+                const shortage = minBalance - walletBalance;
+                
+                showMessage(
+                    `Insufficient wallet balance. You need $${shortage.toFixed(2)} more. Please top up your wallet first.`, 
+                    'error'
+                );
+                
+                // Show link to topup after 2 seconds
+                setTimeout(() => {
+                    if (confirm('Would you like to top up your wallet now?')) {
+                        window.location.href = '/checkout?type=topup';
+                    }
+                }, 2000);
+            }
             return;
         }
         
@@ -146,10 +180,17 @@ $(document).ready(function() {
     // Purchase Confirmation Button
     // ============================================
     $('#purchase-btn').on('click', function() {
+        const checkoutType = $('#checkout-type').val();
         const amount = parseFloat($('#wallet-amount').val()) || 0;
+        const orderIds = $('#order-ids').val();
         
         // Validation
-        if (amount <= 0) {
+        if (checkoutType === 'pay' && !orderIds) {
+            showMessage('No orders found', 'error');
+            return;
+        }
+        
+        if (checkoutType === 'topup' && amount <= 0) {
             showMessage('Please enter a valid amount', 'error');
             return;
         }
@@ -159,33 +200,81 @@ $(document).ready(function() {
             return;
         }
         
-        // Success - would redirect to payment gateway in real application
-        showMessage(`Redirecting to ${selectedGateway} payment gateway...`, 'success');
+        // Prepare data
+        const data = {
+            type: checkoutType,
+            amount: amount,
+            order_ids: orderIds ? orderIds.split(',').filter(id => id) : [],
+            payment_gateway: selectedGateway,
+            country: $('#country-select').val(),
+            discount_code: $('#discount-code').val() || null,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        };
         
-        // Simulate loading state
-        $(this).prop('disabled', true).html('<span class="inline-block animate-pulse">Processing...</span>');
+        // Show loading state
+        const $btn = $(this);
+        $btn.prop('disabled', true).html('<span class="inline-block animate-pulse">Processing...</span>');
         
-        // Simulate redirect after 2 seconds
-        setTimeout(() => {
-            $(this).prop('disabled', false).text('Purchase confirmation');
-            showMessage('Redirecting to page check', 'info');
-            setTimeout(function() {
-                window.location.href = 'complete_checkout.html';
-            }, 2000);
-        }, 2000);
+        // Send AJAX request
+        $.ajax({
+            url: $('#checkout-type').data('checkout-url') || '/checkout',
+            method: 'POST',
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if(response.success && response.url) {
+                    // Redirect to payment gateway
+                    window.location.href = response.url;
+                } else if(response.success && response.redirect_url) {
+                    // Direct success (wallet payment)
+                    window.location.href = response.redirect_url;
+                } else {
+                    showMessage(response.message || 'An error occurred', 'error');
+                    $btn.prop('disabled', false).text('Purchase confirmation');
+                }
+            },
+            error: function(xhr) {
+                const response = xhr.responseJSON || {};
+                let errorMessage = response.message || 'An error occurred';
+                
+                // Handle insufficient balance error with topup link
+                if (response.message === 'insufficient-wallet-balance' && response.topup_url) {
+                    errorMessage = response.message_text || errorMessage;
+                    showMessage(errorMessage, 'error');
+                    
+                    // Show topup option after 2 seconds
+                    setTimeout(() => {
+                        if (confirm('Would you like to top up your wallet now?')) {
+                            window.location.href = response.topup_url;
+                        }
+                    }, 2000);
+                } else {
+                    showMessage(errorMessage, 'error');
+                }
+                
+                $btn.prop('disabled', false).text('Purchase confirmation');
+            }
+        });
     });
 
     // ============================================
     // Update Totals Function
     // ============================================
     function updateTotals(baseAmount) {
-        // Calculate all elements total (negative - to deduct from wallet)
-        // All existing elements are automatically deducted
+        const checkoutType = $('#checkout-type').val();
         let elementsTotal = 0;
-        $('.element-item').each(function() {
-            const price = parseFloat($(this).data('price')) || 0;
-            elementsTotal += price;
-        });
+        
+        // In payment mode, calculate sum of items
+        if(checkoutType === 'pay') {
+            $('.element-item').each(function() {
+                const price = parseFloat($(this).data('price')) || 0;
+                elementsTotal += price;
+            });
+            // Use elements total as base amount for payment
+            baseAmount = elementsTotal;
+        }
         
         // Calculate tax
         const taxAmount = baseAmount * TAX_RATE;
@@ -199,8 +288,8 @@ $(document).ready(function() {
             discount = baseAmount * 0.10; // 10% discount
         }
         
-        // Calculate total (subtract elements total as negative)
-        const total = baseAmount - discount - elementsTotal;
+        // Calculate total
+        const total = baseAmount - discount;
         const finalTotal = total + taxAmount + serviceFee;
         
         // Update display
@@ -249,7 +338,19 @@ $(document).ready(function() {
     // ============================================
     // Initialize with default values
     // ============================================
-    const initialAmount = parseFloat($('#wallet-amount').val()) || 10;
+    const checkoutType = $('#checkout-type').val();
+    let initialAmount = parseFloat($('#wallet-amount').val()) || 10;
+    
+    // If payment mode, calculate from items
+    if(checkoutType === 'pay') {
+        let itemsTotal = 0;
+        $('.element-item').each(function() {
+            const price = parseFloat($(this).data('price')) || 0;
+            itemsTotal += price;
+        });
+        initialAmount = itemsTotal;
+    }
+    
     updateTotals(initialAmount);
     
     // Initialize payment gateways based on default country
