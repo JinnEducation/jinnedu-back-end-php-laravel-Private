@@ -14,7 +14,7 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
 
 // Login (popup)
 Route::get('/login', function(){
-        return redirect()->route('home', ['login' => 1]);
+        return redirect()->route('home', ['login' => 1])->with('warning', 'Please login to continue');
 })->middleware(['guest'])->name('login');
 
 // Login (popup)

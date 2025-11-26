@@ -563,3 +563,34 @@ $(function () {
     $(this).find('.eye, .eye-off').toggleClass('hidden');
   });
 });
+
+
+// ============================================
+// Helper: Show Messages
+// ============================================
+function showMessage(message, type) {
+  // Create message element
+  const messageClass = {
+      'success': 'bg-green-100 border-green-400 text-green-700',
+      'error': 'bg-red-100 border-red-400 text-red-700',
+      'danger': 'bg-red-100 border-red-400 text-red-700',
+      'warning': 'bg-yellow-100 border-yellow-400 text-yellow-700',
+      'info': 'bg-blue-100 border-blue-400 text-blue-700'
+  };
+  
+  const $message = $(`
+      <div class="fixed top-32 left-4 mx-auto max-w-md z-50 px-4 py-3 rounded-lg border-l-4 shadow-lg ${messageClass[type]} animate-fade-in-down" role="alert">
+          <p class="font-medium">${message}</p>
+      </div>
+  `);
+  
+  // Add to page
+  $('body').append($message);
+  
+  // Auto remove after 3 seconds
+  setTimeout(() => {
+      $message.fadeOut(300, function() {
+          $(this).remove();
+      });
+  }, 3000);
+}
