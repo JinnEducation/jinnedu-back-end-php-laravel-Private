@@ -77,7 +77,7 @@ Route::group([
 
 
     // checkout
-    Route::middleware(['auth'])->group(function() {
+    Route::middleware(['auth:web'])->group(function() {
         Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
         Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
         Route::get('checkout-complete', [CheckoutController::class, 'checkoutComplete'])->name('checkout-complete');

@@ -13,6 +13,11 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware(['guest']);
 
 // Login (popup)
+Route::get('/login', function(){
+        return redirect()->route('home', ['login' => 1]);
+})->middleware(['guest'])->name('login');
+
+// Login (popup)
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['guest'])
         ->name('login');

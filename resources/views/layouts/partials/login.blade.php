@@ -215,3 +215,15 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+@if(request('login') == 1)
+<script>
+    $(document).ready(function() {
+        setTimeout(() => {
+            $("#btn-open-loginModal").click();
+        }, 1000);
+    });
+</script>
+@endif
+@endpush

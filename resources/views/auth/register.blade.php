@@ -41,7 +41,7 @@
                         {{ label_text('global', 'site.Home', __('site.Home')) }}
                     </a>
                     <span>|</span>
-                    <a href="{{ route('home') }}" class="hover:underline">
+                    <a href="{{ route('login') }}" class="hover:underline">
                         {{ label_text('global', 'site.login', __('site.login')) }}
                     </a>
                     <span>|</span>

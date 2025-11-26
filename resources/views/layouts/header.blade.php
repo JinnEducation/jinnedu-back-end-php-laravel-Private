@@ -304,7 +304,7 @@
                     @guest
                         <!-- Guest User (Login/Signup) -->
                         <div class="flex items-center guest-auth text-[15px]">
-                            <button type="button" data-open="#loginModal"
+                            <button type="button" data-open="#loginModal" id="btn-open-loginModal"
                                 class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all	duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
                                 <span class="relative z-10">{{ label_text('global', 'site.login', __('site.login')) }}</span>
                                 <span
