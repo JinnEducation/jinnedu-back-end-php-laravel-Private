@@ -585,4 +585,14 @@ class HomeController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function online_private_classes()
+    {
+        return view('front.online_private_classes');
+    }
+
+    public function tutor_jinn(string $locale, string|int $id)
+    {
+        return view('front.tutor_jinn', compact('id'));
+    }
 }
