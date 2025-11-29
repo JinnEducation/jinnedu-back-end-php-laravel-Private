@@ -35,166 +35,162 @@
                 </div>
                 <div class="grid grid-cols-2 gap-6 mb-3 md:grid-cols-3 lg:grid-cols-5">
 
-                    <!-- What to Learn -->
+                    {{-- What to Learn? --}}
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">What to
-                            Learn?</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">What to Learn?</label>
                         <div class="relative">
                             <select
+                                id="filterSubject"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Subject</option>
-                                <option>Mathematics</option>
-                                <option>English</option>
-                                <option>Science</option>
-                                <option>History</option>
-                                <option>Programming</option>
+                                <option value="">Subject</option>
+                                <option value="english">Mathematics</option>
+                                <option value="math">English</option>
+                                <option value="science">Science</option>
+                                <option value="history">History</option>
+                                <option value="programming">Programming</option>
                             </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
                         </div>
                     </div>
 
                     <!-- Price Range -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Price
-                            Range</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>5 USD - 50 USD</option>
-                                <option>Under 10 USD</option>
-                                <option>10 USD - 25 USD</option>
-                                <option>25 USD - 50 USD</option>
-                                <option>50 USD - 100 USD</option>
-                                <option>100 USD+</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                   <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Price Range</label>
+    <div class="relative">
+        <select
+            id="filterPriceRange"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Any price</option>
+            <option value="0-10">Under 10 USD</option>
+            <option value="10-25">10 USD - 25 USD</option>
+            <option value="25-50">25 USD - 50 USD</option>
+            <option value="50-100">50 USD - 100 USD</option>
+            <option value="100-9999">100 USD+</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
 
                     <!-- Native Language -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Native
-                            Language</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Native Language</option>
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                                <option>German</option>
-                                <option>Arabic</option>
-                                <option>Chinese</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                  <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Native Language</label>
+    <div class="relative">
+        <select
+            id="filterNativeLanguage"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Native Language</option>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="ar">Arabic</option>
+            <option value="zh">Chinese</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
 
                     <!-- Availability Time -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Availability
-                            Time</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Any Time</option>
-                                <option>Morning (6AM - 12PM)</option>
-                                <option>Afternoon (12PM - 6PM)</option>
-                                <option>Evening (6PM - 10PM)</option>
-                                <option>Night (10PM - 6AM)</option>
-                                <option>Weekends Only</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                   <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Availability Time</label>
+    <div class="relative">
+        <select
+            id="filterAvailability"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Any Time</option>
+            <option value="morning">Morning (6AM - 12PM)</option>
+            <option value="afternoon">Afternoon (12PM - 6PM)</option>
+            <option value="evening">Evening (6PM - 10PM)</option>
+            <option value="night">Night (10PM - 6AM)</option>
+            <option value="weekends">Weekends Only</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
                     <!-- Specializations -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Specializations</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Specializations</option>
-                                <option>Test Preparation</option>
-                                <option>Academic Support</option>
-                                <option>Language Learning</option>
-                                <option>Professional Development</option>
-                                <option>Creative Arts</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                   <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Specializations</label>
+    <div class="relative">
+        <select
+            id="filterSpecialization"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Specializations</option>
+            <option value="test-prep">Test Preparation</option>
+            <option value="academic">Academic Support</option>
+            <option value="language-learning">Language Learning</option>
+            <option value="professional">Professional Development</option>
+            <option value="creative-arts">Creative Arts</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
 
                     <!-- Country -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Country</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Country</option>
-                                <option>United States</option>
-                                <option>United Kingdom</option>
-                                <option>Canada</option>
-                                <option>Australia</option>
-                                <option>Germany</option>
-                                <option>France</option>
-                                <option>Other</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                  <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Country</label>
+    <div class="relative">
+        <select
+            id="filterCountry"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Country</option>
+            <option value="us">United States</option>
+            <option value="uk">United Kingdom</option>
+            <option value="ca">Canada</option>
+            <option value="au">Australia</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+            <option value="other">Other</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
 
                     <!-- Also Speaks -->
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Also Speaks</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Also Speaks</option>
-                                <option>English</option>
-                                <option>Spanish</option>
-                                <option>French</option>
-                                <option>German</option>
-                                <option>Arabic</option>
-                                <option>Chinese</option>
-                                <option>Japanese</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
+                  <div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Also Speaks</label>
+    <div class="relative">
+        <select
+            id="filterAlsoSpeaks"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Also Speaks</option>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="ar">Arabic</option>
+            <option value="zh">Chinese</option>
+            <option value="ja">Japanese</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
 
                     <!-- Sort By -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Sort By</label>
-                        <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>Sort By</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                                <option>Rating: High to Low</option>
-                                <option>Most Popular</option>
-                                <option>Newest First</option>
-                                <option>Experience</option>
-                            </select>
-                            <i
-                                class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Full name</label>
-                        <div class="relative">
-                            <input type="text"
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                        </div>
-                    </div>
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Sort By</label>
+    <div class="relative">
+        <select
+            id="filterSortBy"
+            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+            <option value="">Sort By</option>
+            <option value="price_low_high">Price: Low to High</option>
+            <option value="price_high_low">Price: High to Low</option>
+            <option value="rating_high_low">Rating: High to Low</option>
+            <option value="most_popular">Most Popular</option>
+        </select>
+        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+    </div>
+</div>
+                   {{-- Full name --}}
+<div class="flex flex-col">
+    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Full name</label>
+    <div class="relative">
+        <input type="text"
+               id="filterFullName"
+               placeholder="Search by tutor name"
+               class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+    </div>
+</div>
 
                 </div>
             </div>
@@ -634,8 +630,7 @@
 
     @push('scripts')
     <script src="{{ asset('front/assets/js/tutors_list.js') }}"></script>
+    <script src="{{ asset('front/assets/js/find_tutor.js') }}"></script>
     @endpush
 
 </x-front-layout>
-
-
