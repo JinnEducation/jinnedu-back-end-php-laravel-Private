@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers\Front;
 
+use Carbon\Carbon;
+use App\Models\Blog;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Slider;
+use App\Models\Country;
+use App\Models\Subject;
+use App\Models\Category;
+use App\Models\Language;
+use App\Models\CateqBlog;
+use App\Models\OurCourse;
+use App\Models\GroupClass;
+use Illuminate\Http\Request;
+use App\Models\Specialization;
+use App\Models\GroupClassTutor;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\GroupClassController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
-use App\Models\Blog;
-use App\Models\Category;
-use App\Models\CateqBlog;
-use App\Models\GroupClass;
-use App\Models\GroupClassTutor;
-use App\Models\Language;
-use App\Models\Order;
-use App\Models\OurCourse;
-use App\Models\Slider;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\GroupClassController;
 
 class HomeController extends Controller
 {
@@ -360,7 +363,8 @@ class HomeController extends Controller
         // Load group class with relations
         $group_class = GroupClass::with([
             'level',
-            'category', 'category.langsAll',
+            'category',
+            'category.langsAll',
             'langsAll.language',
             'dates',
             'reviews.user',
@@ -516,7 +520,7 @@ class HomeController extends Controller
             if (! $class) {
                 return redirect()->back()->with('error', 'Class not found');
             }
-            
+
             $orderController = new OrderController;
             $response = $orderController->groupClass($request, $id);
             $original = $response->getOriginalContent();
@@ -524,15 +528,15 @@ class HomeController extends Controller
             if ($original['success']) {
                 $walletController = new WalletController();
                 $responseCheckout = $walletController->checkout($original['order_id']);
-                $originalCheckout = $responseCheckout->getOriginalContent();                
-                
-                if(!$originalCheckout['success']){
+                $originalCheckout = $responseCheckout->getOriginalContent();
+
+                if (!$originalCheckout['success']) {
                     return redirect()->back()->with('error', $originalCheckout['message']);
                 }
-                
+
                 $orderId = $original['order_id'];
                 $order = Order::find($orderId);
-                
+
                 if (!$order) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 'Order not found');
@@ -540,7 +544,7 @@ class HomeController extends Controller
 
                 // Check if user wants to pay directly from wallet or go to checkout
                 $payDirectly = $request->get('pay_directly', false); // يمكن إرسالها من الـ frontend
-                
+
                 // Check wallet balance
                 $user = Auth::user();
                 $wallet = $user->wallets()->first();
@@ -552,9 +556,9 @@ class HomeController extends Controller
                     // Pay directly from wallet
                     $walletController = new WalletController();
                     $responseCheckout = $walletController->checkout($orderId);
-                    $originalCheckout = $responseCheckout->getOriginalContent();                
-                    
-                    if($originalCheckout['success']){
+                    $originalCheckout = $responseCheckout->getOriginalContent();
+
+                    if ($originalCheckout['success']) {
                         DB::commit();
                         return redirect()->route('redirect.dashboard')->with('success', $originalCheckout['message']);
                     } else {
@@ -571,11 +575,10 @@ class HomeController extends Controller
                     return redirect()->route('checkout', [
                         'type' => 'pay',
                         'order_ids' => $orderId
-                    ])->with('info', $hasEnoughBalance 
-                        ? 'You can pay from your wallet or choose another payment method' 
+                    ])->with('info', $hasEnoughBalance
+                        ? 'You can pay from your wallet or choose another payment method'
                         : 'Please complete payment to finish your order');
                 }
-
             } else {
                 DB::rollBack();
                 return redirect()->back()->with('error', $original['message']);
@@ -588,8 +591,33 @@ class HomeController extends Controller
 
     public function online_private_classes()
     {
-        return view('front.online_private_classes');
+        $tutors = User::query()
+            ->with([
+                'profile',
+                'tutorProfile',
+                'availabilities',
+                'tutorProfile.subject',
+                'tutorProfile.nativeLanguageModel',
+                'tutorProfile.countryModel',
+            ])
+            ->where('type', 2)
+            ->whereHas('tutorProfile')
+            ->get();
+
+        $subjects        = Subject::query()->orderBy('name')->get();
+        $languages       = Language::query()->orderBy('name')->get();
+        $countries       = Country::query()->orderBy('en_name')->get();
+        $specializations = Specialization::query()->orderBy('name')->get();
+
+        return view('front.online_private_classes', compact(
+            'tutors',
+            'subjects',
+            'languages',
+            'countries',
+            'specializations'
+        ));
     }
+
 
     public function tutor_jinn(string $locale, string|int $id)
     {

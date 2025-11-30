@@ -37,160 +37,160 @@
 
                     {{-- What to Learn? --}}
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">What to Learn?</label>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
+                            What to Learn?
+                        </label>
                         <div class="relative">
                             <select
                                 id="filterSubject"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Subject</option>
-                                <option value="english">Mathematics</option>
-                                <option value="math">English</option>
-                                <option value="science">Science</option>
-                                <option value="history">History</option>
-                                <option value="programming">Programming</option>
+                                @foreach($subjects as $subject)
+                                <option value="{{ $subject->id }}">
+                                    {{ $subject->name }}
+                                </option>
+                                @endforeach
                             </select>
                             <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
                         </div>
                     </div>
 
                     <!-- Price Range -->
-                   <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Price Range</label>
-    <div class="relative">
-        <select
-            id="filterPriceRange"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Any price</option>
-            <option value="0-10">Under 10 USD</option>
-            <option value="10-25">10 USD - 25 USD</option>
-            <option value="25-50">25 USD - 50 USD</option>
-            <option value="50-100">50 USD - 100 USD</option>
-            <option value="100-9999">100 USD+</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Price Range</label>
+                        <div class="relative">
+                            <select
+                                id="filterPriceRange"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Any price</option>
+                                <option value="0-10">Under 10 USD</option>
+                                <option value="10-25">10 USD - 25 USD</option>
+                                <option value="25-50">25 USD - 50 USD</option>
+                                <option value="50-100">50 USD - 100 USD</option>
+                                <option value="100-9999">100 USD+</option>
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
 
                     <!-- Native Language -->
-                  <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Native Language</label>
-    <div class="relative">
-        <select
-            id="filterNativeLanguage"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Native Language</option>
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="ar">Arabic</option>
-            <option value="zh">Chinese</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Native Language</label>
+                        <div class="relative">
+                            <select
+                                id="filterNativeLanguage"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Native Language</option>
+                                @foreach($languages as $language)
+                                <option value="{{ $language->id }}">
+                                    {{ $language->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
 
                     <!-- Availability Time -->
-                   <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Availability Time</label>
-    <div class="relative">
-        <select
-            id="filterAvailability"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Any Time</option>
-            <option value="morning">Morning (6AM - 12PM)</option>
-            <option value="afternoon">Afternoon (12PM - 6PM)</option>
-            <option value="evening">Evening (6PM - 10PM)</option>
-            <option value="night">Night (10PM - 6AM)</option>
-            <option value="weekends">Weekends Only</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Availability Time</label>
+                        <div class="relative">
+                            <select
+                                id="filterAvailability"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Any Time</option>
+                                <option value="morning">Morning (6AM - 12PM)</option>
+                                <option value="afternoon">Afternoon (12PM - 6PM)</option>
+                                <option value="evening">Evening (6PM - 10PM)</option>
+                                <option value="night">Night (10PM - 6AM)</option>
+                                <option value="weekend">Weekends Only</option>
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
+
+
                     <!-- Specializations -->
-                   <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Specializations</label>
-    <div class="relative">
-        <select
-            id="filterSpecialization"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Specializations</option>
-            <option value="test-prep">Test Preparation</option>
-            <option value="academic">Academic Support</option>
-            <option value="language-learning">Language Learning</option>
-            <option value="professional">Professional Development</option>
-            <option value="creative-arts">Creative Arts</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Specializations</label>
+                        <div class="relative">
+                            <select
+                                id="filterSpecialization"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Specializations</option>
+                                @foreach($specializations as $spec)
+                                <option value="{{ $spec->id }}">
+                                    {{ $spec->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
 
                     <!-- Country -->
-                  <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Country</label>
-    <div class="relative">
-        <select
-            id="filterCountry"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Country</option>
-            <option value="us">United States</option>
-            <option value="uk">United Kingdom</option>
-            <option value="ca">Canada</option>
-            <option value="au">Australia</option>
-            <option value="de">Germany</option>
-            <option value="fr">France</option>
-            <option value="other">Other</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Country</label>
+                        <div class="relative">
+                            <select
+                                id="filterCountry"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Country</option>
+                                @foreach($countries as $country)
+                                <option value="{{ $country->id }}">
+                                    {{-- عندك بالـ DB أعمدة name / en_name / ar_name --}}
+                                    {{ $country->en_name ?? $country->name ?? $country->ar_name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
 
                     <!-- Also Speaks -->
-                  <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Also Speaks</label>
-    <div class="relative">
-        <select
-            id="filterAlsoSpeaks"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Also Speaks</option>
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="ar">Arabic</option>
-            <option value="zh">Chinese</option>
-            <option value="ja">Japanese</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
-
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Also Speaks</label>
+                        <div class="relative">
+                            <select
+                                id="filterAlsoSpeaks"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Also Speaks</option>
+                                @foreach($languages as $language)
+                                <option value="{{ $language->id }}">
+                                    {{ $language->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
                     <!-- Sort By -->
                     <div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Sort By</label>
-    <div class="relative">
-        <select
-            id="filterSortBy"
-            class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-            <option value="">Sort By</option>
-            <option value="price_low_high">Price: Low to High</option>
-            <option value="price_high_low">Price: High to Low</option>
-            <option value="rating_high_low">Rating: High to Low</option>
-            <option value="most_popular">Most Popular</option>
-        </select>
-        <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
-    </div>
-</div>
-                   {{-- Full name --}}
-<div class="flex flex-col">
-    <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Full name</label>
-    <div class="relative">
-        <input type="text"
-               id="filterFullName"
-               placeholder="Search by tutor name"
-               class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-    </div>
-</div>
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Sort By</label>
+                        <div class="relative">
+                            <select
+                                id="filterSortBy"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">Sort By</option>
+                                <option value="price_low_high">Price: Low to High</option>
+                                <option value="price_high_low">Price: High to Low</option>
+                                <option value="rating_high_low">Rating: High to Low</option>
+                                <option value="most_popular">Most Popular</option>
+                            </select>
+                            <i class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
+                        </div>
+                    </div>
+
+                    {{-- Full name --}}
+                    <div class="flex flex-col">
+                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">Full name</label>
+                        <div class="relative">
+                            <input type="text"
+                                id="filterFullName"
+                                placeholder="Search by tutor name"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -205,25 +205,106 @@
                 <!-- Left Column: Tutors List -->
                 <div class="lg:col-span-8 space-y-4" id="tutorsListContainer">
 
-                    <!-- Tutor Card 1 -->
+                    @forelse($tutors as $tutor)
+                    @php
+                    $profile = $tutor->profile;
+                    $tp = $tutor->tutorProfile;
+
+                    // اسم المعلم
+                    $fullName = trim(($profile->first_name ?? '') . ' ' . ($profile->last_name ?? ''));
+                    if ($fullName === '') {
+                    $fullName = $tutor->name ?? 'Tutor';
+                    }
+
+                    // IDs متعددة (JSON أو نص مفصول بفواصل)
+                    $specializationIds = [];
+                    if (!empty($tp?->specializations)) {
+                    if (is_array($tp->specializations)) {
+                    $specializationIds = $tp->specializations;
+                    } else {
+                    $specializationIds = array_filter(array_map('trim', explode(',', $tp->specializations)));
+                    }
+                    }
+
+                    $otherLanguageIds = [];
+                    if (!empty($tp?->other_languages)) {
+                    if (is_array($tp->other_languages)) {
+                    $otherLanguageIds = $tp->other_languages;
+                    } else {
+                    $otherLanguageIds = array_filter(array_map('trim', explode(',', $tp->other_languages)));
+                    }
+                    }
+
+                    // فترات التوفر من user_availabilities (لو عندك حقل period)
+                    $availabilityPeriods = [];
+                    if ($tutor->relationLoaded('availabilities')) {
+                    $availabilityPeriods = $tutor->availabilities
+                    ->pluck('period')
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->toArray();
+                    }
+
+                    // أسماء لطيفة للعرض
+                    $subjectName = $tp?->subject?->name ?? '-';
+                    $nativeLangName = $tp?->nativeLanguageModel?->name ?? null;
+                    $countryName = $tp?->countryModel?->en_name
+                    ?? $tp?->countryModel?->name
+                    ?? $tp?->countryModel?->ar_name
+                    ?? null;
+
+                    $hourlyRate = $tp->hourly_rate ?? null;
+                    $rating = $tp->avg_rating ?? 0;
+                    $reviewsCount = $tp->reviews_count ?? 0;
+                    $studentsCount = $tp->students_count ?? 0;
+                    @endphp
+
                     <div
-                        class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+                        class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
+                        data-full-name="{{ strtolower($fullName) }}"
+                        data-subject-id="{{ $tp->teaching_subject ?? '' }}"
+                        data-price="{{ $hourlyRate ?? 0 }}"
+                        data-native-language-id="{{ $tp->native_language ?? '' }}"
+                        data-country-id="{{ $tp->tutor_country ?? '' }}"
+                        data-specialization-ids="{{ implode(',', $specializationIds) }}"
+                        data-also-speaks-ids="{{ implode(',', $otherLanguageIds) }}"
+                        data-availability-periods="{{ implode(',', $availabilityPeriods) }}"
+                        data-rating="{{ $rating }}"
+                        data-students="{{ $studentsCount }}">
                         <div class="flex gap-4">
                             <!-- Tutor Image -->
                             <div class="flex-shrink-0">
-                                <img src="./assets/imgs/tutors/1.jpg" alt="Tutor Jinn" class="w-53 h-full object-cover">
+                                {{-- لو عندك صورة في البروفايل عدّلي السطر الجاي --}}
+                                <img src="{{ asset('front/assets/imgs/tutors/1.jpg') }}"
+                                    alt="{{ $fullName }}"
+                                    class="w-53 h-full object-cover">
                             </div>
 
                             <!-- Tutor Info -->
                             <div class="flex-1 p-5 ">
                                 <div class="flex justify-between items-center mb-3">
                                     <div>
-                                        <h3 class="text-xl font-bold text-primary mb-1">Tutor Jinn</h3>
+                                        <h3 class="text-xl font-bold text-primary mb-1">
+                                            {{ $fullName }}
+                                        </h3>
+                                        @if($countryName)
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ $countryName }}
+                                        </p>
+                                        @endif
                                     </div>
+
                                     <!-- Price & Rating -->
                                     <div class="flex items-center justify-between gap-3">
                                         <div class="flex flex-col items-start justify-end">
-                                            <span class="text-lg font-bold text-primary">50$</span>
+                                            <span class="text-lg font-bold text-primary">
+                                                @if($hourlyRate !== null)
+                                                {{ $hourlyRate }}$
+                                                @else
+                                                -
+                                                @endif
+                                            </span>
                                             <span class="text-sm text-black">Per hour</span>
                                         </div>
                                         <div class="flex flex-col items-start justify-end">
@@ -232,31 +313,42 @@
                                                     <path
                                                         d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                                 </svg>
-                                                <span class="text-lg text-gray-700">4</span>
+                                                <span class="text-lg text-gray-700">
+                                                    {{ number_format($rating, 1) }}
+                                                </span>
                                             </div>
-                                            <span class="text-sm text-black">2 Reviews</span>
+                                            <span class="text-sm text-black">
+                                                {{ $reviewsCount }} Reviews
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Info Rows -->
                                 <div class="space-y-2 mb-4">
+                                    {{-- المادة التي يدرّسها --}}
                                     <div class="flex items-center gap-2 text-sm text-gray-700">
                                         <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
                                             viewBox="0 0 20 20">
                                             <path
                                                 d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                         </svg>
-                                        <span>English language</span>
+                                        <span>
+                                            {{ $subjectName }}
+                                        </span>
                                     </div>
+
+                                    {{-- عدد الطلاب --}}
                                     <div class="flex items-center gap-2 text-sm text-gray-700">
                                         <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
                                             viewBox="0 0 20 20">
                                             <path
                                                 d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                         </svg>
-                                        <span>8 Students</span>
+                                        <span>{{ $studentsCount }} Students</span>
                                     </div>
+
+                                    {{-- اللغة الأم --}}
                                     <div class="flex items-center gap-2 text-sm text-gray-700">
                                         <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
                                             viewBox="0 0 20 20">
@@ -264,7 +356,12 @@
                                                 d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
                                                 clip-rule="evenodd" />
                                         </svg>
-                                        <span>Speaks <span class="text-primary font-semibold">(Native)</span></span>
+                                        <span>
+                                            Speaks
+                                            <span class="text-primary font-semibold">
+                                                {{ $nativeLangName ?? 'N/A' }} (Native)
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -282,236 +379,13 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
-                        <div class="flex gap-4">
-                            <!-- Tutor Image -->
-                            <div class="flex-shrink-0">
-                                <img src="./assets/imgs/tutors/1.jpg" alt="Tutor Jinn" class="w-53 h-full object-cover">
-                            </div>
 
-                            <!-- Tutor Info -->
-                            <div class="flex-1 p-5 ">
-                                <div class="flex justify-between items-center mb-3">
-                                    <div>
-                                        <h3 class="text-xl font-bold text-primary mb-1">Tutor Jinn</h3>
-                                    </div>
-                                    <!-- Price & Rating -->
-                                    <div class="flex items-center justify-between gap-3">
-                                        <div class="flex flex-col items-start justify-end">
-                                            <span class="text-lg font-bold text-primary">50$</span>
-                                            <span class="text-sm text-black">Per hour</span>
-                                        </div>
-                                        <div class="flex flex-col items-start justify-end">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                                </svg>
-                                                <span class="text-lg text-gray-700">4</span>
-                                            </div>
-                                            <span class="text-sm text-black">2 Reviews</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Info Rows -->
-                                <div class="space-y-2 mb-4">
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                                        </svg>
-                                        <span>English language</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                        <span>8 Students</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span>Speaks <span class="text-primary font-semibold">(Native)</span></span>
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="flex gap-3 w-2/3">
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                        View Details
-                                    </button>
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
-                                        Join Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
-                        <div class="flex gap-4">
-                            <!-- Tutor Image -->
-                            <div class="flex-shrink-0">
-                                <img src="./assets/imgs/tutors/1.jpg" alt="Tutor Jinn" class="w-53 h-full object-cover">
-                            </div>
-
-                            <!-- Tutor Info -->
-                            <div class="flex-1 p-5 ">
-                                <div class="flex justify-between items-center mb-3">
-                                    <div>
-                                        <h3 class="text-xl font-bold text-primary mb-1">Tutor Jinn</h3>
-                                    </div>
-                                    <!-- Price & Rating -->
-                                    <div class="flex items-center justify-between gap-3">
-                                        <div class="flex flex-col items-start justify-end">
-                                            <span class="text-lg font-bold text-primary">50$</span>
-                                            <span class="text-sm text-black">Per hour</span>
-                                        </div>
-                                        <div class="flex flex-col items-start justify-end">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                                </svg>
-                                                <span class="text-lg text-gray-700">4</span>
-                                            </div>
-                                            <span class="text-sm text-black">2 Reviews</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Info Rows -->
-                                <div class="space-y-2 mb-4">
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                                        </svg>
-                                        <span>English language</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                        <span>8 Students</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span>Speaks <span class="text-primary font-semibold">(Native)</span></span>
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="flex gap-3 w-2/3">
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                        View Details
-                                    </button>
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
-                                        Join Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
-                        <div class="flex gap-4">
-                            <!-- Tutor Image -->
-                            <div class="flex-shrink-0">
-                                <img src="./assets/imgs/tutors/1.jpg" alt="Tutor Jinn" class="w-53 h-full object-cover">
-                            </div>
-
-                            <!-- Tutor Info -->
-                            <div class="flex-1 p-5 ">
-                                <div class="flex justify-between items-center mb-3">
-                                    <div>
-                                        <h3 class="text-xl font-bold text-primary mb-1">Tutor Jinn</h3>
-                                    </div>
-                                    <!-- Price & Rating -->
-                                    <div class="flex items-center justify-between gap-3">
-                                        <div class="flex flex-col items-start justify-end">
-                                            <span class="text-lg font-bold text-primary">50$</span>
-                                            <span class="text-sm text-black">Per hour</span>
-                                        </div>
-                                        <div class="flex flex-col items-start justify-end">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                                </svg>
-                                                <span class="text-lg text-gray-700">4</span>
-                                            </div>
-                                            <span class="text-sm text-black">2 Reviews</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Info Rows -->
-                                <div class="space-y-2 mb-4">
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                                        </svg>
-                                        <span>English language</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                        <span>8 Students</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-700">
-                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        <span>Speaks <span class="text-primary font-semibold">(Native)</span></span>
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="flex gap-3 w-2/3">
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                        View Details
-                                    </button>
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
-                                        Join Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @empty
+                    <p class="text-gray-500">No tutors found.</p>
+                    @endforelse
 
                 </div>
+
 
                 <!-- Right Column: Schedule Preview -->
                 <div class="lg:col-span-4">

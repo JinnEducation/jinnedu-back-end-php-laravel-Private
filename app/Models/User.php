@@ -137,6 +137,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserAbout::class, 'user_id');
     }
 
+    
+
     /**
      * Unified availabilities accessor.
      *

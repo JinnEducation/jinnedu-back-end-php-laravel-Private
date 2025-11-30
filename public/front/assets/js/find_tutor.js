@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const cards = Array.from(document.querySelectorAll('.tutor-card'));
     if (!cards.length) return;
@@ -32,43 +30,58 @@ document.addEventListener('DOMContentLoaded', function () {
     function matchesFilter(card, filterName, filterValue) {
         if (!filterValue) return true;
 
-        // نخلي المقارنات lower-case
+        // نخلي المقارنات lower-case لو كانت نصية
         filterValue = String(filterValue).toLowerCase();
 
         switch (filterName) {
             case 'subject': {
-                const value = (card.dataset.subject || '').toLowerCase();
+                // من data-subject-id
+                const value = (card.dataset.subjectId || '').toLowerCase();
                 return !filterValue || value === filterValue;
             }
 
             case 'nativeLanguage': {
-                const value = (card.dataset.nativeLanguage || '').toLowerCase();
+                // من data-native-language-id
+                const value = (card.dataset.nativeLanguageId || '').toLowerCase();
                 return !filterValue || value === filterValue;
             }
 
             case 'availability': {
-                const value = (card.dataset.availability || '').toLowerCase(); // "morning,afternoon"
+                // من data-availability-periods = "morning,afternoon"
+                const value = (card.dataset.availabilityPeriods || '').toLowerCase();
                 if (!filterValue) return true;
-                const availableSlots = value.split(',').map(v => v.trim());
+                const availableSlots = value
+                    .split(',')
+                    .map(v => v.trim())
+                    .filter(Boolean);
                 return availableSlots.includes(filterValue);
             }
 
             case 'specialization': {
-                const value = (card.dataset.specializations || '').toLowerCase(); // "language-learning,test-prep"
+                // من data-specialization-ids = "1,2,3"
+                const value = (card.dataset.specializationIds || '').toLowerCase();
                 if (!filterValue) return true;
-                const specs = value.split(',').map(v => v.trim());
+                const specs = value
+                    .split(',')
+                    .map(v => v.trim())
+                    .filter(Boolean);
                 return specs.includes(filterValue);
             }
 
             case 'country': {
-                const value = (card.dataset.country || '').toLowerCase();
+                // من data-country-id
+                const value = (card.dataset.countryId || '').toLowerCase();
                 return !filterValue || value === filterValue;
             }
 
             case 'alsoSpeaks': {
-                const value = (card.dataset.alsoSpeaks || '').toLowerCase(); // "en,ar"
+                // من data-also-speaks-ids = "1,3,5"
+                const value = (card.dataset.alsoSpeaksIds || '').toLowerCase();
                 if (!filterValue) return true;
-                const langs = value.split(',').map(v => v.trim());
+                const langs = value
+                    .split(',')
+                    .map(v => v.trim())
+                    .filter(Boolean);
                 return langs.includes(filterValue);
             }
 
@@ -83,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             case 'fullName': {
                 if (!filterValue) return true;
-                const name = (card.dataset.name || '').toLowerCase();
+                // من data-full-name
+                const name = (card.dataset.fullName || '').toLowerCase();
                 return name.includes(filterValue);
             }
 
