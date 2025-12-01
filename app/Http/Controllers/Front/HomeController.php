@@ -591,19 +591,14 @@ class HomeController extends Controller
 
     public function online_private_classes()
     {
-        $tutors = User::query()
+        $tutors = User::
+            where('type', 2)
             ->with([
                 'profile',
                 'tutorProfile',
-                'availabilities',
-                'tutorProfile.subject',
-                'tutorProfile.nativeLanguageModel',
-                'tutorProfile.countryModel',
             ])
-            ->where('type', 2)
-            ->whereHas('tutorProfile')
+            ->orderBy('id', 'desc')
             ->get();
-
         $subjects        = Subject::query()->orderBy('name')->get();
         $languages       = Language::query()->orderBy('name')->get();
         $countries       = Country::query()->orderBy('en_name')->get();
