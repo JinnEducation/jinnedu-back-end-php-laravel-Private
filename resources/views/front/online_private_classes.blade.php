@@ -45,9 +45,9 @@
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Subject</option>
                                 @foreach($subjects as $subject)
-                                    <option value="{{ $subject->name }}">
-                                        {{ $subject->name }}
-                                    </option>
+                                <option value="{{ $subject->name }}">
+                                    {{ $subject->name }}
+                                </option>
                                 @endforeach
                             </select>
                             <i
@@ -81,9 +81,9 @@
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Native Language</option>
                                 @foreach($languages as $language)
-                                    <option value="{{ $language->name }}">
-                                        {{ $language->name }}
-                                    </option>
+                                <option value="{{ $language->name }}">
+                                    {{ $language->name }}
+                                </option>
                                 @endforeach
                             </select>
                             <i
@@ -118,9 +118,9 @@
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Specializations</option>
                                 @foreach($specializations as $spec)
-                                    <option value="{{ $spec->name }}">
-                                        {{ $spec->name }}
-                                    </option>
+                                <option value="{{ $spec->name }}">
+                                    {{ $spec->name }}
+                                </option>
                                 @endforeach
                             </select>
                             <i
@@ -136,10 +136,10 @@
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Country</option>
                                 @foreach($countries as $country)
-                                    <option value="{{ $country->en_name }}">
-                                        {{-- عندك بالـ DB أعمدة name / en_name / ar_name --}}
-                                        {{ $country->en_name ?? $country->name ?? $country->ar_name }}
-                                    </option>
+                                <option value="{{ $country->en_name }}">
+                                    {{-- عندك بالـ DB أعمدة name / en_name / ar_name --}}
+                                    {{ $country->en_name ?? $country->name ?? $country->ar_name }}
+                                </option>
                                 @endforeach
                             </select>
                             <i
@@ -155,9 +155,9 @@
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">Also Speaks</option>
                                 @foreach($languages as $language)
-                                    <option value="{{ $language->name }}">
-                                        {{ $language->name }}
-                                    </option>
+                                <option value="{{ $language->name }}">
+                                    {{ $language->name }}
+                                </option>
                                 @endforeach
                             </select>
                             <i
@@ -204,187 +204,187 @@
                 <div class="lg:col-span-8 space-y-4" id="tutorsListContainer">
 
                     @forelse($tutors as $tutor)
-                        @php
-                            $profile = $tutor->profile;
-                            $tp = $tutor->tutorProfile;
+                    @php
+                    $profile = $tutor->profile;
+                    $tp = $tutor->tutorProfile;
 
-                            // اسم المعلم
-                            $fullName = trim(($profile?->first_name ?? '') . ' ' . ($profile?->last_name ?? ''));
-                            if ($fullName === '') {
-                                $fullName = $tutor?->name ?? 'Tutor';
-                            }
+                    // اسم المعلم
+                    $fullName = trim(($profile?->first_name ?? '') . ' ' . ($profile?->last_name ?? ''));
+                    if ($fullName === '') {
+                    $fullName = $tutor?->name ?? 'Tutor';
+                    }
 
-                            // IDs متعددة (JSON أو نص مفصول بفواصل)
-                            $specializationIds = [];
-                            if (!empty($tp?->specializations)) {
-                                if (is_array($tp->specializations)) {
-                                    $specializationIds = $tp->specializations;
-                                } else {
-                                    $specializationIds = array_filter(array_map('trim', explode(',', $tp->specializations)));
-                                }
-                            }
+                    // IDs متعددة (JSON أو نص مفصول بفواصل)
+                    $specializationIds = [];
+                    if (!empty($tp?->specializations)) {
+                    if (is_array($tp->specializations)) {
+                    $specializationIds = $tp->specializations;
+                    } else {
+                    $specializationIds = array_filter(array_map('trim', explode(',', $tp->specializations)));
+                    }
+                    }
 
-                            $otherLanguageIds = [];
-                            if (!empty($tp?->other_languages)) {
-                                if (is_array($tp->other_languages)) {
-                                    $otherLanguageIds = $tp->other_languages;
-                                } else {
-                                    $otherLanguageIds = array_filter(array_map('trim', explode(',', $tp->other_languages)));
-                                }
-                            }
+                    $otherLanguageIds = [];
+                    if (!empty($tp?->other_languages)) {
+                    if (is_array($tp->other_languages)) {
+                    $otherLanguageIds = $tp->other_languages;
+                    } else {
+                    $otherLanguageIds = array_filter(array_map('trim', explode(',', $tp->other_languages)));
+                    }
+                    }
 
-                            // فترات التوفر من user_availabilities (لو عندك حقل period)
-                            $availabilityPeriods = [];
-                            if ($tutor->availabilities()) {
-                                $availabilityPeriods = [];
-                                $availabilities = $tutor->availabilities()->get();
+                    // فترات التوفر من user_availabilities (لو عندك حقل period)
+                    $availabilityPeriods = [];
+                    if ($tutor->availabilities()) {
+                    $availabilityPeriods = [];
+                    $availabilities = $tutor->availabilities()->get();
 
-                                if ($availabilities) {
-                                    foreach ($availabilities as $availability) {
-                                        if (!empty($availability->period)) {
-                                            $availabilityPeriods[] = $availability->period;
-                                        }
-                                    }
-                                    // Get unique values and re-index
-                                    $availabilityPeriods = array_values(array_unique(array_filter($availabilityPeriods)));
-                                }
-                                    // ->pluck('period')
-                                    // ->filter()
-                                    // ->unique()
-                                    // ->values()
-                                    // ->toArray();
-                            }
+                    if ($availabilities) {
+                    foreach ($availabilities as $availability) {
+                    if (!empty($availability->period)) {
+                    $availabilityPeriods[] = $availability->period;
+                    }
+                    }
+                    // Get unique values and re-index
+                    $availabilityPeriods = array_values(array_unique(array_filter($availabilityPeriods)));
+                    }
+                    // ->pluck('period')
+                    // ->filter()
+                    // ->unique()
+                    // ->values()
+                    // ->toArray();
+                    }
 
-                            // أسماء لطيفة للعرض
-                            $subjectName = $tp?->teaching_subject ?? '-';
-                            $nativeLangName = $tp?->native_language ?? '-';
-                            $countryName = $tp?->tutor_country;
+                    // أسماء لطيفة للعرض
+                    $subjectName = $tp?->teaching_subject ?? '-';
+                    $nativeLangName = $tp?->native_language ?? '-';
+                    $countryName = $tp?->tutor_country;
 
-                            $hourlyRate = $tp->hourly_rate ?? null;
-                            $price = $tp->price ?? null;
-                            $rating = $tp->avg_rating ?? 0;
-                            $reviewsCount = $tp->reviews_count ?? 0;
-                            $studentsCount = $tp->students_count ?? 0;
-                        @endphp
+                    $hourlyRate = $tp->hourly_rate ?? null;
 
-                        <div class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
-                            data-full-name="{{ strtolower($fullName) }}" 
-                            data-subject-id="{{ $tp->teaching_subject ?? '' }}"
-                            data-price="{{ $hourlyRate ?? 0 }}" 
-                            data-native-language-id="{{ $tp->native_language ?? '' }}"
-                            data-country-id="{{ $tp->tutor_country ?? '' }}"
-                            data-specialization-ids="{{ implode(',', $specializationIds) }}"
-                            data-also-speaks-ids="{{ implode(',', $otherLanguageIds) }}"
-                            data-availability-periods="{{ implode(',', $availabilityPeriods) }}" 
-                            data-rating="{{ $rating }}"
-                            data-students="{{ $studentsCount }}">
-                            <div class="flex gap-4">
-                                <!-- Tutor Image -->
-                                <div class="flex-shrink-0">
-                                    {{-- لو عندك صورة في البروفايل عدّلي السطر الجاي --}}
-                                    <img src="{{ $tutor->profile?->avatar_path ? asset('storage/'.$tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/'.$tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}" alt="{{ $fullName }}"
-                                        class="w-53 h-full object-cover">
+                    $rating = $tp->avg_rating ?? 0;
+                    $reviewsCount = $tp->reviews_count ?? 0;
+                    $studentsCount = $tp->students_count ?? 0;
+                    @endphp
+
+                    <div class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
+                        data-full-name="{{ strtolower($fullName) }}"
+                        data-subject-id="{{ $tp->teaching_subject ?? '' }}"
+                        data-price="{{ $hourlyRate ?? 0 }}"
+                        data-native-language-id="{{ $tp->native_language ?? '' }}"
+                        data-country-id="{{ $tp->tutor_country ?? '' }}"
+                        data-specialization-ids="{{ implode(',', $specializationIds) }}"
+                        data-also-speaks-ids="{{ implode(',', $otherLanguageIds) }}"
+                        data-availability-periods="{{ implode(',', $availabilityPeriods) }}"
+                        data-rating="{{ $rating }}"
+                        data-students="{{ $studentsCount }}">
+                        <div class="flex gap-4">
+                            <!-- Tutor Image -->
+                            <div class="flex-shrink-0">
+                                {{-- لو عندك صورة في البروفايل عدّلي السطر الجاي --}}
+                                <img src="{{ $tutor->profile?->avatar_path ? asset('storage/'.$tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/'.$tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}" alt="{{ $fullName }}"
+                                    class="w-53 h-full object-cover">
+                            </div>
+
+                            <!-- Tutor Info -->
+                            <div class="flex-1 p-5 ">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-primary mb-1">
+                                            {{ $fullName }}
+                                        </h3>
+                                        @if($countryName)
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ $countryName }}
+                                        </p>
+                                        @endif
+                                    </div>
+
+                                    <!-- Price & Rating -->
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="flex flex-col items-start justify-end">
+                                            <span class="text-lg font-bold text-primary">
+
+                                                {{ $hourlyRate}}$
+
+                                            </span>
+                                            <span class="text-sm text-black">Per hour</span>
+                                        </div>
+                                        <div class="flex flex-col items-start justify-end">
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                                </svg>
+                                                <span class="text-lg text-gray-700">
+                                                    {{ number_format($rating, 1) }}
+                                                </span>
+                                            </div>
+                                            <span class="text-sm text-black">
+                                                {{ $reviewsCount }} Reviews
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Tutor Info -->
-                                <div class="flex-1 p-5 ">
-                                    <div class="flex justify-between items-center mb-3">
-                                        <div>
-                                            <h3 class="text-xl font-bold text-primary mb-1">
-                                                {{ $fullName }}
-                                            </h3>
-                                            @if($countryName)
-                                                <p class="text-xs text-gray-500 mt-1">
-                                                    {{ $countryName }}
-                                                </p>
-                                            @endif
-                                        </div>
-
-                                        <!-- Price & Rating -->
-                                        <div class="flex items-center justify-between gap-3">
-                                            <div class="flex flex-col items-start justify-end">
-                                                <span class="text-lg font-bold text-primary">
-                                                   
-                                                        {{ $price }}$
-                                                    
-                                                </span>
-                                                <span class="text-sm text-black">Per hour</span>
-                                            </div>
-                                            <div class="flex flex-col items-start justify-end">
-                                                <div class="flex items-center gap-1">
-                                                    <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                                        <path
-                                                            d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                                    </svg>
-                                                    <span class="text-lg text-gray-700">
-                                                        {{ number_format($rating, 1) }}
-                                                    </span>
-                                                </div>
-                                                <span class="text-sm text-black">
-                                                    {{ $reviewsCount }} Reviews
-                                                </span>
-                                            </div>
-                                        </div>
+                                <!-- Info Rows -->
+                                <div class="space-y-2 mb-4">
+                                    {{-- المادة التي يدرّسها --}}
+                                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                        </svg>
+                                        <span>
+                                            {{ $subjectName }}
+                                        </span>
                                     </div>
 
-                                    <!-- Info Rows -->
-                                    <div class="space-y-2 mb-4">
-                                        {{-- المادة التي يدرّسها --}}
-                                        <div class="flex items-center gap-2 text-sm text-gray-700">
-                                            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                viewBox="0 0 20 20">
-                                                <path
-                                                    d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                                            </svg>
-                                            <span>
-                                                {{ $subjectName }}
+                                    {{-- عدد الطلاب --}}
+                                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                        </svg>
+                                        <span>{{ $studentsCount }} Students</span>
+                                    </div>
+
+                                    {{-- اللغة الأم --}}
+                                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                                        <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <span>
+                                            Speaks
+                                            <span class="text-primary font-semibold">
+                                                {{ $nativeLangName ?? 'N/A' }} (Native)
                                             </span>
-                                        </div>
-
-                                        {{-- عدد الطلاب --}}
-                                        <div class="flex items-center gap-2 text-sm text-gray-700">
-                                            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                            </svg>
-                                            <span>{{ $studentsCount }} Students</span>
-                                        </div>
-
-                                        {{-- اللغة الأم --}}
-                                        <div class="flex items-center gap-2 text-sm text-gray-700">
-                                            <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span>
-                                                Speaks
-                                                <span class="text-primary font-semibold">
-                                                    {{ $nativeLangName ?? 'N/A' }} (Native)
-                                                </span>
-                                            </span>
-                                        </div>
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <!-- Buttons -->
-                                    <div class="flex gap-3 w-2/3">
-                                        <button
-                                            class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                            View Details
-                                        </button>
-                                        <button
-                                            class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
-                                            Join Now
-                                        </button>
-                                    </div>
+                                <!-- Buttons -->
+                                <div class="flex gap-3 w-2/3">
+                                    <a href="{{ route('site.tutor_jinn',$tutor->id) }}"
+                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
+                                        View Details
+                                    </a>
+                                    <button
+                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
+                                        Join Now
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     @empty
-                        <p class="text-gray-500">No tutors found.</p>
+                    <p class="text-gray-500">No tutors found.</p>
                     @endforelse
 
                 </div>
@@ -506,8 +506,8 @@
 
 
     @push('scripts')
-        <script src="{{ asset('front/assets/js/tutors_list.js') }}"></script>
-        <script src="{{ asset('front/assets/js/find_tutor.js') }}"></script>
+    <script src="{{ asset('front/assets/js/tutors_list.js') }}"></script>
+    <script src="{{ asset('front/assets/js/find_tutor.js') }}"></script>
     @endpush
 
 </x-front-layout>

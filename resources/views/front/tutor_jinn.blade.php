@@ -1,5 +1,41 @@
 <x-front-layout>
 
+    @php
+        $profile = $tutor->profile ?? null;
+        $tp = $tutor->tutorProfile ?? null;
+
+        // الاسم الكامل
+        $fullName = $profile?->full_name ?? ($tutor->name ?? 'Tutor');
+
+        // الصورة
+        $avatar = $profile?->avatar_path
+            ? asset('storage/' . $profile->avatar_path)
+            : ($tutor->avatar
+                ? asset('storage/' . $tutor->avatar)
+                : asset('front/assets/imgs/user-avatar.jpg'));
+
+        // بيانات أساسية
+        $headline = $tp?->headline ?? '';
+        $nativeLanguage = $tp?->native_language ?? 'N/A';
+        $teachingSubject = $tp?->teaching_subject ?? 'N/A';
+        $tutorCountry = $tp?->tutor_country ?? $profile?->country;
+
+        // نص الـ About
+        $aboutMain = $tp?->experience_bio ?? $tp?->motivation ?? '';
+        $aboutExtra = $tp?->methodology ?? '';
+
+        // السعر
+        $hourlyRate = $tp?->hourly_rate ?? 0;
+
+        // الفيديو
+        $videoPath = $tp?->video_path ? asset('storage/' . $tp->video_path) : null;
+
+        // إحصائيات (لو ما عندك أعمدة، هتطلع 0 عادي)
+        $rating = $tp->avg_rating ?? 0;
+        $reviewsCount = $tp->reviews_count ?? 0;
+        $lessonsCount = $tp->lessons_count ?? 0;
+    @endphp
+
     <!-- Main Content - Tutor Profile -->
     <section class="py-8 md:py-16 mt-[120px]">
         <div class="container px-4 mx-auto">
@@ -11,43 +47,54 @@
                     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
                         <div class="flex gap-6 items-start">
                             <!-- Tutor Image -->
-                            <img src="./assets/imgs/user-avatar.jpg" alt="Tutor Jinn"
-                                class="w-36 h-36 rounded-lg object-cover flex-shrink-0">
+                            <img src="{{ $avatar }}" alt="{{ $fullName }}"
+                                 class="w-36 h-36 rounded-lg object-cover flex-shrink-0">
 
                             <!-- Tutor Info -->
                             <div class="flex-1">
-                                <h2 class="text-2xl font-bold text-primary mb-2">Tutor Jinn</h2>
-                                <p class="text-gray-600 mb-4">headline 1</p>
+                                <h2 class="text-2xl font-bold text-primary mb-2">{{ $fullName }}</h2>
+
+                                @if($headline)
+                                    <p class="text-gray-600 mb-4">{{ $headline }}</p>
+                                @endif
 
                                 <div class="space-y-2">
                                     <div class="flex items-center gap-2 text-gray-700">
                                         <i class="fas fa-comment text-primary"></i>
-                                        <span>Speaks english Language</span>
+                                        <span>Speaks {{ $nativeLanguage }} Language</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-700">
                                         <i class="fas fa-book text-primary"></i>
-                                        <span>Teaches english-language Subject</span>
+                                        <span>Teaches {{ $teachingSubject }} Subject</span>
                                     </div>
+
+                                    @if($tutorCountry)
+                                        <div class="flex items-center gap-2 text-gray-700">
+                                            <i class="fas fa-globe text-primary"></i>
+                                            <span>From {{ $tutorCountry }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tabs Section -->
-                    <div class="bg-white rounded-lg p-6">
+                    <div class="bg-white rounded-lg p-6"
+                         data-availability='@json($availabilities ?? [])'>
                         <!-- Tab Buttons -->
                         <div class="flex gap-3 mb-6">
                             <button data-tab="about"
-                                class="tab-button active px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 bg-primary text-white hover:bg-primary hover:text-white">
+                                    class="tab-button active px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 bg-primary text-white hover:bg-primary hover:text-white">
                                 About
                             </button>
                             <button data-tab="schedule"
-                                class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
+                                    class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
                                 Schedule
                             </button>
                             <button data-tab="reviews"
-                                class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
-                                Reviews (2)
+                                    class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
+                                Reviews ({{ $reviewsCount }})
                             </button>
                         </div>
 
@@ -55,41 +102,28 @@
                         <div>
                             <!-- About Tab Content -->
                             <div id="about-tab" class="tab-content">
-                                <h3 class="text-2xl font-bold text-primary mb-4">Tutor Jinn</h3>
+                                <h3 class="text-2xl font-bold text-primary mb-4">{{ $fullName }}</h3>
                                 <div class="text-gray-700 leading-relaxed">
-                                    <p class="mb-4">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut labore et
-                                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                        laboris nisi ut aliquip ex
-                                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
-                                        esse cillum dolore eu
-                                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                                        culpa qui officia deserunt
-                                        mollit anim id est Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                                        do eiusmod tempor
-                                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                        nostrud exercitation ullamco
-                                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                                        reprehenderit in voluptate velit
-                                        esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                                        non proident, sunt in culpa qui officia deserunt
-                                        mollit anim id est laborum.
-                                    </p>
-                                    <div class="about-text-extra hidden">
+                                    @if($aboutMain)
                                         <p class="mb-4">
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                            doloremque laudantium,
-                                            totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                                            architecto beatae vitae dicta sunt explicabo.
-                                            Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
-                                            sed quia consequuntur magni dolores eos qui ratione
-                                            voluptatem sequi nesciunt.
+                                            {!! nl2br(e($aboutMain)) !!}
                                         </p>
-                                    </div>
-                                    <button id="showMoreBtn" class="text-primary font-bold hover:underline mt-2">
-                                        Show More
-                                    </button>
+                                    @else
+                                        <p class="mb-4">
+                                            No bio has been added yet.
+                                        </p>
+                                    @endif
+
+                                    @if($aboutExtra)
+                                        <div class="about-text-extra hidden">
+                                            <p class="mb-4">
+                                                {!! nl2br(e($aboutExtra)) !!}
+                                            </p>
+                                        </div>
+                                        <button id="showMoreBtn" class="text-primary font-bold hover:underline mt-2">
+                                            Show More
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
 
@@ -97,16 +131,20 @@
                             <div id="schedule-tab" class="tab-content hidden">
                                 <!-- Title and Date Navigation -->
                                 <div class="mb-6">
-                                    <h3 class="text-2xl font-bold text-primary mb-3">Tutor Schedule Wedne</h3>
+                                    <h3 class="text-2xl font-bold text-primary mb-3">
+                                        Tutor Schedule - {{ $fullName }}
+                                    </h3>
                                     <div class="flex items-center gap-3">
-                                        <span id="weekDate" class="text-base text-gray-700 font-medium">Wednesday,
-                                            10/15/2025</span>
+                                        <span id="weekDate" class="text-base text-gray-700 font-medium">
+                                            <!-- JavaScript will update this -->
+                                            This Week
+                                        </span>
                                         <button id="prevWeek"
-                                            class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
+                                                class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
                                             <i class="fas fa-chevron-left text-sm"></i>
                                         </button>
                                         <button id="nextWeek"
-                                            class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
+                                                class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
                                             <i class="fas fa-chevron-right text-sm"></i>
                                         </button>
                                     </div>
@@ -122,7 +160,7 @@
                                 <!-- View Full Schedule Button -->
                                 <div class="text-center">
                                     <button id="viewFullScheduleBtn"
-                                        class="px-10 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all">
+                                            class="px-10 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all">
                                         View Full Schedule
                                     </button>
                                 </div>
@@ -130,55 +168,31 @@
 
                             <!-- Reviews Tab Content -->
                             <div id="reviews-tab" class="tab-content hidden">
-                                <h3 class="text-xl font-bold text-primary mb-6">Tutor Schedule Wedne</h3>
+                                <h3 class="text-xl font-bold text-primary mb-6">
+                                    Reviews ({{ $reviewsCount }})
+                                </h3>
 
+                                {{-- Placeholder ثابت حالياً، لاحقاً يمكن ربطه بجدول التقييمات --}}
                                 <div class="space-y-6">
-                                    <!-- Review Item 1 -->
                                     <div class="pb-6">
-                                        <div class="flex items-center  gap-4">
-                                            <img src="./assets/imgs/user-avatar.jpg" alt="Reviewer"
-                                                class="w-18 h-18 rounded-md object-cover">
+                                        <div class="flex items-center gap-4">
+                                            <img src="{{ $avatar }}" alt="Reviewer"
+                                                 class="w-18 h-18 rounded-md object-cover">
                                             <div class="flex-1">
-                                                <div class="flex items-start flex-col  mb-2">
-                                                    <h4 class="font-bold text-gray-800">joud-shaheen</h4>
+                                                <div class="flex items-start flex-col mb-2">
+                                                    <h4 class="font-bold text-gray-800">{{ $fullName }}</h4>
                                                     <div class="flex items-center gap-1">
                                                         <i class="fas fa-star text-yellow-400"></i>
-                                                        <span class="font-semibold">2 / 5</span>
+                                                        <span class="font-semibold">
+                                                            {{ number_format($rating, 1) }} / 5
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="mt-2">
                                             <p class="text-gray-600 text-sm leading-relaxed">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                                eiusmod tempor
-                                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                                                veniam, quis nostrud
-                                                exercitation ullamco laboris nisi ut ali
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="pb-6">
-                                        <div class="flex items-center  gap-4">
-                                            <img src="./assets/imgs/user-avatar.jpg" alt="Reviewer"
-                                                class="w-18 h-18 rounded-md object-cover">
-                                            <div class="flex-1">
-                                                <div class="flex items-start flex-col  mb-2">
-                                                    <h4 class="font-bold text-gray-800">joud-shaheen</h4>
-                                                    <div class="flex items-center gap-1">
-                                                        <i class="fas fa-star text-yellow-400"></i>
-                                                        <span class="font-semibold">2 / 5</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mt-2">
-                                            <p class="text-gray-600 text-sm leading-relaxed">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                                eiusmod tempor
-                                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                                                veniam, quis nostrud
-                                                exercitation ullamco laboris nisi ut ali
+                                                Reviews are not implemented yet.
                                             </p>
                                         </div>
                                     </div>
@@ -187,7 +201,7 @@
                         </div>
                     </div>
 
-                    <!-- Tutor Suggestions Section -->
+                    <!-- Tutor Suggestions Section (حالياً static كما في التصميم الأصلي) -->
                     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
                         <h3 class="text-2xl font-bold text-primary mb-6">Tutor Suggestions</h3>
 
@@ -197,8 +211,8 @@
                                 <div class="flex gap-4">
                                     <!-- Tutor Image -->
                                     <div class="flex-shrink-0">
-                                        <img src="./assets/imgs/tutors/1.jpg" alt="Tutor Jinn"
-                                            class="w-53 h-full object-cover">
+                                        <img src="{{ asset('front/assets/imgs/tutors/1.jpg') }}" alt="Tutor Jinn"
+                                             class="w-53 h-full object-cover">
                                     </div>
 
                                     <!-- Tutor Info -->
@@ -216,7 +230,7 @@
                                                 <div class="flex flex-col items-start justify-end">
                                                     <div class="flex items-center gap-1">
                                                         <svg class="w-4 h-4 text-yellow-400 fill-current"
-                                                            viewBox="0 0 20 20">
+                                                             viewBox="0 0 20 20">
                                                             <path
                                                                 d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                                         </svg>
@@ -231,7 +245,7 @@
                                         <div class="space-y-2 mb-4">
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path
                                                         d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                                 </svg>
@@ -239,7 +253,7 @@
                                             </div>
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path
                                                         d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                                 </svg>
@@ -247,10 +261,10 @@
                                             </div>
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
-                                                        d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                        clip-rule="evenodd" />
+                                                          d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
+                                                          clip-rule="evenodd" />
                                                 </svg>
                                                 <span>Speaks <span
                                                         class="text-primary font-semibold">(Native)</span></span>
@@ -271,13 +285,14 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div
                                 class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
                                 <div class="flex gap-4">
                                     <!-- Tutor Image -->
                                     <div class="flex-shrink-0">
-                                        <img src="./assets/imgs/tutors/2.jpg" alt="Tutor Jinn"
-                                            class="w-53 h-full object-cover">
+                                        <img src="{{ asset('front/assets/imgs/tutors/2.jpg') }}" alt="Tutor Jinn"
+                                             class="w-53 h-full object-cover">
                                     </div>
 
                                     <!-- Tutor Info -->
@@ -295,7 +310,7 @@
                                                 <div class="flex flex-col items-start justify-end">
                                                     <div class="flex items-center gap-1">
                                                         <svg class="w-4 h-4 text-yellow-400 fill-current"
-                                                            viewBox="0 0 20 20">
+                                                             viewBox="0 0 20 20">
                                                             <path
                                                                 d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                                         </svg>
@@ -310,7 +325,7 @@
                                         <div class="space-y-2 mb-4">
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path
                                                         d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                                 </svg>
@@ -318,7 +333,7 @@
                                             </div>
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path
                                                         d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                                 </svg>
@@ -326,10 +341,10 @@
                                             </div>
                                             <div class="flex items-center gap-2 text-sm text-gray-700">
                                                 <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                    viewBox="0 0 20 20">
+                                                     viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
-                                                        d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
-                                                        clip-rule="evenodd" />
+                                                          d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
+                                                          clip-rule="evenodd" />
                                                 </svg>
                                                 <span>Speaks <span
                                                         class="text-primary font-semibold">(Native)</span></span>
@@ -362,37 +377,45 @@
                         <div class="bg-white rounded-lg shadow-md border border-gray-200 p-3">
                             <!-- Price at Top -->
                             <div class="text-center mb-4">
-                                <div class="text-4xl font-bold text-primary mb-1">0 <span
-                                        class="text-2xl text-black">USD</span>
+                                <div class="text-4xl font-bold text-primary mb-1">
+                                    {{ $hourlyRate }} <span class="text-2xl text-black">USD</span>
                                 </div>
                             </div>
 
                             <!-- Video Preview -->
                             <div class="relative rounded-lg overflow-hidden bg-black aspect-video">
-                                <video class="w-full h-full" controls poster="./assets/imgs/user-avatar.jpg">
-                                    <source src="#" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
+                                @if($videoPath)
+                                    <video class="w-full h-full" controls poster="{{ $avatar }}">
+                                        <source src="{{ $videoPath }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                @else
+                                    <img src="{{ $avatar }}" alt="{{ $fullName }}"
+                                         class="w-full h-full object-cover">
+                                @endif
                             </div>
                         </div>
 
                         <div>
-
                             <!-- Stats Grid -->
                             <div class="grid grid-cols-3 gap-4 mb-6 text-start">
                                 <div>
                                     <div class="flex items-center justify-start gap-1 mb-1">
                                         <i class="fas fa-star text-yellow-400"></i>
-                                        <span class="font-bold text-lg text-primary">4/5</span>
+                                        <span class="font-bold text-lg text-primary">
+                                            {{ number_format($rating, 1) }}/5
+                                        </span>
                                     </div>
-                                    <div class="text-xs text-black">96 reviews</div>
+                                    <div class="text-xs text-black">{{ $reviewsCount }} reviews</div>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-lg text-primary mb-1">11773</div>
+                                    <div class="font-bold text-lg text-primary mb-1">{{ $lessonsCount }}</div>
                                     <div class="text-xs text-black">lessons</div>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-lg text-primary mb-1">$1,904</div>
+                                    <div class="font-bold text-lg text-primary mb-1">
+                                        {{ $hourlyRate }} USD
+                                    </div>
                                     <div class="text-xs text-black">50-min lesson</div>
                                 </div>
                             </div>
@@ -405,7 +428,7 @@
                                 </button>
                                 <button
                                     class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
-                                    Message Cheryl
+                                    Message {{ $fullName }}
                                 </button>
                                 <button
                                     class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
@@ -434,7 +457,6 @@
             </div>
         </div>
     </div>
-
 
     @push('scripts')
         <script src="{{ asset('front/assets/js/tutor_profile.js') }}"></script>

@@ -616,6 +616,19 @@ class HomeController extends Controller
 
     public function tutor_jinn(string $locale, string|int $id)
     {
-        return view('front.tutor_jinn', compact('id'));
+
+        $tutor = User::with(['profile', 'tutorProfile'])
+            ->where('type', 2)
+            ->findOrFail($id);
+
+       
+        if (! $tutor->tutorProfile) {
+            abort(404);
+        }
+
+        
+        $availabilities = $tutor->availabilities()->get();
+
+        return view('front.tutor_jinn', compact('tutor', 'availabilities'));
     }
 }
