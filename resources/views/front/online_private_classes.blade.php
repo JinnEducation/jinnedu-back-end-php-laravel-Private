@@ -374,10 +374,22 @@
                                         class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
                                         View Details
                                     </a>
-                                    <button
-                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn">
-                                        Join Now
-                                    </button>
+                                    <form
+                                        action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
+                                        method="POST"
+                                        class="w-full">
+                                        @csrf
+
+                                      
+                                        <input type="hidden" name="date" value="{{ $selected_date ?? '' }}">
+
+                                        <button
+                                            type="submit"
+                                            class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn w-full">
+                                            Join Now
+                                        </button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
