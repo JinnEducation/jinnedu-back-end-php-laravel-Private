@@ -75,6 +75,9 @@ Route::group([
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
     Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->name('site.group_class_order');
 
+    Route::post('private-lesson-order/{id}', [HomeController::class, 'privateLessonOrder'])->name('site.private_lesson_order');
+
+
     Route::get('online_private_classes', [HomeController::class, 'online_private_classes'])->name('site.online_private_classes');
     Route::get('tutor_jinn/{id}', [HomeController::class, 'tutor_jinn'])->name('site.tutor_jinn');
 

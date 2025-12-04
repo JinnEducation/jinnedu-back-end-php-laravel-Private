@@ -58,7 +58,7 @@ class CreateNewUser implements CreatesNewUsers
             ]);
 
             // ✅ 4. لو المستخدم معلم، نضيف بيانات المعلم
-            if ($input['type'] === 2) {
+            if ($input['type'] == 2) {
                 $availability = isset($input['availability'])
                     ? json_encode($input['availability'])
                     : null;
@@ -83,6 +83,7 @@ class CreateNewUser implements CreatesNewUsers
 
                 if (isset($input['video_file']) && $input['video_file'] instanceof \Illuminate\Http\UploadedFile) {
                     $video_path = $input['video_file']->store('video_files', 'public');
+                    // $video_path = null;
                 } else {
                     $video_path = null;
                 }

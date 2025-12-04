@@ -589,6 +589,85 @@ class HomeController extends Controller
         }
     }
 
+    public function privateLessonOrder(string $locale, Request $request, string|int $id)
+{
+    DB::beginTransaction();
+    try {
+        $tutor = \App\Models\Tutor::find($id);
+        if (! $tutor) {
+            return redirect()->back()->with('error', 'Tutor not found');
+        }
+
+        $orderController = new \App\Http\Controllers\OrderController;
+        $response = $orderController->privateLesson($request, $id);
+        $original = $response->getOriginalContent();
+
+        if ($original['success']) {
+            $walletController = new WalletController();
+            $responseCheckout = $walletController->checkout($original['result']['id'] ?? $original['order_id']);
+            $originalCheckout = $responseCheckout->getOriginalContent();
+
+            if (!$originalCheckout['success']) {
+                return redirect()->back()->with('error', $originalCheckout['message']);
+            }
+
+            $orderId = $original['result']['id'] ?? $original['order_id'];
+            $order = Order::find($orderId);
+
+            if (!$order) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Order not found');
+            }
+
+            // هل يريد الدفع مباشرة من المحفظة؟
+            $payDirectly = $request->get('pay_directly', false);
+
+            $user = Auth::user();
+            $wallet = $user->wallets()->first();
+            $walletBalance = $wallet ? $wallet->balance : 0;
+            $hasEnoughBalance = $walletBalance >= $order->price;
+
+            // الدفع المباشر
+            if ($payDirectly && $hasEnoughBalance) {
+                $responseCheckout = $walletController->checkout($orderId);
+                $originalCheckout = $responseCheckout->getOriginalContent();
+
+                if ($originalCheckout['success']) {
+                    DB::commit();
+                    return redirect()->route('redirect.dashboard')
+                        ->with('success', $originalCheckout['message']);
+                } else {
+                    DB::rollBack();
+                    // إذا فشل الدفع نرسله لصفحة checkout
+                    return redirect()->route('checkout', [
+                        'type' => 'pay',
+                        'order_ids' => $orderId
+                    ])->with('error', $originalCheckout['message'] ?? 'Payment failed');
+                }
+            }
+
+            // التوجيه إلى صفحة الدفع مع خيارات الدفع
+            DB::commit();
+            return redirect()->route('checkout', [
+                'type' => 'pay',
+                'order_ids' => $orderId
+            ])->with('info', $hasEnoughBalance
+                ? 'You can pay from your wallet or choose another payment method'
+                : 'Please complete payment to finish your order'
+            );
+
+        } else {
+            DB::rollBack();
+            return redirect()->back()->with('error', $original['message']);
+        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', $e->getMessage());
+    }
+}
+
+
+
     public function online_private_classes()
     {
         $tutors = User::
