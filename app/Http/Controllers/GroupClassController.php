@@ -764,10 +764,9 @@ class GroupClassController extends Controller
             $limit = setDataTablePerPageLimit($request->limit);
 
             // get all group classes
-            $items = GroupClass::select('group_classes.*');
+            $items = GroupClass::with('level')->select('group_classes.*');
             // join group class langs
             $items->leftjoin('group_class_langs', 'group_class_langs.classid', 'group_classes.id');
-
             if (! empty($request->tutor_id)) {
                 $items->where('tutor_id', $request->tutor_id);
             }
@@ -904,6 +903,15 @@ class GroupClassController extends Controller
 
                 $item->imageInfo;
                 $item->attachment;
+                // if($class->level?->level_number > 1){
+                //     if($class->exams?->count() <= 0){
+                //         return false;
+                //     }
+                // }
+                $item->level_number = $item->level?->level_number;
+                if($item->level_number > 1){
+                    $item->have_exams = $item->exams?->count() > 0 ? 1 : 0;
+                }
             }
         }
 

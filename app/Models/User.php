@@ -228,13 +228,11 @@ class User extends Authenticatable implements MustVerifyEmail
                         }
                     }
 
-                    return collect($result);
+                    return collect(value: $result);
                 }
 
                 // في حال عدم وجود JSON نرجع للجدول القديم (لو ما زال مستخدماً)
-                return UserAvailability::where('user_id', $this->user->id)
-                    ->with(['timezone', 'day'])
-                    ->get();
+                return collect(value: []);
             }
         };
     }

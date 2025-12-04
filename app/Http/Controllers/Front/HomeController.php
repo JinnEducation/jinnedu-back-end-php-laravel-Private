@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers\Front;
 
-use Carbon\Carbon;
-use App\Models\Blog;
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Slider;
-use App\Models\Country;
-use App\Models\Subject;
-use App\Models\Category;
-use App\Models\Language;
-use App\Models\CateqBlog;
-use App\Models\OurCourse;
-use App\Models\GroupClass;
-use Illuminate\Http\Request;
-use App\Models\Specialization;
-use App\Models\GroupClassTutor;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\GroupClassController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
-use App\Http\Controllers\GroupClassController;
+use App\Models\Blog;
+use App\Models\Category;
+use App\Models\CateqBlog;
+use App\Models\Country;
+use App\Models\Exam;
+use App\Models\ExamAttempt;
+use App\Models\GroupClass;
+use App\Models\GroupClassTutor;
+use App\Models\Language;
+use App\Models\Order;
+use App\Models\OurCourse;
+use App\Models\Slider;
+use App\Models\Specialization;
+use App\Models\Subject;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -308,6 +310,11 @@ class HomeController extends Controller
                 return false;
             }
 
+            if($class->level?->level_number > 1){
+                if($class->exams?->count() <= 0){
+                    return false;
+                }
+            }
             return true;
         });
 
@@ -377,6 +384,7 @@ class HomeController extends Controller
             'tutor.videos',
             'imageInfo',
             'attachment',
+            'exams',
         ])->find($id);
 
         if (! $group_class) {
@@ -423,30 +431,14 @@ class HomeController extends Controller
             return true;
         });
         $group_class->dates = $dates;
-        // // Suggestions (same category), each limited to current language
-        // $suggestions = GroupClass::with([
-        //     'langsAll.language',
-        //     'dates',
-        //     'reviews',
-        //     'tutor',
-        //     'imageInfo',
-        // ])
-        // ->where('category_id', $group_class->category_id)
-        // ->where('id', '<>', $group_class->id)
-        // ->limit(6)
-        // ->get();
 
-        // foreach ($suggestions as $suggestion) {
-        //     $sTrans = $suggestion->langsAll->where('language_id', $languageId)->first();
-        //     if (!$sTrans) {
-        //         $sTrans = $suggestion->langsAll->first();
-        //     }
-        //     $suggestion->setRelation('langsAll', collect([$sTrans]));
-        //     $suggestion->rating = $suggestion->reviews()->avg('stars');
-        //     if ($suggestion->tutor) {
-        //         $suggestion->tutor->email = null;
-        //     }
-        // }
+        $exams = collect([]);
+        $attempts = ExamAttempt::where('exam_id', $group_class->exams?->first()?->id)->where('student_id', Auth::user()?->id)->orderBy('id', 'desc')->first();
+        $result = $attempts ? $attempts->result : null;
+        foreach ($group_class->exams as $exam) {
+            $exams->push(Exam::with('level', 'category', 'langsAll', 'groupClass:id,name')->find($exam->id));
+        }
+
         $groupClassController = new GroupClassController;
         $request = new Request;
         $request->limit = 1000;
@@ -509,7 +501,7 @@ class HomeController extends Controller
         });
 
         // dd($group_class,$suggestions,$languageId);
-        return view('front.class_details', compact('group_class', 'suggestions', 'languageId'));
+        return view('front.class_details', compact('group_class', 'exams', 'suggestions', 'languageId', 'result', 'attempts'));
     }
 
     public function groupClassOrder(string $locale, Request $request, string|int $id)
@@ -526,19 +518,20 @@ class HomeController extends Controller
             $original = $response->getOriginalContent();
 
             if ($original['success']) {
-                $walletController = new WalletController();
+                $walletController = new WalletController;
                 $responseCheckout = $walletController->checkout($original['order_id']);
                 $originalCheckout = $responseCheckout->getOriginalContent();
 
-                if (!$originalCheckout['success']) {
+                if (! $originalCheckout['success']) {
                     return redirect()->back()->with('error', $originalCheckout['message']);
                 }
 
                 $orderId = $original['order_id'];
                 $order = Order::find($orderId);
 
-                if (!$order) {
+                if (! $order) {
                     DB::rollBack();
+
                     return redirect()->back()->with('error', 'Order not found');
                 }
 
@@ -554,54 +547,58 @@ class HomeController extends Controller
                 // If user wants to pay directly AND has enough balance
                 if ($payDirectly && $hasEnoughBalance) {
                     // Pay directly from wallet
-                    $walletController = new WalletController();
+                    $walletController = new WalletController;
                     $responseCheckout = $walletController->checkout($orderId);
                     $originalCheckout = $responseCheckout->getOriginalContent();
 
                     if ($originalCheckout['success']) {
                         DB::commit();
+
                         return redirect()->route('redirect.dashboard')->with('success', $originalCheckout['message']);
                     } else {
                         DB::rollBack();
+
                         // If direct payment failed, redirect to checkout
                         return redirect()->route('checkout', [
                             'type' => 'pay',
-                            'order_ids' => $orderId
+                            'order_ids' => $orderId,
                         ])->with('error', $originalCheckout['message'] ?? 'Payment failed');
                     }
                 } else {
                     // Redirect to checkout page to choose payment method
                     DB::commit();
+
                     return redirect()->route('checkout', [
                         'type' => 'pay',
-                        'order_ids' => $orderId
+                        'order_ids' => $orderId,
                     ])->with('info', $hasEnoughBalance
                         ? 'You can pay from your wallet or choose another payment method'
                         : 'Please complete payment to finish your order');
                 }
             } else {
                 DB::rollBack();
+
                 return redirect()->back()->with('error', $original['message']);
             }
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function online_private_classes()
     {
-        $tutors = User::
-            where('type', 2)
+        $tutors = User::where('type', 2)
             ->with([
                 'profile',
                 'tutorProfile',
             ])
             ->orderBy('id', 'desc')
             ->get();
-        $subjects        = Subject::query()->orderBy('name')->get();
-        $languages       = Language::query()->orderBy('name')->get();
-        $countries       = Country::query()->orderBy('en_name')->get();
+        $subjects = Subject::query()->orderBy('name')->get();
+        $languages = Language::query()->orderBy('name')->get();
+        $countries = Country::query()->orderBy('en_name')->get();
         $specializations = Specialization::query()->orderBy('name')->get();
 
         return view('front.online_private_classes', compact(
@@ -613,7 +610,6 @@ class HomeController extends Controller
         ));
     }
 
-
     public function tutor_jinn(string $locale, string|int $id)
     {
 
@@ -621,12 +617,10 @@ class HomeController extends Controller
             ->where('type', 2)
             ->findOrFail($id);
 
-       
         if (! $tutor->tutorProfile) {
             abort(404);
         }
 
-        
         $availabilities = $tutor->availabilities()->get();
 
         return view('front.tutor_jinn', compact('tutor', 'availabilities'));
