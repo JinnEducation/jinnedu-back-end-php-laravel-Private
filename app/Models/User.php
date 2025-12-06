@@ -164,6 +164,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return new class($user)
         {
             protected $user;
+            protected $filterDate = null;
+            protected $period = 60;
 
             public function __construct(User $user)
             {
@@ -171,14 +173,69 @@ class User extends Authenticatable implements MustVerifyEmail
             }
 
             /**
-             * يحاكي استدعاء الـ Eloquent: $user->availabilities()->get()
+             * تحديد التاريخ للفلترة (اختياري)
              */
+            public function forDate($date, $period = 60)
+            {
+                $this->filterDate = $date;
+                $this->period = $period;
+                return $this;
+            }
+
+            /**
+             * Eloquent: $user->availabilities()->get()
+            */
             public function get()
             {
+                /*
+                #items: array:7 [▼
+                    0 => {#2128 ▼
+                        +"day": {#2122 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "10:00"
+                        +"timezone": null
+                    }
+                    1 => {#2153 ▼
+                        +"day": {#2122 ▶}
+                        +"hour_from": "11:00"
+                        +"hour_to": "17:00"
+                        +"timezone": null
+                    }
+                    2 => {#2113 ▼
+                        +"day": {#2145 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "19:00"
+                        +"timezone": null
+                    }
+                    3 => {#2151 ▼
+                        +"day": {#2149 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "10:00"
+                        +"timezone": null
+                    }
+                    4 => {#2144 ▼
+                        +"day": {#2148 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "19:00"
+                        +"timezone": null
+                    }
+                    5 => {#2114 ▼
+                        +"day": {#2120 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "19:00"
+                        +"timezone": null
+                    }
+                    6 => {#2146 ▼
+                        +"day": {#2120 ▶}
+                        +"hour_from": "09:00"
+                        +"hour_to": "19:00"
+                        +"timezone": null
+                    }
+                    ]
+                */
                 $profile = $this->user->tutorProfile;
-
-                // لو عندنا JSON جديد في tutor_profiles نستخدمه
-                if ($profile && is_array($profile->availability_json)) {
+                $availability_json = $profile?->availability_json ? json_decode($profile?->availability_json, true) : [];
+                if ($profile && is_array($availability_json)) {
                     $result = [];
 
                     // خريطة أيام الأسبوع إلى أرقام تقريبية مثل جدول week_days
@@ -192,18 +249,49 @@ class User extends Authenticatable implements MustVerifyEmail
                         'saturday' => 7,
                     ];
 
-                    foreach ($profile->availability_json as $dayKey => $slots) {
+                    // جلب الأوقات المحجوزة إذا تم تحديد تاريخ
+                    $bookedSlots = [];
+                    if ($this->filterDate) {
+                        $bookedConferences = \App\Models\Conference::where('tutor_id', $this->user->id)
+                            ->whereDate('start_date_time', $this->filterDate)
+                            ->whereNotNull('start_date_time')
+                            ->whereNotNull('end_date_time')
+                            ->get(['start_date_time', 'end_date_time']);
+
+                        foreach ($bookedConferences as $conference) {
+                            $start = new \DateTime($conference->start_date_time);
+                            $end = new \DateTime($conference->end_date_time);
+                            
+                            $startMinutes = (int)$start->format('H') * 60 + (int)$start->format('i');
+                            $endMinutes = (int)$end->format('H') * 60 + (int)$end->format('i');
+                            
+                            for ($min = $startMinutes; $min < $endMinutes; $min++) {
+                                $bookedSlots[$min] = true;
+                            }
+                        }
+                    }
+
+                    $dateObj = $this->filterDate ? new \DateTime($this->filterDate) : null;
+                    $dayName = $dateObj ? strtolower($dateObj->format('l')) : null;
+
+                    foreach ($availability_json as $dayKey => $slots) {
                         if (! is_array($slots)) {
                             continue;
                         }
 
                         $normalizedKey = strtolower((string) $dayKey);
-                        $dayName = ucfirst($normalizedKey); // Sunday, Monday, ...
+                        $availabilityDayName = strtolower($normalizedKey);
+                        $dayNameFormatted = ucfirst($normalizedKey); // Sunday, Monday, ...
                         $dayId = $dayIds[$normalizedKey] ?? 0;
+
+                        // إذا تم تحديد تاريخ، فلتر حسب اليوم
+                        if ($dayName && $availabilityDayName != $dayName) {
+                            continue;
+                        }
 
                         $dayObject = (object) [
                             'id' => $dayId,
-                            'name' => $dayName,
+                            'name' => $dayNameFormatted,
                         ];
 
                         foreach ($slots as $slot) {
@@ -218,23 +306,59 @@ class User extends Authenticatable implements MustVerifyEmail
                                 continue;
                             }
 
+                            // إذا تم تحديد تاريخ، فلتر الأوقات المحجوزة
+                            if ($this->filterDate && !empty($bookedSlots)) {
+                                $fromMinutes = $this->timeToMinutes($from);
+                                $toMinutes = $this->timeToMinutes($to);
+                                
+                                // فحص إذا كانت الفترة متاحة (يوجد على الأقل فترة واحدة غير محجوزة)
+                                $hasAvailableSlot = false;
+                                $checkInterval = 30; // فحص كل 30 دقيقة
+                                
+                                for ($checkTime = $fromMinutes; $checkTime <= ($toMinutes - $this->period); $checkTime += $checkInterval) {
+                                    $slotEnd = $checkTime + $this->period;
+                                    $isBooked = false;
+                                    
+                                    for ($min = $checkTime; $min < $slotEnd; $min++) {
+                                        if (isset($bookedSlots[$min])) {
+                                            $isBooked = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if (!$isBooked) {
+                                        $hasAvailableSlot = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (!$hasAvailableSlot) {
+                                    continue; // تخطي هذه الفترة لأنها محجوزة بالكامل
+                                }
+                            }
+
                             $result[] = (object) [
                                 'day' => $dayObject,
                                 'hour_from' => $from,
                                 'hour_to' => $to,
-                                // لم يعد لدينا موديل timezone هنا، فنضعه null للتوافق
                                 'timezone' => null,
                             ];
                         }
                     }
 
-                    return collect($result);
+                    return collect(value: $result);
                 }
 
-                // في حال عدم وجود JSON نرجع للجدول القديم (لو ما زال مستخدماً)
-                return UserAvailability::where('user_id', $this->user->id)
-                    ->with(['timezone', 'day'])
-                    ->get();
+                return collect(value: []);
+            }
+
+            /**
+             * تحويل الوقت إلى دقائق
+             */
+            private function timeToMinutes($time)
+            {
+                [$hours, $minutes] = explode(':', $time);
+                return (int)$hours * 60 + (int)$minutes;
             }
         };
     }
@@ -373,4 +497,99 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->type == 1;
     }
+
+    /**
+     * الحصول على الأوقات المتاحة بعد استبعاد الأوقات المحجوزة
+     * هذه الدالة ترجع جميع الأوقات المتاحة مع استبعاد الأوقات المحجوزة في الأيام القادمة
+     * 
+     * @param int $daysForward عدد الأيام القادمة للتحقق من الأوقات المحجوزة (افتراضي 30 يوم)
+     * @param int $period مدة الحصة بالدقائق (افتراضي 60)
+     * @return \Illuminate\Support\Collection
+     */
+    public function getFilteredAvailabilities($daysForward = 30, $period = 60)
+    {
+        $allAvailabilities = $this->availabilities()->get();
+        
+        // إذا لم يكن هناك أوقات متاحة، ارجع collection فارغة
+        if ($allAvailabilities->isEmpty()) {
+            return $allAvailabilities;
+        }
+
+        // جلب جميع الأوقات المحجوزة للمعلم في الأيام القادمة
+        $now = now();
+        $futureDate = $now->copy()->addDays($daysForward);
+        
+        $bookedConferences = \App\Models\Conference::where('tutor_id', $this->id)
+            ->whereBetween('start_date_time', [$now->format('Y-m-d H:i:s'), $futureDate->format('Y-m-d H:i:s')])
+            ->whereNotNull('start_date_time')
+            ->whereNotNull('end_date_time')
+            ->get(['start_date_time', 'end_date_time']);
+
+        // تجميع الأوقات المحجوزة حسب اليوم والوقت
+        $bookedSlotsByDay = [];
+        foreach ($bookedConferences as $conference) {
+            $start = new \DateTime($conference->start_date_time);
+            $dayName = strtolower($start->format('l')); // monday, tuesday, etc.
+            
+            if (!isset($bookedSlotsByDay[$dayName])) {
+                $bookedSlotsByDay[$dayName] = [];
+            }
+            
+            $startMinutes = (int)$start->format('H') * 60 + (int)$start->format('i');
+            $end = new \DateTime($conference->end_date_time);
+            $endMinutes = (int)$end->format('H') * 60 + (int)$end->format('i');
+            
+            // إضافة جميع الدقائق المحجوزة
+            for ($min = $startMinutes; $min < $endMinutes; $min++) {
+                $bookedSlotsByDay[$dayName][$min] = true;
+            }
+        }
+
+        // دالة مساعدة لتحويل الوقت إلى دقائق
+        $timeToMinutes = function($time) {
+            [$hours, $minutes] = explode(':', $time);
+            return (int)$hours * 60 + (int)$minutes;
+        };
+
+        // فلترة الأوقات المتاحة
+        return $allAvailabilities->filter(function($availability) use ($bookedSlotsByDay, $period, $timeToMinutes) {
+            if (!isset($availability->day) || !isset($availability->day->name)) {
+                return true; // إذا لم يكن هناك معلومات اليوم، نرجعها كما هي
+            }
+            
+            $dayName = strtolower($availability->day->name);
+            
+            // إذا لم يكن هناك أوقات محجوزة لهذا اليوم، نرجع الفترة كما هي
+            if (empty($bookedSlotsByDay[$dayName])) {
+                return true;
+            }
+
+            // التحقق من أن الفترة المتاحة غير محجوزة بالكامل
+            $fromMinutes = $timeToMinutes($availability->hour_from);
+            $toMinutes = $timeToMinutes($availability->hour_to);
+            
+            // فحص إذا كانت هناك فترة واحدة متاحة على الأقل
+            $checkInterval = 30; // فحص كل 30 دقيقة
+            for ($checkTime = $fromMinutes; $checkTime <= ($toMinutes - $period); $checkTime += $checkInterval) {
+                $slotEnd = $checkTime + $period;
+                $isBooked = false;
+                
+                for ($min = $checkTime; $min < $slotEnd; $min++) {
+                    if (isset($bookedSlotsByDay[$dayName][$min])) {
+                        $isBooked = true;
+                        break;
+                    }
+                }
+                
+                // إذا وجدنا فترة واحدة متاحة على الأقل، نرجع true
+                if (!$isBooked) {
+                    return true;
+                }
+            }
+            
+            // إذا كانت جميع الفترات محجوزة، نرجع false
+            return false;
+        });
+    }
+
 }

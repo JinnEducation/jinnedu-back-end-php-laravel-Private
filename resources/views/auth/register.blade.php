@@ -699,7 +699,7 @@
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     @foreach ($specializations as $specialization)
-                                    <option value="{{$subject->name}}">{{$subject->name}}</option>
+                                    <option value="{{$specialization->name}}">{{$specialization->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -1312,7 +1312,7 @@
                         <div class="mb-6">
                             <div class="mb-6">
                                 <!-- <label class="block text-sm font-semibold text-gray-900 mb-2">Hourly Rate</label> -->
-                                <input type="text"
+                                <input type="number" min="0" step="any"
                                     placeholder="{{ label_text('global', 'site.register-hourly-rate-placeholder', __('site.Hourly Rate')) }}"
                                     name="hourly_rate" required
                                     class="w-full px-4 py-8 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:bg-[#F3F5FA] focus:ring-2 focus:ring-primary/20 transition-all">

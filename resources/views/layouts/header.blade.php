@@ -226,7 +226,7 @@
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.online-group-classes', __('site.online group classes')) }}
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('site.online_private_classes') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.Private-Classes', __('site.Private Classes')) }}
                                 </a>

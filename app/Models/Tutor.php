@@ -51,4 +51,14 @@ class Tutor extends User
         return $this->belongsToMany(GroupClass::class, 'group_class_tutors', 'tutor_id', 'group_class_id')
                     ->withPivot('status');
     }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class, 'user_id', 'id');
+    }
+
+    public function tutorProfile()
+    {
+        return $this->hasOne(TutorProfile::class, 'user_id', 'id');
+    }
 }

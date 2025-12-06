@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Front\CheckoutController;
+use App\Http\Controllers\Front\ExamController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MuxController;
@@ -73,16 +74,24 @@ Route::group([
     
     Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
-    Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->name('site.group_class_order');
+    Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->middleware('check_student')->name('site.group_class_order');
 
-    Route::post('private-lesson-order/{id}', [HomeController::class, 'privateLessonOrder'])->name('site.private_lesson_order');
+    Route::post('private-lesson-order/{id}', [HomeController::class, 'privateLessonOrder'])->middleware('check_student')->name('site.private_lesson_order');
 
 
     Route::get('online_private_classes', [HomeController::class, 'online_private_classes'])->name('site.online_private_classes');
     Route::get('tutor_jinn/{id}', [HomeController::class, 'tutor_jinn'])->name('site.tutor_jinn');
 
-    // checkout
+    Route::get('take-exam-successful/{id}', [ExamController::class, 'success'])->name('site.take_exam_successful');
+
     Route::middleware(['auth:web', 'check_student'])->group(function() {
+
+        // exam
+        Route::get('take-exam/{group_class_id}', [ExamController::class, 'index'])->name('site.take_exam');
+        Route::post('take-exam/{group_class_id}', [ExamController::class, 'store'])->name('site.take_exam_store');
+        Route::get('exam-result/{id}', [ExamController::class, 'show'])->name('site.exam_result');
+
+        // checkout
         Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
         Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
         Route::get('checkout-complete', [CheckoutController::class, 'checkoutComplete'])->name('checkout-complete');
