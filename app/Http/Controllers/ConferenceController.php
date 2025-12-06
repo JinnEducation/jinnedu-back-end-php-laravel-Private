@@ -55,18 +55,14 @@ class ConferenceController extends Controller
 	    $conference->order_id=$order->id;
 	    
 	    $conference->title=$order->note;
-	    
-	    $conference->start_date_time = $order->dates;
+        $order->dates = json_decode($order->dates);
+
+        $conference->start_date_time = $order->dates?->start_date_time;
 	    $conference->end_date_time   = date('Y-m-d H:i:s', strtotime($conference->start_date_time.' +40 minutes'));
 	    
-	    $start_date_time = explode(' ', $conference->start_date_time);
-	    $end_date_time   = explode(' ', $conference->end_date_time); 
-	    //echo $end_date_time;exit;
-	    //echo date("H:iA", strtotime($date_time[1]));exit;
-	    
-	    $conference->date = $start_date_time[0];
-	    $conference->start_time = date("h:iA", strtotime($start_date_time[1]));
-	    $conference->end_time   = date("h:iA", strtotime($end_date_time[1]));
+	    $conference->date = $order->dates?->date;
+	    $conference->start_time = $order->dates?->start_date_time;
+	    $conference->end_time   = $conference->end_date_time;
 	    $conference->record=3;
 	    $conference->timezone=35;
 	    
@@ -82,11 +78,23 @@ class ConferenceController extends Controller
         	'date' => $conference->date,
         	'record' => 3
         );
-        
-        $braincert = new BraincertController;
-        $conference->response = $braincert->conferenceCreate($postValues);
-        //$notes = json_encode($postValues);
+    
+
+        // $braincert = new BraincertController;
+        // $conference->response = $braincert->conferenceCreate($postValues);
+        $zoom = new ZoomController;
+        // $conference->response = $zoom->createMeeting($postValues);
+        $result = $zoom->createMeeting($postValues);
+
+        $conference->response = json_encode($result);
+        // $conference->notes = json_encode($postValues);
         $conference->save();
+
+        
+        // $braincert = new BraincertController;
+        // $conference->response = $braincert->conferenceCreate($postValues);
+        //$notes = json_encode($postValues);
+        // $conference->save();
         
         /*
         $braincert = json_encode($conference->response);
@@ -99,6 +107,7 @@ class ConferenceController extends Controller
         */
         
         $conferences= Conference::where('order_id',$order->id)->get();
+        return $conferences;
     }
     
     public function createOurCourseConferences($order){

@@ -212,7 +212,18 @@ class WalletController extends Controller
             $class_date = date('Y-m-d H:i:s', strtotime($group_class_date->class_date));
         }else{
             $percentage = getSettingVal('private_lesson_fees');
-            $class_date = date('Y-m-d H:i:s', strtotime($order->dates));
+            
+            // Check if dates is JSON and contains array with start_date_time
+            $dates = $order->dates;
+            $decoded = json_decode($dates, true);
+            
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && isset($decoded['start_date_time'])) {
+                // If it's JSON array with start_date_time, use it
+                $class_date = date('Y-m-d H:i:s', strtotime($decoded['start_date_time']));
+            } else {
+                // If it's direct date string, use it as is
+                $class_date = date('Y-m-d H:i:s', strtotime($dates));
+            }
         }
 
         $data =[
@@ -356,26 +367,25 @@ class WalletController extends Controller
                 $conference = new ConferenceController;
     	        $conferences= $conference->createOurCourseConferences($order);
             }else if($order->ref_type==4){
-                if($wallet->private_lesson_count>0) {
-                    $wallet->private_lesson_count -=1;
-                    $wallet->save();
+                // if($wallet->private_lesson_count>0) {
+                //     $wallet->private_lesson_count -=1;
+                //     $wallet->save();
                     
-                    $order->payment = 'wallet-package';
-                    $order->save();
+                //     $order->payment = 'wallet-package';
+                //     $order->save();
                     
-                    //$this->addTutorTransferToHisWallet($order,$order->ref_id);
-                    $this->addTutorFinance($order,$order->ref_id, 4);
-        	    }else {
-        	        $wallet->balance -= $order->price;
-                    $wallet->save();
+                //     //$this->addTutorTransferToHisWallet($order,$order->ref_id);
+                //     $this->addTutorFinance($order,$order->ref_id, 4);
+        	    // }else {
+        	    //     $wallet->balance -= $order->price;
+                //     $wallet->save();
         	        
-        	        //$this->addTutorTransferToHisWallet($order,$order->ref_id);
-                    $this->addTutorFinance($order,$order->ref_id, 4);
-        	    }
+        	    //     //$this->addTutorTransferToHisWallet($order,$order->ref_id);
+                //     $this->addTutorFinance($order,$order->ref_id, 4);
+        	    // }
         	    //=====================================================================
                 $conference = new ConferenceController;
     	        $conferences= $conference->createPrivateLessonConference($order);
-                                
 
                 $user = User::find($order->tutor_id);
                 $info = [

@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Http\Controllers\WalletController;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\WalletPaymentTransaction;
@@ -131,6 +132,11 @@ class LocalTestService implements PaymentInterface
             $order->status = 1; // completed
             $order->payment = 'local-test';
             $order->save();
+
+            if($order->ref_type == 4) {
+                $walletController = new WalletController();
+                $walletController->addTutorFinance($order,$order->ref_id, 4);
+            }
 
             // Create wallet transaction record
             WalletTransaction::create([

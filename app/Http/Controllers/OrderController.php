@@ -395,17 +395,31 @@ class OrderController extends Controller
 
         if ($tutor) {
             // ======================================================
+            // التحقق من توفر المعلم في الوقت المحدد
             $availabileTime = false;
             $tutor->availabilities = $tutor->availabilities()->get();
-            if ($tutor->availabilities) {
+            
+            if ($tutor->availabilities && $tutor->availabilities->isNotEmpty()) {
+                $dayName = strtolower($book_start->format('l')); // Monday, Tuesday, etc.
+                
                 foreach ($tutor->availabilities as $availability) {
-                    $availability->timezone;
-                    $availability->day;
-                    if (strtolower($availability->day->name) == strtolower($book_start->format('l'))) {
-                        $availabile_from = new DateTime($book_start->format('Y-m-d').' '.$availability->hour_from.':00');
-                        $availabile_to = new DateTime($book_start->format('Y-m-d').' '.$availability->hour_to.':00');
+                    // التحقق من وجود day object
+                    if (!isset($availability->day) || !isset($availability->day->name)) {
+                        continue;
+                    }
+                    
+                    $availabilityDayName = strtolower($availability->day->name);
+                    
+                    // التحقق من أن اليوم متطابق
+                    if ($availabilityDayName == $dayName) {
+                        // بناء تواريخ البداية والنهاية للفترة المتاحة
+                        $availabile_from = new DateTime($book_start->format('Y-m-d').' '.$availability->hour_from);
+                        $availabile_to = new DateTime($book_start->format('Y-m-d').' '.$availability->hour_to);
+                        
+                        // التحقق من أن وقت الحجز يقع ضمن الفترة المتاحة
                         if ($book_start >= $availabile_from && $book_end <= $availabile_to) {
                             $availabileTime = true;
+                            break; // وجدنا فترة متاحة، لا حاجة للبحث أكثر
                         }
                     }
                 }
@@ -451,6 +465,136 @@ class OrderController extends Controller
         ];
     }
 
+    /**
+     * جلب آخر موعد متاح للحجز
+     * 
+     * @param User $tutor المعلم
+     * @param int $period مدة الحجز بالدقائق
+     * @param int $daysToCheck عدد الأيام للبحث (افتراضي: 30 يوم)
+     * @return array|null آخر موعد متاح أو null إذا لم يوجد
+     */
+    public function getLastAvailableBookingTime($tutor, $period = 40, $daysToCheck = 30)
+    {
+        if (!$tutor) {
+            return null;
+        }
+
+        $now = new DateTime('now');
+        $endSearchDate = clone $now;
+        $endSearchDate->modify("+{$daysToCheck} days");
+
+        // الحصول على جميع المواعيد المتاحة
+        $availabilities = $tutor->availabilities()->get();
+        
+        if (!$availabilities || $availabilities->isEmpty()) {
+            return null;
+        }
+
+        // الحصول على جميع الحجوزات الموجودة للمعلم
+        $existingBookings = Conference::where('tutor_id', $tutor->id)
+            ->where('start_date_time', '>=', $now->format('Y-m-d H:i:s'))
+            ->where('start_date_time', '<=', $endSearchDate->format('Y-m-d H:i:s'))
+            ->orderBy('start_date_time', 'desc')
+            ->get();
+
+        // إنشاء خريطة للحجوزات حسب التاريخ
+        $bookingsMap = [];
+        foreach ($existingBookings as $booking) {
+            $bookingStart = new DateTime($booking->start_date_time);
+            $bookingEnd = new DateTime($booking->end_date_time);
+            $dateKey = $bookingStart->format('Y-m-d');
+            
+            if (!isset($bookingsMap[$dateKey])) {
+                $bookingsMap[$dateKey] = [];
+            }
+            
+            $bookingsMap[$dateKey][] = [
+                'start' => $bookingStart,
+                'end' => $bookingEnd,
+            ];
+        }
+
+        // البحث من آخر يوم إلى أول يوم
+        $currentDate = clone $endSearchDate;
+        
+        while ($currentDate >= $now) {
+            $dateKey = $currentDate->format('Y-m-d');
+            $dayName = strtolower($currentDate->format('l'));
+            
+            // الحصول على المواعيد المتاحة لهذا اليوم
+            $dayAvailabilities = $availabilities->filter(function($av) use ($dayName) {
+                if (!isset($av->day) || !isset($av->day->name)) {
+                    return false;
+                }
+                return strtolower($av->day->name) == $dayName;
+            });
+
+            if ($dayAvailabilities->isNotEmpty()) {
+                // الحصول على الحجوزات لهذا اليوم
+                $dayBookings = $bookingsMap[$dateKey] ?? [];
+                
+                // البحث في كل فترة متاحة
+                foreach ($dayAvailabilities as $availability) {
+                    $availableFrom = new DateTime($dateKey . ' ' . $availability->hour_from);
+                    $availableTo = new DateTime($dateKey . ' ' . $availability->hour_to);
+                    
+                    // التحقق من أن الفترة في المستقبل
+                    if ($availableTo <= $now) {
+                        continue;
+                    }
+                    
+                    // البحث عن آخر وقت متاح في هذه الفترة
+                    // نبدأ من نهاية الفترة ونرجع للخلف
+                    $testTime = clone $availableTo;
+                    $testTime->modify("-{$period} minutes"); // نرجع بمقدار مدة الحجز
+                    
+                    // التأكد من أننا لا نتجاوز بداية الفترة
+                    if ($testTime < $availableFrom) {
+                        $testTime = clone $availableFrom;
+                    }
+                    
+                    // البحث عن آخر وقت متاح قبل الحجوزات
+                    while ($testTime >= $availableFrom && $testTime >= $now) {
+                        $testEnd = clone $testTime;
+                        $testEnd->modify("+{$period} minutes");
+                        
+                        // التحقق من عدم التعارض مع الحجوزات
+                        $hasConflict = false;
+                        foreach ($dayBookings as $booking) {
+                            // التحقق من التعارض
+                            if (($testTime >= $booking['start'] && $testTime < $booking['end']) ||
+                                ($testEnd > $booking['start'] && $testEnd <= $booking['end']) ||
+                                ($testTime <= $booking['start'] && $testEnd >= $booking['end'])) {
+                                $hasConflict = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!$hasConflict) {
+                            // وجدنا آخر موعد متاح
+                            return [
+                                'success' => true,
+                                'start_date_time' => $testTime->format('Y-m-d H:i:s'),
+                                'end_date_time' => $testEnd->format('Y-m-d H:i:s'),
+                                'date' => $dateKey,
+                                'day_name' => ucfirst($dayName),
+                            ];
+                        }
+                        
+                        // نرجع 30 دقيقة للخلف ونحاول مرة أخرى
+                        $testTime->modify('-30 minutes');
+                    }
+                }
+            }
+            
+            // الانتقال لليوم السابق
+            $currentDate->modify('-1 day');
+        }
+
+        // لم نجد أي موعد متاح
+        return null;
+    }
+
     public function privateLesson(Request $request, $id)
     {
         // dd('123');
@@ -480,8 +624,8 @@ class OrderController extends Controller
             ], 200);
         }
 
-        $hourlyPrices = $tutor->hourlyPrices()->orderBy('id', 'desc')->first();
-        if (! $hourlyPrices) {
+        $hourlyPrice = (int)($tutor?->tutorProfile?->hourly_rate ?? 0);
+        if ($hourlyPrice == 0) {
             return response([
                 'success' => false,
                 'message' => 'hourly-price-not-found',
@@ -489,27 +633,28 @@ class OrderController extends Controller
             ], 200);
         }
 
-        $checkAllowBooking = $this->checkAllowBooking($user, $tutor, $request->date, 40);
-        if (! $checkAllowBooking['success']) {
-            return response($checkAllowBooking, 200);
-        }
+        // بعد ما تراجع اساسيات المواعيد واختيار موعد تفعل
+        // $checkAllowBooking = $this->checkAllowBooking($user, $tutor, $request->date, 40);
+        // if (! $checkAllowBooking['success']) {
+        //     return response($checkAllowBooking, 200);
+        // }
 
-        if (! empty($request->currency_id)) {
-            $currency = new CurrencyController;
-            $this->currencyResponse = $currency->latestExchange($request->currency_id, false);
-            if (! $this->currencyResponse['success']) {
-                return response($this->currencyResponse, 200);
-            }
-        }
+        // if (! empty($request->currency_id)) {
+        //     $currency = new CurrencyController;
+        //     $this->currencyResponse = $currency->latestExchange($request->currency_id, false);
+        //     if (! $this->currencyResponse['success']) {
+        //         return response($this->currencyResponse, 200);
+        //     }
+        // }
 
         $order = new Order;
         $order->user_id = $user->id;
         $order->ipaddress = $request->ip();
         $order->note = 'private-lesson';
-        $order->dates = $request->date;
+        $order->dates = json_encode($request->date);
         $order->ref_type = 4;
         $order->ref_id = $tutor->id;
-        $order->price = $hourlyPrices->price;
+        $order->price = $hourlyPrice;
         $order->outline_id = 0;
         $order->tutor_id = $tutor->id;
 

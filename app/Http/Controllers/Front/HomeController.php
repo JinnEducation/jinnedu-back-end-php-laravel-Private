@@ -20,6 +20,7 @@ use App\Models\OurCourse;
 use App\Models\Slider;
 use App\Models\Specialization;
 use App\Models\Subject;
+use App\Models\TutorReview;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -310,11 +311,12 @@ class HomeController extends Controller
                 return false;
             }
 
-            if($class->level?->level_number > 1){
-                if($class->exams?->count() <= 0){
+            if ($class->level?->level_number > 1) {
+                if ($class->exams?->count() <= 0) {
                     return false;
                 }
             }
+
             return true;
         });
 
@@ -587,85 +589,6 @@ class HomeController extends Controller
         }
     }
 
-    public function privateLessonOrder(string $locale, Request $request, string|int $id)
-{
-    DB::beginTransaction();
-    try {
-        $tutor = \App\Models\Tutor::find($id);
-        if (! $tutor) {
-            return redirect()->back()->with('error', 'Tutor not found');
-        }
-
-        $orderController = new \App\Http\Controllers\OrderController;
-        $response = $orderController->privateLesson($request, $id);
-        $original = $response->getOriginalContent();
-
-        if ($original['success']) {
-            $walletController = new WalletController();
-            $responseCheckout = $walletController->checkout($original['result']['id'] ?? $original['order_id']);
-            $originalCheckout = $responseCheckout->getOriginalContent();
-
-            if (!$originalCheckout['success']) {
-                return redirect()->back()->with('error', $originalCheckout['message']);
-            }
-
-            $orderId = $original['result']['id'] ?? $original['order_id'];
-            $order = Order::find($orderId);
-
-            if (!$order) {
-                DB::rollBack();
-                return redirect()->back()->with('error', 'Order not found');
-            }
-
-            // هل يريد الدفع مباشرة من المحفظة؟
-            $payDirectly = $request->get('pay_directly', false);
-
-            $user = Auth::user();
-            $wallet = $user->wallets()->first();
-            $walletBalance = $wallet ? $wallet->balance : 0;
-            $hasEnoughBalance = $walletBalance >= $order->price;
-
-            // الدفع المباشر
-            if ($payDirectly && $hasEnoughBalance) {
-                $responseCheckout = $walletController->checkout($orderId);
-                $originalCheckout = $responseCheckout->getOriginalContent();
-
-                if ($originalCheckout['success']) {
-                    DB::commit();
-                    return redirect()->route('redirect.dashboard')
-                        ->with('success', $originalCheckout['message']);
-                } else {
-                    DB::rollBack();
-                    // إذا فشل الدفع نرسله لصفحة checkout
-                    return redirect()->route('checkout', [
-                        'type' => 'pay',
-                        'order_ids' => $orderId
-                    ])->with('error', $originalCheckout['message'] ?? 'Payment failed');
-                }
-            }
-
-            // التوجيه إلى صفحة الدفع مع خيارات الدفع
-            DB::commit();
-            return redirect()->route('checkout', [
-                'type' => 'pay',
-                'order_ids' => $orderId
-            ])->with('info', $hasEnoughBalance
-                ? 'You can pay from your wallet or choose another payment method'
-                : 'Please complete payment to finish your order'
-            );
-
-        } else {
-            DB::rollBack();
-            return redirect()->back()->with('error', $original['message']);
-        }
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', $e->getMessage());
-    }
-}
-
-
-
     public function online_private_classes()
     {
         $tutors = User::where('type', 2)
@@ -699,9 +622,131 @@ class HomeController extends Controller
         if (! $tutor->tutorProfile) {
             abort(404);
         }
+        $order = Order::where('user_id',Auth::id())->where('tutor_id',$tutor->id)->first();
+        if($order){
+            $order->dates = json_decode($order->dates);
+            $time = $order->dates?->start_date_time;
 
-        $availabilities = $tutor->availabilities()->get();
+            // نتأكد إذا الوقت مر أو لا، والتخزين بيكون true إذا الوقت انتهى و false إذا لسه
+            $checkTimeOrder = Carbon::now()->lt(Carbon::parse($time));
+        }
 
-        return view('front.tutor_jinn', compact('tutor', 'availabilities'));
+        $availabilities = $tutor->getFilteredAvailabilities();
+        $tutorsSuggestions = User::where('type', 2)
+            ->with([
+                'profile',
+                'tutorProfile',
+            ])
+            ->where('id','!=',$tutor->id)
+            ->take(2)
+            ->orderBy('id', 'desc')
+            ->get();
+        $reviews = TutorReview::where('tutor_id',$tutor->id)->get();
+        $reviewsCount = $reviews->count();
+
+        return view('front.tutor_jinn', compact('tutor', 'availabilities','tutorsSuggestions','reviewsCount','reviews','checkTimeOrder'));
     }
+
+    public function privateLessonOrder(string $locale, Request $request, string|int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $tutor = \App\Models\Tutor::find($id);
+            if (! $tutor) {
+                return redirect()->back()->with('error', 'Tutor not found');
+            }
+
+            $order = Order::where('user_id',Auth::id())->where('tutor_id',$tutor->id)->first();
+            if($order){
+                $order->dates = json_decode($order->dates);
+                $time = $order->dates?->start_date_time;
+    
+                // نتأكد إذا الوقت مر أو لا، والتخزين بيكون true إذا الوقت انتهى و false إذا لسه
+                $checkTimeOrder = Carbon::now()->lt(Carbon::parse($time));
+                if($checkTimeOrder){
+                    return redirect()->route('redirect.dashboard')->with('error', 'You have already booked a lesson with this tutor');
+                }
+            }
+
+            $orderController = new OrderController;
+
+            $request->date = $orderController->getLastAvailableBookingTime($tutor, 60);
+            if (! $request->date['success']) {
+                return redirect()->back()->with('error', 'No available time found');
+            }
+
+            
+            $response = $orderController->privateLesson($request, $id);
+            $original = $response->getOriginalContent();
+            if ($original['success']) {
+                $walletController = new WalletController;
+                $responseCheckout = $walletController->checkout($original['result']['id'] ?? $original['order_id']);
+                $originalCheckout = $responseCheckout->getOriginalContent();
+
+                if (! $originalCheckout['success']) {
+                    return redirect()->back()->with('error', $originalCheckout['message']);
+                }
+
+                $orderId = $original['result']['id'] ?? $original['order_id'];
+                $order = Order::find($orderId);
+
+                if (! $order) {
+                    DB::rollBack();
+
+                    return redirect()->back()->with('error', 'Order not found');
+                }
+
+                // هل يريد الدفع مباشرة من المحفظة؟
+                $payDirectly = $request->get('pay_directly', false);
+
+                $user = Auth::user();
+                $wallet = $user->wallets()->first();
+                $walletBalance = $wallet ? $wallet->balance : 0;
+                $hasEnoughBalance = $walletBalance >= $order->price;
+                // الدفع المباشر
+                if ($payDirectly && $hasEnoughBalance) {
+                    $responseCheckout = $walletController->checkout($orderId);
+                    $originalCheckout = $responseCheckout->getOriginalContent();
+
+                    if ($originalCheckout['success']) {
+                        $walletController->addTutorFinance($order,$order->ref_id, 4);
+                        DB::commit();
+
+                        return redirect()->route('redirect.dashboard')
+                            ->with('success', $originalCheckout['message']);
+                    } else {
+                        DB::rollBack();
+
+                        // إذا فشل الدفع نرسله لصفحة checkout
+                        return redirect()->route('checkout', [
+                            'type' => 'pay',
+                            'order_ids' => $orderId,
+                        ])->with('error', $originalCheckout['message'] ?? 'Payment failed');
+                    }
+                }
+
+                // التوجيه إلى صفحة الدفع مع خيارات الدفع
+                DB::commit();
+
+                return redirect()->route('checkout', [
+                    'type' => 'pay',
+                    'order_ids' => $orderId,
+                ])->with('info', $hasEnoughBalance
+                    ? 'You can pay from your wallet or choose another payment method'
+                    : 'Please complete payment to finish your order'
+                );
+
+            } else {
+                DB::rollBack();
+
+                return redirect()->back()->with('error', $original['message']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
 }
