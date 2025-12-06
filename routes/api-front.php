@@ -48,8 +48,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TutorController;
-
-use App\Http\Controllers\GroupClassExamController;
 use App\Http\Controllers\InviteController;
 
 use App\Http\Controllers\PaypalCheckoutController;
@@ -200,13 +198,6 @@ Route::prefix('front')->name('front.')->group(function () {
     Route::post('/add-support', [SupportController::class,'add'])->name('add-support');
 
     Route::get('/latest-currency-exchange/{id}', [CurrencyController::class,'latestExchange'])->name('latest-currency-exchange');
-
-
-    Route::middleware(['auth:sanctum','single_login_session'])->prefix('group-classes-exam')->name('group-classes-exam.')->group(function () {
-        Route::post('/create', [GroupClassExamController::class,'store'])->name('store');
-        Route::get('result/{id}',[GroupClassExamController::class,'getGroupClass'])->name('getGroupClass');
-        Route::get('/{id}', [GroupClassExamController::class,'index'])->name('index');
-    });
 
     Route::middleware(['auth:sanctum','single_login_session'])->group(function(){
         Route::get('tutors-favorites', [UserController::class, 'tutorFavorite'])->name('tutors-Favorites');

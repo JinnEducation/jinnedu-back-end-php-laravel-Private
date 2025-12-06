@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             case 'specialization': {
                 // من data-specialization-ids = "1,2,3"
-                const value = (card.dataset.specializationIds || '').toLowerCase();
+                const value = (card.dataset.specialization || '').toLowerCase();
                 if (!filterValue) return true;
                 const specs = value
                     .split(',')
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             case 'alsoSpeaks': {
                 // من data-also-speaks-ids = "1,3,5"
-                const value = (card.dataset.alsoSpeaksIds || '').toLowerCase();
+                const value = (card.dataset.alsoSpeaks || '').toLowerCase();
                 if (!filterValue) return true;
                 const langs = value
                     .split(',')

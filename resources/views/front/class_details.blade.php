@@ -195,6 +195,12 @@
 
                 <!-- Right Column: Booking Card -->
                 <div class="lg:col-span-1">
+                    @if($exams->count() > 0)
+                    <a href="{{ route('site.take_exam', ['locale' => app()->getLocale(), 'group_class_id' => $group_class->id]) }}"
+                        class="block text-center px-6 py-3 mb-6 text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                        Take Exam
+                    </a>
+                    @endif
                     <div class="bg-white rounded-md border border-gray-200 shadow-sm p-6 sticky top-31">
                         <div class="flex justify-between items-center mb-3">
                             <h2 class="text-lg font-bold text-black">Booking</h2>
@@ -215,7 +221,7 @@
                             <!-- Price -->
                             <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
                                 <span class="text-[15px] font-semibold text-black">Price</span>
-                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD/session</span>
+                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD</span>
                             </div>
 
                             <!-- Date/Time Selection -->
@@ -229,21 +235,20 @@
                                 @endforeach
                             </div>
 
-                            <!-- Book Now Button -->
-                            @auth
-                            <button type="submit"
-                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                                Book Now
-                            </button>
-                            @endauth
-                                
                             @guest
                             <button type="button" data-open="#loginModal"
                                 class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                                Book Now
-                            </button>                            
+                                Login to Book
+                            </button>
                             @endguest
 
+                            @auth
+                            <!-- Book Now Button -->
+                            <button type="submit"
+                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                Book Now
+                            </button>                                    
+                            @endauth
                             
                         </form>
                         <p class="text-xs text-center text-gray-500">

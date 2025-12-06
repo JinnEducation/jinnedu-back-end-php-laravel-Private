@@ -37,6 +37,10 @@ class ConstantController extends Controller
             $items->whereRaw(filterTextDB('translations.title') . ' like ?', ['%' . filterText($request->q) . '%']);
             $items->distinct();
         }
+        if($request->has('exams') && $request->exams == 1){
+            $items->where('level_number', '>', 1);
+        }
+    
 
         //dd( $items->toSql() );
 
@@ -53,7 +57,7 @@ class ConstantController extends Controller
             }
         
         }
-        
+
         $data = [
                'success' => true,
                'message' => 'item-listed-successfully',
@@ -85,9 +89,9 @@ class ConstantController extends Controller
 
     public function storeUpdateRequest($request, $id = 0)
     {
-        $data = $request->only(['name']);
+        $data = $request->only(['name','level_number']);
         $data['name'] = str_replace(' ', '-', strtolower($data['name']));
-        $itemDuplicated = $this->modelName::where('name', $data['name'])->where('id', '<>', $id)->first();
+        $itemDuplicated = $this->modelName::where('name', $data['name'])->where('level_number', $data['level_number'])->where('id', '<>', $id)->first();
         if($itemDuplicated) {
             return response([
                     'success' => false,
@@ -112,7 +116,7 @@ class ConstantController extends Controller
             $item = $this->modelName::create($data);
         }
 
-        $req = json_decode('{"name":"'.$data['name'].'", "file":"'.$this->modelTitle.'", "title":"'.$data['name'].'"}');
+        $req = json_decode('{"name":"'.$data['name'].'", "file":"'.$this->modelTitle.'", "title":"'.$data['name'].'", "level_number":"'.$data['level_number'].'"}');
         $req->trans = $request->trans;
         $this->addLabelAndTranslations($req);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WalletController;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\UserWallet;
@@ -115,7 +116,6 @@ class CheckoutController extends Controller
         if($request->has('discount_code') && !empty($request->discount_code)) {
             $discountAmount = $this->applyDiscountCode($request->discount_code);
         }
-
         // Route to appropriate handler
         if($checkoutType === 'topup') {
             return $this->handleTopup($request, $user, $discountAmount);
@@ -262,6 +262,11 @@ class CheckoutController extends Controller
             $order->status = 1; // completed
             $order->payment = 'wallet';
             $order->save();
+
+            if($order->ref_type == 4) {
+                $walletController = new WalletController();
+                $walletController->addTutorFinance($order,$order->ref_id, 4);
+            }
 
             // Create wallet transaction record
             \App\Models\WalletTransaction::create([

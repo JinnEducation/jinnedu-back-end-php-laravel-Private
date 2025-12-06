@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ExamLang extends Model
+class ExamQuestionLang extends Model
 {
-    protected $table = 'exams_langs';
+    protected $table = 'exam_question_langs';
     protected $guarded = [];
 
-    public function exam()
+    public function question()
     {
-        return $this->belongsTo(Exam::class, 'exam_id');
+        return $this->belongsTo(ExamQuestion::class, 'question_id');
     }
 
     public function language()
@@ -19,3 +19,4 @@ class ExamLang extends Model
         return $this->belongsTo(Language::class, 'language_id');
     }
 }
+

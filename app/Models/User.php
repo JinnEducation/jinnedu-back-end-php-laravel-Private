@@ -349,6 +349,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     return collect(value: $result);
                 }
 
+
                 return collect(value: []);
             }
 
@@ -359,6 +360,7 @@ class User extends Authenticatable implements MustVerifyEmail
             {
                 [$hours, $minutes] = explode(':', $time);
                 return (int)$hours * 60 + (int)$minutes;
+
             }
         };
     }
