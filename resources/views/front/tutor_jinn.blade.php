@@ -395,10 +395,38 @@
                             @auth
                                 <!-- Action Buttons -->
                                 <div class="space-y-3">
-                                    <button
-                                        class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        Book trial lesson
-                                    </button>
+                                    @if(!$orderTrialExists)
+                                    <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}"
+                                        method="POST" class="w-full">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            Book trial lesson
+                                        </button>
+                                    </form>
+                                    @endif
+                                    @if($orderTrialExists && !$orderTrialFinash)
+                                    <a href="route('redirect.dashboard')"
+                                        class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                        Go to dashboard Trial Lesson
+                                    </a>
+                                    @endif
+                                    @if($orderTrialFinash && $checkAllowOrder)
+                                    <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
+                                        method="POST" class="w-full">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            Book Lesson
+                                        </button>
+                                    </form>
+                                    @endif
+                                    @if($orderTrialExists && $orderTrialFinash && !$checkAllowOrder)
+                                    <a href="route('redirect.dashboard')"
+                                        class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                        Go to dashboard
+                                    </a>
+                                    @endif
                                     <button
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
                                         Message {{ $profile?->full_name }}
@@ -407,21 +435,6 @@
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
                                         Save to my list
                                     </button>
-                                    @if($checkTimeOrder)
-                                    <a href="route('redirect.dashboard')"
-                                        class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        Go to dashboard
-                                    </a>
-                                    @else
-                                    <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
-                                        method="POST" class="w-full">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                            Join Now
-                                        </button>
-                                    </form>
-                                    @endif
                                 </div>
                             @endauth
                         </div>

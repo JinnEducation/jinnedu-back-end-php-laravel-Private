@@ -66,7 +66,7 @@ class ConferenceController extends Controller
 	    $conference->record=3;
 	    $conference->timezone=35;
 	    
-	    $conference->type='braincert';
+	    $conference->type='zoom'; // braincert
 	    $conference->status=0;
 	    $conference->save();
 	    

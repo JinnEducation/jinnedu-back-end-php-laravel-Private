@@ -12,6 +12,7 @@ use App\Models\Post;
 use App\Models\Student;
 use App\Models\Tutor;
 use App\Models\User;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -308,7 +309,7 @@ class OrderController extends Controller
             ], 200);
         }
 
-        $checkAllowBooking = $this->checkAllowBooking($user, $tutor, $request->date, 15);
+        $checkAllowBooking = $this->checkAllowBooking($user, $tutor, $request->date['start_date_time'], 15);
         if (! $checkAllowBooking['success']) {
             return response($checkAllowBooking, 200);
         }
@@ -317,7 +318,7 @@ class OrderController extends Controller
         $order->user_id = $user->id;
         $order->ipaddress = $request->ip();
         $order->note = 'trial-lesson';
-        $order->dates = $request->date;
+        $order->dates = json_encode($request->date);
         $order->ref_type = 3;
         $order->ref_id = $tutor->id;
         $order->price = 0;
@@ -333,23 +334,23 @@ class OrderController extends Controller
         $conference->ref_type = $order->ref_type;
         $conference->order_id = $order->id;
 
-        $conference->title = 'trial-lesson-at '.$request->date;
+        $conference->title = 'trial-lesson-at '.$request->date['start_date_time'];
 
-        $conference->start_date_time = $request->date;
-        $conference->end_date_time = date('Y-m-d H:i:s', strtotime($conference->start_date_time.' +15 minutes'));
+        $conference->start_date_time = $request->date['start_date_time'];
+        $conference->end_date_time = $request->date['end_date_time'];
 
         $start_date_time = explode(' ', $conference->start_date_time);
         $end_date_time = explode(' ', $conference->end_date_time);
         // echo $end_date_time;exit;
         // echo date("H:iA", strtotime($date_time[1]));exit;
 
-        $conference->date = $start_date_time[0];
-        $conference->start_time = date('h:iA', strtotime($start_date_time[1]));
-        $conference->end_time = date('h:iA', strtotime($end_date_time[1]));
+        $conference->date = $request->date['date'];
+        $conference->start_time = Carbon::parse($request->date['start_date_time'])->format('h:iA');
+        $conference->end_time = Carbon::parse($request->date['end_date_time'])->format('h:iA');
         $conference->record = 3;
         $conference->timezone = 35;
 
-        $conference->type = 'braincert';
+        $conference->type = 'zoom'; // braincert
         $conference->status = 0;
         $conference->save();
 
@@ -362,10 +363,17 @@ class OrderController extends Controller
             'record' => 3,
         ];
 
-        $braincert = new BraincertController;
-        $conference->response = $braincert->conferenceCreate($postValues);
-        // $conference->notes = json_encode($postValues);
+        $zoom = new ZoomController;
+        $result = $zoom->createMeeting($postValues);
+
+        $conference->response = json_encode($result);
         $conference->save();
+
+
+        // $braincert = new BraincertController;
+        // $conference->response = $braincert->conferenceCreate($postValues);
+        // // $conference->notes = json_encode($postValues);
+        // $conference->save();
 
         return response([
             'success' => true,
@@ -480,9 +488,7 @@ class OrderController extends Controller
         }
 
         $now = new DateTime('now');
-        $endSearchDate = clone $now;
-        $endSearchDate->modify("+{$daysToCheck} days");
-
+        
         // الحصول على جميع المواعيد المتاحة
         $availabilities = $tutor->availabilities()->get();
         
@@ -490,34 +496,18 @@ class OrderController extends Controller
             return null;
         }
 
-        // الحصول على جميع الحجوزات الموجودة للمعلم
-        $existingBookings = Conference::where('tutor_id', $tutor->id)
-            ->where('start_date_time', '>=', $now->format('Y-m-d H:i:s'))
-            ->where('start_date_time', '<=', $endSearchDate->format('Y-m-d H:i:s'))
-            ->orderBy('start_date_time', 'desc')
-            ->get();
-
-        // إنشاء خريطة للحجوزات حسب التاريخ
-        $bookingsMap = [];
-        foreach ($existingBookings as $booking) {
-            $bookingStart = new DateTime($booking->start_date_time);
-            $bookingEnd = new DateTime($booking->end_date_time);
-            $dateKey = $bookingStart->format('Y-m-d');
-            
-            if (!isset($bookingsMap[$dateKey])) {
-                $bookingsMap[$dateKey] = [];
-            }
-            
-            $bookingsMap[$dateKey][] = [
-                'start' => $bookingStart,
-                'end' => $bookingEnd,
-            ];
-        }
-
-        // البحث من آخر يوم إلى أول يوم
-        $currentDate = clone $endSearchDate;
+        // حد أقصى للبحث
+        $maxSearchDate = clone $now;
+        $maxSearchDate->modify("+{$daysToCheck} days");
         
-        while ($currentDate >= $now) {
+        // البدء من بكرا (اليوم التالي)
+        $currentDate = clone $now;
+        $currentDate->modify('+1 day');
+        $currentDate->setTime(0, 0, 0); // بداية اليوم
+        $daysSearched = 0;
+        
+        // البحث من بكرا للأمام حتى نجد موعد متاح
+        while ($currentDate <= $maxSearchDate && $daysSearched < $daysToCheck) {
             $dateKey = $currentDate->format('Y-m-d');
             $dayName = strtolower($currentDate->format('l'));
             
@@ -530,37 +520,47 @@ class OrderController extends Controller
             });
 
             if ($dayAvailabilities->isNotEmpty()) {
-                // الحصول على الحجوزات لهذا اليوم
-                $dayBookings = $bookingsMap[$dateKey] ?? [];
+                // الحصول على جميع الحجوزات لهذا اليوم
+                $dayBookings = Conference::where('tutor_id', $tutor->id)
+                    ->whereDate('start_date_time', $dateKey)
+                    ->whereNotNull('start_date_time')
+                    ->whereNotNull('end_date_time')
+                    ->get();
+                
+                // إنشاء خريطة للحجوزات لهذا اليوم
+                $bookingsMap = [];
+                foreach ($dayBookings as $booking) {
+                    $bookingStart = new DateTime($booking->start_date_time);
+                    $bookingEnd = new DateTime($booking->end_date_time);
+                    
+                    $bookingsMap[] = [
+                        'start' => $bookingStart,
+                        'end' => $bookingEnd,
+                    ];
+                }
                 
                 // البحث في كل فترة متاحة
                 foreach ($dayAvailabilities as $availability) {
                     $availableFrom = new DateTime($dateKey . ' ' . $availability->hour_from);
                     $availableTo = new DateTime($dateKey . ' ' . $availability->hour_to);
                     
-                    // التحقق من أن الفترة في المستقبل
-                    if ($availableTo <= $now) {
-                        continue;
-                    }
+                    // البحث عن أول وقت متاح في هذه الفترة
+                    // نبدأ من بداية الفترة (لأننا نبدأ من بكرا)
+                    $testTime = clone $availableFrom;
                     
-                    // البحث عن آخر وقت متاح في هذه الفترة
-                    // نبدأ من نهاية الفترة ونرجع للخلف
-                    $testTime = clone $availableTo;
-                    $testTime->modify("-{$period} minutes"); // نرجع بمقدار مدة الحجز
-                    
-                    // التأكد من أننا لا نتجاوز بداية الفترة
-                    if ($testTime < $availableFrom) {
-                        $testTime = clone $availableFrom;
-                    }
-                    
-                    // البحث عن آخر وقت متاح قبل الحجوزات
-                    while ($testTime >= $availableFrom && $testTime >= $now) {
+                    // البحث عن أول وقت متاح بعد الحجوزات
+                    while ($testTime < $availableTo) {
                         $testEnd = clone $testTime;
                         $testEnd->modify("+{$period} minutes");
                         
+                        // التأكد من أن الفترة لا تتجاوز نهاية الفترة المتاحة
+                        if ($testEnd > $availableTo) {
+                            break;
+                        }
+                        
                         // التحقق من عدم التعارض مع الحجوزات
                         $hasConflict = false;
-                        foreach ($dayBookings as $booking) {
+                        foreach ($bookingsMap as $booking) {
                             // التحقق من التعارض
                             if (($testTime >= $booking['start'] && $testTime < $booking['end']) ||
                                 ($testEnd > $booking['start'] && $testEnd <= $booking['end']) ||
@@ -571,7 +571,7 @@ class OrderController extends Controller
                         }
                         
                         if (!$hasConflict) {
-                            // وجدنا آخر موعد متاح
+                            // وجدنا أول موعد متاح
                             return [
                                 'success' => true,
                                 'start_date_time' => $testTime->format('Y-m-d H:i:s'),
@@ -581,18 +581,22 @@ class OrderController extends Controller
                             ];
                         }
                         
-                        // نرجع 30 دقيقة للخلف ونحاول مرة أخرى
-                        $testTime->modify('-30 minutes');
+                        // نذهب 30 دقيقة للأمام ونحاول مرة أخرى
+                        $testTime->modify('+30 minutes');
                     }
                 }
             }
             
-            // الانتقال لليوم السابق
-            $currentDate->modify('-1 day');
+            // الانتقال لليوم التالي
+            $currentDate->modify('+1 day');
+            $daysSearched++;
         }
 
         // لم نجد أي موعد متاح
-        return null;
+        return [
+            'success' => false,
+            'message' => 'no-available-time-found',
+        ];
     }
 
     public function privateLesson(Request $request, $id)
