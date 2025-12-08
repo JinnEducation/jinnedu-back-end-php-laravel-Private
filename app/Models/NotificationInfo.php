@@ -10,7 +10,19 @@ class NotificationInfo extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
-    
+   protected $fillable = [
+        'n_title',
+        'n_details',
+        'n_url',
+        'n_icon',
+        'n_color',
+        'n_seen',
+    ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
    
 }

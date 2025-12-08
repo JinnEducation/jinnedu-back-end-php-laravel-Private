@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
+
 function getSettingVal($key){
     $setting = \App\Models\Setting::whereRaw('id=? or name=?',[$key,$key])->first();
     if($setting) return $setting->value;
@@ -274,20 +276,89 @@ function registerLog($instance, $text='', $type='log')
 
     }
 }
-function sendFCMNotification($title, $message, $token, $info = null)
-{
+// function sendFCMNotification($title, $message, $token, $info = null)
+// {
 
-    $server_key =  env('FIREBASE_SERVER_KEY', 'AAAAK9htOQw:APA91bHMUimKEXIIgbj1swvdmWKivgT1qT2kVpkYVmn6S6jOosI8UIKFzBrTEExLTpqNdvFGPkApd1UEtGD2dnkQSiFWkqkuUCN16HKt-ib7aQlmiffmhsJRb4QO5OvFI9cFyXBrqNWc');
+//     $server_key =  env('FIREBASE_SERVER_KEY', 'AAAAK9htOQw:APA91bHMUimKEXIIgbj1swvdmWKivgT1qT2kVpkYVmn6S6jOosI8UIKFzBrTEExLTpqNdvFGPkApd1UEtGD2dnkQSiFWkqkuUCN16HKt-ib7aQlmiffmhsJRb4QO5OvFI9cFyXBrqNWc');
+
+//     $data = [
+//         "registration_ids" => [$token],
+//         "notification" => [
+//             "title"     => $title,
+//             "body"      => $message,
+//             "sound"     => 'default',
+//         ],
+//         "data" => $info
+//     ];
+//     $encodedData = json_encode($data);
+
+//     $headers = [
+//         'Authorization:key=' . $server_key,
+//         'Content-Type: application/json',
+//     ];
+
+//     $ch = curl_init();
+
+//     curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+//     curl_setopt($ch, CURLOPT_POST, true);
+//     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+//     curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+//     // Disabling SSL Certificate support temporarly
+//     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+//     curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
+//     // Execute post
+//     $result = curl_exec($ch);
+//     if ($result === FALSE) {
+//         die('Curl failed: ' . curl_error($ch));
+//     }
+//     // Close connection
+//     curl_close($ch);
+//     // FCM response
+//     //dd($result);
+// }
+
+function sendFCMNotification($title, $message, $token, $info = null, $userId = null)
+{
+    // 1) حفظ الإشعار في قاعدة البيانات
+    try {
+        \App\Models\NotificationInfo::create([
+            'user_id'   => $userId,
+            'n_title'   => $title,
+            'n_details' => $message,
+            'n_url'     => is_array($info) && isset($info['url'])   ? $info['url']   : null,
+            'n_icon'    => is_array($info) && isset($info['icon'])  ? $info['icon']  : null,
+            'n_color'   => is_array($info) && isset($info['color']) ? $info['color'] : null,
+            'n_seen'    => 0,
+        ]);
+    } catch (\Throwable $e) {
+        \Log::error('Failed to store notification: '.$e->getMessage());
+    }
+
+    // 2) إرسال الإشعار عن طريق FCM (نفس القديم تقريباً)
+    $server_key = env('FIREBASE_SERVER_KEY');
+
+    if (!$server_key) {
+        \Log::error('FCM server key is not set.');
+        // نقدر نوقف هنا لو حابة، بس بخليه يكمل لو فيه key افتراضي
+    }
+
+    // لو ما في توكن، ما نرسل FCM بس نكون خزّنا في الداتابيس
+    if (!$token) {
+        return false;
+    }
 
     $data = [
         "registration_ids" => [$token],
         "notification" => [
-            "title"     => $title,
-            "body"      => $message,
-            "sound"     => 'default',
+            "title" => $title,
+            "body"  => $message,
+            "sound" => 'default',
         ],
         "data" => $info
     ];
+
     $encodedData = json_encode($data);
 
     $headers = [
@@ -296,26 +367,27 @@ function sendFCMNotification($title, $message, $token, $info = null)
     ];
 
     $ch = curl_init();
-
     curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-    // Disabling SSL Certificate support temporarly
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
-    // Execute post
+
     $result = curl_exec($ch);
-    if ($result === FALSE) {
-        die('Curl failed: ' . curl_error($ch));
+
+    if ($result === false) {
+        \Log::error('FCM curl failed: ' . curl_error($ch));
+        curl_close($ch);
+        return false;
     }
-    // Close connection
+
     curl_close($ch);
-    // FCM response
-    //dd($result);
+    return true;
 }
+
+
 
 if (! function_exists('label_text')) {
     /**
