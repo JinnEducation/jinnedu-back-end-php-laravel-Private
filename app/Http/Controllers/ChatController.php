@@ -29,49 +29,47 @@ class ChatController extends Controller
         $this->database = $database;
     }
 
-    public function contacts(Request $request, $id=0)
+    public function contacts(Request $request, $id = 0)
     {
         $user = Auth::user();
-        
+
         //get contacts for specific user
-        if($request->user_id){
+        if ($request->user_id) {
             $user = User::find($request->user_id);
-            if(!$user){
+            if (!$user) {
                 return response([
-                        'success' => false,
-                        'message' => 'user-not-found'
-                ] , 200);
+                    'success' => false,
+                    'message' => 'user-not-found'
+                ], 200);
             }
         }
-         
-        $contacts = User::select('users.name','users.id','users.type','users.avatar','users.online','users.last_online_date','contacts.user_id','contacts.contact_id','contacts.last_msg','contacts.status','contacts.updated_at')->leftJoin(\DB::raw('(select * from chat_contacts where user_id='.$user->id.') contacts'),'contacts.contact_id','users.id');
-        
-        if(intval($id)>0){
-            $contacts = $contacts->where('users.id',$id)->first();
-            $this->processContact($contacts, $user);
-            
-        }else{
-            $contacts->where('contacts.user_id',$user->id);
 
-            if(!empty($request->q)){
-                $contacts->whereRaw(filterTextDB('users.name').' like ?',['%'.filterText($request->q).'%']);
+        $contacts = User::select('users.name', 'users.id', 'users.type', 'users.avatar', 'users.online', 'users.last_online_date', 'contacts.user_id', 'contacts.contact_id', 'contacts.last_msg', 'contacts.status', 'contacts.updated_at')->leftJoin(\DB::raw('(select * from chat_contacts where user_id=' . $user->id . ') contacts'), 'contacts.contact_id', 'users.id');
+
+        if (intval($id) > 0) {
+            $contacts = $contacts->where('users.id', $id)->first();
+            $this->processContact($contacts, $user);
+        } else {
+            $contacts->where('contacts.user_id', $user->id);
+
+            if (!empty($request->q)) {
+                $contacts->whereRaw(filterTextDB('users.name') . ' like ?', ['%' . filterText($request->q) . '%']);
                 $contacts->distinct();
             }
             //$items->orderBy('updated_at','DESC');
             $contacts = paginate($contacts, setDataTablePerPageLimit($request->limit));
-            
-            foreach($contacts as $contact){
+
+            foreach ($contacts as $contact) {
                 $this->processContact($contact, $user);
             }
-    
         }
-        
+
 
         return response([
-                'success' => true,
-                'message' => 'contacts-listed-successfully',
-                'result' => $contacts
-        ] , 200);
+            'success' => true,
+            'message' => 'contacts-listed-successfully',
+            'result' => $contacts
+        ], 200);
     }
 
     private function processContact($contact, $user)
@@ -81,14 +79,13 @@ class ChatController extends Controller
             $lastOnlineDate = new Carbon($contact->last_online_date);
             // $contact->since_start = $lastOnlineDate->diffForHumans();
             // $contact->since_start = $lastOnlineDate->diff(new DateTime());
-            
+
             $interval = $lastOnlineDate->diff(new DateTime());
             $intervalArray = (array) $interval;
             unset($intervalArray['from_string']);
-            
+
             $contact->since_start = (object) $intervalArray;
             $contact->unseen = $contact->chats->where('to_user', $user->id)->where('seen', 0)->count();
-
         }
     }
 
@@ -201,15 +198,15 @@ class ChatController extends Controller
     public function messagesList(Request $request, $id)
     {
         $user = Auth::user();
-        
+
         //get messagesList for specific user
-        if($request->user_id){
+        if ($request->user_id) {
             $user = User::find($request->user_id);
-            if(!$user){
+            if (!$user) {
                 return response([
-                        'success' => false,
-                        'message' => 'user-not-found'
-                ] , 200);
+                    'success' => false,
+                    'message' => 'user-not-found'
+                ], 200);
             }
         }
 
@@ -229,7 +226,7 @@ class ChatController extends Controller
         $items = Chat::with(['fromUser', 'toUser'])
             ->where(function ($query) use ($user, $id) {
                 $query->where('from_user', $user->id)
-                      ->where('to_user', $id);
+                    ->where('to_user', $id);
             })
             ->orWhere(function ($query) use ($user, $id) {
                 $query->where('from_user', $id)
@@ -270,19 +267,19 @@ class ChatController extends Controller
 
         $limit = setDataTablePerPageLimit($request->limit);
 
-        $items = Chat::whereRaw('((from_user=? and to_user=?) or (from_user=? and to_user=?))', [$user->id,$user_id,$user_id,$user->id])->orderby('id', 'desc')->paginate($limit);
+        $items = Chat::whereRaw('((from_user=? and to_user=?) or (from_user=? and to_user=?))', [$user->id, $user_id, $user_id, $user->id])->orderby('id', 'desc')->paginate($limit);
 
         return response([
-               'success' => true,
-               'message' => 'item-listed-successfully',
-               'result' => $items
+            'success' => true,
+            'message' => 'item-listed-successfully',
+            'result' => $items
         ], 200);
     }
 
     public function sendMessage(Request $request)
     {
         $forbidden_words = ForbiddenWords::all();
-        $data = $request->only(['to_user','message']);
+        $data = $request->only(['to_user', 'message']);
 
         if (preg_match('/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/si', $data['message'])) {
             return response([
@@ -331,7 +328,7 @@ class ChatController extends Controller
         $item->fromUser;
         $item->toUser;
 
-        if($item->from_user == $user->id) {
+        if ($item->from_user == $user->id) {
             $item->direction = 'start';
         } else {
             $item->direction = 'end';
@@ -347,41 +344,50 @@ class ChatController extends Controller
         $getMessage = Chat::find($item->id);
         $message_data = [
             'id' => $getMessage->id,
-            'message'=> $getMessage->message,
-            'from_user'=>   $getMessage->fromUser,
+            'message' => $getMessage->message,
+            'from_user' =>   $getMessage->fromUser,
             'to_user' =>   $getMessage->toUser,
-            "status"=> $getMessage->status,
-            "fav"=> $getMessage->fav,
-            "seen"=> $getMessage->seen,
-            "seen_date"=> $getMessage->seen_date,
-            "ipaddress"=> $getMessage->ipaddress,
-            "created_at"=> $getMessage->created_at,
-            "updated_at"=> $getMessage->updated_at,
-            "deleted_at"=> $getMessage->deleted_at,
-            "since_start"=> $getMessage->created_at->diffForHumans(),
-            "direction"=> $getMessage->direction
+            "status" => $getMessage->status,
+            "fav" => $getMessage->fav,
+            "seen" => $getMessage->seen,
+            "seen_date" => $getMessage->seen_date,
+            "ipaddress" => $getMessage->ipaddress,
+            "created_at" => $getMessage->created_at,
+            "updated_at" => $getMessage->updated_at,
+            "deleted_at" => $getMessage->deleted_at,
+            "since_start" => $getMessage->created_at->diffForHumans(),
+            "direction" => $getMessage->direction
         ];
 
         $data = [
-            'chat/'. $room    => $message_data
+            'chat/' . $room    => $message_data
         ];
-        
+
         $this->database->getReference()->update($data);
 
         $receiver_user = User::find($request->to_user);
         $info = [
             'type' => 'chat',
-            "senderUserId"=> $user->id,
-            "senderUserName"=> $user->name,
-            "senderUserImage"=> $user->avatar
+            "senderUserId" => $user->id,
+            "senderUserName" => $user->name,
+            "senderUserImage" => $user->avatar
         ];
 
-        sendFCMNotification($user->name, $getMessage->message, $receiver_user->fcm, $info);
+        if ($receiver_user && $receiver_user->fcm) {
+            sendFCMNotification(
+                $user->name,
+                $getMessage->message,
+                $receiver_user->fcm,
+                $info,
+                $receiver_user->id
+            );
+        }
+
 
         return response([
-                'success' => true,
-                'message' => 'item-added-successfully',
-                'result' => $item
+            'success' => true,
+            'message' => 'item-added-successfully',
+            'result' => $item
         ], 200);
     }
 
@@ -395,10 +401,10 @@ class ChatController extends Controller
         //$items = User::select(\DB::raw('TIMESTAMPDIFF(MINUTE,?,last_online_date) diff'))->whereRaw('online=1 and TIMESTAMPDIFF(MINUTE,?,last_online_date)>=5 or 1=1',[date('Y-m-d H:i:s'),date('Y-m-d H:i:s')])->get();
 
         return response([
-                'success' => true,
-                'message' => 'item-added-successfully',
-                'result' => 'online',
-                'date' => date('Y-m-d H:i:s')
+            'success' => true,
+            'message' => 'item-added-successfully',
+            'result' => 'online',
+            'date' => date('Y-m-d H:i:s')
         ], 200);
     }
 
@@ -409,9 +415,9 @@ class ChatController extends Controller
         ChatContact::where('user_id', $contact_id)->where('contact_id', $user->id)->update(['status' => $status]);
 
         return response([
-                'success' => true,
-                'message' => 'item-added-successfully',
-                'result' => 'typing'
+            'success' => true,
+            'message' => 'item-added-successfully',
+            'result' => 'typing'
         ], 200);
     }
 
@@ -419,7 +425,7 @@ class ChatController extends Controller
     {
         $user = Auth::user();
         $item = ChatContact::where('user_id', $user->id)->where('contact_id', $message->to_user)->first();
-        if(!$item) {
+        if (!$item) {
             $item = new ChatContact();
             $item->user_id = $user->id;
             $item->contact_id = $message->to_user;
@@ -431,7 +437,7 @@ class ChatController extends Controller
         }
 
         $item = ChatContact::where('user_id', $message->to_user)->where('contact_id', $user->id)->first();
-        if(!$item) {
+        if (!$item) {
             $item = new ChatContact();
             $item->user_id = $message->to_user;
             $item->contact_id = $user->id;
@@ -440,39 +446,37 @@ class ChatController extends Controller
             $item->save();
         }
         ChatContact::where('user_id', $message->to_user)->where('contact_id', $user->id)->update(['status' => 0, 'last_msg' => $message->message, 'last_msg_date' => date('Y-m-d H:i:s')]);
-
-
     }
 
     public function show($id)
     {
         $user = Auth::user();
         $item = Chat::find($id);
-        if(!$item) {
+        if (!$item) {
             return response([
-                    'success' => false,
-                    'message' => 'item-dose-not-exist',
-                    'msg-code' => '111'
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '111'
             ], 200);
         }
 
-        if($item->from_user != $user->id && $item->to_user != $user->id) {
+        if ($item->from_user != $user->id && $item->to_user != $user->id) {
             return response([
-                    'success' => false,
-                    'message' => 'item-dose-not-allow-show',
-                    'msg-code' => '111'
+                'success' => false,
+                'message' => 'item-dose-not-allow-show',
+                'msg-code' => '111'
             ], 200);
         }
 
-        if($item->to_user == $user->id) {
+        if ($item->to_user == $user->id) {
             $item->seen = 1;
             $item->seen_date = date('Y-m-d H:i:s');
             $item->save();
         }
         return response([
-                'success' => true,
-                'message' => 'item-showen-successfully',
-                'result' => $item
+            'success' => true,
+            'message' => 'item-showen-successfully',
+            'result' => $item
         ], 200);
     }
 
@@ -481,28 +485,27 @@ class ChatController extends Controller
         $user = Auth::user();
         $item = Chat::find($id);
 
-        if(!$item) {
+        if (!$item) {
             return response([
-                    'success' => false,
-                    'message' => 'item-dose-not-exist',
-                    'msg-code' => '111'
+                'success' => false,
+                'message' => 'item-dose-not-exist',
+                'msg-code' => '111'
             ], 200);
         }
 
-        if($item->from_user != $user->id) {
+        if ($item->from_user != $user->id) {
             return response([
-                    'success' => false,
-                    'message' => 'item-dose-not-delete',
-                    'msg-code' => '111'
+                'success' => false,
+                'message' => 'item-dose-not-delete',
+                'msg-code' => '111'
             ], 200);
         }
 
         $item->delete();
 
         return response([
-                'success' => true,
-                'message' => 'item-deleted-successfully'
+            'success' => true,
+            'message' => 'item-deleted-successfully'
         ], 200);
     }
-
 }

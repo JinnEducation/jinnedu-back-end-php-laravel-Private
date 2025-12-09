@@ -342,7 +342,13 @@ class WalletController extends Controller
                     'orderId' => $order->id
                 ];
 
-                sendFCMNotification('Jinnedu', 'You have a new student to ' . $groupClass->name . ' group class', $user->fcm, $info);
+               sendFCMNotification(
+    'Jinnedu',
+    'You have a new student to ' . $groupClass->name . ' group class',
+    $user->fcm,
+    $info,
+    $user->id
+);
                  
             }else if($order->ref_type==2){
                 if($wallet->our_course_count>0) {
@@ -393,7 +399,15 @@ class WalletController extends Controller
                     'orderId' => $order->id
                 ];
 
-                sendFCMNotification('Jinnedu', 'You have a new private lesson', $user->fcm, $info);
+              
+
+                sendFCMNotification(
+    'Jinnedu',
+    'You have a new private lesson',
+    $user->fcm,
+    $info,
+    $user->id
+);
                  
                  
             }else if($order->ref_type==6){

@@ -30,7 +30,14 @@ class SendNotificationAndEmailListener
         $conference = $event->conference;
         $user = $event->conference->student;
         $message = $event->message;
-        sendFCMNotification($conference->title, $message, $user->fcm);
+      
+        sendFCMNotification(
+    $conference->title,
+    $message,
+    $user->fcm,
+    null,
+    $user->id
+);
         Mail::to($user->email)->send(new NotifyBookedClassMail(['user_name'=>$user->name,'message'=>$message]));
     }
 }

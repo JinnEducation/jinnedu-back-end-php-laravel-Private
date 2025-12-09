@@ -212,11 +212,13 @@ class GroupClassController extends Controller
                         'tutor_name' => $tutor->name
                     ];
                     sendFCMNotification(
-                        'Tutor Assigned', 
-                        'A tutor has been assigned to your group class: ' . $group_class->name, 
-                        $student->fcm, 
-                        $info
-                    );
+    'Tutor Assigned',
+    'A tutor has been assigned to your group class: ' . $group_class->name,
+    $student->fcm,
+    $info,
+    $student->id
+);
+
                 }
             }
         }
@@ -271,11 +273,13 @@ class GroupClassController extends Controller
                         'group_class_id' => $group_class->id
                     ];
                     sendFCMNotification(
-                        'Tutor Removed', 
-                        'The tutor has been removed from your group class: ' . $group_class->name, 
-                        $student->fcm, 
-                        $info
-                    );
+    'Tutor Removed',
+    'The tutor has been removed from your group class: ' . $group_class->name,
+    $student->fcm,
+    $info,
+    $student->id
+);
+
                 }
             }
         }
@@ -288,11 +292,13 @@ class GroupClassController extends Controller
                 'group_class_id' => $group_class->id
             ];
             sendFCMNotification(
-                'Removed from Class', 
-                'You have been removed from group class: ' . $group_class->name, 
-                $oldTutor->fcm, 
-                $info
-            );
+    'Tutor Removed',
+    'The tutor has been removed from your group class: ' . $group_class->name,
+    $student->fcm,
+    $info,
+    $student->id
+);
+
         }
 
         return response()->json([
@@ -1375,11 +1381,13 @@ class GroupClassController extends Controller
                         'group_class_id' => $item->id
                     ];
                     sendFCMNotification(
-                        'Class Cancelled', 
-                        'The group class "' . $item->name . '" has been cancelled', 
-                        $student->fcm, 
-                        $info
-                    );
+    'Class Cancelled',
+    'The group class "' . $item->name . '" has been cancelled',
+    $student->fcm,
+    $info,
+    $student->id
+);
+
                 }
             }
         }
@@ -1392,12 +1400,14 @@ class GroupClassController extends Controller
                     'type' => 'class_cancelled',
                     'group_class_id' => $item->id
                 ];
-                sendFCMNotification(
-                    'Class Cancelled', 
-                    'The group class "' . $item->name . '" has been cancelled', 
-                    $tutor->fcm, 
-                    $info
-                );
+               sendFCMNotification(
+    'Class Cancelled',
+    'The group class "' . $item->name . '" has been cancelled',
+    $tutor->fcm,
+    $info,
+    $tutor->id
+);
+
             }
         }
 
