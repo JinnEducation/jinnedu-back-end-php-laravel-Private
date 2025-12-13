@@ -8,19 +8,19 @@
             <div class="mb-6 mt-14 text-center">
                 <h1 class="mb-3 text-2xl font-bold text-black md:text-3xl">
                     @if($checkoutType === 'pay')
-                        Complete Payment
+                        {{ label_text('global', 'Complete Payment', __('site.Complete Payment')) }}
                     @else
-                        Complete checkout
+                        {{ label_text('global', 'Complete checkout', __('site.Complete checkout')) }}
                     @endif
                 </h1>
                 <div class="inline-block px-4 py-1.5 mb-3 text-xs text-black border border-gray-200 rounded-md">
-                    Your wallet : <span id="wallet-balance">{{ number_format($walletBalance, 2) }}</span> USD
+                    {{ label_text('global', 'Your wallet', __('site.Your wallet')) }} : <span id="wallet-balance">{{ number_format($walletBalance, 2) }}</span> {{ label_text('global', 'USD', __('site.USD')) }}
                 </div>
                 <p class="text-xs text-gray-500">
                     @if($checkoutType === 'pay')
-                        Complete your payment: 1) Review items 2) Choose a payment method.
+                        {{ label_text('global', 'Complete your payment: 1) Review items 2) Choose a payment method.', __('site.Complete your payment: 1) Review items 2) Choose a payment method.')) }}
                     @else
-                        Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.
+                        {{ label_text('global', 'Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.', __('site.Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.')) }}
                     @endif
                 </p>
             </div>
@@ -37,20 +37,20 @@
                     @if($orders->isNotEmpty())
                     <div class="mb-6 bg-white border border-gray-300 rounded-lg">
                         <div class="flex justify-between items-center mb-4 bg-[#E9EDF6] p-4 border-b border-gray-300 rounded-t-lg">
-                            <h3 class="text-base font-bold text-black">Items</h3>
-                            <h3 class="text-base font-bold text-black">Price</h3>
+                            <h3 class="text-base font-bold text-black">{{ label_text('global', 'Items', __('site.Items')) }}</h3>
+                            <h3 class="text-base font-bold text-black">{{ label_text('global', 'Price', __('site.Price')) }}</h3>
                         </div>
                         <div class="space-y-4 px-4 pb-4" id="element">
                             @foreach($orders as $order)
                             <div class="flex justify-between items-center element-item" data-price="{{ $order->price }}">
                                 <div class="flex flex-col">
-                                    <span class="text-base text-black font-medium">Order #{{ $order->id }}</span>
+                                    <span class="text-base text-black font-medium">{{ label_text('global', 'Order', __('site.Order')) }} #{{ $order->id }}</span>
                                     @if($order->status == 1)
-                                        <span class="text-xs text-green-600">(Already Paid)</span>
+                                        <span class="text-xs text-green-600">({{ label_text('global', 'Already Paid', __('site.Already Paid')) }})</span>
                                     @elseif($order->status == 2)
-                                        <span class="text-xs text-red-600">(Failed)</span>
+                                        <span class="text-xs text-red-600">({{ label_text('global', 'Failed', __('site.Failed')) }})</span>
                                     @else
-                                        <span class="text-xs text-blue-600">(Pending)</span>
+                                        <span class="text-xs text-blue-600">({{ label_text('global', 'Pending', __('site.Pending')) }})</span>
                                     @endif
                                 </div>
                                 <span class="text-base text-black font-semibold">{{ number_format($order->price, 2) }}$</span>
@@ -145,7 +145,7 @@
                 <!-- Payment Method -->
                 <div class="mb-6">
                     <label class="block mb-3 text-base font-semibold text-black">
-                        Payment method
+                       {{ label_text('global', ' Payment method', __('site.Complete Payment')) }}
                     </label>
                     <input type="hidden" name="payment_gateway" id="payment-gateway">
                     
@@ -161,7 +161,7 @@
                                     <div class="relative">
                                         <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg opacity-50">
                                         <div class="absolute inset-0 flex items-center justify-center">
-                                            <span class="text-xs font-bold text-red-600 bg-white px-2 py-1 rounded">Insufficient</span>
+                                            <span class="text-xs font-bold text-red-600 bg-white px-2 py-1 rounded"> {{ label_text('global', 'Insufficient', __('site.Insufficient')) }}</span>
                                         </div>
                                     </div>
                                 @else
@@ -175,14 +175,14 @@
                 <!-- Paym Discount -->
                 <div class="mb-6">
                     <label class="block mb-2 text-base font-semibold text-black">
-                        Paym Discount
+                       {{ label_text('global', 'Paym Discount', __('site.Paym Discount')) }} 
                     </label>
                     <div class="flex gap-3 relative">
                         <input type="text" id="discount-code" placeholder="Enter the code"
                             class="flex-1 px-5 py-6 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
                         <button id="apply-discount-btn"
                             class="absolute top-1/2 right-3 transform translate-y-[-50%] translate-x-[-3%] px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200">
-                            Application
+                             {{ label_text('global', 'Application', __('site.Application')) }} 
                         </button>
                     </div>
                 </div>
@@ -191,19 +191,19 @@
                 <div class="mb-6 py-4 border-t border-gray-200">
                     <div class="space-y-3 w-1/3">
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black">Total</span>
+                            <span class="font-bold text-black"> {{ label_text('global', 'Total', __('site.Total')) }} </span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="total-amount">7.46 $</span>
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black">Tax / Fees</span>
+                            <span class="font-bold text-black"> {{ label_text('global', 'Tax / Fees', __('site.Tax / Fees')) }}</span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="tax-amount">%0</span>
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black">Service</span>
+                            <span class="font-bold text-black">{{ label_text('global', 'Service', __('site.Service')) }} </span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="service-amount">0.00 $</span>
                             </span>
@@ -214,14 +214,14 @@
                 <!-- Total Price and Purchase Button -->
                 <div class="flex justify-between items-center gap-4 mb-6 px-2.5 py-4 border border-gray-200 rounded-lg">
                     <div class="flex justify-between items-center w-1/3">
-                        <span class="text-lg font-bold text-black">Total price</span>
+                        <span class="text-lg font-bold text-black">{{ label_text('global', 'Total price', __('site.Total price')) }}</span>
                         <span class="text-center w-20">
                             <span class="font-bold text-lg text-black" id="final-total">7.46 $</span>
                         </span>
                     </div>
                     <button id="purchase-btn"
                         class="px-4 py-3 text-xs text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm">
-                        Purchase confirmation
+                       {{ label_text('global', 'Purchase confirmation', __('site.Purchase confirmation')) }} 
                     </button>
                 </div>
 
@@ -257,8 +257,10 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            By clicking 'Complete Purchase, I acknowledge that I have read and agree to the terms and
-                            conditions and the privacy policy of the Jien platform.
+                            {{ label_text('global', ' By clicking 'Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            conditions and the privacy policy of the Jien platform.', __('site. By clicking 'Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            conditions and the privacy policy of the Jien platform.')) }}
+                           
                         </p>
                     </div>
                     <div class="flex gap-3 items-start">
@@ -282,7 +284,8 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            All transactions are secure, processed, and authorized by payment service providers.
+                            {{ label_text('global', 'All transactions are secure, processed, and authorized by payment service providers.', __('site.All transactions are secure, processed, and authorized by payment service providers.')) }}
+                            
                         </p>
                     </div>
                     <div class="flex gap-3 items-start">
@@ -309,8 +312,10 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            The price you see on the payment provider's page may vary slightly due to differences in
-                            exchange rates.
+                            {{ label_text('global', 'The price you see on the payment provider's page may vary slightly due to differences in
+                            exchange rates.', __('site.The price you see on the payment provider's page may vary slightly due to differences in
+                            exchange rates.')) }}
+                            
                         </p>
                     </div>
                 </div>

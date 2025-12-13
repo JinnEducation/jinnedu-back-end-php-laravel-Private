@@ -283,4 +283,203 @@ return [
     'Enter the email address you use on Jinn. We\'ll send you a link to reset your password.' => 'Enter the email address you use on Jinn. We\'ll send you a link to reset your password.',
     'eMAIL ME A LOGIN LINK' => 'eMAIL ME A LOGIN LINK',
     'Back to' => 'Back to',
+    'Classes' => 'Classes',
+    'Online Private classes' => 'Online Private classes',
+    'Find a Tutor' => 'Find a Tutor',
+    'Availability Time' => 'Availability Time',
+    'Native Language' => 'Native Language',
+    'Any price' => 'Any price',
+    'Under 10 USD' => 'Under 10 USD',
+    '10 USD - 25 USD' => '10 USD - 25 USD',
+    '25 USD - 50 USD' => '25 USD - 50 USD',
+    '50 USD - 100 USD' => '50 USD - 100 USD',
+    '100 USD+' => '100 USD+',
+    'Any Time' => 'Any Time',
+    'Morning (6AM - 12PM)' => 'Morning (6AM - 12PM)',
+    'Afternoon (12PM - 6PM)' => 'Afternoon (12PM - 6PM)',
+    'Evening (6PM - 10PM)' => 'Evening (6PM - 10PM)',
+    'Night (10PM - 6AM)' => 'Night (10PM - 6AM)',
+    'Weekends Only' => 'Weekends Only',
+    'Specializations' => 'Specializations',
+    'Country' => 'Country',
+    'Also Speaks' => 'Also Speaks',
+    'Sort By' => 'Sort By',
+    'Price: Low to High' => 'Price: Low to High',
+    'Price: High to Low' => 'Price: High to Low',
+    'Rating: High to Low' => 'Rating: High to Low',
+    'Most Popular' => 'Most Popular',
+
+    'Full name' => 'Full name',
+    'Search by tutor name' => 'Search by tutor name',
+    'Online Group classes' => 'Online Group classes',
+    'Price (USD)' => 'Price (USD)',
+
+    'From' => 'From',
+    'To' => 'To',
+    'Level' => 'Level',
+    'All' => 'All',
+    'Beginner' => 'Beginner',
+    'Intermediate' => 'Intermediate',
+    'Advanced' => 'Advanced',
+    'Topic' => 'Topic',
+    'Technology' => 'Technology',
+    'Business' => 'Business',
+    'Design' => 'Design',
+    'Marketing' => 'Marketing',
+
+    'Time' => 'Time',
+    'PER PAGE' => 'PER PAGE',
+    'Preview this courses' => 'Preview this courses',
+    'Complete Payment' => 'Complete Payment',
+    'Complete checkout' => 'Complete checkout',
+    'Your wallet' => 'Your wallet',
+    'USD' => 'USD',
+    'Payment method' => 'Payment method',
+    'Insufficient' => 'Insufficient',
+
+    'Paym Discount' => 'Paym Discount',
+    'Application' => 'Application',
+    'Total' => 'Total',
+    'Service' => 'Service',
+    'Tax / Fees' => 'Tax / Fees',
+    ' By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            conditions and the privacy policy of the Jien platform.' => ' By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            conditions and the privacy policy of the Jien platform.',
+    'All transactions are secure, processed, and authorized by payment service providers.' => 'All transactions are secure, processed, and authorized by payment service providers.',
+
+    'Online Group classes' => 'Online Group classes',
+
+    'reviews' => 'reviews',
+    'Course preview' => 'Course preview',
+
+    'Level' => 'Level',
+    'duration' => 'duration',
+    'Not available' => 'Not available',
+    'teacher' => 'teacher',
+    'Language' => 'Language',
+
+    'View profile' => 'View profile',
+    'Message tutor' => 'Message tutor',
+
+    'FAQ' => 'FAQ',
+    'You might also like' => 'You might also like',
+
+    'Booking' => 'Booking',
+    'Price' => 'Price',
+
+    'Login to Book' => 'Login to Book',
+    'Book Now' => 'Book Now',
+
+    'About' => 'About',
+    'Get In Touch' => 'Get In Touch',
+    'FEEL FREE TO DROP US A LINE BELOW' => 'FEEL FREE TO DROP US A LINE BELOW',
+
+    'Your First Name' => 'Your First Name',
+    'Enter the first name' => 'Enter the first name',
+
+    'Your Last Name' => 'Your Last Name',
+
+    'Your Email' => 'Your Email',
+    'Enter Your Email' => 'Enter Your Email',
+
+    'Your Mobile' => 'Your Mobile',
+    'Enter Your Mobile' => 'Enter Your Mobile',
+
+    'Your Message' => 'Your Message',
+    'Enter Your Message' => 'Enter Your Message',
+    'Send' => 'Send',
+
+    'Please fill in all required fields.' => 'Please fill in all required fields.',
+    'Please enter a valid email address.' => 'Please enter a valid email address.',
+
+    'Sending...' => 'Sending...',
+
+    'characters' => 'characters',
+
+
+    'Test Payment (Local Mode)' => 'Test Payment (Local Mode)',
+
+    'This is a test payment page for development.' => 'This is a test payment page for development.',
+
+    'Amount:' => 'Amount:',
+
+    'Transaction ID:' => 'Transaction ID:',
+    'Payment Channel:' => 'Payment Channel:',
+    'Current Wallet:' => 'Current Wallet:',
+
+    '✓ Simulate Successful Payment' => '✓ Simulate Successful Payment',
+    '✗ Cancel Payment' => '✗ Cancel Payment',
+    'This is a test mode. No real payment will be processed.' => 'This is a test mode. No real payment will be processed.',
+
+    'Content will be available soon.' => 'Content will be available soon.',
+    'Return to Homepage' => 'Return to Homepage',
+    'Blog' => 'Blog',
+    'Category' => 'Category',
+    'Posted-By' => 'Posted-By',
+
+    'Explore-Related-Courses' => 'Explore-Related-Courses',
+    'Free-Learn' => 'Free-Learn',
+    'Load-More' => 'Load-More',
+    'Level' => 'Level',
+
+    'Speaks' => 'Speaks',
+    'Language' => 'Language',
+    'Teaches' => 'Teaches',
+    'Subject' => 'Subject',
+    'From' => 'From',
+
+    'About' => 'About',
+    'Schedule' => 'Schedule',
+    'Reviews' => 'Reviews',
+
+    'No bio has been added yet.' => 'No bio has been added yet.',
+    'Show More' => 'Show More',
+
+    'Tutor Schedule' => 'Tutor Schedule',
+    'This Week' => 'This Week',
+    'View Full Schedule' => 'View Full Schedule',
+
+    'Reviewer' => 'Reviewer',
+    'Tutor Suggestions' => 'Tutor Suggestions',
+    'Per hour' => 'Per hour',
+    'Students' => 'Students',
+    '(Native)' => '(Native)',
+
+    'View Details' => 'View Details',
+    'Join Now' => 'Join Now',
+    'No tutors found.' => 'No tutors found.',
+
+    'Your browser does not support the video tag.' => 'Your browser does not support the video tag.',
+
+    'reviews' => 'reviews',
+    'lessons' => 'lessons',
+    '50-min lesson' => '50-min lesson',
+
+    'Login to Book' => 'Login to Book',
+    'Book trial lesson' => 'Book trial lesson',
+    'Go to dashboard Trial Lesson' => 'Go to dashboard Trial Lesson',
+    'Book Lesson' => 'Book Lesson',
+    'Go to dashboard' => 'Go to dashboard',
+    'Message' => 'Message',
+    'Save to my list' => 'Save to my list',
+    'Full Schedule' => 'Full Schedule',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ];

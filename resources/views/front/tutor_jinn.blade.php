@@ -57,17 +57,28 @@
                                 <div class="space-y-2">
                                     <div class="flex items-center gap-2 text-gray-700">
                                         <i class="fas fa-comment text-primary"></i>
-                                        <span>Speaks {{ $nativeLanguage }} Language</span>
+                                        <span>
+                                            {{ label_text('global', 'Speaks', __('site.Speaks')) }}
+                                            {{ $nativeLanguage }}
+                                            {{ label_text('global', 'Language', __('site.Language')) }}
+                                        </span>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-700">
                                         <i class="fas fa-book text-primary"></i>
-                                        <span>Teaches {{ $teachingSubject }} Subject</span>
+                                        <span>
+                                            {{ label_text('global', 'Teaches', __('site.Teaches')) }}
+                                            {{ $teachingSubject }}
+                                            {{ label_text('global', 'Subject', __('site.Subject')) }}
+                                        </span>
                                     </div>
 
                                     @if($tutorCountry)
                                         <div class="flex items-center gap-2 text-gray-700">
                                             <i class="fas fa-globe text-primary"></i>
-                                            <span>From {{ $tutorCountry }}</span>
+                                            <span>
+                                                {{ label_text('global', 'From', __('site.From')) }}
+                                                {{ $tutorCountry }}
+                                            </span>
                                         </div>
                                     @endif
                                 </div>
@@ -92,15 +103,15 @@
                         <div class="flex gap-3 mb-6">
                             <button data-tab="about"
                                 class="tab-button active px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 bg-primary text-white hover:bg-primary hover:text-white">
-                                About
+                                {{ label_text('global', 'About', __('site.About')) }}
                             </button>
                             <button data-tab="schedule"
                                 class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
-                                Schedule
+                                {{ label_text('global', 'Schedule', __('site.Schedule')) }}
                             </button>
                             <button data-tab="reviews"
                                 class="tab-button px-8 py-3 text-base font-semibold rounded-lg transition-all duration-300 text-black hover:bg-primary hover:text-white">
-                                Reviews ({{ $reviewsCount }})
+                                {{ label_text('global', 'Reviews', __('site.Reviews')) }} ({{ $reviewsCount }})
                             </button>
                         </div>
 
@@ -116,7 +127,7 @@
                                         </p>
                                     @else
                                         <p class="mb-4">
-                                            No bio has been added yet.
+                                            {{ label_text('global', 'No bio has been added yet.', __('site.No bio has been added yet.')) }}
                                         </p>
                                     @endif
 
@@ -127,7 +138,7 @@
                                             </p>
                                         </div>
                                         <button id="showMoreBtn" class="text-primary font-bold hover:underline mt-2">
-                                            Show More
+                                            {{ label_text('global', 'Show More', __('site.Show More')) }}
                                         </button>
                                     @endif
                                 </div>
@@ -137,10 +148,13 @@
                             <div id="schedule-tab" class="tab-content hidden">
                                 <!-- Title and Date Navigation -->
                                 <div class="mb-6">
-                                    <h3 class="text-2xl font-bold text-primary mb-3">Tutor Schedule - {{ $fullName }}
+                                    <h3 class="text-2xl font-bold text-primary mb-3">
+                                        {{ label_text('global', 'Tutor Schedule', __('site.Tutor Schedule')) }} - {{ $fullName }}
                                     </h3>
                                     <div class="flex items-center gap-3">
-                                        <span id="weekDate" class="text-base text-gray-700 font-medium">This Week</span>
+                                        <span id="weekDate" class="text-base text-gray-700 font-medium">
+                                            {{ label_text('global', 'This Week', __('site.This Week')) }}
+                                        </span>
                                         <button id="prevWeek"
                                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
                                             <i class="fas fa-chevron-left text-sm"></i>
@@ -163,7 +177,7 @@
                                 <div class="text-center">
                                     <button id="viewFullScheduleBtn"
                                         class="px-10 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-all">
-                                        View Full Schedule
+                                        {{ label_text('global', 'View Full Schedule', __('site.View Full Schedule')) }}
                                     </button>
                                 </div>
                             </div>
@@ -171,7 +185,7 @@
                             <!-- Reviews Tab Content -->
                             <div id="reviews-tab" class="tab-content hidden">
                                 <h3 class="text-xl font-bold text-primary mb-6">
-                                    Reviews ({{ $reviewsCount }})
+                                    {{ label_text('global', 'Reviews', __('site.Reviews')) }} ({{ $reviewsCount }})
                                 </h3>
 
                                 {{-- Placeholder ثابت حالياً، لاحقاً يمكن ربطه بجدول التقييمات --}}
@@ -185,7 +199,7 @@
                                         <div class="pb-6">
                                             <div class="flex items-center gap-4">
                                                 <img src="{{ $reviewerProfile?->avatar_path ? asset('storage/' . $reviewerProfile?->avatar_path) : ($reviewer?->avatar ? asset('storage/' . $reviewer?->avatar) : asset('front/assets/imgs/user-avatar.jpg')) }}"
-                                                    alt="Reviewer" class="w-18 h-18 rounded-md object-cover">
+                                                    alt="{{ label_text('global', 'Reviewer', __('site.Reviewer')) }}" class="w-18 h-18 rounded-md object-cover">
                                                 <div class="flex-1">
                                                     <div class="flex items-start flex-col mb-2">
                                                         <h4 class="font-bold text-gray-800">{{ $reviewerName }}</h4>
@@ -212,7 +226,9 @@
 
                     <!-- Tutor Suggestions Section -->
                     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-                        <h3 class="text-2xl font-bold text-primary mb-6">Tutor Suggestions</h3>
+                        <h3 class="text-2xl font-bold text-primary mb-6">
+                            {{ label_text('global', 'Tutor Suggestions', __('site.Tutor Suggestions')) }}
+                        </h3>
 
                         <div class="space-y-3">
                             @forelse($tutorsSuggestions as $suggestion)
@@ -257,7 +273,9 @@
                                                     <div class="flex flex-col items-start justify-end">
                                                         <span
                                                             class="text-lg font-bold text-primary">{{ $hourlyRate }}$</span>
-                                                        <span class="text-sm text-black">Per hour</span>
+                                                        <span class="text-sm text-black">
+                                                            {{ label_text('global', 'Per hour', __('site.Per hour')) }}
+                                                        </span>
                                                     </div>
                                                     <div class="flex flex-col items-start justify-end">
                                                         <div class="flex items-center gap-1">
@@ -269,7 +287,9 @@
                                                             <span
                                                                 class="text-lg text-gray-700">{{ number_format($rating, 1) }}</span>
                                                         </div>
-                                                        <span class="text-sm text-black">{{ $reviewsCount }} Reviews</span>
+                                                        <span class="text-sm text-black">
+                                                            {{ $reviewsCount }} {{ label_text('global', 'Reviews', __('site.Reviews')) }}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,7 +310,7 @@
                                                         <path
                                                             d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                                     </svg>
-                                                    <span>{{ $studentsCount }} Students</span>
+                                                    <span>{{ $studentsCount }} {{ label_text('global', 'Students', __('site.Students')) }}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 text-sm text-gray-700">
                                                     <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
@@ -299,9 +319,13 @@
                                                             d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
                                                             clip-rule="evenodd" />
                                                     </svg>
-                                                    <span>Speaks <span
-                                                            class="text-primary font-semibold">{{ $nativeLangName ?? 'N/A' }}
-                                                            (Native)</span></span>
+                                                    <span>
+                                                        {{ label_text('global', 'Speaks', __('site.Speaks')) }}
+                                                        <span class="text-primary font-semibold">
+                                                            {{ $nativeLangName ?? 'N/A' }}
+                                                            {{ label_text('global', '(Native)', __('site.(Native)')) }}
+                                                        </span>
+                                                    </span>
                                                 </div>
                                             </div>
 
@@ -309,7 +333,7 @@
                                             <div class="flex gap-3 w-2/3">
                                                 <a href="{{ route('site.tutor_jinn', $suggestion->id) }}"
                                                     class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                                    View Details
+                                                    {{ label_text('global', 'View Details', __('site.View Details')) }}
                                                 </a>
                                                 <form
                                                     action="{{ route('site.private_lesson_order', ['id' => $suggestion->id]) }}"
@@ -318,7 +342,7 @@
 
                                                     <button type="submit"
                                                         class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn w-full">
-                                                        Join Now
+                                                        {{ label_text('global', 'Join Now', __('site.Join Now')) }}
                                                     </button>
                                                 </form>
                                             </div>
@@ -326,7 +350,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <p class="text-gray-500">No tutors found.</p>
+                                <p class="text-gray-500">{{ label_text('global', 'No tutors found.', __('site.No tutors found.')) }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -351,7 +375,7 @@
                                 @if($videoPath)
                                     <video class="w-full h-full" controls poster="{{ $avatar }}">
                                         <source src="{{ $videoPath }}" type="video/mp4">
-                                        Your browser does not support the video tag.
+                                        {{ label_text('global', 'Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}
                                     </video>
                                 @else
                                     <img src="{{ $avatar }}" alt="{{ $fullName }}" class="w-full h-full object-cover">
@@ -369,17 +393,17 @@
                                             {{ number_format($rating, 1) }}/5
                                         </span>
                                     </div>
-                                    <div class="text-xs text-black">{{ $reviewsCount }} reviews</div>
+                                    <div class="text-xs text-black">{{ $reviewsCount }} {{ label_text('global', 'reviews', __('site.reviews')) }}</div>
                                 </div>
                                 <div>
                                     <div class="font-bold text-lg text-primary mb-1">{{ $lessonsCount }}</div>
-                                    <div class="text-xs text-black">lessons</div>
+                                    <div class="text-xs text-black">{{ label_text('global', 'lessons', __('site.lessons')) }}</div>
                                 </div>
                                 <div>
                                     <div class="font-bold text-lg text-primary mb-1">
                                         {{ $hourlyRate ?? 0 }} USD
                                     </div>
-                                    <div class="text-xs text-black">50-min lesson</div>
+                                    <div class="text-xs text-black">{{ label_text('global', '50-min lesson', __('site.50-min lesson')) }}</div>
                                 </div>
                             </div>
 
@@ -388,7 +412,7 @@
                                 <div class="space-y-3">
                                     <button type="button" data-open="#loginModal"
                                         class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                                        Login to Book
+                                        {{ label_text('global', 'Login to Book', __('site.Login to Book')) }}
                                     </button>
                                 </div>
                             @endguest
@@ -401,14 +425,14 @@
                                         @csrf
                                         <button type="submit"
                                             class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                            Book trial lesson
+                                            {{ label_text('global', 'Book trial lesson', __('site.Book trial lesson')) }}
                                         </button>
                                     </form>
                                     @endif
                                     @if($orderTrialExists && !$orderTrialFinash)
                                     <a href="route('redirect.dashboard')"
                                         class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        Go to dashboard Trial Lesson
+                                        {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
                                     </a>
                                     @endif
                                     @if($orderTrialFinash && $checkAllowOrder)
@@ -417,23 +441,23 @@
                                         @csrf
                                         <button type="submit"
                                             class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                            Book Lesson
+                                            {{ label_text('global', 'Book Lesson', __('site.Book Lesson')) }}
                                         </button>
                                     </form>
                                     @endif
                                     @if($orderTrialExists && $orderTrialFinash && !$checkAllowOrder)
                                     <a href="route('redirect.dashboard')"
                                         class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        Go to dashboard
+                                        {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
                                     </a>
                                     @endif
                                     <button
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
-                                        Message {{ $profile?->full_name }}
+                                        {{ label_text('global', 'Message', __('site.Message')) }} {{ $profile?->full_name }}
                                     </button>
                                     <button
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
-                                        Save to my list
+                                        {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
                                     </button>
                                 </div>
                             @endauth
@@ -450,7 +474,9 @@
         <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-2xl font-bold text-primary">Full Schedule - {{ $fullName }}</h3>
+                    <h3 class="text-2xl font-bold text-primary">
+                        {{ label_text('global', 'Full Schedule', __('site.Full Schedule')) }} - {{ $fullName }}
+                    </h3>
                     <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times text-2xl"></i>
                     </button>
@@ -459,7 +485,9 @@
                 <!-- Title and Date Navigation -->
                 <div class="mb-6">
                     <div class="flex items-center gap-3">
-                        <span id="weekDateModal" class="text-base text-gray-700 font-medium">This Week</span>
+                        <span id="weekDateModal" class="text-base text-gray-700 font-medium">
+                            {{ label_text('global', 'This Week', __('site.This Week')) }}
+                        </span>
                         <button id="prevWeekModal"
                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
                             <i class="fas fa-chevron-left text-sm"></i>

@@ -16,7 +16,9 @@
                     <!-- Home -->
                     <li>
                         <a href="{{ route('home') }}"
-                            class="transition-colors text-primary-600 hover:text-primary-700">{{ __('Home') }}</a>
+                            class="transition-colors text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'Home', __('site.Home')) }}
+                        </a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -108,10 +110,12 @@
                     </div>
                     <div>
                         <p>
-                            {{ __('Content will be available soon.') }}
+                            {{ label_text('global', 'Content will be available soon.', __('site.Content will be available soon.')) }}
                         </p>
                         <a href="{{ route('home') }}" class="flex gap-2 justify-center items-center mt-7 text-[#0553FC]">
-                            <span class="underline">{{ __('Return to Homepage') }}</span>
+                            <span class="underline">
+                                {{ label_text('global', 'Return to Homepage', __('site.Return to Homepage')) }}
+                            </span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>

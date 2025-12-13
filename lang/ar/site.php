@@ -282,4 +282,176 @@ return [
     'Enter the email address you use on Jinn. We\'ll send you a link to reset your password.' => 'أدخل البريد الإلكتروني الذي تستخدمه في جن، وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.',
     'eMAIL ME A LOGIN LINK' => 'أرسل لي رابط تسجيل الدخول عبر البريد',
     'Back to' => 'العودة إلى',
+
+
+    'Classes' => 'الدورات',
+    'Online Private classes' => 'دروس خاصة عبر الإنترنت',
+    'Find a Tutor' => 'ابحث عن مدرس',
+    'Availability Time' => 'أوقات التوفر',
+    'Native Language' => 'اللغة الأم',
+    'Any price' => 'أي سعر',
+    'Under 10 USD' => 'أقل من 10 دولارات',
+    '10 USD - 25 USD' => 'من 10 إلى 25 دولار',
+    '25 USD - 50 USD' => 'من 25 إلى 50 دولار',
+    '50 USD - 100 USD' => 'من 50 إلى 100 دولار',
+    '100 USD+' => 'أكثر من 100 دولار',
+    'Any Time' => 'أي وقت',
+    'Morning (6AM - 12PM)' => 'صباحاً (6 ص - 12 ظ)',
+    'Afternoon (12PM - 6PM)' => 'بعد الظهر (12 ظ - 6 م)',
+    'Evening (6PM - 10PM)' => 'مساءً (6 م - 10 م)',
+    'Night (10PM - 6AM)' => 'ليلاً (10 م - 6 ص)',
+    'Weekends Only' => 'عطلة نهاية الأسبوع فقط',
+    'Specializations' => 'التخصصات',
+    'Country' => 'الدولة',
+    'Also Speaks' => 'يتحدث أيضاً',
+    'Sort By' => 'ترتيب حسب',
+    'Price: Low to High' => 'السعر: من الأقل إلى الأعلى',
+    'Price: High to Low' => 'السعر: من الأعلى إلى الأقل',
+    'Rating: High to Low' => 'التقييم: من الأعلى إلى الأقل',
+    'Most Popular' => 'الأكثر شهرة',
+
+    'Full name' => 'الاسم الكامل',
+    'Search by tutor name' => 'البحث باسم المدرس',
+    'Online Group classes' => 'دروس جماعية عبر الإنترنت',
+    'Price (USD)' => 'السعر (دولار)',
+
+    'From' => 'من',
+    'To' => 'إلى',
+    'Level' => 'المستوى',
+    'All' => 'الكل',
+    'Beginner' => 'مبتدئ',
+    'Intermediate' => 'متوسط',
+    'Advanced' => 'متقدم',
+    'Topic' => 'الموضوع',
+    'Technology' => 'التكنولوجيا',
+    'Business' => 'الأعمال',
+    'Design' => 'التصميم',
+    'Marketing' => 'التسويق',
+
+    'Time' => 'الوقت',
+    'PER PAGE' => 'لكل صفحة',
+    'Preview this courses' => 'معاينة هذه الدورة',
+    'Complete Payment' => 'إتمام الدفع',
+    'Complete checkout' => 'إتمام عملية الشراء',
+    'Your wallet' => 'محفظتك',
+    'USD' => 'دولار',
+    'Payment method' => 'طريقة الدفع',
+    'Insufficient' => 'غير كافٍ',
+
+    'Paym Discount' => 'خصم الدفع',
+    'Application' => 'التطبيق',
+    'Total' => 'الإجمالي',
+    'Service' => 'الخدمة',
+    'Tax / Fees' => 'الضرائب / الرسوم',
+    'By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
+conditions and the privacy policy of the Jien platform.'
+    => 'بالنقر على إتمام الشراء، أقر بأنني قرأت ووافقت على الشروط والأحكام وسياسة الخصوصية الخاصة بمنصة جين.',
+    'All transactions are secure, processed, and authorized by payment service providers.'
+    => 'جميع المعاملات آمنة ويتم معالجتها واعتمادها من مزودي خدمات الدفع.',
+
+    'reviews' => 'المراجعات',
+    'Course preview' => 'معاينة الدورة',
+
+    'duration' => 'المدة',
+    'Not available' => 'غير متوفر',
+    'teacher' => 'المدرس',
+    'Language' => 'اللغة',
+
+    'View profile' => 'عرض الملف الشخصي',
+    'Message tutor' => 'مراسلة المدرس',
+
+    'FAQ' => 'الأسئلة الشائعة',
+    'You might also like' => 'قد يعجبك أيضاً',
+
+    'Booking' => 'الحجز',
+    'Price' => 'السعر',
+
+    'Login to Book' => 'سجّل الدخول للحجز',
+    'Book Now' => 'احجز الآن',
+
+    'About' => 'من نحن',
+    'Get In Touch' => 'تواصل معنا',
+    'FEEL FREE TO DROP US A LINE BELOW' => 'لا تتردد في مراسلتنا عبر النموذج أدناه',
+
+    'Your First Name' => 'الاسم الأول',
+    'Enter the first name' => 'أدخل الاسم الأول',
+
+    'Your Last Name' => 'اسم العائلة',
+
+    'Your Email' => 'البريد الإلكتروني',
+    'Enter Your Email' => 'أدخل بريدك الإلكتروني',
+
+    'Your Mobile' => 'رقم الجوال',
+    'Enter Your Mobile' => 'أدخل رقم الجوال',
+
+    'Your Message' => 'رسالتك',
+    'Enter Your Message' => 'أدخل رسالتك',
+    'Send' => 'إرسال',
+
+    'Please fill in all required fields.' => 'يرجى تعبئة جميع الحقول المطلوبة.',
+    'Please enter a valid email address.' => 'يرجى إدخال بريد إلكتروني صحيح.',
+
+    'Sending...' => 'جارٍ الإرسال...',
+
+    'characters' => 'أحرف',
+
+    'Test Payment (Local Mode)' => 'اختبار الدفع (الوضع المحلي)',
+    'This is a test payment page for development.' => 'هذه صفحة دفع تجريبية لأغراض التطوير.',
+    'Amount:' => 'المبلغ:',
+    'Transaction ID:' => 'رقم العملية:',
+    'Payment Channel:' => 'قناة الدفع:',
+    'Current Wallet:' => 'المحفظة الحالية:',
+    '✓ Simulate Successful Payment' => '✓ محاكاة دفع ناجح',
+    '✗ Cancel Payment' => '✗ إلغاء الدفع',
+    'This is a test mode. No real payment will be processed.'
+    => 'هذا وضع تجريبي. لن يتم تنفيذ أي عملية دفع حقيقية.',
+
+    'Content will be available soon.' => 'سيتم توفير المحتوى قريباً.',
+    'Return to Homepage' => 'العودة إلى الصفحة الرئيسية',
+    'Blog' => 'المدونة',
+    'Category' => 'التصنيف',
+    'Posted-By' => 'نشر بواسطة',
+
+    'Explore-Related-Courses' => 'استكشف الدورات ذات الصلة',
+    'Free-Learn' => 'تعلم مجاناً',
+    'Load-More' => 'تحميل المزيد',
+
+    'Speaks' => 'يتحدث',
+    'Teaches' => 'يدرّس',
+    'Subject' => 'المادة',
+
+    'Schedule' => 'الجدول',
+    'Reviews' => 'التقييمات',
+
+    'No bio has been added yet.' => 'لم يتم إضافة نبذة بعد.',
+    'Show More' => 'عرض المزيد',
+
+    'Tutor Schedule' => 'جدول المدرس',
+    'This Week' => 'هذا الأسبوع',
+    'View Full Schedule' => 'عرض الجدول الكامل',
+
+    'Reviewer' => 'المراجع',
+    'Tutor Suggestions' => 'اقتراحات المدرسين',
+    'Per hour' => 'في الساعة',
+    'Students' => 'الطلاب',
+    '(Native)' => '(لغة أم)',
+
+    'View Details' => 'عرض التفاصيل',
+    'Join Now' => 'انضم الآن',
+    'No tutors found.' => 'لم يتم العثور على مدرسين.',
+
+    'Your browser does not support the video tag.'
+    => 'متصفحك لا يدعم تشغيل الفيديو.',
+
+    'lessons' => 'الدروس',
+    '50-min lesson' => 'درس لمدة 50 دقيقة',
+
+    'Book trial lesson' => 'احجز درساً تجريبياً',
+    'Go to dashboard Trial Lesson' => 'الانتقال إلى لوحة التحكم للدرس التجريبي',
+    'Book Lesson' => 'احجز درس',
+    'Go to dashboard' => 'الانتقال إلى لوحة التحكم',
+    'Message' => 'رسالة',
+    'Save to my list' => 'حفظ في قائمتي',
+    'Full Schedule' => 'الجدول الكامل',
+
 ];
