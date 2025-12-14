@@ -16,7 +16,7 @@
                     <!-- Home -->
                     <li>
                         <a href="{{ route('home') }}"
-                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
+                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('site.Home')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -25,7 +25,7 @@
                     </li>
                     <li>
                         <a href="{{ route('site.blog') }}"
-                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Blog', __('auth.Blog')) }}</a>
+                            class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Blog', __('site.Blog')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -50,12 +50,12 @@
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-clock text-primary"></i>
-                    <span class="text-sm text-gray-400">{{ label_text('global', 'Category', __('auth.Category')) }} :
+                    <span class="text-sm text-gray-400">{{ label_text('global', 'Category', __('site.Category')) }} :
                         {{ $categoryTranslation?->name ?? '' }}</span>
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-user text-primary"></i>
-                    <span class="text-sm text-gray-400">{{ label_text('global', 'Posted-By', __('auth.Posted by')) }} : {{ $blog->users?->name ?? '' }}</span>
+                    <span class="text-sm text-gray-400">{{ label_text('global', 'Posted-By', __('site.Posted-By')) }} : {{ $blog->users?->name ?? '' }}</span>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
                     </p>
                 </div>
                 <div class="md:px-6 md:col-span-1">
-                    <h3 class="mb-4 text-2xl font-bold">{{ label_text('global', 'Explore-Related-Courses', __('auth.Explore Related Courses')) }}</h3>
+                    <h3 class="mb-4 text-2xl font-bold">{{ label_text('global', 'Explore-Related-Courses', __('site.Explore-Related-Courses')) }}</h3>
                     <div class="grid grid-cols-1 gap-7 mb-12 md:gap-5" id="coursesGridBlog">
                         @foreach ($blogs as $relatedBlog)
                             @php
@@ -87,13 +87,13 @@
                                     <img src="{{ $relatedBlog->image_url }}" alt="{{ $relatedTranslation->title }}"
                                         class="object-cover w-full h-full">
                                     <div class="absolute right-2 top-4">
-                                        <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">{{ label_text('global', 'Free-Learn', __('auth.Free Learn')) }}</span>
+                                        <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">{{ label_text('global', 'Free-Learn', __('site.Free-Learn')) }}</span>
                                     </div>
                                     <div
                                         class="absolute top-0 left-0 w-full h-full opacity-0 transition-all duration-300 bg-black/50 group-hover:opacity-100">
                                         <div class="flex justify-center items-center h-full">
                                             <a href="{{ route('site.showBlog', $relatedSlug) }}"
-                                                class="px-8 py-4 text-lg text-white rounded-lg bg-primary">{{ label_text('global', 'Load-More', __('auth.Load More')) }}</a>
+                                                class="px-8 py-4 text-lg text-white rounded-lg bg-primary">{{ label_text('global', 'Load-More', __('site.Load-More')) }}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                                                             fill="#1B449C" />
                                                     </svg>
                                                 </i>
-                                                <span class="text-sm text-gray-400">{{ label_text('global', 'Level', __('auth.Level')) }} :
+                                                <span class="text-sm text-gray-400">{{ label_text('global', 'Level', __('site.Level')) }} :
                                                     {{ $relatedBlog->lessons }}</span>
                                             </div>
 

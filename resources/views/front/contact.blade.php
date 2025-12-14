@@ -10,7 +10,9 @@
                 <ul class="flex items-center space-x-1 text-sm font-light">
                     <!-- Home -->
                     <li>
-                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">Home</a>
+                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'Home', __('site.Home')) }}
+                        </a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -18,7 +20,9 @@
                         </span>
                     </li>
                     <li>
-                        <a href="#" class="transition-colors text-primary-600 hover:text-primary-700">About</a>
+                        <a href="#" class="transition-colors text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'About', __('site.About')) }}
+                        </a>
                     </li>
                     <li>
                         <span class="text-gray-400">
@@ -27,15 +31,21 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-black">Get In Touch</span>
+                        <span class="text-black">
+                            {{ label_text('global', 'Get In Touch', __('site.Get In Touch')) }}
+                        </span>
                     </li>
                 </ul>
             </nav>
 
             <!-- Section Title -->
             <div class="text-left">
-                <h1 class="mb-3 text-3xl font-bold text-black">Get In Touch</h1>
-                <p class="text-lg font-light text-primary">FEEL FREE TO DROP US A LINE BELOW</p>
+                <h1 class="mb-3 text-3xl font-bold text-black">
+                    {{ label_text('global', 'Get In Touch', __('site.Get In Touch')) }}
+                </h1>
+                <p class="text-lg font-light text-primary">
+                    {{ label_text('global', 'FEEL FREE TO DROP US A LINE BELOW', __('site.FEEL FREE TO DROP US A LINE BELOW')) }}
+                </p>
             </div>
         </div>
     </section>
@@ -50,9 +60,9 @@
                     <!-- First Name -->
                     <div class="space-y-2">
                         <label for="firstName" class="block text-sm font-bold text-black" name="firstName">
-                            Your First Name
+                            {{ label_text('global', 'Your First Name', __('site.Your First Name')) }}
                         </label>
-                        <input type="text" id="firstName" name="firstName" placeholder="Enter the first name"
+                        <input type="text" id="firstName" name="firstName" placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -60,9 +70,9 @@
                     <!-- Last Name -->
                     <div class="space-y-2">
                         <label for="lastName" class="block text-sm font-bold text-black">
-                            Your Last Name
+                            {{ label_text('global', 'Your Last Name', __('site.Your Last Name')) }}
                         </label>
-                        <input type="text" id="lastName" name="lastName" placeholder="Enter the first name"
+                        <input type="text" id="lastName" name="lastName" placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -73,9 +83,9 @@
                     <!-- Email -->
                     <div class="space-y-2">
                         <label for="email" class="block text-sm font-bold text-black">
-                            Your Email
+                            {{ label_text('global', 'Your Email', __('site.Your Email')) }}
                         </label>
-                        <input type="email" id="email" name="email" placeholder="Enter Your Email"
+                        <input type="email" id="email" name="email" placeholder="{{ label_text('global', 'Enter Your Email', __('site.Enter Your Email')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -83,9 +93,9 @@
                     <!-- Mobile -->
                     <div class="space-y-2">
                         <label for="mobile" class="block text-sm font-bold text-black">
-                            Your Mobile
+                            {{ label_text('global', 'Your Mobile', __('site.Your Mobile')) }}
                         </label>
-                        <input type="tel" id="mobile" name="mobile" placeholder="Enter Your Mobile"
+                        <input type="tel" id="mobile" name="mobile" placeholder="{{ label_text('global', 'Enter Your Mobile', __('site.Enter Your Mobile')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -94,9 +104,9 @@
                 <!-- Message -->
                 <div class="space-y-2">
                     <label for="message" class="block text-sm font-bold text-black">
-                        Your Message
+                        {{ label_text('global', 'Your Message', __('site.Your Message')) }}
                     </label>
-                    <textarea id="message" name="message" rows="6" placeholder="Enter Your Message"
+                    <textarea id="message" name="message" rows="6" placeholder="{{ label_text('global', 'Enter Your Message', __('site.Enter Your Message')) }}"
                         class="w-full px-4 py-4 text-black bg-gray-100 border-2 border-gray-200 rounded-md transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500 resize-vertical min-h-[120px]"
                         required></textarea>
                 </div>
@@ -105,7 +115,7 @@
                 <div class="flex justify-center pt-6">
                     <button type="submit" id="btnSubmit"
                         class="px-12 py-3 font-medium text-white rounded-lg transition-all duration-300 transform bg-primary hover:bg-primary-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 hover:scale-105">
-                        Send
+                        {{ label_text('global', 'Send', __('site.Send')) }}
                     </button>
                 </div>
             </form>
@@ -138,7 +148,7 @@
                 Object.keys(formData).forEach(key => {
                     if (!formData[key].trim()) {
                         isValid = false;
-                        errorMessage = 'Please fill in all required fields.';
+                        errorMessage = "{{ label_text('global', 'Please fill in all required fields.', __('site.Please fill in all required fields.')) }}";
                         return;
                     }
                 });
@@ -147,7 +157,7 @@
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (formData.email && !emailRegex.test(formData.email)) {
                     isValid = false;
-                    errorMessage = 'Please enter a valid email address.';
+                    errorMessage = "{{ label_text('global', 'Please enter a valid email address.', __('site.Please enter a valid email address.')) }}";
                 }
 
                 if (!isValid) {
@@ -158,7 +168,7 @@
                 // Show loading state
                 const submitBtn = $(this).find('button[type="submit"]');
                 const originalText = submitBtn.text();
-                submitBtn.text('Sending...').prop('disabled', true);
+                submitBtn.text("{{ label_text('global', 'Sending...', __('site.Sending...')) }}").prop('disabled', true);
 
                 // Simulate form submission
                 setTimeout(() => {
@@ -196,7 +206,7 @@
                 $(this).siblings('.char-counter').remove();
 
                 if (currentLength > 0) {
-                    const counter = $(`<div class="mt-1 text-xs text-gray-500 char-counter">${currentLength}/${maxLength} characters</div>`);
+                    const counter = $(`<div class="mt-1 text-xs text-gray-500 char-counter">${currentLength}/${maxLength} {{ label_text('global', 'characters', __('site.characters')) }}</div>`);
                     $(this).parent().append(counter);
                 }
 

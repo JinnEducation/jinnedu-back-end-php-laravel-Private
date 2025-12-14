@@ -14,31 +14,31 @@
             <nav aria-label="Breadcrumb" class="mb-14">
                 <div class="text-sm font-light text-gray-600 leading-relaxed">
                     <span>
-                        <a href="index.html" class="text-primary-600 hover:text-primary-700">Home</a>
+                        <a href="index.html" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('site.Home')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i class="fas fa-chevron-right text-[10px]"></i>
                     </span>
                     <span>
-                        <a href="#" class="text-primary-600 hover:text-primary-700">Classes</a>
+                        <a href="#" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Classes', __('site.Classes')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i class="fas fa-chevron-right text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
-                        Online Group classes
+                        {{ label_text('global', 'Online Group classes', __('site.Online Group classes')) }}
                     </span>
                 </div>
             </nav>
 
             <!-- Section Title -->
-            <h2 class="mb-6 text-3xl font-bold">Online Group classes</h2>
+            <h2 class="mb-6 text-3xl font-bold">{{ label_text('global', 'Online Group classes', __('site.Online Group classes')) }}</h2>
 
             <!-- Filter Bar Section -->
             <div class="flex flex-wrap items-end gap-3 md:gap-4 lg:gap-6">
                 <!-- Price (USD) Filter -->
                 <div class="flex flex-col gap-2 min-w-[230px] flex-1 md:flex-none md:min-w-[180px]">
-                    <label class="text-sm font-semibold text-primary">Price (USD)</label>
+                    <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Price (USD)', __('site.Price (USD)')) }}</label>
                     <div class="flex gap-2 items-center">
                         <!-- From Input with Floating Label -->
                         <div class="relative flex-1">
@@ -47,7 +47,7 @@
                             <label for="price-from"
                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
                                     peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary
-                                    peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">From</label>
+                                    peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">{{ label_text('global', 'From', __('site.From')) }}</label>
                         </div>
                         <!-- To Input with Floating Label -->
                         <div class="relative flex-1">
@@ -56,21 +56,21 @@
                             <label for="price-to"
                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
                                     peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary
-                                    peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">To</label>
+                                    peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">{{ label_text('global', 'To', __('site.To')) }}</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- Level Filter -->
                 <div class="flex flex-col gap-2 min-w-[110px] flex-1 md:flex-none md:min-w-[130px]">
-                    <label class="text-sm font-semibold text-primary">Level</label>
+                    <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Level', __('site.Level')) }}</label>
                     <div class="relative">
                         <select id="level-filter"
                             class="w-full h-[42px] px-3 pr-8 text-sm text-black bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200">
-                            <option value="all" selected>All</option>
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
+                            <option value="all" selected>{{ label_text('global', 'All', __('site.All')) }}</option>
+                            <option value="beginner">{{ label_text('global', 'Beginner', __('site.Beginner')) }}</option>
+                            <option value="intermediate">{{ label_text('global', 'Intermediate', __('site.Intermediate')) }}</option>
+                            <option value="advanced">{{ label_text('global', 'Advanced', __('site.Advanced')) }}</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,15 +83,15 @@
 
                 <!-- Topic Filter -->
                 <div class="flex flex-col gap-2 min-w-[110px] flex-1 md:flex-none md:min-w-[130px]">
-                    <label class="text-sm font-semibold text-primary">Topic</label>
+                    <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Topic', __('site.Topic')) }}</label>
                     <div class="relative">
                         <select id="topic-filter"
                             class="w-full h-[42px] px-3 pr-8 text-sm text-black bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200">
-                            <option value="" selected>Topic</option>
-                            <option value="technology">Technology</option>
-                            <option value="business">Business</option>
-                            <option value="design">Design</option>
-                            <option value="marketing">Marketing</option>
+                            <option value="" selected>{{ label_text('global', 'Topic', __('site.Topic')) }}</option>
+                            <option value="technology">{{ label_text('global', 'Technology', __('site.Technology')) }}</option>
+                            <option value="business">{{ label_text('global', 'Business', __('site.Business')) }}</option>
+                            <option value="design">{{ label_text('global', 'Design', __('site.Design')) }}</option>
+                            <option value="marketing">{{ label_text('global', 'Marketing', __('site.Marketing')) }}</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,14 +104,14 @@
 
                 <!-- Time Filter -->
                 <div class="flex flex-col gap-2 min-w-[150px] flex-1 md:flex-none md:min-w-[200px]">
-                    <label class="text-sm font-semibold text-primary">Time</label>
+                    <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Time', __('site.Time')) }}</label>
                     <div class="relative">
                         <select id="time-filter"
                             class="w-full h-[42px] px-3 pr-8 text-sm text-black bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200">
-                            <option value="" selected>Start time – End time</option>
-                            <option value="morning">Morning (8:00 - 12:00)</option>
-                            <option value="afternoon">Afternoon (12:00 - 17:00)</option>
-                            <option value="evening">Evening (17:00 - 21:00)</option>
+                            <option value="" selected>Start time placeholder</option>
+                            <option value="morning">{{ label_text('global', 'Morning (8:00 - 12:00)', __('site.Morning (8:00 - 12:00)')) }}</option>
+                            <option value="afternoon">{{ label_text('global', 'Afternoon (12:00 - 17:00)', __('site.Afternoon (12:00 - 17:00)')) }}</option>
+                            <option value="evening">{{ label_text('global', 'Evening (17:00 - 21:00)', __('site.Evening (17:00 - 21:00)')) }}</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@
 
                 <!-- Rate Filter -->
                 <div class="flex flex-col gap-2 min-w-[110px] flex-1 md:flex-none md:min-w-[130px]">
-                    <label class="text-sm font-semibold text-primary">Rate</label>
+                    <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Rate', __('site.Rate')) }}</label>
                     <div class="relative flex items-center h-[42px] px-3 bg-white border border-gray-300 rounded-md">
                         <svg class="w-5 h-5 text-yellow-400 fill-current flex-shrink-0 mr-2" viewBox="0 0 20 20">
                             <path
@@ -140,7 +140,7 @@
                 <div class="flex items-end w-full md:w-auto lg:ml-auto">
                     <button id="clear-filters-btn"
                         class="w-full h-[42px] px-8 text-sm font-semibold text-white bg-primary rounded-xl transition-all duration-200 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:w-auto">
-                        Clear Filters
+                       {{ label_text('global', ' Clear Filters', __('site. Clear Filters')) }}
                     </button>
                 </div>
             </div>
@@ -247,7 +247,7 @@
                                 </div>
                                 <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $class->id]) }}"
                                     class="block text-center mt-4 w-full py-2.5 text-base font-semibold text-primary rounded-lg transition-all duration-300 border border-primary bg-white hover:bg-primary hover:text-white hover:border-0 cursor-pointer">
-                                    Preview this courses
+                                    {{ label_text('global', 'Preview this courses', __('site.Preview this courses')) }}
                                 </a>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
                             </select>
                             <!-- PER PAGE من الشمال -->
                             <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                                <span class="text-sm font-medium text-gray-700">PER PAGE</span>
+                                <span class="text-sm font-medium text-gray-700">{{ label_text('global', 'PER PAGE', __('site.PER PAGE')) }}</span>
                             </div>
                             <!-- السهم من اليمين -->
                             <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
@@ -366,3 +366,4 @@
         <script src="{{ asset('front/assets/js/online_group_classes.js') }}"></script>
     @endpush
 </x-front-layout>
+
