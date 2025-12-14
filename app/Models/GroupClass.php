@@ -71,6 +71,11 @@ class GroupClass extends Model
     {
         return $this->belongsTo(Level::class,'level_id');
     }
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class,'language_id');
+    }
     
     public function category()
     {

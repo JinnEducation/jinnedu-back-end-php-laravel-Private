@@ -21,8 +21,8 @@
                     <!-- Student Info & Timer Row -->
                     <div class="flex flex-wrap justify-between items-start mb-6 gap-4 w-3/4">
                         <div class="text-md text-black space-y-1">
-                            <div>Student: {{ $attempt->student->profile->first_name }}
-                                {{ $attempt->student->profile->last_name }} Attempt: {{ $attempt->attempt_no }}</div>
+                            <div>Student: {{ $attempt->student?->profile?->first_name }}
+                                {{ $attempt->student?->profile?->last_name }} Attempt: {{ $attempt->attempt_no }}</div>
                             <div>Your score <span class="font-bold">{{ $attempt->success_rate }}%</span> – Passing
                                 threshold: <span class="font-bold">{{ $attempt->exam->pass_percentage }}%</span></div>
                         </div>

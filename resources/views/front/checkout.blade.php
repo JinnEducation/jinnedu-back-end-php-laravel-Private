@@ -197,6 +197,12 @@
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
+                            <span class="font-bold text-black">Discount</span>
+                            <span class="text-center w-20">
+                                <span class="font-semibold text-black" id="discount-amount">0.00 $</span>
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center text-base">
                             <span class="font-bold text-black">Tax / Fees</span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="tax-amount">%0</span>

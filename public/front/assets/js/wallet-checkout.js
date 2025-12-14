@@ -286,11 +286,12 @@ $(document).ready(function() {
         let discount = 0;
         if (discountApplied) {
             discount = baseAmount * 0.10; // 10% discount
+            $('#discount-amount').text(formatCurrency(discount));
         }
         
         // Calculate total
-        const total = baseAmount - discount;
-        const finalTotal = total + taxAmount + serviceFee;
+        const total = baseAmount;
+        const finalTotal = total + taxAmount + serviceFee - discount;
         
         // Update display
         $('#total-amount').text(formatCurrency(total));

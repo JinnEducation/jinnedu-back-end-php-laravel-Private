@@ -77,11 +77,10 @@
                     <div class="flex flex-wrap gap-2 mb-8">
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">Level
                             : {{ $group_class->level->name }}</span>
-                        <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">duration :  Not available
-                            week</span>
+                        <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">duration :  {{ ($group_class->total_classes_length ?? 0) / 60 }} h</span>
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">Classes : {{ $group_class->classes }}</span>
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">teacher : {{ $group_class->tutor?->name }}</span>
-                        <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">Language : Not available</span>
+                        <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">Language : {{ $group_class->language?->name }}</span>
                     </div>
 
                     <!-- What you'll learn -->

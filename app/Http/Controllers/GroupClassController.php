@@ -317,6 +317,7 @@ class GroupClassController extends Controller
             $items = GroupClass::where('slug', $slug)->where('tutor_id', '<>', null)->first();
             if ($items) {
                 $items->level;
+                $items->language;
                 $items->category;
                 if ($items->category) {
                     $items->category->langs = $items->category->langs()->get();
@@ -373,6 +374,8 @@ class GroupClassController extends Controller
                 $suggestions = GroupClass::where('category_id', $items->category_id)->where('id', '<>', $items->id)->where('tutor_id', '<>', null)->where('status', 1)->limit(6)->get();
                 foreach ($suggestions as $suggestion) {
                     $suggestion->level;
+                    $suggestion->language;
+                    $suggestion->language;
                     $suggestion->category;
                     if ($suggestion->category) {
                         $suggestion->category->langs = $suggestion->category->langs()->get();
@@ -440,6 +443,10 @@ class GroupClassController extends Controller
 
             if (! empty($request->level)) {
                 $items->where('level_id', $request->level);
+            }
+
+            if (! empty($request->language_id)) {
+                $items->where('language_id', $request->language_id);
             }
 
             if ($request->rate) {
@@ -674,6 +681,7 @@ class GroupClassController extends Controller
             if ($items) {
                 $items->level;
                 $items->category;
+                $items->language;
                 if ($items->category) {
                     $items->category->langs = $items->category->langs()->get();
                 }
@@ -734,6 +742,7 @@ class GroupClassController extends Controller
                 $suggestions = GroupClass::where('category_id', $items->category_id)->where('id', '<>', $items->id)->limit(6)->get();
                 foreach ($suggestions as $suggestion) {
                     $suggestion->level;
+                    $suggestion->language;
                     $suggestion->category;
                     if ($suggestion->category) {
                         $suggestion->category->langs = $suggestion->category->langs()->get();
@@ -770,7 +779,7 @@ class GroupClassController extends Controller
             $limit = setDataTablePerPageLimit($request->limit);
 
             // get all group classes
-            $items = GroupClass::with('level')->select('group_classes.*');
+            $items = GroupClass::with('level','language')->select('group_classes.*');
             // join group class langs
             $items->leftjoin('group_class_langs', 'group_class_langs.classid', 'group_classes.id');
             if (! empty($request->tutor_id)) {
@@ -794,6 +803,9 @@ class GroupClassController extends Controller
 
             if (! empty($request->level)) {
                 $items->where('level_id', $request->level);
+            }
+            if (! empty($request->language_id)) {
+                $items->where('language_id', $request->language_id);
             }
 
             if ($request->rate) {
@@ -973,7 +985,7 @@ class GroupClassController extends Controller
 
             }
 
-            $data = $request->only(['name', 'category_id', 'price', 'level_id', 'classes', 'class_length', 'total_classes_length', 'frequency_id', 'min_size', 'metadata', 'embed', 'image', 'attachment', 'status', 'publish', 'publish_date', 'start_month', 'sessions_hour']); // 'tutor_id'
+            $data = $request->only(['name', 'category_id', 'price', 'level_id','language_id', 'classes', 'class_length', 'total_classes_length', 'frequency_id', 'min_size', 'metadata', 'embed', 'image', 'attachment', 'status', 'publish', 'publish_date', 'start_month', 'sessions_hour']); // 'tutor_id'
             $user = Auth::user();
             $data['user_id'] = $user->id;
             $data['ipaddress'] = $request->ip();
@@ -1267,6 +1279,7 @@ class GroupClassController extends Controller
         }
 
         $item->level;
+        $item->language;
         $item->category;
         if ($item->category) {
             $item->category->langs = $item->category->langs()->get();
@@ -1320,6 +1333,7 @@ class GroupClassController extends Controller
         $suggestions = GroupClass::where('category_id', $item->category_id)->where('id', '<>', $item->id)->limit(6)->get();
         foreach ($suggestions as $suggestion) {
             $suggestion->level;
+            $suggestion->language;
             $suggestion->category;
             if ($suggestion->category) {
                 $suggestion->category->langs = $suggestion->category->langs()->get();
@@ -1433,18 +1447,24 @@ class GroupClassController extends Controller
 
         $conferences = Conference::where(['ref_type' => 1, 'ref_id' => $group_class->id])->get();
         $studentIds = GroupClassStudent::where('class_id', $group_class->id)->pluck('student_id');
-        $students = User::select('id', 'name')->whereIn('id', $studentIds)->get();
+        $students = User::select('id', 'name')->with('profile')->whereIn('id', $studentIds)->get();
         foreach ($conferences as $key => $conference) {
-            $conference->is_taken = ConferenceAttendance::where('conference_id', $conference->id)->exists();
-            $conference['students'] = $students->map(function ($student) use ($conference) {
-                $student_attendance = ConferenceAttendance::where([
-                    'conference_id' => $conference->id,
-                    'user_id' => $student->id,
+            // $conference->is_taken = ConferenceAttendance::where('conference_id', $conference->id)->exists();
+            $conference->is_taken = !empty($studentIds);
+            $conference['students'] = $students->map(function ($student) use ($conference,$group_class) {
+                $student_attendance = GroupClassStudent::where([
+                    'student_id' => $student->id,
+                    'class_id' => $group_class->id,
                 ])->first();
 
-                return array_merge($student->toArray(), [
-                    'status' => $student_attendance ? $student_attendance->status : 0,
-                ]);
+                return [
+                    'id' => $student->id,
+                    'name' => $student->profile ? ($student->profile?->first_name . ' ' . $student->profile?->last_name) : $student->name,
+                    'status' => $student_attendance ? true : false,
+                ];
+                // return array_merge($student->toArray(), [
+                //     'status' => $student_attendance ? true : false,
+                // ]);
             });
         }
 

@@ -18,6 +18,7 @@ return new class () extends Migration {
             $table->string('name')->nullable();
             // Foreign key to "categories" table
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            
 
             // Foreign key to "levels" table
             $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');

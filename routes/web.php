@@ -143,3 +143,21 @@ Route::group([
 
 
 
+Route::get('/bridge-login/{token}', function ($token) {
+    $tokenModel = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+
+    if (! $tokenModel) {
+        abort(403);
+    }
+
+    $user = $tokenModel->tokenable;
+
+    Auth::login($user, true);
+    request()->session()->regenerate();
+
+    return redirect()->route('bridge-login-check');
+});
+
+Route::get('/bridge-login-check', function () {
+    return view('bridge-login-check');
+})->name('bridge-login-check');

@@ -172,8 +172,8 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'The Login info is not correct',
                 'msg-code' => '111',
-            ], 500);
-        }
+            ], 401);
+        }      
 
         $user = Auth::user();
 

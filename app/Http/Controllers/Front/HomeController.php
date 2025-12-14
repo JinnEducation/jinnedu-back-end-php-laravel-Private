@@ -373,6 +373,7 @@ class HomeController extends Controller
         // Load group class with relations
         $group_class = GroupClass::with([
             'level',
+            'language',
             'category',
             'category.langsAll',
             'langsAll.language',
