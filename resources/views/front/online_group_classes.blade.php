@@ -166,7 +166,8 @@
                             </div>
                             <div class="p-5">
                                 <h3 class="mb-3 text-lg font-bold text-primary">{{ $class->langsAll?->first()->title }}</h3>
-                                <p class="mb-4 text-sm text-gray-600 leading-relaxed">{!! $class->langsAll?->first()->headline !!}</p>
+                                <p class="mb-4 text-sm text-gray-600 leading-relaxed">{{ \Illuminate\Support\Str::limit(strip_tags($class->langsAll?->first()->headline), 120) }}</p>
+                                
                                 <div class="flex flex-wrap justify-between gap-4 items-center mb-4">
                                     <div class="flex gap-10 items-center">
                                         <div class="flex gap-2 items-center">
@@ -366,4 +367,3 @@
         <script src="{{ asset('front/assets/js/online_group_classes.js') }}"></script>
     @endpush
 </x-front-layout>
-

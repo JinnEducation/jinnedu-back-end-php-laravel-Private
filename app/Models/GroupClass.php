@@ -22,14 +22,15 @@ class GroupClass extends Model
      *
      * @return array
      */
-    public function sluggable(): array
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
+   public function sluggable(): array
+{
+    return [
+        'slug' => [
+            'source' => 'name',
+            'unique' => true,
+        ],
+    ];
+}
 
     public function langs()
     {             

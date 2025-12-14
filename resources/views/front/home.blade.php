@@ -49,7 +49,7 @@
                                         {{ $title }}
                                     </h1>
                                     <p class="max-w-xl leading-relaxed text-gray-600 text-md md:mb-8 rtl:lg:text-right">
-                                        {{ $sub }}
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($sub), 120) }}
                                     </p>
 
                                     @if ($index === 0)
