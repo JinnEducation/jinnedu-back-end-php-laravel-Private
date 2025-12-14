@@ -263,8 +263,8 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            {{ label_text('global', ' By clicking 'Complete Purchase, I acknowledge that I have read and agree to the terms and
-                            conditions and the privacy policy of the Jien platform.', __('site. By clicking 'Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            {{ label_text('global', ' By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
+                            conditions and the privacy policy of the Jien platform.', __('site. By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
                             conditions and the privacy policy of the Jien platform.')) }}
                            
                         </p>
@@ -318,9 +318,9 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            {{ label_text('global', 'The price you see on the payment provider's page may vary slightly due to differences in
-                            exchange rates.', __('site.The price you see on the payment provider's page may vary slightly due to differences in
-                            exchange rates.')) }}
+                            {{ label_text('global', "The price you see on the payment provider's page may vary slightly due to differences in
+                            exchange rates.", __("site.The price you see on the payment provider's page may vary slightly due to differences in
+                            exchange rates.")) }}
                             
                         </p>
                     </div>
