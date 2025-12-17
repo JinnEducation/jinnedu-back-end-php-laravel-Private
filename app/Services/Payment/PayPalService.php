@@ -18,9 +18,9 @@ class PayPalService implements PaymentInterface
 
     public function __construct()
     {
-        $this->clientId = config('services.paypal.client_id');
-        $this->secret = config('services.paypal.secret');
-        $this->baseUrl = config('services.paypal.mode') === 'live'
+        $this->clientId = config('services.paypal.client_id',env('PAYPAL_CLIENT_ID'));
+        $this->secret = config('services.paypal.secret',env('PAYPAL_SECRET'));
+        $this->baseUrl = config('services.paypal.mode',env('PAYPAL_MODE')) === 'live'
             ? 'https://api.paypal.com'
             : 'https://api.sandbox.paypal.com';
 
@@ -138,6 +138,15 @@ class PayPalService implements PaymentInterface
     
     public function cancel(Request $request)
     {
+        $referenceId = $request->get('reference_id');
+        
+        if($referenceId) {
+            $transaction = WalletPaymentTransaction::where('reference_id', $referenceId)->first();
+            if($transaction) {
+                $transaction->payment_status = TransactionPaymentStatus::CANCELED;
+                $transaction->save();
+            }
+        }
         return response()->json([
             'success' => false,
             'message' => 'payment-faild'

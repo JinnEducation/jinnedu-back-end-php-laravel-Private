@@ -136,7 +136,7 @@ class WalletPaymentTransactionController extends Controller
 
     }
 
-    public function handlePaymentResponse(Request $request, $transactionId, $status)
+    public function handlePaymentResponse(Request $request,$locale, $transactionId, $status)
     {
         if (!in_array($status, ['success', 'cancel'])) {
             abort(400, 'Invalid payment status');

@@ -383,7 +383,7 @@ class CheckoutController extends Controller
                     // Payment failed
                     $transaction->payment_status = TransactionPaymentStatus::CANCELED;
                     $transaction->save();
-                    
+
                     return redirect()->route('checkout')
                         ->with('error', $resultData['message'] ?? 'Payment processing failed');
                 }
@@ -393,6 +393,8 @@ class CheckoutController extends Controller
                 // Mark transaction as failed
                 $transaction->payment_status = TransactionPaymentStatus::CANCELED;
                 $transaction->save();
+
+                // throw $e;
                 
                 return redirect()->route('checkout')
                     ->with('error', 'Payment processing failed: ' . $e->getMessage());
@@ -424,13 +426,13 @@ class CheckoutController extends Controller
                 'balance' => 0
             ]);
         }
-        
-        if($type === 'topup') {
+
+        if($type == 'topup') {
             $wallet->update([
                 'balance' => $wallet->balance + $transaction->amount
             ]);
         }
-        
+
         // Create wallet transaction record
         WalletTransaction::create([
             'user_id' => $transaction->user_id,
@@ -507,7 +509,13 @@ class CheckoutController extends Controller
         // Add other payment gateways
         $gateways['paypal'] = [
                 'name' => 'PayPal',
-                'image_path' => asset('front/assets/imgs/payment/paypal.jpg'),
+                'image_path' => asset('front/assets/imgs/payment/paypal.png'),
+            'countries' => ['all'],
+        ];
+        
+        $gateways['stripe'] = [
+                'name' => 'Stripe',
+                'image_path' => asset('front/assets/imgs/payment/stripe.png'),
             'countries' => ['all'],
         ];
         
