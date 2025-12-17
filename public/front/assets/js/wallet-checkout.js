@@ -6,7 +6,12 @@
 $(document).ready(function() {
     
     let selectedGateway = null;
+
+    // Discount state
     let discountApplied = false;
+    let discountPercentage = 0; // e.g. 10 means 10%
+    let appliedDiscountCode = null;
+
     const TAX_RATE = 0; // 0% tax
     const SERVICE_FEE = 0; // $0 service fee
 
@@ -147,7 +152,7 @@ $(document).ready(function() {
     });
 
     // ============================================
-    // Discount Code Application
+    // Discount Code Application (REAL API CALL)
     // ============================================
     $('#apply-discount-btn').on('click', function() {
         const discountCode = $('#discount-code').val().trim();
@@ -156,24 +161,65 @@ $(document).ready(function() {
             showMessage('Please enter a discount code', 'warning');
             return;
         }
-        
-        // Simulate discount code validation
-        // In real application, this would be an API call
-        if (discountCode.toUpperCase() === 'DISCOUNT10' || discountCode.toUpperCase() === 'SAVE20') {
-            discountApplied = true;
-            
-            showMessage('Discount code applied successfully!', 'success');
-            
-            // Update button appearance
-            $(this).text('Applied ✓').addClass('bg-green-600 hover:bg-green-700').removeClass('bg-primary hover:bg-primary-700');
-            $('#discount-code').prop('disabled', true).addClass('bg-gray-100');
-            
-            // Recalculate with discount
-            const amount = parseFloat($('#wallet-amount').val()) || 0;
-            updateTotals(amount);
-        } else {
-            showMessage('Invalid discount code. Try: DISCOUNT10 or SAVE20', 'error');
-        }
+
+        const $btn = $(this);
+        const amount = parseFloat($('#wallet-amount').val()) || 0;
+
+        // optional data attr, fallback route
+        const applyUrl = $btn.data('apply-url') || '/checkout/apply-discount';
+
+        $btn.prop('disabled', true).html('<span class="inline-block animate-pulse">Applying...</span>');
+
+        $.ajax({
+            url: applyUrl,
+            method: 'POST',
+            data: {
+                code: discountCode,
+                amount: amount,
+                _token: $('meta[name="csrf-token"]').attr('content'),
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                // Expected: { success:true, data:{ percentage, discount, message } }
+                if (response && response.success && response.data) {
+                    discountApplied = true;
+                    discountPercentage = parseFloat(response.data.percentage) || 0;
+                    appliedDiscountCode = discountCode;
+
+                    showMessage(response.data.message || 'Discount code applied successfully!', 'success');
+
+                    // Update UI
+                    $btn
+                        .text('Applied ✓')
+                        .addClass('bg-green-600 hover:bg-green-700')
+                        .removeClass('bg-primary hover:bg-primary-700')
+                        .prop('disabled', true);
+
+                    $('#discount-code').prop('disabled', true).addClass('bg-gray-100');
+
+                    // Update totals (will compute discount by percentage)
+                    updateTotals(amount);
+                } else {
+                    showMessage((response && response.message) ? response.message : 'Invalid discount code', 'error');
+                    $btn.prop('disabled', false).text('Apply');
+                }
+            },
+            error: function(xhr) {
+                const res = xhr.responseJSON || {};
+                const msg = res.message || 'Invalid or expired discount code';
+
+                // reset discount state just in case
+                discountApplied = false;
+                discountPercentage = 0;
+                appliedDiscountCode = null;
+                $('#discount-amount').text(formatCurrency(0));
+
+                showMessage(msg, 'error');
+                $btn.prop('disabled', false).text('Apply');
+            }
+        });
     });
 
     // ============================================
@@ -207,7 +253,8 @@ $(document).ready(function() {
             order_ids: orderIds ? orderIds.split(',').filter(id => id) : [],
             payment_gateway: selectedGateway,
             country: $('#country-select').val(),
-            discount_code: $('#discount-code').val() || null,
+            // send only if applied (avoid sending random text)
+            discount_code: discountApplied ? (appliedDiscountCode || $('#discount-code').val() || null) : null,
             _token: $('meta[name="csrf-token"]').attr('content')
         };
         
@@ -282,11 +329,13 @@ $(document).ready(function() {
         // Calculate service fee
         const serviceFee = SERVICE_FEE;
         
-        // Apply discount if applicable
+        // Apply discount if applicable (by percentage)
         let discount = 0;
-        if (discountApplied) {
-            discount = baseAmount * 0.10; // 10% discount
+        if (discountApplied && discountPercentage > 0) {
+            discount = baseAmount * (discountPercentage / 100);
             $('#discount-amount').text(formatCurrency(discount));
+        } else {
+            $('#discount-amount').text(formatCurrency(0));
         }
         
         // Calculate total
@@ -304,7 +353,7 @@ $(document).ready(function() {
     // Helper: Format Currency
     // ============================================
     function formatCurrency(amount) {
-        return amount.toFixed(2) + ' $';
+        return (parseFloat(amount) || 0).toFixed(2) + ' $';
     }
 
     // ============================================
@@ -378,4 +427,3 @@ $('<style>')
         }
     `)
     .appendTo('head');
-

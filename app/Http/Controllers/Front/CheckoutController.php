@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\WalletController;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\UserWallet;
-use App\Enums\TransactionPaymentStatus;
+use App\Models\DiscountCode;
+use Illuminate\Http\Request;
 use App\Enums\TransactionStatus;
 use App\Models\WalletTransaction;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\TransactionPaymentStatus;
+use App\Http\Controllers\WalletController;
 
 class CheckoutController extends Controller
 {
@@ -477,13 +478,28 @@ class CheckoutController extends Controller
     /**
      * Apply discount code
      */
-    private function applyDiscountCode($code)
-    {
-        // Implement discount code logic
-        // You can create a discount_codes table and check here
-        // For now, return 0 (no discount)
-        return 0;
+   private function applyDiscountCode(string $code, float $amount): array
+{
+    $discount = DiscountCode::where('code', strtoupper($code))->first();
+
+    if (! $discount || ! $discount->isValid()) {
+        return [
+            'valid' => false,
+            'discount' => 0,
+            'message' => 'Invalid or expired discount code',
+        ];
     }
+
+    $discountAmount = round($amount * ($discount->percentage / 100), 2);
+
+    return [
+        'valid' => true,
+        'percentage' => $discount->percentage,
+        'discount' => $discountAmount,
+        'message' => 'Discount applied successfully',
+    ];
+}
+
 
     /**
      * Get payment gateways configuration
@@ -542,4 +558,7 @@ class CheckoutController extends Controller
     {
         return view('front.complete_checkout');
     }
+
+ 
+
 }
