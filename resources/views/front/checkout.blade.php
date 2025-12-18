@@ -333,6 +333,9 @@
 
 
     @push('scripts')
+        <script>
+            let apply_discount_url = "{{ route('checkout.applyDiscountCode')}}";
+        </script>
         <script src="{{ asset('front/assets/js/wallet-checkout.js') }}"></script>
     @endpush
 </x-front-layout>

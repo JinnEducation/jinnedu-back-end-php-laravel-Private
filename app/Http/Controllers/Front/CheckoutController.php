@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Models\User;
-use App\Models\Order;
-use App\Models\UserWallet;
-use App\Models\DiscountCode;
-use Illuminate\Http\Request;
-use App\Enums\TransactionStatus;
-use App\Models\WalletTransaction;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Enums\TransactionPaymentStatus;
+use App\Enums\TransactionStatus;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\WalletController;
+use App\Models\DiscountCode;
+use App\Models\Order;
+use App\Models\User;
+use App\Models\UserWallet;
+use App\Models\WalletTransaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -25,31 +25,31 @@ class CheckoutController extends Controller
     public function checkout(Request $request)
     {
         $user = Auth::user();
-        if(!$user) {
+        if (! $user) {
             return redirect()->route('home');
         }
 
         // Get user with wallet
         $user = User::find($user->id);
-        
+
         // Determine checkout type (topup or pay)
         $checkoutType = trim($request->get('type', 'topup')); // default is topup
-        
+
         // Initialize variables
         $orders = collect();
         $totalAmount = 0;
-        
+
         // If checkout type is 'pay', get orders
-        if($checkoutType === 'pay' && $request->has('order_ids')) {
+        if ($checkoutType === 'pay' && $request->has('order_ids')) {
             $orderIds = explode(',', $request->get('order_ids'));
             $orderIds = array_filter(array_map('intval', $orderIds)); // Clean and validate IDs
-            
-            if(!empty($orderIds)) {
+
+            if (! empty($orderIds)) {
                 // Get orders for the user (show all orders, filter by status only when paying)
                 $orders = Order::whereIn('id', $orderIds)
                     ->where('user_id', $user->id)
                     ->get();
-                    
+
                 $totalAmount = $orders->sum('price');
             }
         }
@@ -69,7 +69,7 @@ class CheckoutController extends Controller
 
         // Payment Gateways Configuration
         $paymentGateways = $this->getPaymentGateways($checkoutType);
-        
+
         // Debug: Log payment gateways (remove after testing)
         // \Log::info('Checkout Debug', [
         //     'checkoutType' => $checkoutType,
@@ -79,8 +79,8 @@ class CheckoutController extends Controller
         // ]);
 
         return view('front.checkout', compact(
-            'user', 
-            'countries', 
+            'user',
+            'countries',
             'paymentGateways',
             'checkoutType',
             'orders',
@@ -95,10 +95,10 @@ class CheckoutController extends Controller
     public function checkout_store(Request $request)
     {
         $user = Auth::user();
-        if(!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'user-not-authenticated'
+                'message' => 'user-not-authenticated',
             ], 401);
         }
 
@@ -114,11 +114,19 @@ class CheckoutController extends Controller
 
         // Handle discount code if provided
         $discountAmount = 0;
-        if($request->has('discount_code') && !empty($request->discount_code)) {
-            $discountAmount = $this->applyDiscountCode($request->discount_code);
+        if ($request->has('discount_code') && ! empty($request->discount_code)) {
+            $discountResult = $this->calculateDiscount($request->discount_code, $request->amount);
+            if($discountResult['valid']){
+                $discountAmount = $discountResult['discount'];
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => $discountResult['message'],
+                ], 422);
+            }
         }
         // Route to appropriate handler
-        if($checkoutType === 'topup') {
+        if ($checkoutType === 'topup') {
             return $this->handleTopup($request, $user, $discountAmount);
         } else {
             return $this->handlePayment($request, $user, $discountAmount);
@@ -132,21 +140,19 @@ class CheckoutController extends Controller
     {
         $amount = $request->amount ?? 0;
         $finalAmount = max(0, $amount - $discountAmount);
-        if($finalAmount <= 0) {
+        if ($finalAmount <= 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'invalid-amount'
+                'message' => 'invalid-amount',
             ], 422);
         }
-
         // Cannot use wallet to top-up wallet
-        if($request->payment_gateway === 'my-wallet') {
+        if ($request->payment_gateway === 'my-wallet') {
             return response()->json([
                 'success' => false,
-                'message' => 'cannot-use-wallet-for-topup'
+                'message' => 'cannot-use-wallet-for-topup',
             ], 422);
         }
-
 
         // Create payment transaction
         $transaction = \App\Models\WalletPaymentTransaction::create([
@@ -155,11 +161,11 @@ class CheckoutController extends Controller
             'payment_channel' => $request->payment_gateway,
             'current_wallet' => $user->wallets()->first()?->balance ?? 0,
             'reference_id' => (string) \Illuminate\Support\Str::uuid(),
-            'response' => json_encode(['type' => 'topup','payment_gateway' => $request->payment_gateway]),
+            'response' => json_encode(['type' => 'topup', 'payment_gateway' => $request->payment_gateway]),
         ]);
 
         // Process payment gateway
-        return $this->processPaymentGateway($transaction, $request,'topup');
+        return $this->processPaymentGateway($transaction, $request, 'topup');
     }
 
     /**
@@ -168,15 +174,15 @@ class CheckoutController extends Controller
     private function handlePayment(Request $request, $user, $discountAmount)
     {
         $orderIds = $request->order_ids ?? [];
-        if(!is_array($orderIds)) {
+        if (! is_array($orderIds)) {
             $orderIds = explode(',', $orderIds);
         }
         $orderIds = array_filter(array_map('intval', $orderIds));
 
-        if(empty($orderIds)) {
+        if (empty($orderIds)) {
             return response()->json([
                 'success' => false,
-                'message' => 'no-orders-found'
+                'message' => 'no-orders-found',
             ], 404);
         }
 
@@ -184,10 +190,10 @@ class CheckoutController extends Controller
             ->where('user_id', $user->id)
             ->get();
 
-        if($orders->isEmpty()) {
+        if ($orders->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'no-orders-found'
+                'message' => 'no-orders-found',
             ], 404);
         }
 
@@ -210,10 +216,10 @@ class CheckoutController extends Controller
         $finalAmount = max(0, $totalAmount - $discountAmount);
 
         // If paying from wallet
-        if($request->payment_gateway === 'my-wallet') {
+        if ($request->payment_gateway === 'my-wallet') {
             return $this->payFromWallet($user, $orders, $finalAmount);
         }
-        
+
         // Create payment transaction
         $transaction = \App\Models\WalletPaymentTransaction::create([
             'user_id' => $user->id,
@@ -221,11 +227,11 @@ class CheckoutController extends Controller
             'payment_channel' => $request->payment_gateway,
             'current_wallet' => $user->wallets()->first()?->balance ?? 0,
             'reference_id' => (string) \Illuminate\Support\Str::uuid(),
-            'response' => json_encode(['order_ids' => $orderIds,'type' => 'pay','payment_gateway' => $request->payment_gateway]), // Store order IDs in response field
+            'response' => json_encode(['order_ids' => $orderIds, 'type' => 'pay', 'payment_gateway' => $request->payment_gateway]), // Store order IDs in response field
         ]);
 
         // Process payment gateway
-        return $this->processPaymentGateway($transaction, $request,'pay');
+        return $this->processPaymentGateway($transaction, $request, 'pay');
     }
 
     /**
@@ -234,15 +240,16 @@ class CheckoutController extends Controller
     private function payFromWallet($user, $orders, $amount)
     {
         $wallet = $user->wallets()->first();
-        if(!$wallet) {
+        if (! $wallet) {
             $wallet = UserWallet::create([
                 'user_id' => $user->id,
-                'balance' => 0
+                'balance' => 0,
             ]);
         }
 
-        if($wallet->balance < $amount) {
+        if ($wallet->balance < $amount) {
             $shortage = $amount - $wallet->balance;
+
             return response()->json([
                 'success' => false,
                 'message' => 'insufficient-wallet-balance',
@@ -250,7 +257,7 @@ class CheckoutController extends Controller
                 'available' => $wallet->balance,
                 'shortage' => $shortage,
                 'topup_url' => route('checkout', ['type' => 'topup']),
-                'message_text' => "Your wallet balance ($" . number_format($wallet->balance, 2) . ") is insufficient. You need $" . number_format($shortage, 2) . " more. Please top up your wallet first."
+                'message_text' => 'Your wallet balance ($'.number_format($wallet->balance, 2).') is insufficient. You need $'.number_format($shortage, 2).' more. Please top up your wallet first.',
             ], 422);
         }
 
@@ -259,14 +266,14 @@ class CheckoutController extends Controller
         $wallet->save();
 
         // Update orders status
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
             $order->status = 1; // completed
             $order->payment = 'wallet';
             $order->save();
 
-            if($order->ref_type == 4) {
-                $walletController = new WalletController();
-                $walletController->addTutorFinance($order,$order->ref_id, 4);
+            if ($order->ref_type == 4) {
+                $walletController = new WalletController;
+                $walletController->addTutorFinance($order, $order->ref_id, 4);
             }
 
             // Create wallet transaction record
@@ -275,7 +282,7 @@ class CheckoutController extends Controller
                 'order_id' => $order->id,
                 'type' => 'debit',
                 'amount' => $order->price,
-                'description' => 'Payment for order #' . $order->id
+                'description' => 'Payment for order #'.$order->id,
             ]);
         }
 
@@ -284,7 +291,7 @@ class CheckoutController extends Controller
             'message' => 'payment-completed-successfully',
             'orders' => $orders,
             'wallet_balance' => $wallet->balance,
-            'redirect_url' => route('checkout-complete')
+            'redirect_url' => route('checkout-complete'),
         ]);
     }
 
@@ -300,20 +307,20 @@ class CheckoutController extends Controller
                 'amount' => $transaction->amount,
                 'currency' => 'USD',
                 'type' => $type,
-                'description' => $transaction->payment_channel === 'topup' 
-                    ? 'Wallet Top-up' 
+                'description' => $transaction->payment_channel === 'topup'
+                    ? 'Wallet Top-up'
                     : 'Order Payment',
                 'success_url' => route('checkout-response', ['id' => $transaction->id, 'status' => 'success']),
                 'cancel_url' => route('checkout-response', ['id' => $transaction->id, 'status' => 'cancel']),
             ]);
-            
+
             // Extract payment URL based on gateway
             $url = $this->extractPaymentUrl($transaction->payment_channel, $response);
 
-            if(!$url) {
+            if (! $url) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'payment-gateway-url-not-found'
+                    'message' => 'payment-gateway-url-not-found',
                 ], 500);
             }
 
@@ -321,14 +328,15 @@ class CheckoutController extends Controller
                 'success' => true,
                 'message' => 'redirecting-to-payment-gateway',
                 'url' => $url,
-                'transaction_id' => $transaction->id
+                'transaction_id' => $transaction->id,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Payment Gateway Error: ' . $e->getMessage());
+            \Log::error('Payment Gateway Error: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'payment-gateway-error',
-                'error' => config('app.debug') ? $e->getMessage() : 'An error occurred'
+                'error' => config('app.debug') ? $e->getMessage() : 'An error occurred',
             ], 500);
         }
     }
@@ -345,6 +353,7 @@ class CheckoutController extends Controller
         } elseif ($gateway === 'local-test') {
             return $response['url'] ?? null;
         }
+
         // Add more gateways as needed
         return null;
     }
@@ -354,29 +363,30 @@ class CheckoutController extends Controller
      */
     public function handlePaymentResponse(Request $request, $locale, $transactionId, $status)
     {
-        if (!in_array($status, ['success', 'cancel'])) {
+        if (! in_array($status, ['success', 'cancel'])) {
             abort(400, 'Invalid payment status');
         }
 
         $transaction = \App\Models\WalletPaymentTransaction::findOrFail($transactionId);
         $type = json_decode($transaction->response, true)['type'];
-        if($status === 'success') {
+        if ($status === 'success') {
             try {
                 $gateway = \App\Services\Payment\PaymentManager::driver($transaction->payment_channel);
-                
+
                 // Add reference_id to request for gateways that need it (like local-test)
                 $request->merge(['reference_id' => $transaction->reference_id]);
-                
+
                 $result = $gateway->success($request);
 
                 // Convert JsonResponse to array
-                $resultData = $result instanceof \Illuminate\Http\JsonResponse 
-                    ? $result->getData(true) 
+                $resultData = $result instanceof \Illuminate\Http\JsonResponse
+                    ? $result->getData(true)
                     : (is_array($result) ? $result : []);
 
                 // If payment succeeded, complete transaction
-                if(isset($resultData['success']) && $resultData['success']) {
-                    $this->completeTransaction($transaction,$type);
+                if (isset($resultData['success']) && $resultData['success']) {
+                    $this->completeTransaction($transaction, $type);
+
                     // dd('success',Auth::user()->wallets()->first());
                     return redirect()->route('checkout-complete')
                         ->with('success', $resultData['message'] ?? 'Payment completed successfully');
@@ -389,21 +399,21 @@ class CheckoutController extends Controller
                         ->with('error', $resultData['message'] ?? 'Payment processing failed');
                 }
             } catch (\Exception $e) {
-                \Log::error('Payment Response Error: ' . $e->getMessage());
-                
+                \Log::error('Payment Response Error: '.$e->getMessage());
+
                 // Mark transaction as failed
                 $transaction->payment_status = TransactionPaymentStatus::CANCELED;
                 $transaction->save();
 
                 // throw $e;
-                
+
                 return redirect()->route('checkout')
-                    ->with('error', 'Payment processing failed: ' . $e->getMessage());
+                    ->with('error', 'Payment processing failed: '.$e->getMessage());
             }
         } else {
             $transaction->payment_status = TransactionPaymentStatus::CANCELED;
             $transaction->save();
-            
+
             return redirect()->route('checkout')
                 ->with('error', 'Payment was canceled');
         }
@@ -412,7 +422,7 @@ class CheckoutController extends Controller
     /**
      * Complete transaction and update wallet
      */
-    private function completeTransaction($transaction,$type)
+    private function completeTransaction($transaction, $type)
     {
         // Update transaction status
         $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
@@ -421,16 +431,16 @@ class CheckoutController extends Controller
 
         // Add amount to wallet
         $wallet = $transaction->user->wallets()->first();
-        if(!$wallet) {
+        if (! $wallet) {
             $wallet = UserWallet::create([
                 'user_id' => $transaction->user_id,
-                'balance' => 0
+                'balance' => 0,
             ]);
         }
 
-        if($type == 'topup') {
+        if ($type == 'topup') {
             $wallet->update([
-                'balance' => $wallet->balance + $transaction->amount
+                'balance' => $wallet->balance + $transaction->amount,
             ]);
         }
 
@@ -439,13 +449,13 @@ class CheckoutController extends Controller
             'user_id' => $transaction->user_id,
             'type' => 'credit',
             'amount' => $transaction->amount,
-            'description' => 'Wallet top-up via ' . $transaction->payment_channel
+            'description' => 'Wallet top-up via '.$transaction->payment_channel,
         ]);
 
         // If this was a payment transaction (not topup), complete orders
-        if($transaction->response) {
+        if ($transaction->response) {
             $metadata = json_decode($transaction->response, true);
-            if(isset($metadata['order_ids'])) {
+            if (isset($metadata['order_ids'])) {
                 $this->completeOrders($metadata['order_ids'], $transaction);
             }
         }
@@ -461,7 +471,7 @@ class CheckoutController extends Controller
             ->whereIn('status', [0, 2])
             ->get();
 
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
             $order->status = 1; // completed
             $order->payment = $transaction->payment_channel;
             $order->save();
@@ -472,36 +482,63 @@ class CheckoutController extends Controller
                 'order_id' => $order->id,
                 'type' => 'debit',
                 'amount' => $order->price,
-                'description' => 'Payment for order #' . $order->id
+                'description' => 'Payment for order #'.$order->id,
             ]);
         }
     }
 
     /**
-     * Apply discount code
+     * Apply discount code (called from route)
      */
-   private function applyDiscountCode(string $code, float $amount): array
-{
-    $discount = DiscountCode::where('code', strtoupper($code))->first();
+    public function applyDiscountCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'amount' => 'required|numeric|min:0',
+        ]);
 
-    if (! $discount || ! $discount->isValid()) {
-        return [
-            'valid' => false,
+        $result = $this->calculateDiscount($request->code, $request->amount);
+
+        if ($result['valid']) {
+            return response()->json([
+                'success' => true,
+                'discount' => $result['discount'],
+                'percentage' => $result['percentage'],
+                'message' => $result['message'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
             'discount' => 0,
-            'message' => 'Invalid or expired discount code',
-        ];
+            'message' => $result['message'],
+        ], 422);
     }
 
-    $discountAmount = round($amount * ($discount->percentage / 100), 2);
+    /**
+     * Calculate discount amount (internal method)
+     */
+    private function calculateDiscount(string $code, float $amount): array
+    {
+        $discount = DiscountCode::where('code', strtoupper($code))->first();
 
-    return [
-        'valid' => true,
-        'percentage' => $discount->percentage,
-        'discount' => $discountAmount,
-        'message' => 'Discount applied successfully',
-    ];
-}
+        if (! $discount || ! $discount->isValid()) {
+            return [
+                'valid' => false,
+                'discount' => 0,
+                'message' => 'Invalid or expired discount code',
+            ];
+        }
 
+        $discountAmount = round($amount * ($discount->percentage / 100), 2);
+
+        return [
+            'valid' => true,
+            'percentage' => $discount->percentage,
+            'discount' => $discountAmount,
+            'message' => 'Discount applied successfully',
+        ];
+    }
 
     /**
      * Get payment gateways configuration
@@ -509,44 +546,44 @@ class CheckoutController extends Controller
     private function getPaymentGateways($checkoutType = 'topup')
     {
         $gateways = [];
-        
+
         // Normalize checkout type
         $checkoutType = trim(strtolower($checkoutType));
-        
+
         // Add my-wallet only for payment mode (not for topup)
-        if($checkoutType === 'pay') {
+        if ($checkoutType === 'pay') {
             $gateways['my-wallet'] = [
                 'name' => 'My Wallet',
                 'image_path' => asset('front/assets/imgs/payment/my-wallet.jpg'),
                 'countries' => ['all'],
             ];
         }
-        
+
         // Add other payment gateways
         $gateways['paypal'] = [
-                'name' => 'PayPal',
-                'image_path' => asset('front/assets/imgs/payment/paypal.png'),
+            'name' => 'PayPal',
+            'image_path' => asset('front/assets/imgs/payment/paypal.png'),
             'countries' => ['all'],
         ];
-        
+
         $gateways['stripe'] = [
-                'name' => 'Stripe',
-                'image_path' => asset('front/assets/imgs/payment/stripe.png'),
+            'name' => 'Stripe',
+            'image_path' => asset('front/assets/imgs/payment/stripe.png'),
             'countries' => ['all'],
         ];
-        
+
         $gateways['jawal-pay'] = [
-                'name' => 'Jawal Pay',
-                'image_path' => asset('front/assets/imgs/payment/jawal-pay.jpg'),
+            'name' => 'Jawal Pay',
+            'image_path' => asset('front/assets/imgs/payment/jawal-pay.jpg'),
             'countries' => ['palestine', 'jordan'],
         ];
-        
+
         $gateways['palpay'] = [
-                'name' => 'PalPay',
-                'image_path' => asset('front/assets/imgs/payment/palpay.jpg'),
+            'name' => 'PalPay',
+            'image_path' => asset('front/assets/imgs/payment/palpay.jpg'),
             'countries' => ['palestine'],
         ];
-    
+
         // إضافة Local Test فقط في بيئة التطوير
         if (config('app.env') === 'local' || config('app.env') === 'development' || config('app.debug')) {
             $gateways['local-test'] = [
@@ -555,7 +592,7 @@ class CheckoutController extends Controller
                 'countries' => ['all'],
             ];
         }
-    
+
         return $gateways;
     }
 
@@ -566,7 +603,4 @@ class CheckoutController extends Controller
     {
         return view('front.complete_checkout');
     }
-
- 
-
 }

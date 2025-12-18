@@ -96,6 +96,7 @@ Route::group([
 
         // checkout
         Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+        Route::post('checkout/apply-discount', [CheckoutController::class, 'applyDiscountCode'])->name('checkout.applyDiscountCode');
         Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
         Route::get('checkout-complete', [CheckoutController::class, 'checkoutComplete'])->name('checkout-complete');
         Route::get('checkout-response/{id}/{status}', [CheckoutController::class, 'handlePaymentResponse'])->name('checkout-response-get');

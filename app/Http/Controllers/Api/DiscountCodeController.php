@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DiscountCodeResource;
 use App\Models\DiscountCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +40,7 @@ class DiscountCodeController extends Controller
 
         $discountCodes = $query->orderByDesc('id')->paginate(10);
 
-        return response()->json($discountCodes);
+        return DiscountCodeResource::collection($discountCodes);
     }
 
     public function store(Request $request)
@@ -112,5 +113,20 @@ class DiscountCodeController extends Controller
         return response()->json([
             'message' => 'Discount code deleted successfully',
         ], 204);
+    }
+
+    public function checkCode(Request $request)
+    {
+        $code = $request->input('code');
+        $discountCode = DiscountCode::where('code', $code)->first();
+        if ($discountCode) {
+            return response()->json([
+                'exists' => true,
+            ]);
+        } else {
+            return response()->json([
+                'exists' => false,
+            ]);
+        }
     }
 }

@@ -11,7 +11,8 @@ use App\Http\Controllers\Api\DiscountCodeController;
 
 
 Route::apiResource('blog', BlogController::class);
-Route::apiResource('discountcode', DiscountCodeController::class);
+Route::post('discount_codes/check-code', [DiscountCodeController::class, 'checkCode'])->name('discount_codes.check_code');
+Route::apiResource('discount_codes', DiscountCodeController::class);
 
 // Route::get('/blogs/{blog}', [BlogController::class, 'show']);
 // Route::put('blog/{id}', [BlogController::class, 'update']);

@@ -166,7 +166,7 @@ $(document).ready(function() {
         const amount = parseFloat($('#wallet-amount').val()) || 0;
 
         // optional data attr, fallback route
-        const applyUrl = $btn.data('apply-url') || '/checkout/apply-discount';
+        const applyUrl = apply_discount_url;
 
         $btn.prop('disabled', true).html('<span class="inline-block animate-pulse">Applying...</span>');
 
@@ -183,12 +183,12 @@ $(document).ready(function() {
             },
             success: function(response) {
                 // Expected: { success:true, data:{ percentage, discount, message } }
-                if (response && response.success && response.data) {
+                if (response && response.success) {
                     discountApplied = true;
-                    discountPercentage = parseFloat(response.data.percentage) || 0;
+                    discountPercentage = parseFloat(response.percentage) || 0;
                     appliedDiscountCode = discountCode;
 
-                    showMessage(response.data.message || 'Discount code applied successfully!', 'success');
+                    showMessage(response.message || 'Discount code applied successfully!', 'success');
 
                     // Update UI
                     $btn
@@ -198,7 +198,6 @@ $(document).ready(function() {
                         .prop('disabled', true);
 
                     $('#discount-code').prop('disabled', true).addClass('bg-gray-100');
-
                     // Update totals (will compute discount by percentage)
                     updateTotals(amount);
                 } else {
@@ -215,7 +214,7 @@ $(document).ready(function() {
                 discountPercentage = 0;
                 appliedDiscountCode = null;
                 $('#discount-amount').text(formatCurrency(0));
-
+                
                 showMessage(msg, 'error');
                 $btn.prop('disabled', false).text('Apply');
             }
@@ -337,7 +336,7 @@ $(document).ready(function() {
         } else {
             $('#discount-amount').text(formatCurrency(0));
         }
-        
+
         // Calculate total
         const total = baseAmount;
         const finalTotal = total + taxAmount + serviceFee - discount;
