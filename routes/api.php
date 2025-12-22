@@ -11,6 +11,11 @@ use App\Http\Controllers\VerificationController;
 
 use Laravel\Sanctum\PersonalAccessToken;
 
+use App\Http\Controllers\Api\Chat\ChatContactsController;
+use App\Http\Controllers\Api\Chat\ChatMessagesController;
+use App\Http\Controllers\Api\Chat\ChatStatusController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -153,6 +158,22 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/verify/email', [AuthController::class,'verifyEmail']);
 });
 
+Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
+
+    // Contacts (sidebar)
+    Route::get('contacts', [ChatContactsController::class, 'index']);
+    Route::get('contacts/{id}', [ChatContactsController::class, 'show']);
+
+    // Messages
+    Route::get('{id}/messages', [ChatMessagesController::class, 'index']); // id = contactId
+    Route::post('messages', [ChatMessagesController::class, 'store']);
+    Route::delete('messages/{id}', [ChatMessagesController::class, 'destroy']);
+    Route::post('messages/{id}/favorite', [ChatMessagesController::class, 'favorite']);
+
+    // Status
+    Route::post('{id}/seen', [ChatStatusController::class, 'seen']);       // id = contactId
+    Route::post('{id}/typing', [ChatStatusController::class, 'typing']);   // id = contactId
+});
 
 include 'api-admin.php';
 include 'api-tutor.php';
