@@ -18,6 +18,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
+// Broadcast::channel('private-chat.{room}', function ($user, $room) {
+//     return ChatRoomService::userInRoom((int)$user->id, (string)$room);
+// });
 Broadcast::channel('chat.{room}', function ($user, $room) {
     return ChatRoomService::userInRoom((int)$user->id, (string)$room);
 });

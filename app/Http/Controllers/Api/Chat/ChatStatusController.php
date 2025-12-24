@@ -15,7 +15,7 @@ class ChatStatusController extends Controller
 
     public function seen(Request $request, int $id)
     {
-        $authId = (int)$request->user()->id;
+        $authId = (int) $request->user()->id;
 
         $count = $this->chatService->markAsSeen($authId, $id);
 
@@ -28,11 +28,21 @@ class ChatStatusController extends Controller
             'status' => ['required', 'boolean'],
         ]);
 
-        $authId = (int)$request->user()->id;
-        $status = (bool)$request->boolean('status');
+        $authId = (int) $request->user()->id;
+        $status = (bool) $request->boolean('status');
 
         $this->chatService->setTyping($authId, $id, $status);
 
         return response()->json(['ok' => true]);
+    }
+
+    public function online(Request $request)
+    {
+        $request->user()->update([
+            'online' => $request->status ? 1 : 0,
+            'last_seen_at' => now(),
+        ]);
+
+        return response()->json(['success' => true]);
     }
 }

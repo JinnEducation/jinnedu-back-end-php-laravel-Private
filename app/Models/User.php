@@ -594,4 +594,9 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    // Accessor for name
+    public function getFullNameAttribute()
+    {
+        return $this->profile?->first_name . ' ' . $this->profile?->last_name ?? ($this->name ?? 'Unknown');
+    }
 }
