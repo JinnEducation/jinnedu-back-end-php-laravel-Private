@@ -158,6 +158,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/verify/email', [AuthController::class,'verifyEmail']);
 });
 
+Route::get('chat/blocked-words', function () {
+    return \App\Models\ChatBlockedWord::where('is_active', true)
+        ->pluck('word');
+});
+
 Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
 
     // Contacts (sidebar)
