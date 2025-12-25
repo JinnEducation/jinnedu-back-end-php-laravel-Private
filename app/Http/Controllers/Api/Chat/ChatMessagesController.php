@@ -16,7 +16,8 @@ class ChatMessagesController extends Controller
     public function index(Request $request, int $id)
     {
         $authId = (int)$request->user()->id;
-        $perPage = (int)($request->query('per_page', 20));
+        // $perPage = (int)($request->query('per_page', 20));
+        $perPage = 50;
 
         // id هنا = contactId
         $messages = $this->chatService->listMessages($authId, $id, $perPage);

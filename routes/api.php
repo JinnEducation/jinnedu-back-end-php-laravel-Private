@@ -173,6 +173,9 @@ Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
     // Status
     Route::post('{id}/seen', [ChatStatusController::class, 'seen']);       // id = contactId
     Route::post('{id}/typing', [ChatStatusController::class, 'typing']);   // id = contactId
+
+    Route::get('users', [ChatContactsController::class, 'users']);
+    Route::post('online', [ChatStatusController::class, 'online']);
 });
 
 include 'api-admin.php';

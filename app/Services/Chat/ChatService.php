@@ -23,7 +23,7 @@ class ChatService
 
         $messages = Chat::query()
             ->betweenUsers($authId, $contactId)
-            ->orderByDesc('id')
+            ->orderBy('created_at', 'asc')
             ->paginate($perPage);
 
         // mark messages as seen (الرسائل القادمة للمستخدم)

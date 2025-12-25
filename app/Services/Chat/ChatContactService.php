@@ -15,7 +15,7 @@ class ChatContactService
     {
         $contacts = ChatContact::query()
             ->forUser($userId)
-            ->with(['contact:id,name,email']) // عدّلي حسب أعمدة User عندك
+            ->with(['contact:id,name,email','user']) // عدّلي حسب أعمدة User عندك
             ->when($q, function ($query) use ($q) {
                 $query->whereHas('contact', function ($qq) use ($q) {
                     $qq->where('name', 'like', "%{$q}%")
@@ -38,6 +38,21 @@ class ChatContactService
 
         foreach ($contacts as $item) {
             $item->unread_count = (int)($unseen[$item->contact_id] ?? 0);
+            $contact = $item->contact;   // ← خذ نسخة واضحة من الموديل
+
+            if ($contact) {
+                $contact->name = $contact->name ?? $contact->full_name;
+                $contact->avatar = $contact->avatar ?: asset('assets/images/avatar.png');
+                $contact->type = $contact->type ?? 0;
+                $contact->online = $contact->online ?? 0;
+                $contact->last_online_date = $contact->last_online_date ?? null;
+            }
+            // $item->contact->name = $item->contact?->name ?? $item->contact?->full_name ;
+            // $item->contact->avatar = $item->contact->avatar ?? asset('assets/images/avatar.png');
+            // $item->contact->type = $item->contact->type ?? 0;
+            // $item->contact->online = $item->contact->online ?? 0;
+            // $item->contact->last_online_date = $item->contact->last_online_date ?? null;
+
         }
 
         return $contacts;
