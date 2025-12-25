@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ChatBlockedWordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\MenuController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Api\DiscountCodeController;
 
 
 Route::apiResource('blog', BlogController::class);
+Route::apiResource('chat-blocked-words', ChatBlockedWordController::class);
+Route::post('chat-blocked-words/check-word', [ChatBlockedWordController::class, 'checkWord'])->name('chat-blocked-words.check_word');
 Route::post('discount_codes/check-code', [DiscountCodeController::class, 'checkCode'])->name('discount_codes.check_code');
 Route::apiResource('discount_codes', DiscountCodeController::class);
 
