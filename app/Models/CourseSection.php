@@ -5,25 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CourseLang extends Model
+class CourseSection extends Model
 {
     use HasFactory;
 
-    protected $table = 'course_langs';
+    protected $table = 'course_sections';
 
     protected $fillable = [
         'course_id',
-        'lang',
-        'title',
-        'excerpt',
-        'description',
-        'outcomes_json',
-        'requirements_json',
+        'sort_order',
     ];
 
     protected $casts = [
-        'outcomes_json' => 'array',
-        'requirements_json' => 'array',
+        'sort_order' => 'integer',
     ];
 
     /* =========================
@@ -32,5 +26,15 @@ class CourseLang extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function langs()
+    {
+        return $this->hasMany(CourseSectionLang::class, 'section_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(CourseItem::class, 'section_id')->orderBy('sort_order');
     }
 }

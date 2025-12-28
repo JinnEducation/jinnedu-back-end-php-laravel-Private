@@ -5,25 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CourseLang extends Model
+class CourseEnrollment extends Model
 {
     use HasFactory;
 
-    protected $table = 'course_langs';
+    protected $table = 'course_enrollments';
 
     protected $fillable = [
         'course_id',
-        'lang',
-        'title',
-        'excerpt',
-        'description',
-        'outcomes_json',
-        'requirements_json',
+        'user_id',
+        'order_id',
+        'enrolled_at',
     ];
 
     protected $casts = [
-        'outcomes_json' => 'array',
-        'requirements_json' => 'array',
+        'enrolled_at' => 'datetime',
     ];
 
     /* =========================
@@ -32,5 +28,10 @@ class CourseLang extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

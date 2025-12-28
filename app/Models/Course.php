@@ -2,51 +2,134 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\CourseLang;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Course extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
-    protected $guarded = [];
+    protected $table = 'courses';
+
+    // Status
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_PUBLISHED = 'published';
+
+    
+
+    protected $fillable = [
+        'category_id',
+        'instructor_id',
+        'promo_video_url',
+        'promo_video_duration_seconds',
+        'price',
+        'is_free',
+        'has_certificate',
+        'status',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'is_free' => 'boolean',
+        'has_certificate' => 'boolean',
+        'price' => 'decimal:2',
+        'promo_video_duration_seconds' => 'integer',
+        'published_at' => 'datetime',
+    ];
+
+    /* =========================
+     | Relations
+     ========================= */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id');
+    }
+public function discounts()
+{
+    return $this->hasMany(CourseDiscount::class, 'course_id');
+}
+
+public function activeDiscount()
+{
+    return $this->hasOne(CourseDiscount::class, 'course_id')
+        ->where('is_active', true)
+        ->where(function ($q) {
+            $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+        })
+        ->where(function ($q) {
+            $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+        });
+}
 
     public function langs()
     {
-        $lang = Request::header('lang');
+        return $this->hasMany(CourseLang::class, 'course_id');
+    }
 
-        $language = Language::where('shortname', $lang)->first();
+    public function sections()
+    {
+        return $this->hasMany(CourseSection::class, 'course_id')->orderBy('sort_order');
+    }
 
-        return $language ? 
-                  $this->hasMany(CourseLang::class,'course_id')->where('language_id', $language->id) 
-                  : $this->hasMany(CourseLang::class,'course_id');
-    }
-    
-    public function childrens()
+    public function items()
     {
-        return $this->hasMany(Course::class,'parent_id');
+        return $this->hasMany(CourseItem::class, 'course_id')->orderBy('sort_order');
     }
-    
-    public function imageInfo()
+
+    public function enrollments()
     {
-       return $this->belongsTo(Media::class,'image');
+        return $this->hasMany(CourseEnrollment::class, 'course_id');
     }
-    
-    public function iconInfo()
+
+    public function reviews()
     {
-       return $this->belongsTo(Media::class,'icon');
+        return $this->hasMany(CourseReview::class, 'course_id');
     }
-    
-    public function bannerInfo()
+
+    public function certificates()
     {
-       return $this->belongsTo(Media::class,'banner');
+        return $this->hasMany(CourseCertificate::class, 'course_id');
     }
-    
-    public function user()
+
+    /* =========================
+     | Accessors
+     ========================= */
+
+    // السعر النهائي حسب الخصم (إن وجد) + free
+  public function getFinalPriceAttribute(): float
+{
+    if ($this->is_free) {
+        return 0.0;
+    }
+
+    $price = (float) $this->price;
+
+    $discount = $this->activeDiscount()->first();
+
+    if (!$discount) {
+        return $price;
+    }
+
+    if ($discount->type === CourseDiscount::TYPE_PERCENT) {
+        return max($price - ($price * $discount->value / 100), 0);
+    }
+
+    if ($discount->type === CourseDiscount::TYPE_FIXED) {
+        return max($price - $discount->value, 0);
+    }
+
+    return $price;
+}
+
+
+    public function getHasActiveDiscountAttribute(): bool
     {
-        return $this->belongsTo(User::class,'user_id');
+        return ($this->final_price < (float) $this->price);
     }
-   
 }
