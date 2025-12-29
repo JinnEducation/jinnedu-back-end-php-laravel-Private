@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\CourseSectionLang;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CourseSection extends Model
+class CourseSectionLang extends Model
 {
     use HasFactory;
 

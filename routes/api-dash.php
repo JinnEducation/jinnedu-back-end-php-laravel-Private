@@ -9,6 +9,24 @@ use App\Http\Controllers\Api\CateqBlogController;
 use App\Http\Controllers\Api\AccessTokensController;
 use App\Http\Controllers\Api\DiscountCodeController;
 
+use App\Http\Controllers\Api\Admin\{
+    CourseAdminController,
+    CourseDiscountController,
+    CourseSectionController,
+    CourseItemController,
+    UploadController
+};
+use App\Http\Controllers\Api\Student\{
+    CourseCatalogController,
+    EnrollmentController,
+    PlayerController,
+    ProgressController,
+    ReviewController
+};
+
+
+
+
 
 
 Route::apiResource('blog', BlogController::class);
@@ -30,6 +48,63 @@ Route::post('auth/access-tokens', [AccessTokensController::class, 'store'])
     ->middleware('guest:sanctum');
 Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'destroy'])
     ->middleware('auth:sanctum');
+
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+    // ================== ADMIN ==================
+    Route::prefix('admin')->group(function () {
+
+        // Courses
+        Route::apiResource('courses', CourseAdminController::class);
+        Route::post('courses/{course}/publish', [CourseAdminController::class, 'publish']);
+        Route::post('courses/{course}/unpublish', [CourseAdminController::class, 'unpublish']);
+
+        // Discounts (table منفصل)
+        Route::get('courses/{course}/discounts', [CourseDiscountController::class, 'index']);
+        Route::post('courses/{course}/discounts', [CourseDiscountController::class, 'store']);
+        Route::put('discounts/{discount}', [CourseDiscountController::class, 'update']);
+        Route::delete('discounts/{discount}', [CourseDiscountController::class, 'destroy']);
+        // Sections
+        Route::get('courses/{course}/sections', [CourseSectionController::class, 'index']);
+        Route::post('courses/{course}/sections', [CourseSectionController::class, 'store']);
+        Route::put('sections/{section}', [CourseSectionController::class, 'update']);
+        Route::delete('sections/{section}', [CourseSectionController::class, 'destroy']);
+        Route::post('courses/{course}/sections/sort', [CourseSectionController::class, 'sort']);
+
+        // Items
+        Route::get('courses/{course}/items', [CourseItemController::class, 'index']);
+        Route::post('courses/{course}/items', [CourseItemController::class, 'store']);
+        Route::put('items/{item}', [CourseItemController::class, 'update']);
+        Route::delete('items/{item}', [CourseItemController::class, 'destroy']);
+        Route::post('courses/{course}/items/sort', [CourseItemController::class, 'sort']);
+
+        // Upload (video / image ..)
+        Route::post('upload/video', [UploadController::class, 'video']);
+
+         // ================== STUDENT ==================
+    Route::prefix('student')->group(function () {
+
+        // Catalog (list + single)
+        Route::get('courses', [CourseCatalogController::class, 'index']);
+        Route::get('courses/{course}', [CourseCatalogController::class, 'show']);
+
+        // Enrollment
+        Route::post('courses/{course}/enroll', [EnrollmentController::class, 'enroll']); // free or paid(order_id)
+
+        // Player data (sections/items + access)
+        Route::get('courses/{course}/player', [PlayerController::class, 'player']);
+
+        // Progress
+        Route::post('items/{item}/progress', [ProgressController::class, 'update']);
+
+        // Reviews
+        Route::get('courses/{course}/reviews', [ReviewController::class, 'index']);
+        Route::post('courses/{course}/reviews', [ReviewController::class, 'store']);
+    });
+    });
+
+    });
 
 
 
