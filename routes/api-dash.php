@@ -1,33 +1,23 @@
 <?php
 
-use App\Http\Controllers\Api\ChatBlockedWordController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AccessTokensController;
+use App\Http\Controllers\Api\Admin\CourseAdminController;
+use App\Http\Controllers\Api\Admin\CourseDiscountController;
+use App\Http\Controllers\Api\Admin\CourseItemController;
+use App\Http\Controllers\Api\Admin\CourseSectionController;
+use App\Http\Controllers\Api\Admin\UploadController;
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\CateqBlogController;
+use App\Http\Controllers\Api\ChatBlockedWordController;
+use App\Http\Controllers\Api\DiscountCodeController;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\SliderController;
-use App\Http\Controllers\Api\CateqBlogController;
-use App\Http\Controllers\Api\AccessTokensController;
-use App\Http\Controllers\Api\DiscountCodeController;
-
-use App\Http\Controllers\Api\Admin\{
-    CourseAdminController,
-    CourseDiscountController,
-    CourseSectionController,
-    CourseItemController,
-    UploadController
-};
-use App\Http\Controllers\Api\Student\{
-    CourseCatalogController,
-    EnrollmentController,
-    PlayerController,
-    ProgressController,
-    ReviewController
-};
-
-
-
-
-
+use App\Http\Controllers\Api\Student\CourseCatalogController;
+use App\Http\Controllers\Api\Student\EnrollmentController;
+use App\Http\Controllers\Api\Student\PlayerController;
+use App\Http\Controllers\Api\Student\ProgressController;
+use App\Http\Controllers\Api\Student\ReviewController;
+use Illuminate\Support\Facades\Route;
 
 Route::apiResource('blog', BlogController::class);
 Route::apiResource('chat-blocked-words', ChatBlockedWordController::class);
@@ -49,9 +39,9 @@ Route::post('auth/access-tokens', [AccessTokensController::class, 'store'])
 Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'destroy'])
     ->middleware('auth:sanctum');
 
-
-    Route::middleware('auth:sanctum')->group(function () {
-
+Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::get('instructors', [CourseAdminController::class, 'instructors']);
     // ================== ADMIN ==================
     Route::prefix('admin')->group(function () {
 
@@ -65,6 +55,7 @@ Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'de
         Route::post('courses/{course}/discounts', [CourseDiscountController::class, 'store']);
         Route::put('discounts/{discount}', [CourseDiscountController::class, 'update']);
         Route::delete('discounts/{discount}', [CourseDiscountController::class, 'destroy']);
+
         // Sections
         Route::get('courses/{course}/sections', [CourseSectionController::class, 'index']);
         Route::post('courses/{course}/sections', [CourseSectionController::class, 'store']);
@@ -75,39 +66,36 @@ Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'de
         // Items
         Route::get('courses/{course}/items', [CourseItemController::class, 'index']);
         Route::post('courses/{course}/items', [CourseItemController::class, 'store']);
+        Route::post('zoom/check-availability', [CourseItemController::class, 'checkAvailability']);
         Route::put('items/{item}', [CourseItemController::class, 'update']);
         Route::delete('items/{item}', [CourseItemController::class, 'destroy']);
         Route::post('courses/{course}/items/sort', [CourseItemController::class, 'sort']);
 
         // Upload (video / image ..)
         Route::post('upload/video', [UploadController::class, 'video']);
+        Route::delete('upload/video', [UploadController::class, 'delete']);
 
-         // ================== STUDENT ==================
-    Route::prefix('student')->group(function () {
 
-        // Catalog (list + single)
-        Route::get('courses', [CourseCatalogController::class, 'index']);
-        Route::get('courses/{course}', [CourseCatalogController::class, 'show']);
+        // ================== STUDENT ==================
+        Route::prefix('student')->group(function () {
 
-        // Enrollment
-        Route::post('courses/{course}/enroll', [EnrollmentController::class, 'enroll']); // free or paid(order_id)
+            // Catalog (list + single)
+            Route::get('courses', [CourseCatalogController::class, 'index']);
+            Route::get('courses/{course}', [CourseCatalogController::class, 'show']);
 
-        // Player data (sections/items + access)
-        Route::get('courses/{course}/player', [PlayerController::class, 'player']);
+            // Enrollment
+            Route::post('courses/{course}/enroll', [EnrollmentController::class, 'enroll']); // free or paid(order_id)
 
-        // Progress
-        Route::post('items/{item}/progress', [ProgressController::class, 'update']);
+            // Player data (sections/items + access)
+            Route::get('courses/{course}/player', [PlayerController::class, 'player']);
 
-        // Reviews
-        Route::get('courses/{course}/reviews', [ReviewController::class, 'index']);
-        Route::post('courses/{course}/reviews', [ReviewController::class, 'store']);
+            // Progress
+            Route::post('items/{item}/progress', [ProgressController::class, 'update']);
+
+            // Reviews
+            Route::get('courses/{course}/reviews', [ReviewController::class, 'index']);
+            Route::post('courses/{course}/reviews', [ReviewController::class, 'store']);
+        });
     });
-    });
 
-    });
-
-
-
-
-
-
+});

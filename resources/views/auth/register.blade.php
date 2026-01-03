@@ -203,7 +203,7 @@
 
 
             @endphp
-            <form method="post" action="{{ route('register') }}" enctype="multipart/form-data">
+            <form method="post" id="signup-form" action="{{ route('register') }}" enctype="multipart/form-data">
                 <!-- Step 1: Account Type -->
                 <div class="pane block opacity-100" data-step="1">
                     <div class="mx-auto">
@@ -368,10 +368,17 @@
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                                         {{ label_text('global', 'site.Country', __('site.Country')) }}
                                     </label>
-                                    <input type="text"
+                                    {{-- <input type="text"
                                         placeholder="{{ label_text('global', 'site.register-country-placeholder', __('site.egypt (+20)')) }}"
                                         name="country" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"> --}}
+
+                                    <select name="country" required id="country_inp"
+                                        class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        @foreach ( $countries as $country)
+                                        <option value=" {{$country->name}} ">{{$country->name}}</option>
+                                         @endforeach
+                                    </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
@@ -562,26 +569,46 @@
 
                                 <!-- Date Dropdown -->
                                 <div id="dob-dropdown"
-                                    class="hidden absolute top-full left-0 w-full md:w-1/3 bg-white border border-gray-200 rounded-xl shadow-lg mt-2 z-50 p-4 transition-all duration-200">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <button type="button" id="prevMonth"
-                                            class="text-gray-500 hover:text-primary transition px-2 py-1 rounded-lg">&lt;</button>
-                                        <h3 id="monthLabel" class="font-semibold text-gray-800 text-sm"></h3>
-                                        <button type="button" id="nextMonth"
-                                            class="text-gray-500 hover:text-primary transition px-2 py-1 rounded-lg">&gt;</button>
+                                    class="hidden absolute top-full left-0 w-full md:w-1/2 lg:w-1/3 bg-white border border-gray-200 rounded-xl shadow-lg mt-2 z-50 p-4 transition-all duration-200">
+
+                                    <!-- Month & Year Select -->
+                                    <div class="flex items-center justify-between mb-3 gap-2">
+                                        <select id="yearSelect"
+                                            class="border rounded-lg px-2 py-1 text-sm w-1/2">
+                                        </select>
+
+                                        <select id="monthSelect"
+                                            class="border rounded-lg px-2 py-1 text-sm w-1/2">
+                                            <option value="0">January</option>
+                                            <option value="1">February</option>
+                                            <option value="2">March</option>
+                                            <option value="3">April</option>
+                                            <option value="4">May</option>
+                                            <option value="5">June</option>
+                                            <option value="6">July</option>
+                                            <option value="7">August</option>
+                                            <option value="8">September</option>
+                                            <option value="9">October</option>
+                                            <option value="10">November</option>
+                                            <option value="11">December</option>
+                                        </select>
                                     </div>
+
+                                    <h3 id="monthLabel" class="font-semibold text-gray-800 text-sm mb-2"></h3>
+
                                     <div id="calendarGrid"
                                         class="grid grid-cols-7 text-center text-sm text-gray-700 select-none">
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-6 mb-2">
-                                <div>
+                                <div class="hidden">
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                                         {{ label_text('global', 'site.Country', __('site.Country')) }}
                                     </label>
-                                    <select name="countty_tutor" required
+                                    <select name="countty_tutor" required id="countty_tutor"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ( $countries as $country)
                                         <option value=" {{$country->name}} ">{{$country->name}}</option>
@@ -599,9 +626,6 @@
                                          @endforeach
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                                         {{ label_text('global', 'site.register-teaching-subject-label', __('site.Teaching Subject')) }}
@@ -613,6 +637,9 @@
                                          @endforeach
                                     </select>
                                 </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-2">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-900 mb-2">
                                         {{ label_text('global', 'site.register-teaching-experience-label', __('site.Teaching Experience')) }}

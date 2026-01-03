@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Models\CourseLang;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Models\CourseSection;
 use App\Models\CourseSectionLang;
+use App\Models\User;
+use App\Models\Language;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-
 
 class CourseAdminController extends Controller
 {
@@ -21,7 +23,7 @@ class CourseAdminController extends Controller
 
     private function mustBeAdmin(Request $request)
     {
-        if (($request->user()->type ?? 0) != 1) {
+        if (($request->user()->type ?? 0) != 0) {
             abort(403, 'Admin only.');
         }
     }
@@ -34,22 +36,75 @@ class CourseAdminController extends Controller
 
         $q = Course::query()
             ->with([
-                'category:id,name,slug',
+                'category:id,name',
                 'instructor:id,name',
-                'langs' => fn($qq) => $qq->where('lang', $lang),
-            ])
-            ->latest();
+                'langs',
+                'activeDiscount'
+            ]);
 
-        if ($request->filled('category_id')) $q->where('category_id', $request->category_id);
-        if ($request->filled('status')) $q->where('status', $request->status);
+        if ($request->filled('category_id')) {
+            $q->where('category_id', $request->category_id);
+        }
+        if ($request->filled('status')) {
+            $q->where('status', $request->status);
+        }
 
-        return response()->json($q->paginate(15));
+        $courses = $q->paginate(15);
+
+        return CourseResource::collection($courses);
+
+        // return response()->json($q->paginate(15));
     }
 
     public function store(Request $request)
     {
         $this->mustBeAdmin($request);
 
+        if ($request->has('langs')) {
+            $langsPayload = $request->input('langs');
+        
+            // إذا جاي JSON string من FormData
+            if (is_string($langsPayload)) {
+                $langsPayload = json_decode($langsPayload, true);
+            }
+        
+            if (is_array($langsPayload)) {
+                $normalizedLangs = [];
+        
+                // mapping ثابت حسب نظامك
+                $langMap = Language::query()
+                    ->select('id', 'shortname')
+                    ->get()
+                    ->pluck('shortname', 'id') // [id => shortname]
+                    ->toArray();
+                
+        
+                foreach ($langMap as $langId => $langCode) {
+                    // تجاهل اللغة الفارغة
+                    if (
+                        empty($langsPayload['title'][$langId]) &&
+                        empty($langsPayload['excerpt'][$langId]) &&
+                        empty($langsPayload['description'][$langId])
+                    ) {
+                        continue;
+                    }
+        
+                    $normalizedLangs[] = [
+                        'lang' => $langCode,
+                        'title' => $langsPayload['title'][$langId] ?? '',
+                        'excerpt' => $langsPayload['excerpt'][$langId] ?? null,
+                        'description' => $langsPayload['description'][$langId] ?? null,
+                        'outcomes_json' => $langsPayload['outcomes_json'][$langId] ?? [],
+                        'requirements_json' => $langsPayload['requirements_json'][$langId] ?? [],
+                    ];
+                }
+        
+                $request->merge([
+                    'langs' => $normalizedLangs,
+                ]);
+            }
+        }
+        
         $data = $request->validate([
             'category_id' => 'required|integer|exists:categories,id',
             'instructor_id' => 'nullable|integer|exists:users,id',
@@ -89,18 +144,13 @@ class CourseAdminController extends Controller
                 'price' => $data['price'] ?? 0,
                 'is_free' => $data['is_free'] ?? false,
 
-                'discount_type' => $data['discount_type'] ?? null,
-                'discount_value' => $data['discount_value'] ?? null,
-                'discount_starts_at' => $data['discount_starts_at'] ?? null,
-                'discount_ends_at' => $data['discount_ends_at'] ?? null,
-
                 'has_certificate' => $data['has_certificate'] ?? false,
                 'status' => $data['status'] ?? 'draft',
                 'published_at' => ($data['status'] ?? 'draft') === 'published' ? now() : null,
             ]);
 
             // Save course_langs (optional)
-            if (!empty($data['langs'])) {
+            if (! empty($data['langs'])) {
                 foreach ($data['langs'] as $lng) {
                     CourseLang::updateOrCreate(
                         ['course_id' => $course->id, 'lang' => $lng['lang']],
@@ -113,6 +163,17 @@ class CourseAdminController extends Controller
                         ]
                     );
                 }
+            }
+
+            // Create discount if provided
+            if (! empty($data['discount_type']) && ! empty($data['discount_value'])) {
+                $course->discounts()->create([
+                    'type' => $data['discount_type'],
+                    'value' => $data['discount_value'],
+                    'starts_at' => $data['discount_starts_at'] ?? null,
+                    'ends_at' => $data['discount_ends_at'] ?? null,
+                    'is_active' => true,
+                ]);
             }
 
             // Create default section + its langs
@@ -128,37 +189,87 @@ class CourseAdminController extends Controller
 
             return response()->json([
                 'message' => 'Course created.',
-                'course' => $course->load('langs','sections.langs'),
+                'course' => $course->load('langs', 'sections.langs'),
             ], 201);
         });
     }
 
-    public function show(Request $request, Course $course)
+    public function show(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
         $lang = $request->header('lang', 'en');
 
-        $course->load([
-            'category:id,name,slug',
+        $course = Course::with([
+            'category:id,name',
             'instructor:id,name',
-            'langs' => fn($q) => $q->where('lang', $lang),
-            'sections.langs' => fn($q) => $q->where('lang', $lang),
-            'items.langs' => fn($q) => $q->where('lang', $lang),
+            'langs',
+            'sections.langs',
+            'items.langs',
             'items.media',
             'items.liveSession',
             'discounts',
-        ]);
+            'activeDiscount'
+        ])->find($id);
 
-        return response()->json($course);
+        if(!$course) {
+            return response()->json(['message' => 'Course not found.'], 404);
+        }
+
+        return new CourseResource($course);
+        // return response()->json($course);
     }
 
-    public function update(Request $request, Course $course)
+    public function update(Request $request, $id)
     {
         $this->mustBeAdmin($request);
-
+        if ($request->has('langs')) {
+            $langsPayload = $request->input('langs');
+        
+            // إذا جاي JSON string من FormData
+            if (is_string($langsPayload)) {
+                $langsPayload = json_decode($langsPayload, true);
+            }
+        
+            if (is_array($langsPayload)) {
+                $normalizedLangs = [];
+        
+                // mapping ثابت حسب نظامك
+                $langMap = Language::query()
+                ->select('id', 'shortname')
+                ->get()
+                ->pluck('shortname', 'id') // [id => shortname]
+                ->toArray();
+            
+        
+                foreach ($langMap as $langId => $langCode) {
+                    // تجاهل اللغة الفارغة
+                    if (
+                        empty($langsPayload['title'][$langId]) &&
+                        empty($langsPayload['excerpt'][$langId]) &&
+                        empty($langsPayload['description'][$langId])
+                    ) {
+                        continue;
+                    }
+        
+                    $normalizedLangs[] = [
+                        'lang' => $langCode,
+                        'title' => $langsPayload['title'][$langId] ?? '',
+                        'excerpt' => $langsPayload['excerpt'][$langId] ?? null,
+                        'description' => $langsPayload['description'][$langId] ?? null,
+                        'outcomes_json' => $langsPayload['outcomes_json'][$langId] ?? [],
+                        'requirements_json' => $langsPayload['requirements_json'][$langId] ?? [],
+                    ];
+                }
+        
+                $request->merge([
+                    'langs' => $normalizedLangs,
+                ]);
+            }
+        }
+        
         $data = $request->validate([
-            'category_id' => 'sometimes|integer|exists:categories,id',
+            'category_id' => 'required|integer|exists:categories,id',
             'instructor_id' => 'nullable|integer|exists:users,id',
             'promo_video_url' => 'nullable|string|max:2048',
             'promo_video_duration_seconds' => 'nullable|integer|min:0',
@@ -181,25 +292,27 @@ class CourseAdminController extends Controller
             'langs.*.outcomes_json' => 'nullable|array',
             'langs.*.requirements_json' => 'nullable|array',
         ]);
-
-        return DB::transaction(function () use ($course, $data) {
-
-            $course->fill($data);
+        return DB::transaction(function () use ($data,$id) {
+            $course = Course::findOrFail($id);
+            
+            $course->update($data);
 
             // published_at handling
             if (isset($data['status'])) {
-                if ($data['status'] === 'published' && !$course->published_at) {
-                    $course->published_at = now();
+                $published_at = null;
+                if ($data['status'] === 'published' && ! $course->published_at) {
+                    $published_at = now();
                 }
                 if ($data['status'] === 'draft') {
-                    $course->published_at = null;
+                    $published_at = null;
                 }
+                $course->update([
+                    'published_at' => $published_at
+                ]);
             }
 
-            $course->save();
-
-            // Save langs
-            if (!empty($data['langs'])) {
+            // Save course_langs (optional)
+            if (! empty($data['langs'])) {
                 foreach ($data['langs'] as $lng) {
                     CourseLang::updateOrCreate(
                         ['course_id' => $course->id, 'lang' => $lng['lang']],
@@ -214,9 +327,27 @@ class CourseAdminController extends Controller
                 }
             }
 
+            // Create discount if provided
+            if (!empty($data['discount_type']) && !empty($data['discount_value'])) {
+
+                // عطّل أي خصم نشط سابق
+                $course->discounts()
+                    ->where('is_active', true)
+                    ->update(['is_active' => false]);
+            
+                // أنشئ خصم جديد (هو الوحيد النشط)
+                $course->discounts()->create([
+                    'type' => $data['discount_type'],
+                    'value' => $data['discount_value'],
+                    'starts_at' => $data['discount_starts_at'] ?? null,
+                    'ends_at' => $data['discount_ends_at'] ?? null,
+                    'is_active' => true,
+                ]);
+            }
+            
             return response()->json([
                 'message' => 'Course updated.',
-                'course' => $course->fresh()->load('langs','sections.langs'),
+                'course' => $course,
             ]);
         });
     }
@@ -226,6 +357,7 @@ class CourseAdminController extends Controller
         $this->mustBeAdmin($request);
 
         $course->delete();
+
         return response()->json(['message' => 'Course deleted.']);
     }
 
@@ -234,6 +366,7 @@ class CourseAdminController extends Controller
         $this->mustBeAdmin($request);
 
         $course->update(['status' => 'published', 'published_at' => now()]);
+
         return response()->json(['message' => 'Published.']);
     }
 
@@ -242,6 +375,21 @@ class CourseAdminController extends Controller
         $this->mustBeAdmin($request);
 
         $course->update(['status' => 'draft', 'published_at' => null]);
+
         return response()->json(['message' => 'Unpublished.']);
+    }
+
+    public function instructors(Request $request)
+    {
+        $tutors = User::where('type', 2)->orderBy('id', 'desc')->get()->map(function ($tutor) {
+            return [
+                'id' => $tutor->id,
+                'name' => $tutor->full_name,
+            ];
+        });
+
+        return response()->json([
+            'data' => $tutors,
+        ]);
     }
 }

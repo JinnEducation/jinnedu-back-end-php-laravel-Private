@@ -10,11 +10,12 @@ class CourseSectionLang extends Model
 {
     use HasFactory;
 
-    protected $table = 'course_sections';
+    protected $table = 'course_section_langs';
 
     protected $fillable = [
-        'course_id',
-        'sort_order',
+        'section_id',
+        'lang',
+        'title',
     ];
 
     protected $casts = [
@@ -24,18 +25,8 @@ class CourseSectionLang extends Model
     /* =========================
      | Relations
      ========================= */
-    public function course()
+    public function section()
     {
-        return $this->belongsTo(Course::class, 'course_id');
-    }
-
-    public function langs()
-    {
-        return $this->hasMany(CourseSectionLang::class, 'section_id');
-    }
-
-    public function items()
-    {
-        return $this->hasMany(CourseItem::class, 'section_id')->orderBy('sort_order');
+        return $this->belongsTo(CourseSection::class, 'section_id');
     }
 }

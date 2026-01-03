@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\CourseLang;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
@@ -14,9 +13,8 @@ class Course extends Model
 
     // Status
     public const STATUS_DRAFT = 'draft';
-    public const STATUS_PUBLISHED = 'published';
 
-    
+    public const STATUS_PUBLISHED = 'published';
 
     protected $fillable = [
         'category_id',
@@ -50,22 +48,23 @@ class Course extends Model
     {
         return $this->belongsTo(User::class, 'instructor_id');
     }
-public function discounts()
-{
-    return $this->hasMany(CourseDiscount::class, 'course_id');
-}
 
-public function activeDiscount()
-{
-    return $this->hasOne(CourseDiscount::class, 'course_id')
-        ->where('is_active', true)
-        ->where(function ($q) {
-            $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
-        })
-        ->where(function ($q) {
-            $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
-        });
-}
+    public function discounts()
+    {
+        return $this->hasMany(CourseDiscount::class, 'course_id');
+    }
+
+    public function activeDiscount()
+    {
+        return $this->hasOne(CourseDiscount::class, 'course_id')
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+            });
+    }
 
     public function langs()
     {
@@ -102,34 +101,33 @@ public function activeDiscount()
      ========================= */
 
     // السعر النهائي حسب الخصم (إن وجد) + free
-  public function getFinalPriceAttribute(): float
-{
-    if ($this->is_free) {
-        return 0.0;
-    }
+    public function getFinalPriceAttribute(): float
+    {
+        if ($this->is_free) {
+            return 0.0;
+        }
 
-    $price = (float) $this->price;
+        $price = (float) $this->price;
 
-    $discount = $this->activeDiscount()->first();
+        $discount = $this->activeDiscount()->first();
 
-    if (!$discount) {
+        if (! $discount) {
+            return $price;
+        }
+
+        if ($discount->type === CourseDiscount::TYPE_PERCENT) {
+            return max($price - ($price * $discount->value / 100), 0);
+        }
+
+        if ($discount->type === CourseDiscount::TYPE_FIXED) {
+            return max($price - $discount->value, 0);
+        }
+
         return $price;
     }
 
-    if ($discount->type === CourseDiscount::TYPE_PERCENT) {
-        return max($price - ($price * $discount->value / 100), 0);
-    }
-
-    if ($discount->type === CourseDiscount::TYPE_FIXED) {
-        return max($price - $discount->value, 0);
-    }
-
-    return $price;
-}
-
-
     public function getHasActiveDiscountAttribute(): bool
     {
-        return ($this->final_price < (float) $this->price);
+        return $this->final_price < (float) $this->price;
     }
 }

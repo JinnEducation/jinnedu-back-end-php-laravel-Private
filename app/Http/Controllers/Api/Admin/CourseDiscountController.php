@@ -10,7 +10,7 @@ class CourseDiscountController extends Controller
 {
     private function mustBeAdmin(Request $request)
     {
-        if (($request->user()->type ?? 0) != 1) {
+        if (($request->user()->type ?? 0) != 0) {
             abort(403, 'Admin only.');
         }
     }

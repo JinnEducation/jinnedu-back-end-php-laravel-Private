@@ -1,432 +1,696 @@
 $(document).ready(function () {
-    let currentStep = 1;
-    let accountType = localStorage.getItem('accountType') || '';
+  let currentStep = 1;
+  let accountType = localStorage.getItem("accountType") || "";
 
-    // Initialize
-    goToStep(currentStep);
+  // Initialize
+  goToStep(currentStep);
 
-    $('.step-item, .step-item-mobile').click(function () {
-        const step = parseInt($(this).data('step'));
-        if (step < currentStep) {
-            goToStep(step);
-        }
-    });
-
-    // Continue button
-    $(document).on('click', '.btn-continue', function (e) {
-        if (currentStep == 1) {
-            e.preventDefault();
-            let account_type = $('#account-type').val();
-            if (account_type === '' || account_type === null) {
-                $('#account-type-error').removeClass('hidden opacity-0').addClass('opacity-100 translate-y-0');
-                return;
-            } else {
-                $('#account-type-error').addClass('hidden opacity-0').removeClass('opacity-100 translate-y-0');
-            }
-        }
-        if (currentStep < 8) {
-            goToStep(currentStep + 1);
-        }
-
-    });
-
-    // Back button
-    $(document).on('click', '.btn-back', function () {
-        if (currentStep > 1) {
-            goToStep(currentStep - 1);
-        }
-    });
-
-    // Toggle switches
-    $('.toggle-switch').click(function () {
-        $(this).toggleClass('bg-primary bg-gray-300');
-        const circle = $(this).find('div');
-        if ($(this).hasClass('bg-primary')) {
-            circle.removeClass('left-0.5').addClass('right-0.5');
-        } else {
-            circle.removeClass('right-0.5').addClass('left-0.5');
-        }
-    });
-
-    function goToStep(step) {
-        currentStep = step;
-        localStorage.setItem('currentStep', currentStep);
-
-        // Hide all panes
-        $('.pane').removeClass('block').addClass('hidden');
-
-        // Show current pane
-        $(`.pane[data-step="${step}"]`).removeClass('hidden').addClass('block');
-
-        // Update step circles
-        for (let i = 1; i <= 8; i++) {
-            const circle = $(`.step-circle[data-circle="${i}"]`);
-            circle.removeClass('active');
-
-            if (i < step) {
-                // Completed
-                // circle.removeClass('active');
-            } else if (i === step) {
-                // Active
-                circle.addClass('active');
-            } else {
-                // Pending
-                // circle.removeClass('active');
-            }
-        }
-
-        // Scroll to top
-        window.scrollTo(0, 0);
+  $(".step-item, .step-item-mobile").click(function () {
+    const step = parseInt($(this).data("step"));
+    if (step < currentStep) {
+      goToStep(step);
     }
+  });
+
+  // دالة للتحقق من الحقول المطلوبة في الخطوة الحالية
+  function validateCurrentStep() {
+    const $currentPane = $(`.pane[data-step="${currentStep}"]`);
+    // البحث عن جميع الحقول المطلوبة (بما في ذلك المخفية)
+    const $allRequiredFields = $currentPane.find(
+      "input[required], select[required], textarea[required]"
+    );
+
+    // تصفية الحقول: نتحقق من الحقول المرئية أو المخفية التي ليست في container مخفي
+    const $requiredFields = $allRequiredFields.filter(function () {
+      const $field = $(this);
+      // تجاهل الحقول المعطلة
+      if ($field.prop("disabled")) {
+        return false;
+      }
+      // تجاهل الحقول التي هي داخل container مخفي (مثل div.hidden)
+      // لكن نتحقق من الحقول المخفية مباشرة (input[type="hidden"] أو input.hidden)
+      if ($field.closest(".hidden").length && !$field.is('[type="hidden"]')) {
+        return false;
+      }
+      return true;
+    });
+
+    let isValid = true;
+    const invalidFields = [];
+
+    $requiredFields.each(function () {
+      const $field = $(this);
+      const fieldType = $field.attr("type");
+      const fieldTag = $field.prop("tagName").toLowerCase();
+      let isEmpty = false;
+
+      // التحقق من نوع الحقل
+      if (fieldType === "checkbox") {
+        // للـ checkbox، يجب أن يكون checked
+        if (!$field.prop("checked")) {
+          isEmpty = true;
+        }
+      } else if (fieldType === "file") {
+        // للـ file input، يجب أن يكون هناك ملف محدد
+        if (!$field[0].files || $field[0].files.length === 0) {
+          isEmpty = true;
+        }
+      } else if (fieldTag === "select") {
+        // للـ select، يجب أن تكون القيمة موجودة وليست فارغة
+        const value = $field.val();
+        if (!value || value.trim() === "" || value.trim() === "null") {
+          isEmpty = true;
+        }
+      } else if (fieldType === "hidden") {
+        // للحقول المخفية، نتحقق من القيمة
+        const value = $field.val();
+        if (!value || value.trim() === "") {
+          isEmpty = true;
+        }
+      } else {
+        // للحقول النصية
+        const value = $field.val();
+        if (!value || value.trim() === "") {
+          isEmpty = true;
+        }
+      }
+
+      if (isEmpty) {
+        isValid = false;
+        invalidFields.push($field);
+
+        // إضافة تأثير بصري على الحقل الفارغ
+        $field.addClass("border-red-500");
+        if ($field.hasClass("focus:border-primary")) {
+          $field
+            .removeClass("focus:border-primary")
+            .addClass("focus:border-red-500");
+        }
+        if ($field.hasClass("focus:ring-primary/20")) {
+          $field
+            .removeClass("focus:ring-primary/20")
+            .addClass("focus:ring-red-500/20");
+        }
+
+        // إزالة التأثير بعد ملء الحقل
+        $field
+          .off("input change.validation")
+          .on("input.validation change.validation", function () {
+            const $this = $(this);
+            const val = $this.val();
+            if (val && val.trim() !== "") {
+              $this.removeClass(
+                "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+              );
+              $this.addClass("focus:border-primary focus:ring-primary/20");
+            }
+          });
+      }
+    });
+
+    // Scroll إلى أول حقل غير صحيح
+    if (!isValid && invalidFields.length > 0) {
+      const firstInvalidField = invalidFields[0];
+      $("html, body").animate(
+        {
+          scrollTop: firstInvalidField.offset().top - 100,
+        },
+        500
+      );
+    }
+
+    return isValid;
+  }
+
+  // دالة لإظهار رسالة الخطأ
+  function showValidationError(msg = null) {
+    // إزالة أي رسالة خطأ سابقة
+    $(".validation-error-message").remove();
+    if (msg == null) {
+      msg = "الرجاء التأكد من ملء جميع الحقول المميزة بعلامة (*) قبل المتابعة";
+    }
+    // إنشاء رسالة خطأ جميلة
+    const errorMessage = $(`
+            <div class="validation-error-message fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg max-w-md w-full mx-4 animate-slide-down">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="flex-1">
+                        <p class="font-semibold">يجب تعبئة جميع الحقول المطلوبة</p>
+                        <p class="text-sm mt-1 text-red-600">${msg}</p>
+                    </div>
+                    <button type="button" class="close-error-btn text-red-700 hover:text-red-900 transition-colors flex-shrink-0">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `);
+
+    // إضافة event handler لإغلاق الرسالة
+    errorMessage.find(".close-error-btn").on("click", function () {
+      errorMessage.fadeOut(300, function () {
+        $(this).remove();
+      });
+    });
+
+    // إضافة الرسالة إلى body
+    $("body").append(errorMessage);
+
+    // إزالة الرسالة تلقائياً بعد 5 ثوان
+    setTimeout(function () {
+      $(".validation-error-message").fadeOut(300, function () {
+        $(this).remove();
+      });
+    }, 5000);
+
+    // Scroll to top to show the error
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Continue button
+  $(document).on("click", ".btn-continue", function (e) {
+    e.preventDefault();
+
+    // التحقق من الخطوة الأولى (نوع الحساب)
+    if (currentStep == 1) {
+      let account_type = $("#account-type").val();
+      if (account_type === "" || account_type === null) {
+        $("#account-type-error")
+          .removeClass("hidden opacity-0")
+          .addClass("opacity-100 translate-y-0");
+        return;
+      } else {
+        $("#account-type-error")
+          .addClass("hidden opacity-0")
+          .removeClass("opacity-100 translate-y-0");
+      }
+    }
+
+    // التحقق من الحقول المطلوبة في الخطوة الحالية
+    if (!validateCurrentStep()) {
+      showValidationError();
+      return;
+    }
+
+    if (currentStep == 8) {
+      $("#signup-form").submit();
+    }
+    
+    // إذا كان كل شيء صحيح، انتقل للخطوة التالية
+    if (currentStep < 8) {
+      goToStep(currentStep + 1);
+    }
+
+  });
+  $(document).on("click", ".btn-submit", function (e) {
+    e.preventDefault();
+
+    // التحقق من الحقول المطلوبة في الخطوة الحالية
+    if (!validateCurrentStep()) {
+      showValidationError();
+      return;
+    }
+
+    if ($("#avatarInput").val() == null || $("#avatarInput").val() == "") {
+      showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
+      return;
+    }
+
+    let accountType = $("#account-type").val();
+
+    if (currentStep == 2 && accountType == 1) {
+      $("#signup-form").submit();
+    }
+  });
+
+  // Back button
+  $(document).on("click", ".btn-back", function () {
+    if (currentStep > 1) {
+      goToStep(currentStep - 1);
+    }
+  });
+
+  // Toggle switches
+  $(".toggle-switch").click(function () {
+    $(this).toggleClass("bg-primary bg-gray-300");
+    const circle = $(this).find("div");
+    if ($(this).hasClass("bg-primary")) {
+      circle.removeClass("left-0.5").addClass("right-0.5");
+    } else {
+      circle.removeClass("right-0.5").addClass("left-0.5");
+    }
+  });
+
+  function goToStep(step) {
+    currentStep = step;
+    localStorage.setItem("currentStep", currentStep);
+
+    // Hide all panes
+    $(".pane").removeClass("block").addClass("hidden");
+
+    // Show current pane
+    $(`.pane[data-step="${step}"]`).removeClass("hidden").addClass("block");
+
+    // Update step circles
+    for (let i = 1; i <= 8; i++) {
+      const circle = $(`.step-circle[data-circle="${i}"]`);
+      circle.removeClass("active");
+
+      if (i < step) {
+        // Completed
+        // circle.removeClass('active');
+      } else if (i === step) {
+        // Active
+        circle.addClass("active");
+      } else {
+        // Pending
+        // circle.removeClass('active');
+      }
+    }
+
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
 });
 
-// Step 1 
+// Step 1
 $(function () {
-    // دالة لحفظ الحقول المطلوبة الأصلية (تُستدعى مرة واحدة عند التحميل)
-    let requiredFieldsSaved = false;
-    
-    function saveOriginalRequiredFields() {
-        if (requiredFieldsSaved) return;
-        
-        const stepsToManage = [3, 4, 5, 6, 7, 8];
-        stepsToManage.forEach(function(step) {
-            const $pane = $(`.pane[data-step="${step}"]`);
-            $pane.find('input[required], select[required], textarea[required]').each(function() {
-                $(this).attr('data-was-required', 'true');
-            });
-        });
-        requiredFieldsSaved = true;
-    }
+  // دالة لحفظ الحقول المطلوبة الأصلية (تُستدعى مرة واحدة عند التحميل)
+  let requiredFieldsSaved = false;
 
-    // دالة لإدارة الحقول المطلوبة بناءً على نوع الحساب
-    function manageRequiredFields(accountType) {
-        // حفظ الحقول المطلوبة الأصلية أولاً
-        saveOriginalRequiredFields();
-        
-        // الحصول على جميع الحقول في الخطوات 3-8
-        const stepsToManage = [3, 4, 5, 6, 7, 8];
-        
-        stepsToManage.forEach(function(step) {
-            const $pane = $(`.pane[data-step="${step}"]`);
-            
-            if (accountType == 1) {
-                // طالب: إزالة required من جميع الحقول في هذه الخطوات
-                $pane.find('[data-was-required="true"]').each(function() {
-                    $(this).removeAttr('required');
-                });
-            } else if (accountType == 2) {
-                // معلم: إعادة required للحقول التي كانت مطلوبة أصلاً
-                $pane.find('[data-was-required="true"]').each(function() {
-                    $(this).attr('required', 'required');
-                });
-            }
-        });
-    }
+  function saveOriginalRequiredFields() {
+    if (requiredFieldsSaved) return;
 
-    // Account type selection
-    $('.account-card').click(function () {
-        $('.account-card').removeClass('border-primary bg-blue-50');
-        $(this).addClass('border-primary bg-blue-50');
-        accountType = $(this).data('account');
-        localStorage.setItem('accountType', accountType);
-        $('#account-type').val(accountType)
-        console.log(accountType);
-        if (accountType === 1) {
-            // إخفاء الخطوات 3-8
-            $('.step-item, .step-item-mobile').each(function () {
-                const step = $(this).data('step');
-                if ([1, 2].includes(step)) {
-                    $(this).removeClass('hidden');
-                } else {
-                    $(this).addClass('hidden');
-                }
-            });
-            // إزالة required من الحقول في الخطوات المخفية
-            manageRequiredFields(1);
-        }
-        if (accountType === 2) {
-            $('.step-item, .step-item-mobile').each(function () {
-                const step = $(this).data('step');
-                $(this).removeClass('hidden');
-            });
-            // إعادة required للحقول في الخطوات
-            manageRequiredFields(2);
-        }
+    const stepsToManage = [3, 4, 5, 6, 7, 8];
+    stepsToManage.forEach(function (step) {
+      const $pane = $(`.pane[data-step="${step}"]`);
+      $pane
+        .find("input[required], select[required], textarea[required]")
+        .each(function () {
+          $(this).attr("data-was-required", "true");
+        });
     });
+    requiredFieldsSaved = true;
+  }
 
-    // عند تحميل الصفحة: تطبيق الإعدادات إذا كان هناك نوع حساب محفوظ
-    const savedAccountType = localStorage.getItem('accountType');
-    if (savedAccountType) {
-        if (savedAccountType == 1) {
-            $('.step-item, .step-item-mobile').each(function () {
-                const step = $(this).data('step');
-                if (![1, 2].includes(step)) {
-                    $(this).addClass('hidden');
-                }
-            });
-            manageRequiredFields(1);
-        } else if (savedAccountType == 2) {
-            manageRequiredFields(2);
+  // دالة لإدارة الحقول المطلوبة بناءً على نوع الحساب
+  function manageRequiredFields(accountType) {
+    // حفظ الحقول المطلوبة الأصلية أولاً
+    saveOriginalRequiredFields();
+
+    // الحصول على جميع الحقول في الخطوات 3-8
+    const stepsToManage = [3, 4, 5, 6, 7, 8];
+
+    stepsToManage.forEach(function (step) {
+      const $pane = $(`.pane[data-step="${step}"]`);
+
+      if (accountType == 1) {
+        // طالب: إزالة required من جميع الحقول في هذه الخطوات
+        $pane.find('[data-was-required="true"]').each(function () {
+          $(this).removeAttr("required");
+        });
+      } else if (accountType == 2) {
+        // معلم: إعادة required للحقول التي كانت مطلوبة أصلاً
+        $pane.find('[data-was-required="true"]').each(function () {
+          $(this).attr("required", "required");
+        });
+      }
+    });
+  }
+
+  // Account type selection
+  $(".account-card").click(function () {
+    $(".account-card").removeClass("border-primary bg-blue-50");
+    $(this).addClass("border-primary bg-blue-50");
+    accountType = $(this).data("account");
+    localStorage.setItem("accountType", accountType);
+    $("#account-type").val(accountType);
+    if (accountType === 1) {
+      // إخفاء الخطوات 3-8
+      $(".step-item, .step-item-mobile").each(function () {
+        const step = $(this).data("step");
+        if ([1, 2].includes(step)) {
+          $(this).removeClass("hidden");
+        } else {
+          $(this).addClass("hidden");
         }
-    } else {
-        // حتى لو لم يكن هناك نوع حساب محفوظ، نحفظ الحقول المطلوبة الأصلية
-        saveOriginalRequiredFields();
+      });
+      // إزالة required من الحقول في الخطوات المخفية
+      manageRequiredFields(1);
     }
+    if (accountType === 2) {
+      $(".step-item, .step-item-mobile").each(function () {
+        const step = $(this).data("step");
+        $(this).removeClass("hidden");
+      });
+      // إعادة required للحقول في الخطوات
+      manageRequiredFields(2);
+    }
+  });
+
+  // عند تحميل الصفحة: تطبيق الإعدادات إذا كان هناك نوع حساب محفوظ
+  const savedAccountType = localStorage.getItem("accountType");
+  if (savedAccountType) {
+    if (savedAccountType == 1) {
+      $(".step-item, .step-item-mobile").each(function () {
+        const step = $(this).data("step");
+        if (![1, 2].includes(step)) {
+          $(this).addClass("hidden");
+        }
+      });
+      manageRequiredFields(1);
+    } else if (savedAccountType == 2) {
+      manageRequiredFields(2);
+    }
+  } else {
+    // حتى لو لم يكن هناك نوع حساب محفوظ، نحفظ الحقول المطلوبة الأصلية
+    saveOriginalRequiredFields();
+  }
 });
 
 // Step 2
 $(function () {
-    // لما تضغط على زر القلم يفتح اختيار الصورة
-    $('#btnUpload').on('click', function () {
-        $('#avatarInput').click();
+  // لما تضغط على زر القلم يفتح اختيار الصورة
+  $("#btnUpload").on("click", function () {
+    $("#avatarInput").click();
+  });
+
+  // عند اختيار صورة
+  $("#avatarInput").on("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      // عرض الصورة داخل الدائرة
+      $("#avatarImage").attr("src", ev.target.result).removeClass("hidden");
+      // إخفاء الأيقونة الافتراضية
+      $("#avatarIcon").addClass("hidden");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // التحقق من فورم البيانات
+  // الحقول المطلوبة للتحقق
+  const $fields = $(
+    '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="password"], #account-info input[type="checkbox"], #terms'
+  );
+
+  const $googleBtn = $("#account-info .btn-google");
+  const $continueBtn = $("#account-info .btn-continue");
+  const $submitBtn = $("#account-info .btn-submit");
+  let account_type_select = $("#account-type").val();
+
+  // اخفِ زر Continue بالبداية
+  $continueBtn.hide();
+
+  // دالة فحص اكتمال الحقول
+  function allFieldsFilled() {
+    let filled = true;
+    $fields.each(function () {
+      const $field = $(this);
+      const type = $field.attr("type");
+      // فحص الحقول النصية والإيميلات وهكذا
+      if (type === "checkbox") {
+        // لازم يكون مختار (checked)
+        if (!$field.prop("checked")) {
+          filled = false;
+          return false; // أوقف التكرار إذا وجدنا واحد غير مختار
+        }
+      } else {
+        const val = $field.val().trim();
+        if (val === "") {
+          filled = false;
+          return false; // أوقف التكرار إذا وجدنا واحد فاضي
+        }
+      }
     });
+    return filled;
+  }
 
-    // عند اختيار صورة
-    $('#avatarInput').on('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
+  // دالة تحقق الباسورد (مؤقتة – هنطورها لاحقاً)
+  function validatePasswords() {
+    const password = $('input[name="password"]').val().trim();
+    const confirm = $('input[name="confirm_password"]').val().trim();
+    // الآن مجرد مقارنة بسيطة
+    return password !== "" && confirm !== "" && password === confirm;
+  }
 
-        const reader = new FileReader();
-        reader.onload = function (ev) {
-            // عرض الصورة داخل الدائرة
-            $('#avatarImage').attr('src', ev.target.result).removeClass('hidden');
-            // إخفاء الأيقونة الافتراضية
-            $('#avatarIcon').addClass('hidden');
-        };
-        reader.readAsDataURL(file);
-    });
+  const $email = $("#email");
+  const $msg = $("#email-msg");
 
-    // التحقق من فورم البيانات 
-    // الحقول المطلوبة للتحقق
-    const $fields = $(
-        '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="password"], #account-info input[type="checkbox"]'
-    );
+  // regex أكثر دقة – يسمح بمعظم صيغ الإيميل القياسية
+  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-    const $googleBtn = $("#account-info .btn-google");
-    const $continueBtn = $("#account-info .btn-continue");
-    const $submitBtn = $("#account-info .btn-submit");
-    const $account_type = localStorage.getItem('accountType');
+  $email.on("input blur", function () {
+    const val = $email.val().trim();
 
-    // اخفِ زر Continue بالبداية
-    $continueBtn.hide();
-
-    // دالة فحص اكتمال الحقول
-    function allFieldsFilled() {
-        let filled = true;
-        $fields.each(function () {
-            const val = $(this).val().trim();
-            if (val === "") {
-                filled = false;
-                return false; // stop loop
-            }
-        });
-        return filled;
+    // إذا الحقل فاضي -> اخفي الرسالة تمامًا
+    if (val === "") {
+      $msg
+        .removeClass("text-red-500 text-green-600")
+        .addClass("text-gray-500")
+        .css("opacity", 0);
+      return;
     }
 
-    // دالة تحقق الباسورد (مؤقتة – هنطورها لاحقاً)
-    function validatePasswords() {
-        const password = $('input[placeholder="Password"]').val().trim();
-        const confirm = $('input[placeholder="Confirm password"]').val().trim();
-        // الآن مجرد مقارنة بسيطة
-        return password !== "" && confirm !== "" && password === confirm;
+    // تحقق من الصيغة
+    const isValid = emailPattern.test(val);
+
+    if (isValid) {
+      // ✅ إيميل صحيح
+      $msg
+        .text("Valid email address ✓")
+        .removeClass("text-gray-500 text-red-500")
+        .addClass("text-green-600")
+        .css("opacity", 1);
+    } else {
+      // ❌ إيميل خاطئ
+      $msg
+        .text("Invalid email format")
+        .removeClass("text-gray-500 text-green-600")
+        .addClass("text-red-500")
+        .css("opacity", 1);
     }
+  });
 
-    const $email = $('#email');
-    const $msg = $('#email-msg');
+  // عند أي تغيير على الحقول
+  $fields.on("input blur", function () {
+    const filled = allFieldsFilled();
+    const passwordsOK = validatePasswords();
+    account_type_select = $("#account-type").val();
 
-    // regex أكثر دقة – يسمح بمعظم صيغ الإيميل القياسية
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-    $email.on('input blur', function () {
-        const val = $email.val().trim();
-
-        // إذا الحقل فاضي -> اخفي الرسالة تمامًا
-        if (val === '') {
-            $msg
-                .removeClass('text-red-500 text-green-600')
-                .addClass('text-gray-500')
-                .css('opacity', 0);
-            return;
-        }
-
-        // تحقق من الصيغة
-        const isValid = emailPattern.test(val);
-
-        if (isValid) {
-            // ✅ إيميل صحيح
-            $msg
-                .text('Valid email address ✓')
-                .removeClass('text-gray-500 text-red-500')
-                .addClass('text-green-600')
-                .css('opacity', 1);
+    // لو كل الحقول مليانة (مش فارغة)
+    if (filled && passwordsOK) {
+      $googleBtn.fadeOut(200, function () {
+        if (account_type_select == 1) {
+          $submitBtn.fadeIn(200);
         } else {
-            // ❌ إيميل خاطئ
-            $msg
-                .text('Invalid email format')
-                .removeClass('text-gray-500 text-green-600')
-                .addClass('text-red-500')
-                .css('opacity', 1);
+          $continueBtn.fadeIn(200);
         }
-    });
-
-    // عند أي تغيير على الحقول
-    $fields.on("input blur", function () {
-        const filled = allFieldsFilled();
-        const passwordsOK = validatePasswords();
-
-        // لو كل الحقول مليانة (مش فارغة)
-        if (filled && passwordsOK) {
-            $googleBtn.fadeOut(200, function () {
-                console.log($account_type);
-                if($account_type == 1) {
-                    $submitBtn.fadeIn(200);
-                } else {
-                    $continueBtn.fadeIn(200);
-                }
-            });
-        } else {
-            $continueBtn.fadeOut(200, function () {
-                $googleBtn.fadeIn(200);
-            });
-        }
-    });
-
-
-    // ===== Toggle Password Visibility =====
-    $('.toggle-password').on('click', function () {
-        const $input = $(this).siblings('input');
-        const type = $input.attr('type') === 'password' ? 'text' : 'password';
-        $input.attr('type', type);
-        // toggle eye icon style
-        $(this).toggleClass('text-primary');
-    });
-
-    // ===== Password Strength =====
-    $('#password').on('input', function () {
-        const value = $(this).val();
-        const strength = checkPasswordStrength(value);
-        const $bars = $('#password-strength div');
-
-        $bars.removeClass('bg-primary bg-yellow-400 bg-red-500').addClass('bg-gray-200');
-        if (strength === 1) $bars.eq(0).addClass('bg-red-500');
-        if (strength === 2) $bars.slice(0, 2).addClass('bg-yellow-400');
-        if (strength === 3) $bars.addClass('bg-primary');
-    });
-
-    // ===== Confirm Password Validation =====
-    $('#confirm-password').on('blur', function () {
-        const pass = $('#password').val().trim();
-        const confirm = $(this).val().trim();
-        const $error = $('#match-error');
-
-        if (confirm && pass !== confirm) {
-            $error.removeClass('hidden opacity-0').addClass('opacity-100 translate-y-0');
-        } else {
-            $error.addClass('opacity-0');
-            setTimeout(() => $error.addClass('hidden'), 300);
-        }
-    });
-
-    // ===== Strength Check Function =====
-    function checkPasswordStrength(password) {
-        let strength = 0;
-        if (password.length >= 8) strength++;
-        if (/[0-9]/.test(password)) strength++;
-        if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
-        return strength;
+      });
+    } else {
+      $continueBtn.fadeOut(200, function () {
+        $googleBtn.fadeIn(200);
+      });
     }
+  });
+
+  $(document).on("change", "#country_inp", function () {
+    let val = $(this).val();
+    // في مشكلة بالوصول حسب name، سنستخدم id بدلا من name للعنصر المطلوب
+    $("#countty_tutor").val(val);
+  });
+
+  // ===== Toggle Password Visibility =====
+  $(".toggle-password").on("click", function () {
+    const $input = $(this).siblings("input");
+    const type = $input.attr("type") === "password" ? "text" : "password";
+    $input.attr("type", type);
+    // toggle eye icon style
+    $(this).toggleClass("text-primary");
+  });
+
+  // ===== Password Strength =====
+  $("#password").on("input", function () {
+    const value = $(this).val();
+    const strength = checkPasswordStrength(value);
+    const $bars = $("#password-strength div");
+
+    $bars
+      .removeClass("bg-primary bg-yellow-400 bg-red-500")
+      .addClass("bg-gray-200");
+    if (strength === 1) $bars.eq(0).addClass("bg-red-500");
+    if (strength === 2) $bars.slice(0, 2).addClass("bg-yellow-400");
+    if (strength === 3) $bars.addClass("bg-primary");
+  });
+
+  // ===== Confirm Password Validation =====
+  $("#confirm-password").on("blur", function () {
+    const pass = $("#password").val().trim();
+    const confirm = $(this).val().trim();
+    const $error = $("#match-error");
+
+    if (confirm && pass !== confirm) {
+      $error
+        .removeClass("hidden opacity-0")
+        .addClass("opacity-100 translate-y-0");
+    } else {
+      $error.addClass("opacity-0");
+      setTimeout(() => $error.addClass("hidden"), 300);
+    }
+  });
+
+  // ===== Strength Check Function =====
+  function checkPasswordStrength(password) {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+    return strength;
+  }
 });
 
 // Step 3
 $(function () {
-    const $input = $("#dob-input"); // Display input
-    const $valueInput = $("#dob-value"); // Hidden input for actual value
-    const $dropdown = $("#dob-dropdown");
-    const $monthLabel = $("#monthLabel");
-    const $grid = $("#calendarGrid");
-    const $icon = $("#dob-icon");
+  const $input = $("#dob-input"); // Display input
+  const $valueInput = $("#dob-value"); // Hidden input for actual value
+  const $dropdown = $("#dob-dropdown");
+  const $monthLabel = $("#monthLabel");
+  const $grid = $("#calendarGrid");
+  const $icon = $("#dob-icon");
 
-    let current = new Date();
+  const $yearSelect = $("#yearSelect");
+  const $monthSelect = $("#monthSelect");
 
-    const daysShort = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  function initYearSelect() {
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 1940; y--) {
+      $yearSelect.append(`<option value="${y}">${y}</option>`);
+    }
+  }
+  initYearSelect();
 
-    function renderCalendar(date) {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const startDay = firstDay.getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+  let current = new Date();
 
-        $monthLabel.text(date.toLocaleString("default", { month: "long", year: "numeric" }));
-        $grid.empty();
+  const daysShort = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-        // Days header
-        daysShort.forEach(d => {
-            $grid.append(`<div class='font-semibold text-gray-500 py-1'>${d}</div>`);
-        });
+  function renderCalendar() {
+    const year = parseInt($yearSelect.val());
+    const month = parseInt($monthSelect.val());
+    const selectedDate = $valueInput.val();
 
-        // Empty slots
-        for (let i = 0; i < startDay; i++) {
-            $grid.append(`<div></div>`);
-        }
+    const firstDay = new Date(year, month, 1);
+    const startDay = firstDay.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        // Days
-        for (let d = 1; d <= daysInMonth; d++) {
-            const today = new Date();
-            const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    $monthLabel.text(
+      firstDay.toLocaleString("default", { month: "long", year: "numeric" })
+    );
+    $grid.empty();
 
-            const $cell = $(`<div class="py-1.5 rounded-md hover:bg-primary/10 cursor-pointer transition">${d}</div>`);
-            if (isToday) $cell.addClass("bg-primary/10 font-bold text-primary");
+    daysShort.forEach((d) =>
+      $grid.append(`<div class='font-semibold text-gray-500 py-1'>${d}</div>`)
+    );
 
-            $cell.on("click", function () {
-                // Format for display (yyyy / MMM / DD)
-                const displayFormatted = `${year} / ${date.toLocaleString("default", { month: "short" })} / ${String(d).padStart(2, "0")}`;
-                $input.val(displayFormatted);
-                
-                // Format for database (yyyy-MM-DD)
-                const dbFormatted = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-                $valueInput.val(dbFormatted);
-                
-                hideDropdown();
-            });
+    for (let i = 0; i < startDay; i++) $grid.append(`<div></div>`);
 
-            $grid.append($cell);
-        }
+    for (let d = 1; d <= daysInMonth; d++) {
+      let isSelected = false;
+
+      if (selectedDate) {
+        const [sy, sm, sd] = selectedDate.split("-");
+        isSelected =
+          parseInt(sy) === year &&
+          parseInt(sm) === month + 1 &&
+          parseInt(sd) === d;
+      }
+
+      const $cell = $(
+        `<div class="py-1.5 rounded-md cursor-pointer transition">${d}</div>`
+      );
+
+      if (isSelected) {
+        $cell.addClass("bg-primary text-white font-semibold");
+      } else {
+        $cell.addClass("hover:bg-primary/10");
+      }
+
+      $cell.on("click", function () {
+        const displayFormatted = `${year} / ${firstDay.toLocaleString(
+          "default",
+          { month: "short" }
+        )} / ${String(d).padStart(2, "0")}`;
+
+        $input.val(displayFormatted);
+        $valueInput.val(
+          `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(
+            2,
+            "0"
+          )}`
+        );
+
+        current = new Date(year, month, d); // مهم جدًا
+        hideDropdown();
+      });
+
+      $grid.append($cell);
+    }
+  }
+
+  function showDropdown() {
+    let baseDate = new Date();
+
+    if ($valueInput.val()) {
+      const [y, m, d] = $valueInput.val().split("-");
+      baseDate = new Date(y, m - 1, d);
     }
 
-    function showDropdown() {
-        renderCalendar(current);
-        $dropdown.hide().removeClass("hidden").slideDown(150);
-    }
+    current = baseDate;
 
-    function hideDropdown() {
-        $dropdown.slideUp(150, () => $dropdown.addClass("hidden"));
-    }
+    $yearSelect.val(current.getFullYear());
+    $monthSelect.val(current.getMonth());
 
-    $input.add($icon).on("click", function () {
-        if ($dropdown.hasClass("hidden")) showDropdown();
-        else hideDropdown();
-    });
+    renderCalendar();
 
-    $("#prevMonth").on("click", function () {
-        current.setMonth(current.getMonth() - 1);
-        renderCalendar(current);
-    });
-    $("#nextMonth").on("click", function () {
-        current.setMonth(current.getMonth() + 1);
-        renderCalendar(current);
-    });
+    $dropdown.hide().removeClass("hidden").slideDown(150);
+  }
 
-    $(document).on("click", function (e) {
-        if (!$(e.target).closest("#dob-dropdown, #dob-input, #dob-icon").length) hideDropdown();
-    });
+  function hideDropdown() {
+    $dropdown.slideUp(150, () => $dropdown.addClass("hidden"));
+  }
+
+  $yearSelect.on("change", renderCalendar);
+  $monthSelect.on("change", renderCalendar);
+
+  $input.add($icon).on("click", function () {
+    if ($dropdown.hasClass("hidden")) showDropdown();
+    else hideDropdown();
+  });
+
+  $("#prevMonth").on("click", function () {
+    current.setMonth(current.getMonth() - 1);
+    renderCalendar(current);
+  });
+  $("#nextMonth").on("click", function () {
+    current.setMonth(current.getMonth() + 1);
+    renderCalendar(current);
+  });
+
+  $(document).on("click", function (e) {
+    if (!$(e.target).closest("#dob-dropdown, #dob-input, #dob-icon").length)
+      hideDropdown();
+  });
 });
 
 // Step 4
 $(function () {
-    // يبني صف فترة وقت جديدة
-    function buildRangeRow() {
-        return $(`
+  // يبني صف فترة وقت جديدة
+  function buildRangeRow() {
+    return $(`
         <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
           <div>
             <label class="block text-[13px] text-gray-800 mb-1">From</label>
@@ -455,110 +719,129 @@ $(function () {
           </div>
         </div>
       `);
+  }
+
+  // إعادة تسمية الحقول لتتوافق مع Laravel لاحقًا
+  function reindexNames($dayCard) {
+    const day = $dayCard.data("day");
+    $dayCard.find(".range-row").each(function (i) {
+      $(this)
+        .find('input[type="time"]')
+        .eq(0)
+        .attr("name", `availability[${day}][${i}][from]`);
+      $(this)
+        .find('input[type="time"]')
+        .eq(1)
+        .attr("name", `availability[${day}][${i}][to]`);
+    });
+  }
+
+  // تحديث حالة الفراغ
+  function refreshEmptyState($dayCard) {
+    const hasRows = $dayCard.find(".range-row").length > 0;
+    $dayCard.find(".empty-state").toggleClass("hidden", hasRows);
+  }
+
+  // تبديل اليوم On/Off
+  $(document).on("click", ".day-card .toggle", function () {
+    const $btn = $(this);
+    const pressed = $btn.attr("aria-pressed") === "true";
+    const $card = $btn.closest(".day-card");
+    const $badge = $card.find(".badge");
+    const $add = $card.find(".btn-add");
+    const $ranges = $card.find(".ranges");
+
+    if (pressed) {
+      // إلى OFF
+      $btn
+        .attr("aria-pressed", "false")
+        .removeClass("bg-primary")
+        .addClass("bg-gray-300");
+      $btn.find(".knob").removeClass("right-[3px]").addClass("left-[3px]");
+      $badge
+        .removeClass("bg-blue-100 text-primary")
+        .addClass("bg-gray-100 text-gray-500")
+        .text("Unavailable");
+      $add.prop("disabled", true).addClass("text-gray-400 cursor-not-allowed");
+      $ranges.empty().addClass("hidden");
+      refreshEmptyState($card); // يظهر No ranges yet
+    } else {
+      // إلى ON
+      $btn
+        .attr("aria-pressed", "true")
+        .removeClass("bg-gray-300")
+        .addClass("bg-primary");
+      $btn.find(".knob").removeClass("left-[3px]").addClass("right-[3px]");
+      $badge
+        .removeClass("bg-gray-100 text-gray-500")
+        .addClass("bg-blue-100 text-primary")
+        .text("Available");
+      $add
+        .prop("disabled", false)
+        .removeClass("text-gray-400 cursor-not-allowed");
+      $ranges.removeClass("hidden");
+      refreshEmptyState($card);
     }
+    reindexNames($card);
+  });
 
-    // إعادة تسمية الحقول لتتوافق مع Laravel لاحقًا
-    function reindexNames($dayCard) {
-        const day = $dayCard.data('day');
-        $dayCard.find('.range-row').each(function (i) {
-            $(this).find('input[type="time"]').eq(0).attr('name', `availability[${day}][${i}][from]`);
-            $(this).find('input[type="time"]').eq(1).attr('name', `availability[${day}][${i}][to]`);
-        });
+  // إضافة فترة
+  $(document).on("click", ".day-card .btn-add", function () {
+    const $card = $(this).closest(".day-card");
+    const $ranges = $card.find(".ranges");
+    $ranges.append(buildRangeRow());
+    reindexNames($card);
+    refreshEmptyState($card);
+  });
+
+  // حذف صف فترة
+  $(document).on("click", ".day-card .btn-remove", function () {
+    const $card = $(this).closest(".day-card");
+    $(this).closest(".range-row").remove();
+    reindexNames($card);
+    refreshEmptyState($card);
+  });
+
+  // عند التحميل الأول: إعادة فهرسة وضبط حالة الفراغ للأيام المفعّلة
+  $(".day-card").each(function () {
+    reindexNames($(this));
+    refreshEmptyState($(this));
+  });
+
+  $(document).on("click", ".time-input + span", function () {
+    const input = $(this).siblings('input[type="time"]')[0];
+    if (input && input.showPicker) {
+      input.showPicker(); // يفتح اختيار الوقت الأصلي
+    } else {
+      $(input).focus(); // fallback للمتصفحات القديمة
     }
-
-    // تحديث حالة الفراغ
-    function refreshEmptyState($dayCard) {
-        const hasRows = $dayCard.find('.range-row').length > 0;
-        $dayCard.find('.empty-state').toggleClass('hidden', hasRows);
-    }
-
-    // تبديل اليوم On/Off
-    $(document).on('click', '.day-card .toggle', function () {
-        const $btn = $(this);
-        const pressed = $btn.attr('aria-pressed') === 'true';
-        const $card = $btn.closest('.day-card');
-        const $badge = $card.find('.badge');
-        const $add = $card.find('.btn-add');
-        const $ranges = $card.find('.ranges');
-
-        if (pressed) {
-            // إلى OFF
-            $btn.attr('aria-pressed', 'false').removeClass('bg-primary').addClass('bg-gray-300');
-            $btn.find('.knob').removeClass('right-[3px]').addClass('left-[3px]');
-            $badge.removeClass('bg-blue-100 text-primary').addClass('bg-gray-100 text-gray-500').text('Unavailable');
-            $add.prop('disabled', true).addClass('text-gray-400 cursor-not-allowed');
-            $ranges.empty().addClass('hidden');
-            refreshEmptyState($card); // يظهر No ranges yet
-        } else {
-            // إلى ON
-            $btn.attr('aria-pressed', 'true').removeClass('bg-gray-300').addClass('bg-primary');
-            $btn.find('.knob').removeClass('left-[3px]').addClass('right-[3px]');
-            $badge.removeClass('bg-gray-100 text-gray-500').addClass('bg-blue-100 text-primary').text('Available');
-            $add.prop('disabled', false).removeClass('text-gray-400 cursor-not-allowed');
-            $ranges.removeClass('hidden');
-            refreshEmptyState($card);
-        }
-        reindexNames($card);
-    });
-
-    // إضافة فترة
-    $(document).on('click', '.day-card .btn-add', function () {
-        const $card = $(this).closest('.day-card');
-        const $ranges = $card.find('.ranges');
-        $ranges.append(buildRangeRow());
-        reindexNames($card);
-        refreshEmptyState($card);
-    });
-
-    // حذف صف فترة
-    $(document).on('click', '.day-card .btn-remove', function () {
-        const $card = $(this).closest('.day-card');
-        $(this).closest('.range-row').remove();
-        reindexNames($card);
-        refreshEmptyState($card);
-    });
-
-    // عند التحميل الأول: إعادة فهرسة وضبط حالة الفراغ للأيام المفعّلة
-    $('.day-card').each(function () {
-        reindexNames($(this));
-        refreshEmptyState($(this));
-    });
-
-    $(document).on('click', '.time-input + span', function () {
-        console.log('open');
-        const input = $(this).siblings('input[type="time"]')[0];
-        if (input && input.showPicker) {
-            input.showPicker(); // يفتح اختيار الوقت الأصلي
-        } else {
-            $(input).focus(); // fallback للمتصفحات القديمة
-        }
-    });
+  });
 });
 
 // Step 5
 $(function () {
-    // التحكم في زيادة أو نقصان السنة
-    $('#yearUp').on('click', function () {
-        let current = parseInt($('#yearTo').val()) || new Date().getFullYear();
-        $('#yearTo').val(current + 1);
-    });
+  // التحكم في زيادة أو نقصان السنة
+  $("#yearUp").on("click", function () {
+    let current = parseInt($("#yearTo").val()) || new Date().getFullYear();
+    $("#yearTo").val(current + 1);
+  });
 
-    $('#yearDown').on('click', function () {
-        let current = parseInt($('#yearTo').val()) || new Date().getFullYear();
-        $('#yearTo').val(current - 1);
-    });
+  $("#yearDown").on("click", function () {
+    let current = parseInt($("#yearTo").val()) || new Date().getFullYear();
+    $("#yearTo").val(current - 1);
+  });
 
-    // عرض اسم الملف بعد الاختيار
-    $('#certFile').on('change', function () {
-        let file = this.files[0];
-        $('#fileName').text(file ? file.name : 'Choose the file');
-    });
+  // عرض اسم الملف بعد الاختيار
+  $("#certFile").on("change", function () {
+    let file = this.files[0];
+    $("#fileName").text(file ? file.name : "Choose the file");
+  });
 });
 
 // Step 8
 $(function () {
-    $('#videoFile').on('change', function () {
-        let file = this.files[0];
-        $('#videoFileName').text(file ? file.name : 'Choose the file');
-    });
+  $("#videoFile").on("change", function () {
+    let file = this.files[0];
+    $("#videoFileName").text(file ? file.name : "Choose the file");
+  });
 });
