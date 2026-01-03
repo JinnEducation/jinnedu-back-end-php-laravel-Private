@@ -53,15 +53,15 @@ class HomeController extends Controller
             'courses' => DB::table('our_courses')->where('status', 1)->count(),
         ];
 
-        // our course
+       // our course
         $categoryId = $request->query('category_id');
         $categories = Category::query()
             ->with('langs')
             ->select('id', 'name', 'parent_id')
-            ->where('parent_id', 0)     // بدّلناها بدل whereNull
-            // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
+            ->where('parent_id', 0)     
+       
             ->orderBy('id')
-            ->get();
+             ->get();
 
         $coursesQuery = OurCourse::query()
             ->with(['langs', 'imageInfo', 'category:id,name'])
@@ -86,7 +86,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
 
-        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId'));
+        return view('front.home', compact('tutors', 'stats','sliders', 'languageId','categoryId', 'categories', 'courses'));
     }
 
     public function blog(Request $request)

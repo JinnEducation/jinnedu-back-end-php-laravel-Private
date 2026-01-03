@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\Front\CheckoutController;
-use App\Http\Controllers\Front\ExamController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MuxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZoomController;
+use App\Http\Controllers\Front\ExamController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\MailController;
+use App\Http\Controllers\Front\CourseController;
+use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\PaypalCheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\PaymentResponseController;
@@ -78,6 +79,7 @@ Route::group([
 
 
 
+
     Route::get('online_private_classes', [HomeController::class, 'online_private_classes'])->name('site.online_private_classes');
     Route::get('tutor_jinn/{id}', [HomeController::class, 'tutor_jinn'])->name('site.tutor_jinn');
 
@@ -100,6 +102,9 @@ Route::group([
         Route::post('checkout', [CheckoutController::class, 'checkout_store'])->name('checkout.checkout');
         Route::get('checkout-complete', [CheckoutController::class, 'checkoutComplete'])->name('checkout-complete');
         Route::get('checkout-response/{id}/{status}', [CheckoutController::class, 'handlePaymentResponse'])->name('checkout-response-get');
+
+        //course
+         Route::get('single-course/{id}', [CourseController::class, 'singlecourse'])->name('site.singlecourse');
         
         // Local test payment (for development)
         Route::get('local-payment-test', function(Request $request) {
