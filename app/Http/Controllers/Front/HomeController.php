@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers\Front;
 
+use Carbon\Carbon;
+use App\Models\Blog;
+use App\Models\Exam;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Course;
+use App\Models\Slider;
+use App\Models\Country;
+use App\Models\Subject;
+use App\Models\Category;
+use App\Models\Language;
+use App\Models\CateqBlog;
+use App\Models\OurCourse;
+use App\Models\Conference;
+use App\Models\GroupClass;
+use App\Models\ExamAttempt;
+use App\Models\TutorReview;
+use Illuminate\Http\Request;
+use App\Models\Specialization;
+use App\Models\GroupClassTutor;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\GroupClassController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
-use App\Models\Blog;
-use App\Models\Category;
-use App\Models\CateqBlog;
-use App\Models\Conference;
-use App\Models\Country;
-use App\Models\Exam;
-use App\Models\ExamAttempt;
-use App\Models\GroupClass;
-use App\Models\GroupClassTutor;
-use App\Models\Language;
-use App\Models\Order;
-use App\Models\OurCourse;
-use App\Models\Slider;
-use App\Models\Specialization;
-use App\Models\Subject;
-use App\Models\TutorReview;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\GroupClassController;
 
 class HomeController extends Controller
 {
@@ -50,23 +51,22 @@ class HomeController extends Controller
             'services' => 8,
             'students' => DB::table('users')->where('type', 1)->count(),
             'tutors' => DB::table('users')->where('type', 2)->count(),
-            'courses' => DB::table('our_courses')->where('status', 1)->count(),
+            'courses' => DB::table('courses')->where('status', 'published')->count(),
         ];
 
-       // our course
+        // our course
         $categoryId = $request->query('category_id');
         $categories = Category::query()
-            ->with('langs')
+            // ->with('langs')
             ->select('id', 'name', 'parent_id')
-            ->where('parent_id', 0)     
-       
+            ->where('parent_id', 0)     // بدّلناها بدل whereNull
+            // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
             ->orderBy('id')
-             ->get();
+            ->get();
 
-        $coursesQuery = OurCourse::query()
-            ->with(['langs', 'imageInfo', 'category:id,name'])
-            ->select('id', 'name', 'slug', 'category_id', 'lessons', 'class_length', 'image', 'status')
-            ->where('status', 1)
+        $coursesQuery = Course::query()
+            ->with(['category:id,name','instructor:id,name','langs','activeDiscount'])
+            ->where('status', 'published')
             ->latest('id');
 
         if ($categoryId) {
@@ -86,7 +86,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
 
-        return view('front.home', compact('tutors', 'stats','sliders', 'languageId','categoryId', 'categories', 'courses'));
+        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId'));
     }
 
     public function blog(Request $request)
