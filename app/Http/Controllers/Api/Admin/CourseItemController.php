@@ -3,9 +3,17 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\{
-    Course, CourseItem, CourseItemLang, CourseItemMedia
-};
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ZoomController;
+use App\Http\Resources\CourseItemResource;
+use App\Models\Course;
+use App\Models\CourseItem;
+use App\Models\CourseItemLang;
+use App\Models\CourseItemMedia;
+use App\Models\CourseLiveSession;
+use App\Models\CourseSection;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,34 +21,51 @@ class CourseItemController extends Controller
 {
     private function mustBeAdmin(Request $request)
     {
-        if (($request->user()->type ?? 0) != 1) abort(403, 'Admin only.');
+        if (($request->user()->type ?? 0) != 0) {
+            abort(403, 'Admin only.');
+        }
     }
 
-    public function index(Request $request, Course $course)
+    public function index(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
         $lang = $request->header('lang', 'en');
 
+        $course = Course::findOrFail($id);
         $items = $course->items()
             ->with([
-                'langs' => fn($q) => $q->where('lang', $lang),
+                'langs',
                 'media',
-                'liveSession'
+                'liveSession',
             ])
             ->orderBy('sort_order')
             ->get();
+        
 
-        return response()->json($items);
+        return CourseItemResource::collection($items);
     }
 
-    public function store(Request $request, Course $course)
+    public function store(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
+        $course = Course::findOrFail($id);
+        if (! $course) {
+            return response()->json(['message' => 'Course not found.'], 404);
+        }
+        $type = $request->type;
+        if ($type == CourseItem::TYPE_INTRO_ZOOM || $type == CourseItem::TYPE_INTRO_RECORDING) {
+            $section = CourseSection::where('course_id', $course->id)->first();
+            if (! $section) {
+                return response()->json(['message' => 'Section not found.'], 404);
+            }
+            $request->merge(['section_id' => $section->id]);
+        }
+
         $data = $request->validate([
             'section_id' => 'required|integer|exists:course_sections,id',
-            'type' => 'required|in:lesson_video,intro_zoom,intro_recording,workshop_zoom,workshop_recording',
+            'type' => 'required|in:lesson_video,intro_zoom,intro_recording,workshop_zoom,workshop_recording,intro',
             'is_free_preview' => 'nullable|boolean',
             'duration_seconds' => 'nullable|integer|min:0',
             'sort_order' => 'nullable|integer|min:0',
@@ -50,14 +75,20 @@ class CourseItemController extends Controller
             'langs.*.title' => 'required|string|max:255',
             'langs.*.description' => 'nullable|string',
 
-            // media (optional)
-            'media' => 'nullable|array',
-            'media.source_type' => 'required_with:media|in:upload,url',
-            'media.media_url' => 'required_with:media|string|max:2048',
+            'zoom_start_at' => 'nullable|date',
+            'instructor_id' => 'nullable|integer|exists:users,id',
+
+            'external_video_url' => 'nullable|url',
+            'content_source' => 'nullable|in:zoom,upload,url',
         ]);
 
         return DB::transaction(function () use ($course, $data) {
-
+            if ($data['type'] == CourseItem::TYPE_INTRO_ZOOM || $data['type'] == CourseItem::TYPE_INTRO_RECORDING) {
+                $item = CourseItem::where('course_id', $course->id)->where('type', $data['type'])->first();
+                if ($item) {
+                    $item->delete();
+                }
+            }
             $item = CourseItem::create([
                 'course_id' => $course->id,
                 'section_id' => $data['section_id'],
@@ -76,79 +107,132 @@ class CourseItemController extends Controller
                 ]);
             }
 
-            if (!empty($data['media'])) {
-                CourseItemMedia::create([
+            if ($data['type'] == CourseItem::TYPE_INTRO_ZOOM || $data['type'] == CourseItem::TYPE_WORKSHOP_ZOOM) {
+                $zoom_start_at = Carbon::parse($data['zoom_start_at'])->toDateTimeString();
+                $zoom_end_at = Carbon::parse($data['zoom_start_at'])->addMinutes(60)->toDateTimeString();
+                $date = Carbon::parse($data['zoom_start_at'])->format('Y-m-d');
+                $postValues = [
+                    'title' => $data['langs'][0]['title'],
+                    'timezone' => 35,
+                    'start_time' => $zoom_start_at,
+                    'end_time' => $zoom_end_at,
+                    'date' => $date,
+                    'record' => 3,
+                ];
+
+                $zoom = new ZoomController;
+                $result = $zoom->createMeeting($postValues);
+
+                $liveSession = CourseLiveSession::create([
                     'item_id' => $item->id,
-                    'source_type' => $data['media']['source_type'],
-                    'media_url' => $data['media']['media_url'],
+                    'instructor_id' => $data['instructor_id'],
+                    'start_at' => $zoom_start_at,
+                    'end_at' => $zoom_end_at,
+                    'zoom_meeting_id' => $result['data']['id'] ?? null,
+                    'join_url_host' => $result['data']['start_url'] ?? null,
+                    'join_url_attendee' => $result['data']['join_url'] ?? null,
+                    'recording_item_id' => null,
+                ]);
+            }
+            if ($data['type'] == CourseItem::TYPE_INTRO_RECORDING || $data['type'] == CourseItem::TYPE_WORKSHOP_RECORDING || $data['type'] == CourseItem::TYPE_LESSON_VIDEO) {
+                $media = CourseItemMedia::create([
+                    'item_id' => $item->id,
+                    'source_type' => $data['content_source'],
+                    'media_url' => $data['external_video_url'],
                 ]);
             }
 
             return response()->json([
                 'message' => 'Item created.',
-                'item' => $item->load('langs','media','liveSession'),
+                'item' => $item->load('langs', 'media', 'liveSession'),
             ], 201);
         });
     }
 
-    public function update(Request $request, CourseItem $item)
+    public function update(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
         $data = $request->validate([
-            'section_id' => 'nullable|integer|exists:course_sections,id',
-            'type' => 'nullable|in:lesson_video,intro_zoom,intro_recording,workshop_zoom,workshop_recording',
+            'section_id' => 'required|integer|exists:course_sections,id',
+            'type' => 'required|in:lesson_video,intro_zoom,intro_recording,workshop_zoom,workshop_recording,intro',
             'is_free_preview' => 'nullable|boolean',
             'duration_seconds' => 'nullable|integer|min:0',
             'sort_order' => 'nullable|integer|min:0',
 
-            'langs' => 'nullable|array',
-            'langs.*.lang' => 'required_with:langs|string|in:ar,en',
-            'langs.*.title' => 'required_with:langs|string|max:255',
+            'langs' => 'required|array|min:1',
+            'langs.*.lang' => 'required|string|in:ar,en',
+            'langs.*.title' => 'required|string|max:255',
             'langs.*.description' => 'nullable|string',
 
-            // media (optional)
-            'media' => 'nullable|array',
-            'media.source_type' => 'required_with:media|in:upload,url',
-            'media.media_url' => 'required_with:media|string|max:2048',
+            'zoom_start_at' => 'nullable|date',
+            'instructor_id' => 'nullable|integer|exists:users,id',
+
+            'external_video_url' => 'nullable|url',
+            'content_source' => 'nullable|in:zoom,upload,url',
         ]);
 
-        return DB::transaction(function () use ($item, $data) {
+        return DB::transaction(function () use ($id, $data) {
+            $item = CourseItem::findOrFail($id);
 
-            $item->fill($data);
-            $item->save();
-
-            if (!empty($data['langs'])) {
-                foreach ($data['langs'] as $lng) {
-                    CourseItemLang::updateOrCreate(
-                        ['item_id' => $item->id, 'lang' => $lng['lang']],
-                        [
-                            'title' => $lng['title'],
-                            'description' => $lng['description'] ?? null,
-                        ]
-                    );
-                }
+            foreach ($data['langs'] as $lng) {
+                CourseItemLang::updateOrCreate(
+                    ['item_id' => $item->id, 'lang' => $lng['lang']],
+                    [
+                        'title' => $lng['title'],
+                        'description' => $lng['description'] ?? null,
+                    ]
+                );
             }
 
-            if (array_key_exists('media', $data)) {
-                // إذا جت media: نعمل upsert، وإذا كانت null نحذف
-                if ($data['media'] === null) {
-                    $item->media()->delete();
-                } else {
-                    $item->media()->updateOrCreate(
-                        ['item_id' => $item->id],
-                        [
-                            'source_type' => $data['media']['source_type'],
-                            'media_url' => $data['media']['media_url'],
-                        ]
-                    );
+            if ($data['type'] == CourseItem::TYPE_INTRO_ZOOM || $data['type'] == CourseItem::TYPE_WORKSHOP_ZOOM) {
+                if (Carbon::parse($item->liveSession()?->first()?->start_at)->toDateTimeString() != Carbon::parse($data['zoom_start_at'])->toDateTimeString()) {
+
+                    $item->liveSession()->delete();
+
+                    $zoom_start_at = Carbon::parse($data['zoom_start_at'])->toDateTimeString();
+                    $zoom_end_at = Carbon::parse($data['zoom_start_at'])->addMinutes(60)->toDateTimeString();
+                    $date = Carbon::parse($data['zoom_start_at'])->format('Y-m-d');
+                    $postValues = [
+                        'title' => $data['langs'][0]['title'],
+                        'timezone' => 35,
+                        'start_time' => $zoom_start_at,
+                        'end_time' => $zoom_end_at,
+                        'date' => $date,
+                        'record' => 3,
+                    ];
+
+                    $zoom = new ZoomController;
+                    $result = $zoom->createMeeting($postValues);
+
+                    $liveSession = CourseLiveSession::create([
+                        'item_id' => $item->id,
+                        'instructor_id' => $data['instructor_id'],
+                        'start_at' => $zoom_start_at,
+                        'end_at' => $zoom_end_at,
+                        'zoom_meeting_id' => $result['data']['id'] ?? null,
+                        'join_url_host' => $result['data']['start_url'] ?? null,
+                        'join_url_attendee' => $result['data']['join_url'] ?? null,
+                        'recording_item_id' => null,
+                    ]);
                 }
+
             }
+            if ($data['type'] == CourseItem::TYPE_INTRO_RECORDING || $data['type'] == CourseItem::TYPE_WORKSHOP_RECORDING || $data['type'] == CourseItem::TYPE_LESSON_VIDEO) {
+                CourseItemMedia::updateOrCreate([
+                    'item_id' => $item->id,
+                ], [
+                    'source_type' => $data['content_source'],
+                    'media_url' => $data['external_video_url'],
+                ]);
+            }
+
+            $item->update($data);
 
             return response()->json([
-                'message' => 'Item updated.',
-                'item' => $item->fresh()->load('langs','media','liveSession'),
-            ]);
+                'message' => 'Item created.',
+                'item' => $item->load('langs', 'media', 'liveSession'),
+            ], 201);
         });
     }
 
@@ -157,6 +241,7 @@ class CourseItemController extends Controller
         $this->mustBeAdmin($request);
 
         $item->delete();
+
         return response()->json(['message' => 'Item deleted.']);
     }
 
@@ -173,11 +258,37 @@ class CourseItemController extends Controller
 
         foreach ($data['items'] as $row) {
             $update = ['sort_order' => $row['sort_order']];
-            if (!empty($row['section_id'])) $update['section_id'] = $row['section_id'];
+            if (! empty($row['section_id'])) {
+                $update['section_id'] = $row['section_id'];
+            }
 
             $course->items()->where('id', $row['id'])->update($update);
         }
 
         return response()->json(['message' => 'Sorted.']);
+    }
+
+    public function checkAvailability(Request $request)
+    {
+        $request->validate([
+            'instructor_id' => 'required|exists:users,id',
+            'start_at' => 'required|date',
+        ]);
+
+        $zoom_start_at = Carbon::parse($request->start_at)->format('Y-m-d H:i:s');
+
+        $tutor = User::find($request->instructor_id);
+        $orderController = new OrderController;
+        $checkAllowBooking = $orderController->checkAllowBooking($tutor, null, $zoom_start_at, 40);
+        if (! $checkAllowBooking['success']) {
+            // return response($checkAllowBooking, 200);
+            $available = false;
+        } else {
+            $available = true;
+        }
+
+        return response()->json([
+            'available' => $available,
+        ]);
     }
 }

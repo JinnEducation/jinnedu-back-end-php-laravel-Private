@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Resources\CourseSectionResource;
 use Illuminate\Http\Request;
 use App\Models\CourseSectionLang;
 use Illuminate\Support\Facades\DB;
@@ -12,13 +13,17 @@ class CourseSectionController extends Controller
 {
     private function mustBeAdmin(Request $request)
     {
-        if (($request->user()->type ?? 0) != 1) abort(403, 'Admin only.');
+        if (($request->user()->type ?? 0) != 0) abort(403, 'Admin only.');
     }
 
-    public function index(Request $request, Course $course)
+    public function index(Request $request, $id)
     {
         $this->mustBeAdmin($request);
+        $course = Course::find($id);
 
+        if(!$course) {
+            return response()->json(['message' => 'Course not found.'], 404);
+        }
         $lang = $request->header('lang', 'en');
 
         $sections = $course->sections()
@@ -26,7 +31,7 @@ class CourseSectionController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return response()->json($sections);
+        return CourseSectionResource::collection($sections);
     }
 
     public function store(Request $request, Course $course)

@@ -202,4 +202,7 @@
         </div>
     </section>
 
+    @push('scripts')
+        <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
+    @endpush
 </x-front-layout>

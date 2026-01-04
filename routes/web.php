@@ -36,8 +36,9 @@ Route::group([
     Route::get('/',[HomeController::class,'index'])->name('home');
 
 
-    Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])
-        ->name('redirect.dashboard');
+    Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');
+
+    Route::post('/email-check', [AuthController::class, 'emailCheck'])->name('auth.email-check');
 
 
     Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('password.reset');
@@ -167,3 +168,21 @@ Route::get('/bridge-login/{token}', function ($token) {
 Route::get('/bridge-login-check', function () {
     return view('bridge-login-check');
 })->name('bridge-login-check');
+Route::get('/show-video', function (\Illuminate\Http\Request $request) {
+    $path = $request->query('path');
+
+    if (!$path) {
+        abort(404);
+    }
+
+    // حماية بسيطة: لازم يكون داخل courses/videos
+    if (!str_starts_with($path, 'courses/videos/')) {
+        abort(403);
+    }
+
+    $url = asset('storage/' . $path);
+
+    return view('show_video', [
+        'videoUrl' => $url,
+    ]);
+})->name('show_video');
