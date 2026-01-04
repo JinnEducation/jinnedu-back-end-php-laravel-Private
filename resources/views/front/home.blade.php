@@ -262,328 +262,187 @@
     </section>
 
     <!-- Recent Courses Section -->
-    <section class="px-4 py-16">
-        <div class="container mx-auto">
-            <!-- Section Title -->
-            <h2 class="mb-6 text-center h-section">
-                {{ label_text('global', 'site.Recent-courses', __('site.Recent courses')) }}
-            </h2>
-            <!-- Category Filter -->
-            <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
-                <!-- سهم يسار -->
-                <div id="left-arrow"
-                    class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none ps-2 text-primary bg-[#fffffff0]">
-                    <!-- Heroicons: chevron-left -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </div>
-                <div id="filter-container"
-                    class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    <button
-                        class="px-2 py-3 font-bold transition-all duration-300 text-primary lg:px-5 text-md category-btn {{ empty($categoryId) ? 'active' : 'text-black' }} hover:text-primary hover:scale-105 hover:font-bold"
-                        data-type="all">
-                        {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
-                    </button>
-                    @foreach ($categories as $cat)
-                       
-                        <button
-                            class="px-2 py-3 font-medium text-black transition-all duration-300 lg:px-5 text-md category-btn hover:text-primary hover:scale-105 hover:font-bold"
-                            data-type="">
-                           Bou
-                        </button>
-                    @endforeach
-                </div>
+    <!-- Recent Courses Section -->
+<section class="px-4 py-16">
+    <div class="container mx-auto">
+        <!-- Section Title -->
+        <h2 class="mb-6 text-center h-section">
+            {{ label_text('global', 'site.Recent-courses', __('site.Recent courses')) }}
+        </h2>
 
-                <!-- سهم يمين -->
-                <div id="right-arrow"
-                    class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none pe-2 text-primary bg-[#fffffff0]">
-                    <!-- Heroicons: chevron-right -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </div>
-            </div>
-            <!-- Courses Grid -->
-           
-             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
-
-                <!-- Course Card 1 - Design (Original - No Changes) -->
-                <div class="block overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Design">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop"
-                            alt="Design Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Design</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet,consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 2 - AI -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="AI">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop"
-                            alt="AI Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Development</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 3 - Marketing -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Marketing">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
-                            alt="Marketing Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Marketing</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-sm line-through text-[#87CEEB]">$200</span>
-                                    <span class="text-[15px] font-bold text-[#1B449C]">$199.99</span>
-                                </div>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 4 - Business -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Business">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=250&fit=crop"
-                            alt="Business Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Business</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">30 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">$99.99</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hidden Course Cards for Load More -->
-                <!-- Course Card 5 - Programming -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Programming" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=250&fit=crop"
-                            alt="Programming Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Programming</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">23 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 6 - Design -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Design" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop"
-                            alt="UX Design Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">UX Design</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">35 total hours</span>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-sm line-through text-[#87CEEB]">$150</span>
-                                    <span class="text-[15px] font-bold text-[#1B449C]">$129.99</span>
-                                </div>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 7 - AI -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="AI" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop"
-                            alt="Machine Learning Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Machine Learning</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">42 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">Free</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Card 8 - Business -->
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    data-type="Business" style="display: none;">
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop"
-                            alt="Leadership Course" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px]">Leadership</h3>
-                        <p class="mb-4 text-[13px] text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <div
-                                class="flex justify-between items-center transition-all h-[45px] duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">28 total hours</span>
-                                </div>
-                                <span class="text-lg font-bold text-[#1B449C]">$149.99</span>
-                            </div>
-                            <div
-                                class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="#"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    Preview this courses
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+        <!-- Category Filter -->
+        <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
+            <!-- Left Arrow -->
+            <div id="left-arrow"
+                class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none ps-2 text-primary bg-[#fffffff0]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
             </div>
 
-            @if ($courses->count() > $initialVisibleCount)
-                <!-- Load More Button -->
-                <div class="text-center">
-                    <button id="loadMoreBtn"
-                        class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                        <span class="relative z-10">
-                            {{ label_text('global', 'site.Load-More', __('site.Load More')) }}
-                        </span>
-                        <div
-                            class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
-                        </div>
-                    </button>
-                </div>
-            @endif
+            <div id="filter-container"
+                class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
+                <!-- All -->
+                <button type="button"
+                    class="px-2 py-3 font-bold transition-all duration-300 lg:px-5 text-md category-btn
+                    {{ empty($categoryId) ? 'active text-primary' : 'text-black' }}
+                    hover:text-primary hover:scale-105 hover:font-bold"
+                    data-category-id="">
+                    {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
+                </button>
+
+                @foreach ($categories as $cat)
+                    <button type="button"
+                        class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
+                        {{ (string)$categoryId === (string)$cat->id ? 'active text-primary font-bold' : 'text-black' }}
+                        hover:text-primary hover:scale-105 hover:font-bold"
+                        data-category-id="{{ $cat->id }}">
+                        {{ $cat->name }}
+                    </button>
+                @endforeach
+            </div>
+
+            <!-- Right Arrow -->
+            <div id="right-arrow"
+                class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none pe-2 text-primary bg-[#fffffff0]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
         </div>
-    </section>
+
+        <!-- Courses Grid -->
+        <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
+            @forelse ($courses as $index => $course)
+                @php
+                    // ===== Title (multilang) =====
+                    $langRow = $course->langs?->firstWhere('language_id', $languageId) ?? $course->langs?->first();
+                    $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
+                    $desc  = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
+
+                    // ===== Image =====
+                    $image = $course->image
+                        ?? $course->thumbnail
+                        ?? $course->cover
+                        ?? $course->image_url
+                        ?? asset('front/assets/imgs/Rectangle 1904355.png');
+
+                    // ===== URL (عدّلي حسب routes عندك) =====
+                    $courseUrl = url('/course/' . $course->id);
+
+                    // ===== Duration =====
+                    $hours = $course->total_hours ?? $course->duration_hours ?? null;
+
+                    // ===== Pricing + Discount =====
+                    $price = (float) ($course->price ?? 0);
+                    $finalPrice = $price;
+                    $oldPrice = null;
+
+                    if ($course->activeDiscount) {
+                        $oldPrice = $price;
+
+                        $dtype = $course->activeDiscount->discount_type ?? null;
+                        $dval  = (float) ($course->activeDiscount->discount_value ?? 0);
+
+                        if ($dtype === 'percent') {
+                            $finalPrice = max(0, $price - ($price * ($dval / 100)));
+                        } elseif ($dtype === 'fixed') {
+                            $finalPrice = max(0, $price - $dval);
+                        }
+                    }
+
+                    $isFree = ($finalPrice <= 0);
+
+                    // Load-more visibility (أول $initialVisibleCount ظاهر، والباقي مخفي)
+                    $hiddenStyle = ($index >= $initialVisibleCount) ? 'display:none;' : '';
+                @endphp
+
+                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                    style="{{ $hiddenStyle }}"
+                    data-course-index="{{ $index }}">
+
+                    <div class="overflow-hidden relative h-48 rounded-sm">
+                        <img src="{{ $image }}" alt="{{ $title }}" class="object-cover w-full h-full">
+                    </div>
+
+                    <div class="pt-4">
+                        <h3 class="mb-2 text-lg font-bold text-black text-[18px] line-clamp-2">
+                            {{ $title }}
+                        </h3>
+
+                        @if($desc)
+                            <p class="mb-4 text-[13px] text-black line-clamp-2">
+                                {{ strip_tags($desc) }}
+                            </p>
+                        @else
+                            <p class="mb-4 text-[13px] text-black line-clamp-2">
+                                {{ __('site.Learn with confidence.') }}
+                            </p>
+                        @endif
+
+                        <div class="pt-4 border-t border-[#E5E7EB]">
+                            <!-- Default (before hover) -->
+                            <div class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                <div class="flex gap-2 items-center">
+                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                    <span class="text-sm text-black">
+                                        @if($hours)
+                                            {{ $hours }} {{ __('site.total hours') }}
+                                        @else
+                                            {{ __('site.Self paced') }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                <div class="flex flex-col items-end">
+                                    @if($isFree)
+                                        <span class="text-lg font-bold text-[#1B449C]">{{ __('site.Free') }}</span>
+                                    @else
+                                        @if($oldPrice && $oldPrice > $finalPrice)
+                                            <span class="text-sm line-through text-[#87CEEB]">${{ number_format($oldPrice, 2) }}</span>
+                                        @endif
+                                        <span class="text-[15px] font-bold text-[#1B449C]">${{ number_format($finalPrice, 2) }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Hover CTA -->
+                            <div class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                <a href="{{ $courseUrl }}"
+                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                    {{ __('site.Preview this course') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-10 text-gray-500">
+                    {{ __('site.No courses found') }}
+                </div>
+            @endforelse
+        </div>
+
+        @if ($courses->count() > $initialVisibleCount)
+            <!-- Load More Button -->
+            <div class="text-center">
+                <button id="loadMoreBtn"
+                    class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
+                    <span class="relative z-10">
+                        {{ label_text('global', 'site.Load-More', __('site.Load More')) }}
+                    </span>
+                    <div
+                        class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                    </div>
+                </button>
+            </div>
+        @endif
+    </div>
+</section>
+
 
     <!-- Upgrade Skills Section -->
     <section class="px-2 py-5 bg-white md:py-16 md:px-20 lg:px-4">
@@ -1253,4 +1112,39 @@
             </div>
         </div>
     </section>
+
+    @push('scripts')
+<script>
+    // ===== Category filter (reload with query) =====
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-category-id');
+            const url = new URL(window.location.href);
+            if (id) url.searchParams.set('category_id', id);
+            else url.searchParams.delete('category_id');
+            window.location.href = url.toString();
+        });
+    });
+
+    // ===== Load more (show next batch) =====
+    (function () {
+        const btn = document.getElementById('loadMoreBtn');
+        if (!btn) return;
+
+        const step = 4; // كل كبسة بتظهر 4 كورسات
+        btn.addEventListener('click', function () {
+            const hidden = Array.from(document.querySelectorAll('.course-card'))
+                .filter(el => el.style.display === 'none');
+
+            hidden.slice(0, step).forEach(el => el.style.display = '');
+
+            const stillHidden = Array.from(document.querySelectorAll('.course-card'))
+                .some(el => el.style.display === 'none');
+
+            if (!stillHidden) btn.style.display = 'none';
+        });
+    })();
+</script>
+@endpush
+
 </x-front-layout>
