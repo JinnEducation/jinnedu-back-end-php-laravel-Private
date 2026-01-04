@@ -36,8 +36,9 @@ Route::group([
     Route::get('/',[HomeController::class,'index'])->name('home');
 
 
-    Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])
-        ->name('redirect.dashboard');
+    Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');
+
+    Route::post('/email-check', [AuthController::class, 'emailCheck'])->name('auth.email-check');
 
 
     Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('password.reset');

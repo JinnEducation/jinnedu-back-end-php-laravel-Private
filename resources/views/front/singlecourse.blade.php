@@ -1,6 +1,4 @@
-
-
- <x-front-layout>
+<x-front-layout>
 
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] py-5">
@@ -489,6 +487,7 @@
             </div>
         </div>
     </section>
+
     <!-- Recent Courses Section -->
     <section class="py-16">
         <div class="container mx-auto">
@@ -766,10 +765,8 @@
             </div>
         </div>
     </section>
-    <!-- Footer -->
-   
 
- @push('scripts')
+    @push('scripts')
         <script src="{{ asset('front/assets/js/course_detail.js') }}"></script>
     @endpush
 

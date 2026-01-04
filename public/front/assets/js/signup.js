@@ -459,11 +459,34 @@ $(function () {
 
     // تحقق من الصيغة
     const isValid = emailPattern.test(val);
+    let isAvailable = true;
 
-    if (isValid) {
+    $.ajax({
+      url: emailCheckUrl,
+      type: 'POST',
+      data: {
+        email: val,
+        _token: _token
+      },
+      success: function(response) {
+        if(response.isAvailable) {
+          isAvailable = true;
+        } else {
+          isAvailable = false;
+          $msg
+            .text("Invalid email format or Email already exists")
+            .removeClass("text-gray-500 text-green-600")
+            .addClass("text-red-500")
+            .css("opacity", 1);
+          return;
+        }
+      }
+    });
+
+    if (isValid && isAvailable) {
       // ✅ إيميل صحيح
       $msg
-        .text("Valid email address ✓")
+        .text("Valid email address ✓ & Available")
         .removeClass("text-gray-500 text-red-500")
         .addClass("text-green-600")
         .css("opacity", 1);

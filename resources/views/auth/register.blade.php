@@ -200,9 +200,8 @@
             $experiences = App\Models\Experience::get();
             $situations = App\Models\Situation::get();
             $specializations = App\Models\Specialization::get();
-
-
             @endphp
+
             <form method="post" id="signup-form" action="{{ route('register') }}" enctype="multipart/form-data">
                 <!-- Step 1: Account Type -->
                 <div class="pane block opacity-100" data-step="1">
@@ -1540,6 +1539,10 @@
 
     <script src="{{ asset('front/assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('front/assets/js/main.js') }}"></script>
+    <script>
+        const _token = "{{ csrf_token() }}";
+        const emailCheckUrl = "{{ route('auth.email-check') }}";
+    </script>
     <script src="{{ asset('front/assets/js/signup.js') }}"></script>
 </body>
 
