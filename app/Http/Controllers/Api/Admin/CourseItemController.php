@@ -249,14 +249,15 @@ class CourseItemController extends Controller
     {
         $this->mustBeAdmin($request);
 
-        $data = $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.id' => 'required|integer|exists:course_items,id',
-            'items.*.sort_order' => 'required|integer|min:0',
-            'items.*.section_id' => 'nullable|integer|exists:course_sections,id',
-        ]);
+        $ids = $request->ids;
 
-        foreach ($data['items'] as $row) {
+        $data = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'required|integer|exists:course_items,id',
+        ]);
+        $items = CourseItem::whereIn('id', $ids)->get();
+
+        foreach ($items as $row) {
             $update = ['sort_order' => $row['sort_order']];
             if (! empty($row['section_id'])) {
                 $update['section_id'] = $row['section_id'];

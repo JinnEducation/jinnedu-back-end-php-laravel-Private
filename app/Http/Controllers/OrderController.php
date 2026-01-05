@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Constants\CurrencyController;
 use App\Models\Conference;
+use App\Models\CourseEnrollment;
 use App\Models\GroupClass;
 use App\Models\Order;
 use App\Models\OurCourse;
@@ -669,6 +670,51 @@ class OrderController extends Controller
         }
 
         $order->save();
+
+        $order->url = url('/').'/api/wallet/checkout/'.$order->id;
+
+        return response([
+            'success' => true,
+            'message' => 'item-showen-successfully',
+            'result' => $order,
+            'url' => url('/').'/api/wallet/checkout/'.$order->id,
+            // 'url' => url('/').'/paypal/'.$order->id
+        ], 200);
+
+    }
+    public function courseUser(Request $request, $course)
+    {
+        // dd('123');
+        $user = Auth::user();
+        if (! $user) {
+            return response([
+                'success' => false,
+                'message' => 'user-dose-not-exist',
+                'msg-code' => '111',
+            ], 200);
+        }
+
+        $order = new Order;
+        $order->user_id = $user->id;
+        $order->ipaddress = $request->ip();
+        $order->note = 'course';
+        $order->dates = null;
+        $order->ref_type = 2;
+        $order->ref_id = $course->id;
+        $order->price = $course->final_price;
+        $order->outline_id = 0;
+        $order->tutor_id = $course?->instructor?->id;
+
+        $order->save();
+
+        CourseEnrollment::firstOrCreate([
+            'user_id'   => $user->id,
+            'course_id' => $course->id,
+        ], [
+            'order_id'    => $order->id,
+            'enrolled_at' => now(),
+        ]);
+        
 
         $order->url = url('/').'/api/wallet/checkout/'.$order->id;
 

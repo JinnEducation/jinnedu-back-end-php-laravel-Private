@@ -27,7 +27,7 @@ class CourseSectionController extends Controller
         $lang = $request->header('lang', 'en');
 
         $sections = $course->sections()
-            ->with(['langs' => fn($q) => $q->where('lang', $lang)])
+            ->with(['langs'])
             ->orderBy('sort_order')
             ->get();
 
@@ -66,7 +66,7 @@ class CourseSectionController extends Controller
         });
     }
 
-    public function update(Request $request, CourseSection $section)
+    public function update(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
@@ -77,9 +77,13 @@ class CourseSectionController extends Controller
             'langs.*.title' => 'required_with:langs|string|max:255',
         ]);
 
+        $section = CourseSection::findOrFail($id);
         return DB::transaction(function () use ($section, $data) {
-            if (isset($data['sort_order'])) $section->sort_order = $data['sort_order'];
-            $section->save();
+            if (isset($data['sort_order'])){
+                $section->update([
+                    'sort_order' => $data['sort_order']
+                ]);
+            }
 
             if (!empty($data['langs'])) {
                 foreach ($data['langs'] as $lng) {

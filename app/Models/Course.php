@@ -36,6 +36,10 @@ class Course extends Model
         'published_at' => 'datetime',
     ];
 
+    protected $append = [
+        'final_price',
+    ];
+
     /* =========================
      | Relations
      ========================= */
