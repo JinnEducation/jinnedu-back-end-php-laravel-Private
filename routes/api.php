@@ -119,7 +119,7 @@ Route::get('/tlocales/lang/{lang}', function () {
 Route::get('/locall/lang/{lang}', [LocalController::class,'localesLang'])->name('localesLang');
 Route::get('/locall/langs', [LocalController::class,'localesLangs'])->name('localesLangs');
 
-Route::middleware(['auth:sanctum','single_login_session'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

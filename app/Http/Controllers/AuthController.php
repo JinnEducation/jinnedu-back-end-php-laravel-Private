@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Rules\PhoneNumber;
 use Bouncer;
+use DB;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -63,10 +64,11 @@ class AuthController extends Controller
     {
         $email = $request->email;
         $user = User::where('email', $email)->exists();
-        if($user) {
-            return response()->json(['success' => false, 'message' => 'Email already exists','isAvailable' => false], 200);
+        if ($user) {
+            return response()->json(['success' => false, 'message' => 'Email already exists', 'isAvailable' => false], 200);
         }
-        return response()->json(['success' => true, 'message' => 'Email is available','isAvailable' => true], 200);
+
+        return response()->json(['success' => true, 'message' => 'Email is available', 'isAvailable' => true], 200);
     }
 
     public function register(Request $request)
@@ -183,7 +185,7 @@ class AuthController extends Controller
                 'message' => 'The Login info is not correct',
                 'msg-code' => '111',
             ], 401);
-        }      
+        }
 
         $user = Auth::user();
 
@@ -258,6 +260,7 @@ class AuthController extends Controller
 
             $user->roles[$index]->permissions = $menus;
         }
+
         return response([
             'success' => true,
             'message' => 'Login Successfully',
@@ -414,7 +417,7 @@ class AuthController extends Controller
 
     public function profile(Request $request)
     {
-        /** @var \App\Models\User $user */
+        // /** @var \App\Models\User $user */
         $user = $request->user_id ? User::find($request->user_id) : Auth::user();
 
         if (! $user) {
@@ -424,14 +427,32 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // ======================================================
-        $profile = $user->profile;
+        $profile = $user->profile;       // جدول user_profiles (الجديد)
+        $tutor = $user->tutorProfile;  // جدول tutor_profiles (الجديد)
+
+        // ========= 1) Root avatar (Vue يستخدم user.avatar)
+        $user->avatar = $profile?->avatar_path;
+
+        // ========= 2) abouts[] (Vue يستخدم abouts[0].first_name ... country_id ... phone ... date_of_birth)
         $abouts = [];
         if ($profile) {
             $abouts[] = (object) [
                 'first_name' => $profile->first_name,
                 'last_name' => $profile->last_name,
                 'email' => $user->email,
+
+                // Vue متوقع phone و country_id (خليهم موجودين حتى لو null)
+                'phone' => $profile->contact_number,
+                'country_id' => $profile->country, // إذا عندك country_id فعلي بالموديل بدل country عدّلها
+                'language_id' => null,
+                'subject_id' => null,
+                'experience_id' => null,
+                'situation_id' => null,
+
+                // Vue متوقع date_of_birth
+                'date_of_birth' => $tutor?->dob, // أو إذا عندك بالـ profile عدّلها
+
+                // (اختياري) خليك متوافق كمان مع القديم
                 'country' => $profile->country,
                 'contact_number' => $profile->contact_number,
                 'avatar' => $profile->avatar_path,
@@ -439,29 +460,80 @@ class AuthController extends Controller
         }
         $user->abouts = $abouts;
 
-        // ======================================================
-        $tutor = $user->tutorProfile;
+        // ========= 3) availabilities[] (Vue متوقع day.id + hour_from/hour_to)
+        $dayMap = [
+            'saturday' => 1,
+            'sunday' => 2,
+            'monday' => 3,
+            'tuesday' => 4,
+            'wednesday' => 5,
+            'thursday' => 6,
+            'friday' => 7,
+        ];
 
-        // Availabilities
         $availabilities = [];
-        if ($tutor && $tutor->availability_json) {
-            foreach ($tutor->availability_json as $day => $slots) {
+        $availabilityJson = $tutor?->availability_json; // بعد cast صارت array
+
+        if (is_array($availabilityJson)) {
+            foreach ($availabilityJson as $dayKey => $slots) {
+                $dayId = $dayMap[strtolower($dayKey)] ?? null;
+
+                if (! is_array($slots)) {
+                    continue;
+                }
+
                 foreach ($slots as $slot) {
+                    $from = $slot['from'] ?? null;
+                    $to = $slot['to'] ?? null;
+
+                    if (! $from || ! $to) {
+                        continue;
+                    }
+
                     $availabilities[] = (object) [
-                        'day' => ucfirst($day),
-                        'from' => $slot['from'] ?? null,
-                        'to' => $slot['to'] ?? null,
+                        'id' => null, // القديم كان عنده id من جدول availabilities؛ هنا خليها null
+                        'day_id' => $dayId,
+                        'day' => (object) [
+                            'id' => $dayId,
+                            'name' => ucfirst(strtolower($dayKey)),
+                        ],
+                        'hour_from' => $from,
+                        'hour_to' => $to,
                     ];
                 }
             }
         }
         $user->availabilities = $availabilities;
 
-        // Certifications
-        $certifications = [];
-        if ($tutor && $tutor->certifications_json) {
-            foreach ($tutor->certifications_json as $cert) {
-                $certifications[] = (object) [
+        // ========= 4) descriptions[] (Vue متوقع headline/interests/motivation/specialization_id/experience/methodology)
+        $descriptions = [];
+        if ($tutor) {
+            $descriptions[] = (object) [
+                'headline' => $tutor->headline,
+                'interests' => $tutor->interests,
+                'motivation' => $tutor->motivation,
+                'specialization_id' => null, // إذا عندك specialization_id فعلي خزّنه ورجّعه
+                'experience' => $tutor->experience_bio, // Vue يستخدم descriptions[0].experience
+                'methodology' => $tutor->methodology,
+            ];
+        }
+        $user->descriptions = $descriptions;
+
+        // ========= 5) hourlyPrices[] (Vue متوقع price)
+        $hourlyPrices = [];
+        if ($tutor && $tutor->hourly_rate !== null) {
+            $hourlyPrices[] = (object) [
+                'price' => $tutor->hourly_rate,
+            ];
+        }
+        $user->hourlyPrices = $hourlyPrices;
+
+        // ========= (اختياري) certifications/videos/languages إذا الفرونت يحتاجهم لاحقًا
+        $user->certifications = [];
+        $certs = $tutor?->certifications_json;
+        if (is_array($certs)) {
+            foreach ($certs as $cert) {
+                $user->certifications[] = (object) [
                     'name' => $cert['name'] ?? null,
                     'description' => $cert['description'] ?? null,
                     'issued_by' => $cert['issued_by'] ?? null,
@@ -471,61 +543,15 @@ class AuthController extends Controller
                 ];
             }
         }
-        $user->certifications = $certifications;
 
-        // Descriptions
-        $descriptions = [];
-        if ($tutor) {
-            $descriptions[] = (object) [
-                'headline' => $tutor->headline,
-                'motivation' => $tutor->motivation,
-                'interests' => $tutor->interests,
-                'methodology' => $tutor->methodology,
-            ];
-        }
-        $user->descriptions = $descriptions;
-
-        // Educations
-        $educations = [];
-        if ($tutor) {
-            $educations[] = (object) [
-                'experience_bio' => $tutor->experience_bio,
-                'specializations' => $tutor->specializations,
-                'situation' => $tutor->situation,
-            ];
-        }
-        $user->educations = $educations;
-
-        // HourlyPrices
-        $hourlyPrices = [];
-        if ($tutor && $tutor->hourly_rate) {
-            $hourlyPrices[] = (object) [
-                'hourly_rate' => $tutor->hourly_rate,
-            ];
-        }
-        $user->hourlyPrices = $hourlyPrices;
-
-        // Languages
-        $languages = [];
-        if ($tutor && $tutor->native_language) {
-            $languages[] = (object) [
-                'language' => $tutor->native_language,
-                'level' => null,
-            ];
-        }
-        $user->languages = $languages;
-
-        // Videos
-        $videos = [];
+        $user->videos = [];
         if ($tutor && $tutor->video_path) {
-            $videos[] = (object) [
+            $user->videos[] = (object) [
                 'file' => $tutor->video_path,
-                'approved' => $tutor->video_terms_agreed,
+                'approved' => (bool) $tutor->video_terms_agreed,
             ];
         }
-        $user->videos = $videos;
 
-        // ======================================================
         return response([
             'success' => true,
             'message' => 'Profile retrieved Successfully',
@@ -535,81 +561,67 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            'name' => 'required_without_all:first_name,last_name|string',
-            'first_name' => 'required_without:name|string',
-            'last_name' => 'required_without:name|string',
-            'email' => 'required|email|unique:users,email,'.auth()->user()->id,
-            'phone' => 'nullable|string',
-            'date_of_birth' => 'nullable|date_format:Y-m-d',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png',
+            'name' => 'required|string|max:200',
+            'email' => 'required|email|unique:users,email,'.auth()->id(),
+            'phone' => 'nullable|string|max:50',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'msg-code' => 'validation-error',
-            ], 200);
+            ], 422);
         }
 
-        $name = trim($request->name);
+        DB::beginTransaction();
 
-        if (! empty($name)) {
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
 
-            $nameParts = explode(' ', $name);
-            $first_name = $nameParts[0];
-            $last_name = implode(' ', array_slice($nameParts, 1));
+            // ========= 1) تحليل الاسم
+            $nameParts = explode(' ', trim($request->name), 2);
+            $firstName = $nameParts[0] ?? null;
+            $lastName = $nameParts[1] ?? null;
 
-        } else {
-            $name = $request->first_name.' '.$request->last_name;
-            $first_name = $request->first_name;
-            $last_name = $request->last_name;
-        }
-
-        $user = Auth::user();
-        $user->name = $name;
-        $user->email = $request->email;
-        $user->save();
-
-        // Update userAbout
-        $age = $request->date_of_birth ? date('Y') - date('Y', strtotime($request->date_of_birth)) : 0;
-
-        if ($user_about = $user->abouts()->first()) {
-
-            $user_about->first_name = $first_name;
-            $user_about->last_name = $last_name;
-            $user_about->phone = $request->phone;
-            $user_about->date_of_birth = $request->date_of_birth ?? $user_about->date_of_birth;
-            $user_about->age = $age;
-            $user_about->save();
-
-        } else {
-
-            $user->abouts()->create([
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'phone' => $request->phone,
-                'date_of_birth' => $request->date_of_birth,
-                'age' => $age,
+            // ========= 2) تحديث users
+            $user->update([
+                'name' => trim($request->name),
+                'email' => $request->email,
             ]);
 
-        }
+            // ========= 3) تجهيز الصورة (نفس register)
+            $avatarPath = $user->profile?->avatar_path;
 
-        // Upload avatar if provided
-        if (! empty($request->avatar)) {
-            $user->avatar = uploadFile($request->avatar, ['jpg', 'jpeg', 'png'], 'users');
-            $user->save();
-        }
+            if ($request->hasFile('avatar')) {
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            }
 
-        return response([
-            'success' => true,
-            'message' => 'User Profile Updated Successfully',
-            'result' => [
-                'user' => $user,
-            ],
-        ], 200);
+            // ========= 4) تحديث user_profiles
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email_display' => $request->email,
+                    'contact_number' => $request->phone,
+                    'avatar_path' => $avatarPath,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function forgotPassword(Request $request)
