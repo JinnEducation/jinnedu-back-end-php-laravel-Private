@@ -29,6 +29,18 @@ class CourseItemResource extends JsonResource
             ];
         });
 
+        $external_video_url = '';
+        $source_type = '';
+        $content_source = '';
+        $type = $this->type;
+        if($type == 'lesson_video' || $type == 'intro_recording' || $type == 'workshop_recording'){
+            $media = $this->media()?->first();
+            $external_video_url = $media?->media_url;
+            $content_source = $media?->source_type;
+        }else{
+            $content_source = 'zoom';
+        }
+
         // Rather than pluck, build the keys for each field by language_id for all present languages
         return [
             'id' => $this->id,
@@ -38,7 +50,8 @@ class CourseItemResource extends JsonResource
             'is_free_preview' => $this->is_free_preview,
             'duration_seconds' => $this->duration_seconds,
             'sort_order' => $this->sort_order,
-            'external_video_url' => $this->external_video_url,
+            'external_video_url' => $external_video_url,
+            'content_source' => $content_source,
             'title' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['title']]),
             'description' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['description']]),
             'created_at' => $this->created_at,

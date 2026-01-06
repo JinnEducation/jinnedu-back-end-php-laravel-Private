@@ -90,6 +90,9 @@ Route::group([
 
     Route::get('take-exam-successful/{id}', [ExamController::class, 'success'])->name('site.take_exam_successful');
 
+    //course
+    Route::get('single-course/{id}', [CourseController::class, 'singlecourse'])->name('site.singlecourse');
+
     Route::middleware(['auth:web', 'check_student'])->group(function() {
 
         // exam
@@ -105,7 +108,7 @@ Route::group([
         Route::get('checkout-response/{id}/{status}', [CheckoutController::class, 'handlePaymentResponse'])->name('checkout-response-get');
 
         //course
-         Route::get('single-course/{id}', [CourseController::class, 'singlecourse'])->name('site.singlecourse');
+        Route::post('course/{id}/book', [CourseController::class, 'bookCourse'])->name('site.bookCourse');
         
         // Local test payment (for development)
         Route::get('local-payment-test', function(Request $request) {

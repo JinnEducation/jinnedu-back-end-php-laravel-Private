@@ -201,6 +201,10 @@ class WalletController extends Controller
             $groupclass = GroupClass::where('id', $order->ref_id)->first();
             $group_class_date = $groupclass->dates()->orderBy('id', 'desc')->first();
             $class_date = date('Y-m-d H:i:s', strtotime($group_class_date->class_date));
+        } elseif ($type == 2) {
+            $percentage = getSettingVal('our_course_fees');
+
+            
         } else {
             $percentage = getSettingVal('private_lesson_fees');
 
@@ -225,7 +229,7 @@ class WalletController extends Controller
             'total' => $order->price,
             'percentage' => $percentage,
             'fee' => $percentage * $order->price / 100,
-            'class_date' => $class_date,
+            'class_date' => $class_date ?? null,
         ];
 
         TutorFinance::create($data);
@@ -359,7 +363,6 @@ class WalletController extends Controller
                 } else {
                     $wallet->balance -= $order->price;
                     $wallet->save();
-
                     // $this->addTutorTransferToHisWallet($order,$order->tutor_id);
                 }
                 // =====================================================================
@@ -370,8 +373,9 @@ class WalletController extends Controller
                 }
                 $wallet->save();
                 // =====================================================================
-                $conference = new ConferenceController;
-                $conferences = $conference->createOurCourseConferences($order);
+                // $conference = new ConferenceController;
+                // $conferences = $conference->createOurCourseConferences($order);
+                $conferences = null;
             } elseif ($order->ref_type == 4) {
                 // if($wallet->private_lesson_count>0) {
                 //     $wallet->private_lesson_count -=1;
