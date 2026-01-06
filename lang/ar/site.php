@@ -453,5 +453,7 @@ conditions and the privacy policy of the Jien platform.'
     'Message' => 'رسالة',
     'Save to my list' => 'حفظ في قائمتي',
     'Full Schedule' => 'الجدول الكامل',
+    
+    'Profile Picture' => 'صورة الملف الشخصي',
 
 ];

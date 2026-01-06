@@ -149,7 +149,7 @@
                 </a>
             </div>
         </aside>
-{{-- 
+        {{--
         <!-- Mobile Sidebar -->
         <div class="md:hidden w-full bg-primary text-white p-4">
             <details class="bg-primary" open>
@@ -184,22 +184,22 @@
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
             @if($errors->any())
-            <div class="text-white rounded-lg bg-danger">
-                <ul>
-                    @foreach ($errors->all() as $key => $error)
-                        <li>{{ $key + 1 . ' - ' . $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+                <div class="text-white rounded-lg bg-danger">
+                    <ul>
+                        @foreach ($errors->all() as $key => $error)
+                            <li>{{ $key + 1 . ' - ' . $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             @php
-            $countries = App\Models\Country::get();
-            $languages = App\Models\Language::get();    
-            $subjects = App\Models\Subject::get();
-            $experiences = App\Models\Experience::get();
-            $situations = App\Models\Situation::get();
-            $specializations = App\Models\Specialization::get();
+                $countries = App\Models\Country::get();
+                $languages = App\Models\Language::get();
+                $subjects = App\Models\Subject::get();
+                $experiences = App\Models\Experience::get();
+                $situations = App\Models\Situation::get();
+                $specializations = App\Models\Specialization::get();
             @endphp
 
             <form method="post" id="signup-form" action="{{ route('register') }}" enctype="multipart/form-data">
@@ -224,7 +224,7 @@
                             <input type="hidden" name="type" id="account-type" value="" required>
                             <!-- Student Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                 data-account="1" data-type="1">
+                                data-account="1" data-type="1">
                                 <div class="flex justify-center">
                                     <svg width="105" height="57" viewBox="0 0 105 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -249,7 +249,7 @@
 
                             <!-- Tutor Card -->
                             <div class="account-card bg-white rounded-2xl p-8 text-center border-2 border-gray-200 cursor-pointer transition-all hover:border-primary hover:shadow-lg"
-                                data-account="2"   data-type="2">
+                                data-account="2" data-type="2">
                                 <div class="flex justify-center">
                                     <svg width="52" height="57" viewBox="0 0 52 57" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -289,6 +289,12 @@
                         </div>
 
                         <!-- Profile Picture -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-900 mb-2 text-center">
+                                {{ label_text('global', 'site.register-profile-picture-label', __('site.Profile Picture')) }}
+                                <span class="text-red-500">*</span>
+                            </label>
+                        </div>
                         <div class="flex justify-center mb-8">
                             <div class="relative">
                                 <!-- Avatar Circle -->
@@ -370,13 +376,14 @@
                                     {{-- <input type="text"
                                         placeholder="{{ label_text('global', 'site.register-country-placeholder', __('site.egypt (+20)')) }}"
                                         name="country" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"> --}}
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                    --}}
 
                                     <select name="country" required id="country_inp"
-                                        class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                        @foreach ( $countries as $country)
-                                        <option value=" {{$country->name}} ">{{$country->name}}</option>
-                                         @endforeach
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        @foreach ($countries as $country)
+                                            <option value="{{$country->name}}">{{$country->name}}@if($country->phonecode) ({{$country->phonecode}})@endif</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div>
@@ -404,8 +411,7 @@
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -438,8 +444,7 @@
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         <button type="button"
                                             class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -521,7 +526,7 @@
                                 <div class="relative">
                                     <!-- Hidden input for actual date value -->
                                     <input id="dob-value" type="hidden" name="date_of_birth" required>
-                                    
+
                                     <!-- Display input for user -->
                                     <input id="dob-input" type="text" readonly
                                         placeholder="{{ label_text('global', 'site.register-dob-placeholder', __('site.Date of birth (yyyy / MMM / DD)')) }}"
@@ -572,12 +577,10 @@
 
                                     <!-- Month & Year Select -->
                                     <div class="flex items-center justify-between mb-3 gap-2">
-                                        <select id="yearSelect"
-                                            class="border rounded-lg px-2 py-1 text-sm w-1/2">
+                                        <select id="yearSelect" class="border rounded-lg px-2 py-1 text-sm w-1/2">
                                         </select>
 
-                                        <select id="monthSelect"
-                                            class="border rounded-lg px-2 py-1 text-sm w-1/2">
+                                        <select id="monthSelect" class="border rounded-lg px-2 py-1 text-sm w-1/2">
                                             <option value="0">January</option>
                                             <option value="1">February</option>
                                             <option value="2">March</option>
@@ -609,9 +612,9 @@
                                     </label>
                                     <select name="countty_tutor" required id="countty_tutor"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                        @foreach ( $countries as $country)
-                                        <option value=" {{$country->name}} ">{{$country->name}}</option>
-                                         @endforeach
+                                        @foreach ($countries as $country)
+                                            <option value=" {{$country->name}} ">{{$country->name}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div>
@@ -620,9 +623,9 @@
                                     </label>
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                        @foreach ( $languages as $language)
-                                 <option value=" {{$language->name}} ">{{$language->name}}</option>
-                                         @endforeach
+                                        @foreach ($languages as $language)
+                                            <option value=" {{$language->name}} ">{{$language->name}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div>
@@ -631,9 +634,9 @@
                                     </label>
                                     <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                        @foreach ( $subjects as $subject)
-                                        <option value=" {{$subject->name}} ">{{$subject->name}}</option>
-                                         @endforeach
+                                        @foreach ($subjects as $subject)
+                                            <option value=" {{$subject->name}} ">{{$subject->name}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -645,9 +648,9 @@
                                     </label>
                                     <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                           @foreach ( $experiences as $experience)
-                                     <option value=" {{$experience->name}} ">{{$experience->name}}</option>
-                                        @endforeach 
+                                        @foreach ($experiences as $experience)
+                                            <option value=" {{$experience->name}} ">{{$experience->name}}</option>
+                                        @endforeach
                                     </select>
                                     <p class="text-[#AAAAAA]">
                                         {{ label_text('global', 'site.register-teaching-experience-help', __('site.e.g., 1–2 years, 3–5 years, 5–7 years…')) }}
@@ -661,9 +664,9 @@
                                 </label>
                                 <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                                    @foreach ( $situations as $situation)
-                                    <option value=" {{$situation->name}} ">{{$situation->name}}</option>
-                                   @endforeach
+                                    @foreach ($situations as $situation)
+                                        <option value=" {{$situation->name}} ">{{$situation->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -725,7 +728,7 @@
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     @foreach ($specializations as $specialization)
-                                    <option value="{{$specialization->name}}">{{$specialization->name}}</option>
+                                        <option value="{{$specialization->name}}">{{$specialization->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -798,8 +801,7 @@
 
                                 <div class="ranges space-y-4 w-full md:w-3/4">
                                     <!-- range row -->
-                                    <div
-                                        class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                    <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <!-- From -->
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">
@@ -811,8 +813,8 @@
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                                     <!-- ساعة (SVG) -->
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -830,8 +832,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -843,8 +845,8 @@
                                         <div class="flex md:justify-center">
                                             <button type="button"
                                                 class="btn-remove w-11 h-11 rounded-lg border border-gray-200 hover:bg-gray-50 grid place-items-center">
-                                                <svg width="22" height="30" viewBox="0 0 22 30"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="22" height="30" viewBox="0 0 22 30" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M5.17099 25.1213L3.74128 14.3343C3.58992 13.1914 4.90475 12.4222 5.82678 13.1284C5.9631 13.2324 6.07752 13.3624 6.16347 13.5108C6.24943 13.6592 6.30523 13.8232 6.32767 13.9932L7.75738 24.7802C7.77989 24.9497 7.76871 25.122 7.72446 25.2872C7.68022 25.4525 7.60379 25.6073 7.49955 25.7429C6.79181 26.6669 5.32272 26.2665 5.17099 25.1213ZM4.5306 14.2314L5.96022 25.0183C5.9789 25.1513 6.04945 25.2716 6.15647 25.3527C6.26348 25.4339 6.39827 25.4695 6.5314 25.4516C6.66452 25.4337 6.78518 25.3639 6.86701 25.2574C6.94884 25.1509 6.9852 25.0163 6.96816 24.8831L5.53863 14.0961C5.52069 13.9624 5.45039 13.8414 5.34319 13.7595C5.23598 13.6777 5.10066 13.6418 4.96699 13.6597C4.83332 13.6777 4.71224 13.748 4.6304 13.8552C4.54856 13.9624 4.51266 14.0977 4.5306 14.2314ZM15.0172 25.0183L16.4468 14.2314C16.4647 14.0977 16.4288 13.9624 16.347 13.8552C16.2652 13.748 16.1441 13.6777 16.0104 13.6597C15.8767 13.6418 15.7414 13.6777 15.6342 13.7595C15.527 13.8414 15.4567 13.9624 15.4388 14.0961L14.0092 24.8831C13.9922 25.0163 14.0286 25.1509 14.1104 25.2574C14.1922 25.3639 14.3129 25.4337 14.446 25.4516C14.5791 25.4695 14.7139 25.4339 14.8209 25.3527C14.928 25.2716 14.9985 25.1513 15.0172 25.0183ZM17.236 14.3343L15.8064 25.1213C15.7839 25.2926 15.7276 25.4578 15.6407 25.6071C15.5538 25.7565 15.4381 25.8872 15.3003 25.9914C15.1625 26.0957 15.0054 26.1716 14.838 26.2147C14.6707 26.2578 14.4964 26.2671 14.3254 26.2423C14.1544 26.2174 13.99 26.1589 13.8418 26.07C13.6936 25.9811 13.5646 25.8636 13.4621 25.7244C13.3597 25.5852 13.286 25.4271 13.2452 25.2592C13.2044 25.0912 13.1974 24.9169 13.2245 24.7462L14.6499 13.9932C14.8017 12.8475 16.2713 12.4483 16.9784 13.3715C17.0826 13.5071 17.1591 13.662 17.2033 13.8272C17.2476 13.9924 17.2588 14.1647 17.2363 14.3343H17.236ZM20.1269 9.91273H0.850995L3.28041 28.2438C3.31414 28.5098 3.44426 28.7543 3.64613 28.9308C3.848 29.1074 4.10761 29.2038 4.37579 29.2018H16.6012C16.8694 29.2038 17.129 29.1074 17.3309 28.9308C17.5328 28.7543 17.6629 28.5098 17.6966 28.2438L20.1269 9.91273ZM20.5812 9.11418L0.396635 9.11518C0.340126 9.1155 0.284327 9.12779 0.232915 9.15124C0.181503 9.1747 0.135646 9.20879 0.0983686 9.25126C0.0610906 9.29373 0.0332378 9.34362 0.0166466 9.39763C5.53788e-05 9.45165 -0.0048984 9.50858 0.00211344 9.56465L2.49163 28.3463C2.55084 28.804 2.77486 29.2245 3.12176 29.5289C3.46866 29.8333 3.91464 30.0008 4.37616 30H16.6012C17.0628 30.0008 17.5089 29.8334 17.8558 29.529C18.2028 29.2246 18.4269 28.8041 18.4861 28.3463L20.9709 9.5986C20.9838 9.54027 20.9835 9.47978 20.9699 9.4216C20.9563 9.36341 20.9298 9.30904 20.8923 9.26249C20.8548 9.21594 20.8074 9.17842 20.7535 9.1527C20.6995 9.12698 20.6405 9.11372 20.5808 9.11391L20.5812 9.11418ZM11.0016 24.9971C11.0016 25.666 9.98473 25.6671 9.98419 24.9986L9.97559 14.1171C9.97559 13.4483 10.9925 13.4472 10.993 14.1158L11.0021 24.9972L11.0016 24.9971ZM11.7885 14.1157L11.797 24.9971C11.7984 26.7146 9.1898 26.7162 9.18872 24.9986L9.18021 14.1171C9.17885 12.3996 11.7885 12.3982 11.7885 14.1158V14.1157ZM1.57278 2.50401L20.2989 7.52188L20.5578 6.55559C20.6262 6.2993 20.5901 6.02635 20.4575 5.79659C20.325 5.56684 20.1067 5.39905 19.8506 5.33002L3.05762 0.830324C2.80133 0.761899 2.52836 0.797916 2.29859 0.930476C2.06882 1.06304 1.90101 1.28132 1.83196 1.53744L1.57296 2.50419L1.57278 2.50401ZM13.5267 2.80972L9.75615 1.79943L9.9057 1.31411C9.94184 1.17882 10.0295 1.06304 10.1498 0.991501C10.2702 0.919962 10.4138 0.898343 10.5499 0.931263L13.311 1.67115C13.441 1.70332 13.5532 1.78503 13.6238 1.89883C13.6943 2.01263 13.7176 2.1495 13.6886 2.28022L13.5265 2.80972H13.5267ZM8.98657 1.5932L9.14454 1.08009C9.24191 0.748085 9.46424 0.466777 9.76476 0.295327C10.0653 0.123877 10.4206 0.0756463 10.7559 0.160779L13.517 0.900755C14.2313 1.10399 14.6603 1.82722 14.4457 2.53026L14.2961 3.01558L20.0562 4.55899C20.5159 4.68394 20.9076 4.98558 21.1459 5.39816C21.3842 5.81073 21.4497 6.30077 21.3282 6.76145L20.9661 8.11303C20.9387 8.21519 20.872 8.30231 20.7804 8.35526C20.6889 8.40821 20.5801 8.42264 20.4779 8.39539L0.981446 3.1712C0.930835 3.15773 0.883376 3.13441 0.841788 3.10257C0.8002 3.07074 0.765297 3.03101 0.739079 2.98567C0.712861 2.94034 0.695842 2.89027 0.688996 2.83835C0.682149 2.78642 0.685609 2.73366 0.699179 2.68307L1.06129 1.3314C1.18628 0.87177 1.48787 0.480176 1.90034 0.24196C2.31281 0.00374348 2.80272 -0.0617837 3.2633 0.0596593L8.98657 1.5932Z"
                                                         fill="#AAAAAA" />
@@ -854,21 +856,21 @@
                                     </div>
                                 </div>
 
-                                        <div class="empty-state hidden">
-                                            <div
-                                                class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                                {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
-                                            </div>
-                                        </div>
+                                <div class="empty-state hidden">
+                                    <div
+                                        class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
+                                        {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
+                                    </div>
+                                </div>
 
                                 <!-- Add Range -->
-                                        <div class="mt-4">
-                                            <button type="button"
-                                                class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
-                                                <span class="text-xl">+</span>
-                                                {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
-                                            </button>
-                                        </div>
+                                <div class="mt-4">
+                                    <button type="button"
+                                        class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
+                                        <span class="text-xl">+</span>
+                                        {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
+                                    </button>
+                                </div>
                             </section>
 
                             <!-- Monday (ON + sample ranges) -->
@@ -893,8 +895,7 @@
                                 </header>
 
                                 <div class="ranges space-y-4 w-full md:w-3/4">
-                                    <div
-                                        class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                    <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">
                                                 {{ label_text('global', 'site.From', __('site.From')) }}
@@ -904,8 +905,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -922,8 +923,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -934,8 +935,8 @@
                                         <div class="flex md:justify-center">
                                             <button type="button"
                                                 class="btn-remove w-11 h-11 rounded-lg border border-gray-200 hover:bg-gray-50 grid place-items-center">
-                                                <svg width="22" height="30" viewBox="0 0 22 30"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="22" height="30" viewBox="0 0 22 30" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M5.17099 25.1213L3.74128 14.3343C3.58992 13.1914 4.90475 12.4222 5.82678 13.1284C5.9631 13.2324 6.07752 13.3624 6.16347 13.5108C6.24943 13.6592 6.30523 13.8232 6.32767 13.9932L7.75738 24.7802C7.77989 24.9497 7.76871 25.122 7.72446 25.2872C7.68022 25.4525 7.60379 25.6073 7.49955 25.7429C6.79181 26.6669 5.32272 26.2665 5.17099 25.1213ZM4.5306 14.2314L5.96022 25.0183C5.9789 25.1513 6.04945 25.2716 6.15647 25.3527C6.26348 25.4339 6.39827 25.4695 6.5314 25.4516C6.66452 25.4337 6.78518 25.3639 6.86701 25.2574C6.94884 25.1509 6.9852 25.0163 6.96816 24.8831L5.53863 14.0961C5.52069 13.9624 5.45039 13.8414 5.34319 13.7595C5.23598 13.6777 5.10066 13.6418 4.96699 13.6597C4.83332 13.6777 4.71224 13.748 4.6304 13.8552C4.54856 13.9624 4.51266 14.0977 4.5306 14.2314ZM15.0172 25.0183L16.4468 14.2314C16.4647 14.0977 16.4288 13.9624 16.347 13.8552C16.2652 13.748 16.1441 13.6777 16.0104 13.6597C15.8767 13.6418 15.7414 13.6777 15.6342 13.7595C15.527 13.8414 15.4567 13.9624 15.4388 14.0961L14.0092 24.8831C13.9922 25.0163 14.0286 25.1509 14.1104 25.2574C14.1922 25.3639 14.3129 25.4337 14.446 25.4516C14.5791 25.4695 14.7139 25.4339 14.8209 25.3527C14.928 25.2716 14.9985 25.1513 15.0172 25.0183ZM17.236 14.3343L15.8064 25.1213C15.7839 25.2926 15.7276 25.4578 15.6407 25.6071C15.5538 25.7565 15.4381 25.8872 15.3003 25.9914C15.1625 26.0957 15.0054 26.1716 14.838 26.2147C14.6707 26.2578 14.4964 26.2671 14.3254 26.2423C14.1544 26.2174 13.99 26.1589 13.8418 26.07C13.6936 25.9811 13.5646 25.8636 13.4621 25.7244C13.3597 25.5852 13.286 25.4271 13.2452 25.2592C13.2044 25.0912 13.1974 24.9169 13.2245 24.7462L14.6499 13.9932C14.8017 12.8475 16.2713 12.4483 16.9784 13.3715C17.0826 13.5071 17.1591 13.662 17.2033 13.8272C17.2476 13.9924 17.2588 14.1647 17.2363 14.3343H17.236ZM20.1269 9.91273H0.850995L3.28041 28.2438C3.31414 28.5098 3.44426 28.7543 3.64613 28.9308C3.848 29.1074 4.10761 29.2038 4.37579 29.2018H16.6012C16.8694 29.2038 17.129 29.1074 17.3309 28.9308C17.5328 28.7543 17.6629 28.5098 17.6966 28.2438L20.1269 9.91273ZM20.5812 9.11418L0.396635 9.11518C0.340126 9.1155 0.284327 9.12779 0.232915 9.15124C0.181503 9.1747 0.135646 9.20879 0.0983686 9.25126C0.0610906 9.29373 0.0332378 9.34362 0.0166466 9.39763C5.53788e-05 9.45165 -0.0048984 9.50858 0.00211344 9.56465L2.49163 28.3463C2.55084 28.804 2.77486 29.2245 3.12176 29.5289C3.46866 29.8333 3.91464 30.0008 4.37616 30H16.6012C17.0628 30.0008 17.5089 29.8334 17.8558 29.529C18.2028 29.2246 18.4269 28.8041 18.4861 28.3463L20.9709 9.5986C20.9838 9.54027 20.9835 9.47978 20.9699 9.4216C20.9563 9.36341 20.9298 9.30904 20.8923 9.26249C20.8548 9.21594 20.8074 9.17842 20.7535 9.1527C20.6995 9.12698 20.6405 9.11372 20.5808 9.11391L20.5812 9.11418ZM11.0016 24.9971C11.0016 25.666 9.98473 25.6671 9.98419 24.9986L9.97559 14.1171C9.97559 13.4483 10.9925 13.4472 10.993 14.1158L11.0021 24.9972L11.0016 24.9971ZM11.7885 14.1157L11.797 24.9971C11.7984 26.7146 9.1898 26.7162 9.18872 24.9986L9.18021 14.1171C9.17885 12.3996 11.7885 12.3982 11.7885 14.1158V14.1157ZM1.57278 2.50401L20.2989 7.52188L20.5578 6.55559C20.6262 6.2993 20.5901 6.02635 20.4575 5.79659C20.325 5.56684 20.1067 5.39905 19.8506 5.33002L3.05762 0.830324C2.80133 0.761899 2.52836 0.797916 2.29859 0.930476C2.06882 1.06304 1.90101 1.28132 1.83196 1.53744L1.57296 2.50419L1.57278 2.50401ZM13.5267 2.80972L9.75615 1.79943L9.9057 1.31411C9.94184 1.17882 10.0295 1.06304 10.1498 0.991501C10.2702 0.919962 10.4138 0.898343 10.5499 0.931263L13.311 1.67115C13.441 1.70332 13.5532 1.78503 13.6238 1.89883C13.6943 2.01263 13.7176 2.1495 13.6886 2.28022L13.5265 2.80972H13.5267ZM8.98657 1.5932L9.14454 1.08009C9.24191 0.748085 9.46424 0.466777 9.76476 0.295327C10.0653 0.123877 10.4206 0.0756463 10.7559 0.160779L13.517 0.900755C14.2313 1.10399 14.6603 1.82722 14.4457 2.53026L14.2961 3.01558L20.0562 4.55899C20.5159 4.68394 20.9076 4.98558 21.1459 5.39816C21.3842 5.81073 21.4497 6.30077 21.3282 6.76145L20.9661 8.11303C20.9387 8.21519 20.872 8.30231 20.7804 8.35526C20.6889 8.40821 20.5801 8.42264 20.4779 8.39539L0.981446 3.1712C0.930835 3.15773 0.883376 3.13441 0.841788 3.10257C0.8002 3.07074 0.765297 3.03101 0.739079 2.98567C0.712861 2.94034 0.695842 2.89027 0.688996 2.83835C0.682149 2.78642 0.685609 2.73366 0.699179 2.68307L1.06129 1.3314C1.18628 0.87177 1.48787 0.480176 1.90034 0.24196C2.31281 0.00374348 2.80272 -0.0617837 3.2633 0.0596593L8.98657 1.5932Z"
                                                         fill="#AAAAAA" />
@@ -1019,8 +1020,7 @@
                                 </header>
 
                                 <div class="ranges space-y-4 w-full md:w-3/4">
-                                    <div
-                                        class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                    <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">
                                                 {{ label_text('global', 'site.From', __('site.From')) }}
@@ -1030,8 +1030,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1048,8 +1048,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1060,8 +1060,8 @@
                                         <div class="flex md:justify-center">
                                             <button type="button"
                                                 class="btn-remove w-11 h-11 rounded-lg border border-gray-200 hover:bg-gray-50 grid place-items-center">
-                                                <svg width="22" height="30" viewBox="0 0 22 30"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="22" height="30" viewBox="0 0 22 30" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M5.17099 25.1213L3.74128 14.3343C3.58992 13.1914 4.90475 12.4222 5.82678 13.1284C5.9631 13.2324 6.07752 13.3624 6.16347 13.5108C6.24943 13.6592 6.30523 13.8232 6.32767 13.9932L7.75738 24.7802C7.77989 24.9497 7.76871 25.122 7.72446 25.2872C7.68022 25.4525 7.60379 25.6073 7.49955 25.7429C6.79181 26.6669 5.32272 26.2665 5.17099 25.1213ZM20.1269 9.91273H0.850995L3.28041 28.2438C3.31414 28.5098 3.44426 28.7543 3.64613 28.9308C3.848 29.1074 4.10761 29.2038 4.37579 29.2018H16.6012C16.8694 29.2038 17.129 29.1074 17.3309 28.9308C17.5328 28.7543 17.6629 28.5098 17.6966 28.2438L20.1269 9.91273Z"
                                                         fill="#AAAAAA" />
@@ -1110,8 +1110,7 @@
 
                                 <div class="ranges space-y-4 w-full md:w-3/4">
                                     <!-- row 1 -->
-                                    <div
-                                        class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                    <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">
                                                 {{ label_text('global', 'site.From', __('site.From')) }}
@@ -1121,8 +1120,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1139,8 +1138,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1151,8 +1150,8 @@
                                         <div class="flex md:justify-center">
                                             <button type="button"
                                                 class="btn-remove w-11 h-11 rounded-lg border border-gray-200 hover:bg-gray-50 grid place-items-center">
-                                                <svg width="22" height="30" viewBox="0 0 22 30"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="22" height="30" viewBox="0 0 22 30" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M5.17099 25.1213L3.74128 14.3343C3.58992 13.1914 4.90475 12.4222 5.82678 13.1284C5.9631 13.2324 6.07752 13.3624 6.16347 13.5108C6.24943 13.6592 6.30523 13.8232 6.32767 13.9932L7.75738 24.7802C7.77989 24.9497 7.76871 25.122 7.72446 25.2872C7.68022 25.4525 7.60379 25.6073 7.49955 25.7429C6.79181 26.6669 5.32272 26.2665 5.17099 25.1213ZM4.5306 14.2314L5.96022 25.0183C5.9789 25.1513 6.04945 25.2716 6.15647 25.3527C6.26348 25.4339 6.39827 25.4695 6.5314 25.4516C6.66452 25.4337 6.78518 25.3639 6.86701 25.2574C6.94884 25.1509 6.9852 25.0163 6.96816 24.8831L5.53863 14.0961C5.52069 13.9624 5.45039 13.8414 5.34319 13.7595C5.23598 13.6777 5.10066 13.6418 4.96699 13.6597C4.83332 13.6777 4.71224 13.748 4.6304 13.8552C4.54856 13.9624 4.51266 14.0977 4.5306 14.2314ZM15.0172 25.0183L16.4468 14.2314C16.4647 14.0977 16.4288 13.9624 16.347 13.8552C16.2652 13.748 16.1441 13.6777 16.0104 13.6597C15.8767 13.6418 15.7414 13.6777 15.6342 13.7595C15.527 13.8414 15.4567 13.9624 15.4388 14.0961L14.0092 24.8831C13.9922 25.0163 14.0286 25.1509 14.1104 25.2574C14.1922 25.3639 14.3129 25.4337 14.446 25.4516C14.5791 25.4695 14.7139 25.4339 14.8209 25.3527C14.928 25.2716 14.9985 25.1513 15.0172 25.0183ZM17.236 14.3343L15.8064 25.1213C15.7839 25.2926 15.7276 25.4578 15.6407 25.6071C15.5538 25.7565 15.4381 25.8872 15.3003 25.9914C15.1625 26.0957 15.0054 26.1716 14.838 26.2147C14.6707 26.2578 14.4964 26.2671 14.3254 26.2423C14.1544 26.2174 13.99 26.1589 13.8418 26.07C13.6936 25.9811 13.5646 25.8636 13.4621 25.7244C13.3597 25.5852 13.286 25.4271 13.2452 25.2592C13.2044 25.0912 13.1974 24.9169 13.2245 24.7462L14.6499 13.9932C14.8017 12.8475 16.2713 12.4483 16.9784 13.3715C17.0826 13.5071 17.1591 13.662 17.2033 13.8272C17.2476 13.9924 17.2588 14.1647 17.2363 14.3343H17.236ZM20.1269 9.91273H0.850995L3.28041 28.2438C3.31414 28.5098 3.44426 28.7543 3.64613 28.9308C3.848 29.1074 4.10761 29.2038 4.37579 29.2018H16.6012C16.8694 29.2038 17.129 29.1074 17.3309 28.9308C17.5328 28.7543 17.6629 28.5098 17.6966 28.2438L20.1269 9.91273ZM20.5812 9.11418L0.396635 9.11518C0.340126 9.1155 0.284327 9.12779 0.232915 9.15124C0.181503 9.1747 0.135646 9.20879 0.0983686 9.25126C0.0610906 9.29373 0.0332378 9.34362 0.0166466 9.39763C5.53788e-05 9.45165 -0.0048984 9.50858 0.00211344 9.56465L2.49163 28.3463C2.55084 28.804 2.77486 29.2245 3.12176 29.5289C3.46866 29.8333 3.91464 30.0008 4.37616 30H16.6012C17.0628 30.0008 17.5089 29.8334 17.8558 29.529C18.2028 29.2246 18.4269 28.8041 18.4861 28.3463L20.9709 9.5986C20.9838 9.54027 20.9835 9.47978 20.9699 9.4216C20.9563 9.36341 20.9298 9.30904 20.8923 9.26249C20.8548 9.21594 20.8074 9.17842 20.7535 9.1527C20.6995 9.12698 20.6405 9.11372 20.5808 9.11391L20.5812 9.11418ZM11.0016 24.9971C11.0016 25.666 9.98473 25.6671 9.98419 24.9986L9.97559 14.1171C9.97559 13.4483 10.9925 13.4472 10.993 14.1158L11.0021 24.9972L11.0016 24.9971ZM11.7885 14.1157L11.797 24.9971C11.7984 26.7146 9.1898 26.7162 9.18872 24.9986L9.18021 14.1171C9.17885 12.3996 11.7885 12.3982 11.7885 14.1158V14.1157ZM1.57278 2.50401L20.2989 7.52188L20.5578 6.55559C20.6262 6.2993 20.5901 6.02635 20.4575 5.79659C20.325 5.56684 20.1067 5.39905 19.8506 5.33002L3.05762 0.830324C2.80133 0.761899 2.52836 0.797916 2.29859 0.930476C2.06882 1.06304 1.90101 1.28132 1.83196 1.53744L1.57296 2.50419L1.57278 2.50401ZM13.5267 2.80972L9.75615 1.79943L9.9057 1.31411C9.94184 1.17882 10.0295 1.06304 10.1498 0.991501C10.2702 0.919962 10.4138 0.898343 10.5499 0.931263L13.311 1.67115C13.441 1.70332 13.5532 1.78503 13.6238 1.89883C13.6943 2.01263 13.7176 2.1495 13.6886 2.28022L13.5265 2.80972H13.5267ZM8.98657 1.5932L9.14454 1.08009C9.24191 0.748085 9.46424 0.466777 9.76476 0.295327C10.0653 0.123877 10.4206 0.0756463 10.7559 0.160779L13.517 0.900755C14.2313 1.10399 14.6603 1.82722 14.4457 2.53026L14.2961 3.01558L20.0562 4.55899C20.5159 4.68394 20.9076 4.98558 21.1459 5.39816C21.3842 5.81073 21.4497 6.30077 21.3282 6.76145L20.9661 8.11303C20.9387 8.21519 20.872 8.30231 20.7804 8.35526C20.6889 8.40821 20.5801 8.42264 20.4779 8.39539L0.981446 3.1712C0.930835 3.15773 0.883376 3.13441 0.841788 3.10257C0.8002 3.07074 0.765297 3.03101 0.739079 2.98567C0.712861 2.94034 0.695842 2.89027 0.688996 2.83835C0.682149 2.78642 0.685609 2.73366 0.699179 2.68307L1.06129 1.3314C1.18628 0.87177 1.48787 0.480176 1.90034 0.24196C2.31281 0.00374348 2.80272 -0.0617837 3.2633 0.0596593L8.98657 1.5932Z"
                                                         fill="#AAAAAA" />
@@ -1163,8 +1162,7 @@
                                     </div>
 
                                     <!-- row 2 -->
-                                    <div
-                                        class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                    <div class="range-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                                         <div>
                                             <label class="block text-[13px] text-gray-800 mb-1">From</label>
                                             <div class="relative">
@@ -1172,8 +1170,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1188,8 +1186,8 @@
                                                     class="hide-date-icon bg-[#F3F5FA] time-input w-full text-[16px] px-4 py-3 pl-11 rounded-lg border border-primary/35 bg-soft text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary">
                                                 <span
                                                     class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                    <svg width="19" height="19" viewBox="0 0 19 19"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M9.5 19C4.26 19 0 14.739 0 9.5S4.26 0 9.5 0 19 4.261 19 9.5 14.738 19 9.5 19Zm0-17.48A7.98 7.98 0 1 0 17.48 9.5 7.99 7.99 0 0 0 9.5 1.52Zm-.061 8.679H4.56a.78.78 0 0 1 0-1.56h4.119V3.04a.78.78 0 1 1 1.56 0V9.44a.78.78 0 0 1-.78.76Z"
                                                             fill="#1B449C" />
@@ -1200,8 +1198,8 @@
                                         <div class="flex md:justify-center">
                                             <button type="button"
                                                 class="btn-remove w-11 h-11 rounded-lg border border-gray-200 hover:bg-gray-50 grid place-items-center">
-                                                <svg width="22" height="30" viewBox="0 0 22 30"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="22" height="30" viewBox="0 0 22 30" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M5.17099 25.1213L3.74128 14.3343C3.58992 13.1914 4.90475 12.4222 5.82678 13.1284C5.9631 13.2324 6.07752 13.3624 6.16347 13.5108C6.24943 13.6592 6.30523 13.8232 6.32767 13.9932L7.75738 24.7802C7.77989 24.9497 7.76871 25.122 7.72446 25.2872C7.68022 25.4525 7.60379 25.6073 7.49955 25.7429C6.79181 26.6669 5.32272 26.2665 5.17099 25.1213ZM4.5306 14.2314L5.96022 25.0183C5.9789 25.1513 6.04945 25.2716 6.15647 25.3527C6.26348 25.4339 6.39827 25.4695 6.5314 25.4516C6.66452 25.4337 6.78518 25.3639 6.86701 25.2574C6.94884 25.1509 6.9852 25.0163 6.96816 24.8831L5.53863 14.0961C5.52069 13.9624 5.45039 13.8414 5.34319 13.7595C5.23598 13.6777 5.10066 13.6418 4.96699 13.6597C4.83332 13.6777 4.71224 13.748 4.6304 13.8552C4.54856 13.9624 4.51266 14.0977 4.5306 14.2314ZM15.0172 25.0183L16.4468 14.2314C16.4647 14.0977 16.4288 13.9624 16.347 13.8552C16.2652 13.748 16.1441 13.6777 16.0104 13.6597C15.8767 13.6418 15.7414 13.6777 15.6342 13.7595C15.527 13.8414 15.4567 13.9624 15.4388 14.0961L14.0092 24.8831C13.9922 25.0163 14.0286 25.1509 14.1104 25.2574C14.1922 25.3639 14.3129 25.4337 14.446 25.4516C14.5791 25.4695 14.7139 25.4339 14.8209 25.3527C14.928 25.2716 14.9985 25.1513 15.0172 25.0183ZM17.236 14.3343L15.8064 25.1213C15.7839 25.2926 15.7276 25.4578 15.6407 25.6071C15.5538 25.7565 15.4381 25.8872 15.3003 25.9914C15.1625 26.0957 15.0054 26.1716 14.838 26.2147C14.6707 26.2578 14.4964 26.2671 14.3254 26.2423C14.1544 26.2174 13.99 26.1589 13.8418 26.07C13.6936 25.9811 13.5646 25.8636 13.4621 25.7244C13.3597 25.5852 13.286 25.4271 13.2452 25.2592C13.2044 25.0912 13.1974 24.9169 13.2245 24.7462L14.6499 13.9932C14.8017 12.8475 16.2713 12.4483 16.9784 13.3715C17.0826 13.5071 17.1591 13.662 17.2033 13.8272C17.2476 13.9924 17.2588 14.1647 17.2363 14.3343H17.236ZM20.1269 9.91273H0.850995L3.28041 28.2438C3.31414 28.5098 3.44426 28.7543 3.64613 28.9308C3.848 29.1074 4.10761 29.2038 4.37579 29.2018H16.6012C16.8694 29.2038 17.129 29.1074 17.3309 28.9308C17.5328 28.7543 17.6629 28.5098 17.6966 28.2438L20.1269 9.91273ZM20.5812 9.11418L0.396635 9.11518C0.340126 9.1155 0.284327 9.12779 0.232915 9.15124C0.181503 9.1747 0.135646 9.20879 0.0983686 9.25126C0.0610906 9.29373 0.0332378 9.34362 0.0166466 9.39763C5.53788e-05 9.45165 -0.0048984 9.50858 0.00211344 9.56465L2.49163 28.3463C2.55084 28.804 2.77486 29.2245 3.12176 29.5289C3.46866 29.8333 3.91464 30.0008 4.37616 30H16.6012C17.0628 30.0008 17.5089 29.8334 17.8558 29.529C18.2028 29.2246 18.4269 28.8041 18.4861 28.3463L20.9709 9.5986C20.9838 9.54027 20.9835 9.47978 20.9699 9.4216C20.9563 9.36341 20.9298 9.30904 20.8923 9.26249C20.8548 9.21594 20.8074 9.17842 20.7535 9.1527C20.6995 9.12698 20.6405 9.11372 20.5808 9.11391L20.5812 9.11418ZM11.0016 24.9971C11.0016 25.666 9.98473 25.6671 9.98419 24.9986L9.97559 14.1171C9.97559 13.4483 10.9925 13.4472 10.993 14.1158L11.0021 24.9972L11.0016 24.9971ZM11.7885 14.1157L11.797 24.9971C11.7984 26.7146 9.1898 26.7162 9.18872 24.9986L9.18021 14.1171C9.17885 12.3996 11.7885 12.3982 11.7885 14.1158V14.1157ZM1.57278 2.50401L20.2989 7.52188L20.5578 6.55559C20.6262 6.2993 20.5901 6.02635 20.4575 5.79659C20.325 5.56684 20.1067 5.39905 19.8506 5.33002L3.05762 0.830324C2.80133 0.761899 2.52836 0.797916 2.29859 0.930476C2.06882 1.06304 1.90101 1.28132 1.83196 1.53744L1.57296 2.50419L1.57278 2.50401ZM13.5267 2.80972L9.75615 1.79943L9.9057 1.31411C9.94184 1.17882 10.0295 1.06304 10.1498 0.991501C10.2702 0.919962 10.4138 0.898343 10.5499 0.931263L13.311 1.67115C13.441 1.70332 13.5532 1.78503 13.6238 1.89883C13.6943 2.01263 13.7176 2.1495 13.6886 2.28022L13.5265 2.80972H13.5267ZM8.98657 1.5932L9.14454 1.08009C9.24191 0.748085 9.46424 0.466777 9.76476 0.295327C10.0653 0.123877 10.4206 0.0756463 10.7559 0.160779L13.517 0.900755C14.2313 1.10399 14.6603 1.82722 14.4457 2.53026L14.2961 3.01558L20.0562 4.55899C20.5159 4.68394 20.9076 4.98558 21.1459 5.39816C21.3842 5.81073 21.4497 6.30077 21.3282 6.76145L20.9661 8.11303C20.9387 8.21519 20.872 8.30231 20.7804 8.35526C20.6889 8.40821 20.5801 8.42264 20.4779 8.39539L0.981446 3.1712C0.930835 3.15773 0.883376 3.13441 0.841788 3.10257C0.8002 3.07074 0.765297 3.03101 0.739079 2.98567C0.712861 2.94034 0.695842 2.89027 0.688996 2.83835C0.682149 2.78642 0.685609 2.73366 0.699179 2.68307L1.06129 1.3314C1.18628 0.87177 1.48787 0.480176 1.90034 0.24196C2.31281 0.00374348 2.80272 -0.0617837 3.2633 0.0596593L8.98657 1.5932Z"
                                                         fill="#AAAAAA" />
@@ -1378,10 +1376,10 @@
                                 </label>
                                 <select required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
-                                    @foreach ($subjects as $subject )
+                                    @foreach ($subjects as $subject)
 
-                                    <option value="{{$subject->name}}">{{$subject->name}}</option>
-                                     @endforeach
+                                        <option value="{{$subject->name}}">{{$subject->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
 

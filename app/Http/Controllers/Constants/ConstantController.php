@@ -89,16 +89,32 @@ class ConstantController extends Controller
 
     public function storeUpdateRequest($request, $id = 0)
     {
-        $data = $request->only(['name','level_number']);
-        $data['name'] = str_replace(' ', '-', strtolower($data['name']));
-        $itemDuplicated = $this->modelName::where('name', $data['name'])->where('level_number', $data['level_number'])->where('id', '<>', $id)->first();
-        if($itemDuplicated) {
-            return response([
-                    'success' => false,
-                    'message' => 'item-duplicated2',
-                    'msg-code' => '111'
-            ], 200);
+        if($request->has('level_number')){
+            $data = $request->only(['name','level_number']);
+        }else{
+            $data = $request->only(['name']);
         }
+        $data['name'] = str_replace(' ', '-', strtolower($data['name']));
+        if(isset($data['level_number'])){
+            $itemDuplicated = $this->modelName::where('name', $data['name'])->where('level_number', $data['level_number'])->where('id', '<>', $id)->first();
+            if($itemDuplicated) {
+                return response([
+                        'success' => false,
+                        'message' => 'item-duplicated2',
+                        'msg-code' => '111'
+                ], 200);
+            }
+        }else{
+            $itemDuplicated = $this->modelName::where('name', $data['name'])->where('id', '<>', $id)->first();
+            if($itemDuplicated) {
+                return response([
+                        'success' => false,
+                        'message' => 'item-duplicated2',
+                        'msg-code' => '111'
+                ], 200);
+            }
+        }
+
 
         $item = null;
 
@@ -116,7 +132,11 @@ class ConstantController extends Controller
             $item = $this->modelName::create($data);
         }
 
-        $req = json_decode('{"name":"'.$data['name'].'", "file":"'.$this->modelTitle.'", "title":"'.$data['name'].'", "level_number":"'.$data['level_number'].'"}');
+        if(isset($data['level_number'])){
+            $req = json_decode('{"name":"'.$data['name'].'", "file":"'.$this->modelTitle.'", "title":"'.$data['name'].'", "level_number":"'.$data['level_number'].'"}');
+        }else{
+            $req = json_decode('{"name":"'.$data['name'].'", "file":"'.$this->modelTitle.'", "title":"'.$data['name'].'"}');
+        }
         $req->trans = $request->trans;
         $this->addLabelAndTranslations($req);
 

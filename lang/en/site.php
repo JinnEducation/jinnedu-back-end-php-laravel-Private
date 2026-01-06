@@ -464,6 +464,8 @@ return [
     'Save to my list' => 'Save to my list',
     'Full Schedule' => 'Full Schedule',
 
+    'Profile Picture' => 'Profile Picture',
+    'Google' => 'Google',
 
 
 
