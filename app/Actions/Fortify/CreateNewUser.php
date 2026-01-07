@@ -38,6 +38,7 @@ class CreateNewUser implements CreatesNewUsers
                 'type' => $input['type'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
+                'phone' => $input['phone'],
             ]);
 
             if (isset($input['avatar']) && $input['avatar'] instanceof \Illuminate\Http\UploadedFile) {

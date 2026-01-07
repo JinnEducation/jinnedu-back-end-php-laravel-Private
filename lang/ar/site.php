@@ -235,6 +235,7 @@ return [
     'Set up your daily time availability' => 'قم بضبط أوقات تفرغك اليومية',
     'Sunday' => 'الأحد',
     'Monday' => 'الإثنين',
+    'Tuesday' => 'الثلاثاء',
     'Wednesday' => 'الأربعاء',
     'Thursday' => 'الخميس',
     'Friday' => 'الجمعة',
@@ -455,5 +456,10 @@ conditions and the privacy policy of the Jien platform.'
     'Full Schedule' => 'الجدول الكامل',
     
     'Profile Picture' => 'صورة الملف الشخصي',
+    'Google' => 'Google',
+    'Email Not Verified' => 'الإيميل غير متحقق منه',
+    'Update Profile' => 'تحديث الملف الشخصي',
+
+
 
 ];

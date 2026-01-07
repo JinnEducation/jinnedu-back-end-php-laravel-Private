@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
+use App\Models\Language;
+use App\Models\Subject;
+use App\Models\Experience;
+use App\Models\Situation;
+use App\Models\Specialization;
 use App\Models\LoginSessionLog;
 use App\Models\Menu;
 use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Rules\PhoneNumber;
 use Bouncer;
-use DB;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -23,6 +27,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class AuthController extends Controller
 {
@@ -921,4 +928,201 @@ class AuthController extends Controller
         ], 200);
 
     }
+
+    public function editProfile()
+    {
+        $user = Auth::user();
+    
+        // العلاقات
+        $profile = $user->profile;
+        $tutorProfile = $user->tutorProfile;
+    
+        // dropdowns (بدل ما تجيبهم من داخل Blade)
+        $countries = Country::get();
+        $languages = Language::get();
+        $subjects = Subject::get();
+        $experiences = Experience::get();
+        $situations = Situation::get();
+        $specializations = Specialization::get();
+    
+        // تجهيز قيم JSON للمدرس (عشان prefill في Blade بسهولة)
+        $availability = [];
+        $certifications = [];
+    
+        if ($user->type == 2 && $tutorProfile) {
+            $availability = $tutorProfile->availability_json
+                ? json_decode($tutorProfile->availability_json, true) : [];
+    
+            $certifications = $tutorProfile->certifications_json
+                ? json_decode($tutorProfile->certifications_json, true) : [];
+        }
+    
+        // ملاحظة: type=0 و type=1 نفس الشيء (Step 2 فقط)
+        return view('auth.edit-profile', compact(
+            'user',
+            'profile',
+            'tutorProfile',
+            'countries',
+            'languages',
+            'subjects',
+            'experiences',
+            'situations',
+            'specializations',
+            'availability',
+            'certifications'
+        ));
+    }
+
+    public function editProfileStore(Request $request)
+    {
+        $user = Auth::user();
+    
+        DB::beginTransaction();
+        try {
+    
+            /*
+            |--------------------------------------------------------------------------
+            | 1. Update User (email لا يتغير هنا)
+            |--------------------------------------------------------------------------
+            */
+            $user->update([
+                'type' => $request->type, // ثابت غالبًا، لكن نخليه
+                'phone' => $request->phone,
+            ]);
+    
+            /*
+            |--------------------------------------------------------------------------
+            | 2. Handle Avatar (only if uploaded)
+            |--------------------------------------------------------------------------
+            */
+            $avatarPath = $user->profile?->avatar_path;
+    
+            if ($request->hasFile('avatar')) {
+                // حذف القديم
+                if ($avatarPath && Storage::exists($avatarPath)) {
+                    Storage::delete($avatarPath);
+                }
+    
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            }
+    
+            /*
+            |--------------------------------------------------------------------------
+            | 3. Update or Create Profile
+            |--------------------------------------------------------------------------
+            */
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'first_name'      => $request->first_name,
+                    'last_name'       => $request->last_name,
+                    'email_display'   => $user->email,
+                    'country'         => $request->country,
+                    'contact_number'  => $request->phone,
+                    'avatar_path'     => $avatarPath,
+                ]
+            );
+    
+            /*
+            |--------------------------------------------------------------------------
+            | 4. Tutor Profile (type = 2)
+            |--------------------------------------------------------------------------
+            */
+            if ($request->type == 2) {
+    
+                // availability
+                $availability = $request->filled('availability')
+                    ? json_encode($request->availability)
+                    : $user->tutorProfile?->availability_json;
+                /*
+                | Certification file (only if uploaded)
+                */
+                $certifications = [];
+    
+                $oldCerts = $user->tutorProfile?->certifications_json
+                    ? json_decode($user->tutorProfile->certifications_json, true)
+                    : [];
+    
+                $certFilePath = $oldCerts[0]['file_path'] ?? null;
+    
+                if ($request->hasFile('certification_file')) {
+                    if ($certFilePath && Storage::exists($certFilePath)) {
+                        Storage::delete($certFilePath);
+                    }
+    
+                    $certFilePath = $request->file('certification_file')
+                        ->store('certification_files', 'public');
+                }
+    
+                $certifications[] = [
+                    'subject'      => $request->certification_subject ?? null,
+                    'name'         => $request->certification_name ?? null,
+                    'description'  => $request->certification_description ?? null,
+                    'issued_by'    => $request->certification_issued_by ?? null,
+                    'year_from'    => $request->certification_year_from ?? null,
+                    'year_to'      => $request->certification_year_to ?? null,
+                    'file_path'    => $certFilePath,
+                ];
+    
+                /*
+                | Video file (only if uploaded)
+                */
+                $videoPath = $user->tutorProfile?->video_path;
+    
+                if ($request->hasFile('video_file')) {
+                    if ($videoPath && Storage::exists($videoPath)) {
+                        Storage::delete($videoPath);
+                    }
+    
+                    $videoPath = $request->file('video_file')
+                        ->store('video_files', 'public');
+                }
+    
+                /*
+                | Update or Create Tutor Profile
+                */
+                $user->tutorProfile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'dob' => $request->filled('date_of_birth')
+                            ? date('Y-m-d', strtotime($request->date_of_birth))
+                            : null,
+    
+                        'tutor_country'       => $request->countty_tutor,
+                        'native_language'     => $request->language,
+                        'teaching_subject'    => $request->teaching_subject,
+                        'teaching_experience' => $request->teaching_experience,
+                        'situation'           => $request->situation,
+    
+                        'headline'        => $request->headline,
+                        'interests'       => $request->interests,
+                        'motivation'      => $request->motivation,
+                        'specializations' => $request->specializations,
+    
+                        'experience_bio' => $request->experience,
+                        'methodology'    => $request->methodology,
+    
+                        'availability_json'  => $availability,
+                        'hourly_rate'        => $request->hourly_rate,
+                        'certifications_json'=> json_encode($certifications),
+    
+                        'video_path'         => $videoPath,
+                        'video_terms_agreed' => $request->has('agree_terms'),
+                    ]
+                );
+
+            }
+    
+            DB::commit();
+    
+            return redirect()
+                ->route('home')
+                ->with('success', __('site.Update Profile'));
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+    
 }

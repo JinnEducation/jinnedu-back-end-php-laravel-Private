@@ -237,6 +237,7 @@ return [
     'Sunday' => 'Sunday',
     'Monday' => 'Monday',
     'Wednesday' => 'Wednesday',
+    'Tuesday' => 'Tuesday',
     'Thursday' => 'Thursday',
     'Friday' => 'Friday',
     'Saturday' => 'Saturday',
@@ -466,6 +467,8 @@ return [
 
     'Profile Picture' => 'Profile Picture',
     'Google' => 'Google',
+    'Email Not Verified' => 'Email Not Verified',
+    'Update Profile' => 'Update Profile',
 
 
 

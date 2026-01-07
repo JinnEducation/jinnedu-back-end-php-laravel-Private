@@ -330,8 +330,13 @@
                                 class="flex gap-2 items-center p-2 text-gray-700 rounded-lg transition-all duration-300 hover:text-primary-600 hover:bg-white hover:shadow-sm group">
                                 <img src="{{ optional($user->profile()->first())->avatar_path ? asset('storage/' . optional($user->profile()->first())->avatar_path) : asset('front/assets/imgs/user-avatar.jpg') }}"
                                     alt="User" class="w-8 h-8 rounded-full">
-                                <span
-                                    class="font-medium">{{ $user->profile()->first()?->first_name . ' ' . $user->profile()->first()?->last_name ?? label_text('global', 'site.user-name-default', __('site.User Name')) }}</span>
+                                <div class="flex flex-col gap-0.5 items-start">
+                                    <span class="font-medium">{{ $user->full_name }}</span>
+                                    @if(!$user->email_verified_at)
+                                        <span class="text-white bg-red-500 rounded-md px-1 py-0.5" style="font-size: 10px;">{{ label_text('global', 'site.email-not-verified', __('site.Email Not Verified')) }}</span>
+                                    @endif
+                                </div>
+
                                 <i
                                     class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                             </button>
@@ -343,6 +348,11 @@
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-user text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.my-profile', __('site.My Profile')) }}</span>
+                                    </a>
+                                    <a href="{{ route('profile.edit') }}"
+                                        class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                        <i class="fas fa-edit text-primary-600"></i>
+                                        <span>{{ label_text('global', 'site.Update Profile', __('site.Update Profile')) }}</span>
                                     </a>
                                     <a href="#"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">

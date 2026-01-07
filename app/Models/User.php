@@ -39,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'type',
         'email',
         'password',
+        'phone'
     ];
 
     /**
@@ -65,6 +66,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    protected $append = [
+        'full_name'
     ];
 
     /**
@@ -597,6 +602,6 @@ class User extends Authenticatable implements MustVerifyEmail
     // Accessor for name
     public function getFullNameAttribute()
     {
-        return $this->profile?->first_name . ' ' . $this->profile?->last_name ?? ($this->name ?? 'Unknown');
+        return isset($this->profile?->first_name) ? $this->profile?->first_name . ' ' . $this->profile?->last_name : ($this->name ?? 'Unknown');
     }
 }
