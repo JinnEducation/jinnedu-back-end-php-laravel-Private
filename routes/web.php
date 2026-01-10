@@ -218,3 +218,6 @@ Route::get('/show-video', function (\Illuminate\Http\Request $request) {
         'videoUrl' => $url,
     ]);
 })->name('show_video');
+
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');

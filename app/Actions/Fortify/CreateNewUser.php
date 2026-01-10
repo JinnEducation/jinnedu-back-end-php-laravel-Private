@@ -31,21 +31,27 @@ class CreateNewUser implements CreatesNewUsers
             //     'password' => $this->passwordRules(),
             //     'confirm_terms' => ['accepted'],
             // ])->validate();
-            // dd($input);
 
             // ✅ 2. إنشاء المستخدم الأساسي
             $user = User::create([
                 'type' => $input['type'],
                 'email' => $input['email'],
-                'password' => Hash::make($input['password']),
+                'password' => isset($input['password']) ? Hash::make($input['password']) : null ,
                 'phone' => $input['phone'],
+                'google_id' => isset($input['google_id']) ? $input['google_id'] : null
             ]);
 
-            if (isset($input['avatar']) && $input['avatar'] instanceof \Illuminate\Http\UploadedFile) {
-                $avatar = $input['avatar']->store('avatars', 'public');
-            } else {
-                $avatar = null;
+            if(isset($input['google_id']) && isset($input['avatarUrl']) && ($input['avatarUrl'] != '' && $input['avatarUrl'] != null)){
+                $avatar = $input['avatarUrl'];
+            }else{
+                if (isset($input['avatar']) && $input['avatar'] instanceof \Illuminate\Http\UploadedFile) {
+                    $avatar = $input['avatar']->store('avatars', 'public');
+                } else {
+                    $avatar = null;
+                }
             }
+
+
 
             // ✅ 3. إنشاء الملف العام (User Profile)
             $user->profile()->create([

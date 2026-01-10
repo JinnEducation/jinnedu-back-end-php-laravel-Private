@@ -215,8 +215,15 @@ $(document).ready(function () {
     }
 
     if ($("#avatarInput").val() == null || $("#avatarInput").val() == "") {
-      showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
-      return;
+      if(isGoogleRegister){
+        if ($("#avatarInputUrl").val() == null || $("#avatarInputUrl").val() == ""){
+          showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
+          return;
+        }
+      }else{
+        showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
+        return;
+      }
     }
 
     let accountType = $("#account-type").val();
@@ -395,7 +402,7 @@ $(function () {
 
   // التحقق من فورم البيانات
   // الحقول المطلوبة للتحقق
-  const $fields = $(
+  let $fields = $(
     '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="password"], #account-info input[type="checkbox"], #terms'
   );
 
@@ -404,11 +411,18 @@ $(function () {
   const $submitBtn = $("#account-info .btn-submit");
   let account_type_select = $("#account-type").val();
 
+
+  
   // اخفِ زر Continue بالبداية
   $continueBtn.hide();
 
   // دالة فحص اكتمال الحقول
   function allFieldsFilled() {
+    if(isGoogleRegister){
+      $fields = $(
+        '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="checkbox"], #terms'
+      );
+    }
     let filled = true;
     $fields.each(function () {
       const $field = $(this);
@@ -433,14 +447,17 @@ $(function () {
 
   // دالة تحقق الباسورد (مؤقتة – هنطورها لاحقاً)
   function validatePasswords() {
+    if (isGoogleRegister) return true;
     const password = $('input[name="password"]').val().trim();
     const confirm = $('input[name="confirm_password"]').val().trim();
     // الآن مجرد مقارنة بسيطة
     return password !== "" && confirm !== "" && password === confirm;
   }
 
+
   const $email = $("#email");
   const $msg = $("#email-msg");
+  let isAvailableEmail = false;
 
   // regex أكثر دقة – يسمح بمعظم صيغ الإيميل القياسية
   const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -454,6 +471,7 @@ $(function () {
         .removeClass("text-red-500 text-green-600")
         .addClass("text-gray-500")
         .css("opacity", 0);
+      isAvailableEmail = false;
       return;
     }
 
@@ -473,6 +491,8 @@ $(function () {
           isAvailable = true;
         } else {
           isAvailable = false;
+          isAvailableEmail = false;
+
           $msg
             .text("Invalid email format or Email already exists")
             .removeClass("text-gray-500 text-green-600")
@@ -490,6 +510,7 @@ $(function () {
         .removeClass("text-gray-500 text-red-500")
         .addClass("text-green-600")
         .css("opacity", 1);
+      isAvailableEmail = true;
     } else {
       // ❌ إيميل خاطئ
       $msg
@@ -497,6 +518,7 @@ $(function () {
         .removeClass("text-gray-500 text-green-600")
         .addClass("text-red-500")
         .css("opacity", 1);
+      isAvailableEmail = false;
     }
   });
 
@@ -504,10 +526,12 @@ $(function () {
   $fields.on("input blur", function () {
     const filled = allFieldsFilled();
     const passwordsOK = validatePasswords();
+    const isAvailableEmailCheck = isAvailableEmail;
     account_type_select = $("#account-type").val();
 
+    console.log(filled,passwordsOK,isGoogleRegister,isAvailableEmailCheck)
     // لو كل الحقول مليانة (مش فارغة)
-    if (filled && passwordsOK) {
+    if (filled && passwordsOK && isAvailableEmailCheck) {
       $googleBtn.fadeOut(200, function () {
         if (account_type_select == 1) {
           $submitBtn.fadeIn(200);

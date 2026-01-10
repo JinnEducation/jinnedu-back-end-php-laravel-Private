@@ -324,6 +324,9 @@
                                 <!-- Hidden File Input -->
                                 <input type="file" id="avatarInput" name="avatar" accept="image/*" required
                                     class="hidden" />
+                                <!-- Hidden File Input -->
+                                <input type="text" id="avatarInputUrl" name="avatarUrl"
+                                    class="hidden" />
                             </div>
                         </div>
 
@@ -382,7 +385,8 @@
                                     <select name="country" required id="country_inp"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($countries as $country)
-                                            <option value="{{$country->name}}">{{$country->name}}@if($country->phonecode) ({{$country->phonecode}})@endif</option>
+                                            <option value="{{$country->name}}">{{$country->name}}@if($country->phonecode)
+                                            ({{$country->phonecode}})@endif</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -462,6 +466,7 @@
                             </div>
 
                             <div class="flex items-start gap-2 mb-6">
+                                <input type="hidden" name="google_id" id="google_id" value="">
                                 <input type="checkbox" id="terms" name="confirm_terms" required
                                     class="mt-1 w-4 h-4 accent-primary rounded border-gray-300">
                                 <label for="terms" class="text-sm text-gray-600">
@@ -478,7 +483,7 @@
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
                                 {{ label_text('global', 'site.register-back', __('site.← Back')) }}
                             </button>
-                            <button type="button"
+                            <button type="button" onclick="openGooglePopup()"
                                 class="cursor-pointer btn-google flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                                     <path fill="#4285F4"
@@ -1540,8 +1545,78 @@
     <script>
         const _token = "{{ csrf_token() }}";
         const emailCheckUrl = "{{ route('auth.email-check') }}";
+        let isGoogleRegister = false;
     </script>
     <script src="{{ asset('front/assets/js/signup.js') }}"></script>
+    <script>
+        function openGooglePopup() {
+            const width = 500;
+            const height = 600;
+
+            const left = (screen.width / 2) - (width / 2);
+            const top = (screen.height / 2) - (height / 2);
+
+            window.open(
+                "{{ route('google.login') }}",
+                "googleLogin",
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+            );
+        }
+    </script>
+    
+    <script>
+        window.addEventListener('message', function (event) {
+            if (event.origin !== "{{ url('/') }}") return;
+
+            const data = event.data;
+            if (data.provider !== 'google') return;
+
+            console.log(data)
+            if(data.loginNow){
+                window.location.href = "{{ route('home') }}"
+            }
+
+            // تعبئة الحقول
+            if (data.first_name) {
+                document.querySelector('input[name="first_name"]').value = data.first_name;
+            }
+
+            if (data.last_name) {
+                document.querySelector('input[name="last_name"]').value = data.last_name;
+            }
+
+            if (data.email) {
+                $('input[name="email"]').val(data.email).trigger('input')
+            }
+
+            // Avatar preview
+            if (data.avatar) {
+                document.getElementById('avatarImage').src = data.avatar;
+                document.getElementById('avatarImage').classList.remove('hidden');
+                document.getElementById('avatarIcon').classList.add('hidden');
+                document.getElementById('avatarInput').v;
+                $('#avatarInput').prop('required', false);
+                $("#avatarInputUrl").val(data.avatar)
+            }
+            // Avatar preview
+            if (data.google_id) {
+                $("#google_id").val(data.google_id);
+            }
+
+            $('.btn-google').attr('disabled',true);
+            $('input[name="email"]')
+                .prop('readonly', true)
+                .addClass('bg-gray-100 cursor-not-allowed');
+
+            isGoogleRegister = true;
+            $('#password, #confirm-password')
+                .prop('required', false)
+                .prop('disabled', true)
+                .val('');
+
+        });
+    </script>
+
 </body>
 
 </html>

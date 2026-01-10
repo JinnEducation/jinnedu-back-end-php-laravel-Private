@@ -150,7 +150,7 @@ class FrontLayout extends Component
             return $availableLocales[0];
         }
 
-        return $defaultLocale ?: 'en';
+        return $defaultLocale ?: 'ar';
     }
 
     private function buildLanguageUrls(Request $request): array
