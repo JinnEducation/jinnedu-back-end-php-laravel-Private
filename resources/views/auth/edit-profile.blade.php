@@ -289,10 +289,10 @@
                         </div>
 
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
-                            <button type="button"
+                            {{-- <button type="button"
                                 class="cursor-pointer btn-back px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">
                                 {{ label_text('global', 'site.register-back', __('site.← Back')) }}
-                            </button>
+                            </button> --}}
                             {{-- <button type="button"
                                 class="cursor-pointer btn-google flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24">
