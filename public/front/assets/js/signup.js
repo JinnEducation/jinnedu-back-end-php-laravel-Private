@@ -427,6 +427,9 @@ $(function () {
     $fields.each(function () {
       const $field = $(this);
       const type = $field.attr("type");
+      if ($field.is('#avatarInputUrl')) {
+        return true;
+      }     
       // فحص الحقول النصية والإيميلات وهكذا
       if (type === "checkbox") {
         // لازم يكون مختار (checked)
@@ -529,7 +532,6 @@ $(function () {
     const isAvailableEmailCheck = isAvailableEmail;
     account_type_select = $("#account-type").val();
 
-    console.log(filled,passwordsOK,isGoogleRegister,isAvailableEmailCheck)
     // لو كل الحقول مليانة (مش فارغة)
     if (filled && passwordsOK && isAvailableEmailCheck) {
       $googleBtn.fadeOut(200, function () {
