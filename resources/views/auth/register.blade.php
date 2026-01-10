@@ -1571,7 +1571,6 @@
             const data = event.data;
             if (data.provider !== 'google') return;
 
-            console.log(data)
             if(data.loginNow){
                 window.location.href = "{{ route('home') }}"
             }

@@ -460,6 +460,8 @@ conditions and the privacy policy of the Jien platform.'
     'Email Not Verified' => 'الإيميل غير متحقق منه',
     'Update Profile' => 'تحديث الملف الشخصي',
 
+    'register-email-not-found' => 'هذا البريد الإلكتروني غير مسجّل بعد، الرجاء إكمال إنشاء الحساب.',
+
 
 
 ];

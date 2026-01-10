@@ -397,7 +397,6 @@ return [
 
     'characters' => 'characters',
 
-
     'Test Payment (Local Mode)' => 'Test Payment (Local Mode)',
 
     'This is a test payment page for development.' => 'This is a test payment page for development.',
@@ -469,22 +468,6 @@ return [
     'Google' => 'Google',
     'Email Not Verified' => 'Email Not Verified',
     'Update Profile' => 'Update Profile',
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    'register-email-not-found' => 'This email is not registered yet. Please complete your account registration.',
 
 ];
