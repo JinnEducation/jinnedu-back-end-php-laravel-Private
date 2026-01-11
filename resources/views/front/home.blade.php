@@ -262,186 +262,185 @@
     </section>
 
     <!-- Recent Courses Section -->
-    <!-- Recent Courses Section -->
-<section class="px-4 py-16">
-    <div class="container mx-auto">
-        <!-- Section Title -->
-        <h2 class="mb-6 text-center h-section">
-            {{ label_text('global', 'site.Recent-courses', __('site.Recent courses')) }}
-        </h2>
+    <section class="px-4 py-16">
+        <div class="container mx-auto">
+            <!-- Section Title -->
+            <h2 class="mb-6 text-center h-section">
+                {{ label_text('global', 'site.Recent-courses', __('site.Recent courses')) }}
+            </h2>
 
-        <!-- Category Filter -->
-        <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
-            <!-- Left Arrow -->
-            <div id="left-arrow"
-                class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none ps-2 text-primary bg-[#fffffff0]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-            </div>
+            <!-- Category Filter -->
+            <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
+                <!-- Left Arrow -->
+                <div id="left-arrow"
+                    class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none ps-2 text-primary bg-[#fffffff0]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </div>
 
-            <div id="filter-container"
-                class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div id="filter-container"
+                    class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
-                <!-- All -->
-                <button type="button"
-                    class="px-2 py-3 font-bold transition-all duration-300 lg:px-5 text-md category-btn
-                    {{ empty($categoryId) ? 'active text-primary' : 'text-black' }}
-                    hover:text-primary hover:scale-105 hover:font-bold"
-                    data-category-id="">
-                    {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
-                </button>
-
-                @foreach ($categories as $cat)
+                    <!-- All -->
                     <button type="button"
-                        class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
-                        {{ (string)$categoryId === (string)$cat->id ? 'active text-primary font-bold' : 'text-black' }}
+                        class="px-2 py-3 font-bold transition-all duration-300 lg:px-5 text-md category-btn
+                        {{ empty($categoryId) ? 'active text-primary' : 'text-black' }}
                         hover:text-primary hover:scale-105 hover:font-bold"
-                        data-category-id="{{ $cat->id }}">
-                        {{ $cat->name }}
+                        data-category-id="">
+                        {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
                     </button>
-                @endforeach
+
+                    @foreach ($categories as $cat)
+                        <button type="button"
+                            class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
+                            {{ (string)$categoryId === (string)$cat->id ? 'active text-primary font-bold' : 'text-black' }}
+                            hover:text-primary hover:scale-105 hover:font-bold"
+                            data-category-id="{{ $cat->id }}">
+                            {{ $cat->name }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <!-- Right Arrow -->
+                <div id="right-arrow"
+                    class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none pe-2 text-primary bg-[#fffffff0]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
             </div>
 
-            <!-- Right Arrow -->
-            <div id="right-arrow"
-                class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none pe-2 text-primary bg-[#fffffff0]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-            </div>
-        </div>
+            <!-- Courses Grid -->
+            <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
+                @forelse ($courses as $index => $course)
+                    @php
+                        // ===== Title (multilang) =====
+                        $langRow = $course->langs?->firstWhere('language_id', $languageId) ?? $course->langs?->first();
+                        $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
+                        $desc  = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
 
-        <!-- Courses Grid -->
-        <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="coursesGrid">
-            @forelse ($courses as $index => $course)
-                @php
-                    // ===== Title (multilang) =====
-                    $langRow = $course->langs?->firstWhere('language_id', $languageId) ?? $course->langs?->first();
-                    $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
-                    $desc  = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
+                        // ===== Image =====
+                        $image = $course->image
+                            ?? $course->thumbnail
+                            ?? $course->cover
+                            ?? $course->image_url
+                            ?? asset('front/assets/imgs/Rectangle 1904355.png');
 
-                    // ===== Image =====
-                    $image = $course->image
-                        ?? $course->thumbnail
-                        ?? $course->cover
-                        ?? $course->image_url
-                        ?? asset('front/assets/imgs/Rectangle 1904355.png');
+                        // ===== URL (عدّلي حسب routes عندك) =====
+                        $courseUrl = url('/course/' . $course->id);
 
-                    // ===== URL (عدّلي حسب routes عندك) =====
-                    $courseUrl = url('/course/' . $course->id);
+                        // ===== Duration =====
+                        $hours = $course->total_hours ?? $course->duration_hours ?? null;
 
-                    // ===== Duration =====
-                    $hours = $course->total_hours ?? $course->duration_hours ?? null;
+                        // ===== Pricing + Discount =====
+                        $price = (float) ($course->price ?? 0);
+                        $finalPrice = $price;
+                        $oldPrice = null;
 
-                    // ===== Pricing + Discount =====
-                    $price = (float) ($course->price ?? 0);
-                    $finalPrice = $price;
-                    $oldPrice = null;
+                        if ($course->activeDiscount) {
+                            $oldPrice = $price;
 
-                    if ($course->activeDiscount) {
-                        $oldPrice = $price;
+                            $dtype = $course->activeDiscount->discount_type ?? null;
+                            $dval  = (float) ($course->activeDiscount->discount_value ?? 0);
 
-                        $dtype = $course->activeDiscount->discount_type ?? null;
-                        $dval  = (float) ($course->activeDiscount->discount_value ?? 0);
-
-                        if ($dtype === 'percent') {
-                            $finalPrice = max(0, $price - ($price * ($dval / 100)));
-                        } elseif ($dtype === 'fixed') {
-                            $finalPrice = max(0, $price - $dval);
+                            if ($dtype === 'percent') {
+                                $finalPrice = max(0, $price - ($price * ($dval / 100)));
+                            } elseif ($dtype === 'fixed') {
+                                $finalPrice = max(0, $price - $dval);
+                            }
                         }
-                    }
 
-                    $isFree = ($finalPrice <= 0);
+                        $isFree = ($finalPrice <= 0);
 
-                    // Load-more visibility (أول $initialVisibleCount ظاهر، والباقي مخفي)
-                    $hiddenStyle = ($index >= $initialVisibleCount) ? 'display:none;' : '';
-                @endphp
+                        // Load-more visibility (أول $initialVisibleCount ظاهر، والباقي مخفي)
+                        $hiddenStyle = ($index >= $initialVisibleCount) ? 'display:none;' : '';
+                    @endphp
 
-                <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
-                    style="{{ $hiddenStyle }}"
-                    data-course-index="{{ $index }}">
+                    <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
+                        style="{{ $hiddenStyle }}"
+                        data-course-index="{{ $index }}">
 
-                    <div class="overflow-hidden relative h-48 rounded-sm">
-                        <img src="{{ $image }}" alt="{{ $title }}" class="object-cover w-full h-full">
-                    </div>
+                        <div class="overflow-hidden relative h-48 rounded-sm">
+                            <img src="{{ $image }}" alt="{{ $title }}" class="object-cover w-full h-full">
+                        </div>
 
-                    <div class="pt-4">
-                        <h3 class="mb-2 text-lg font-bold text-black text-[18px] line-clamp-2">
-                            {{ $title }}
-                        </h3>
+                        <div class="pt-4">
+                            <h3 class="mb-2 text-lg font-bold text-black text-[18px] line-clamp-2">
+                                {{ $title }}
+                            </h3>
 
-                        @if($desc)
-                            <p class="mb-4 text-[13px] text-black line-clamp-2">
-                                {{ strip_tags($desc) }}
-                            </p>
-                        @else
-                            <p class="mb-4 text-[13px] text-black line-clamp-2">
-                                {{ __('site.Learn with confidence.') }}
-                            </p>
-                        @endif
+                            @if($desc)
+                                <p class="mb-4 text-[13px] text-black line-clamp-2">
+                                    {{ strip_tags($desc) }}
+                                </p>
+                            @else
+                                <p class="mb-4 text-[13px] text-black line-clamp-2">
+                                    {{ __('site.Learn with confidence.') }}
+                                </p>
+                            @endif
 
-                        <div class="pt-4 border-t border-[#E5E7EB]">
-                            <!-- Default (before hover) -->
-                            <div class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
-                                <div class="flex gap-2 items-center">
-                                    <i class="text-sm fas fa-clock text-[#1B449C]"></i>
-                                    <span class="text-sm text-black">
-                                        @if($hours)
-                                            {{ $hours }} {{ __('site.total hours') }}
+                            <div class="pt-4 border-t border-[#E5E7EB]">
+                                <!-- Default (before hover) -->
+                                <div class="flex justify-between items-center h-[45px] transition-all duration-300 group-hover:opacity-0 group-hover:hidden">
+                                    <div class="flex gap-2 items-center">
+                                        <i class="text-sm fas fa-clock text-[#1B449C]"></i>
+                                        <span class="text-sm text-black">
+                                            @if($hours)
+                                                {{ $hours }} {{ __('site.total hours') }}
+                                            @else
+                                                {{ __('site.Self paced') }}
+                                            @endif
+                                        </span>
+                                    </div>
+
+                                    <div class="flex flex-col items-end">
+                                        @if($isFree)
+                                            <span class="text-lg font-bold text-[#1B449C]">{{ __('site.Free') }}</span>
                                         @else
-                                            {{ __('site.Self paced') }}
+                                            @if($oldPrice && $oldPrice > $finalPrice)
+                                                <span class="text-sm line-through text-[#87CEEB]">${{ number_format($oldPrice, 2) }}</span>
+                                            @endif
+                                            <span class="text-[15px] font-bold text-[#1B449C]">${{ number_format($finalPrice, 2) }}</span>
                                         @endif
-                                    </span>
+                                    </div>
                                 </div>
 
-                                <div class="flex flex-col items-end">
-                                    @if($isFree)
-                                        <span class="text-lg font-bold text-[#1B449C]">{{ __('site.Free') }}</span>
-                                    @else
-                                        @if($oldPrice && $oldPrice > $finalPrice)
-                                            <span class="text-sm line-through text-[#87CEEB]">${{ number_format($oldPrice, 2) }}</span>
-                                        @endif
-                                        <span class="text-[15px] font-bold text-[#1B449C]">${{ number_format($finalPrice, 2) }}</span>
-                                    @endif
+                                <!-- Hover CTA -->
+                                <div class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
+                                    <a href="{{ $courseUrl }}"
+                                        class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
+                                        {{ __('site.Preview this course') }}
+                                    </a>
                                 </div>
-                            </div>
-
-                            <!-- Hover CTA -->
-                            <div class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                <a href="{{ $courseUrl }}"
-                                    class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 hover:cursor-pointer bg-[#1B449C]">
-                                    {{ __('site.Preview this course') }}
-                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-span-full text-center py-10 text-gray-500">
-                    {{ __('site.No courses found') }}
-                </div>
-            @endforelse
-        </div>
-
-        @if ($courses->count() > $initialVisibleCount)
-            <!-- Load More Button -->
-            <div class="text-center">
-                <button id="loadMoreBtn"
-                    class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
-                    <span class="relative z-10">
-                        {{ label_text('global', 'site.Load-More', __('site.Load More')) }}
-                    </span>
-                    <div
-                        class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                @empty
+                    <div class="col-span-full text-center py-10 text-gray-500">
+                        {{ __('site.No courses found') }}
                     </div>
-                </button>
+                @endforelse
             </div>
-        @endif
-    </div>
-</section>
+
+            @if ($courses->count() > $initialVisibleCount)
+                <!-- Load More Button -->
+                <div class="text-center">
+                    <button id="loadMoreBtn"
+                        class="overflow-hidden relative px-9 py-4 text-[15px] text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
+                        <span class="relative z-10">
+                            {{ label_text('global', 'site.Load-More', __('site.Load More')) }}
+                        </span>
+                        <div
+                            class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
+                        </div>
+                    </button>
+                </div>
+            @endif
+        </div>
+    </section>
 
 
     <!-- Upgrade Skills Section -->
@@ -899,7 +898,7 @@
                                         </div>
 
                                         <div class="text-left rtl:text-left">
-                                            <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->name }}</h3>
+                                            <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->full_name }}</h3>
                                             <p class="mb-4 font-medium text-black">{{ $spec }}</p>
 
                                             <div class="flex items-center mb-4 text-gray-500">
