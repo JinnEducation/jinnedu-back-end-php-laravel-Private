@@ -318,7 +318,7 @@
                 @forelse ($courses as $index => $course)
                     @php
                         // ===== Title (multilang) =====
-                        $langRow = $course->langs?->firstWhere('language_id', $languageId) ?? $course->langs?->first();
+                        $langRow = $course->langs?->firstWhere('lang', $langShorts) ?? $course->langs?->first();
                         $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
                         $desc  = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
 
@@ -330,7 +330,8 @@
                             ?? asset('front/assets/imgs/Rectangle 1904355.png');
 
                         // ===== URL (عدّلي حسب routes عندك) =====
-                        $courseUrl = url('/course/' . $course->id);
+                        // $courseUrl = url('/course/' . $course->id);
+                        $courseUrl = route('site.singlecourse',$course->id);
 
                         // ===== Duration =====
                         $hours = $course->total_hours ?? $course->duration_hours ?? null;
@@ -441,7 +442,6 @@
             @endif
         </div>
     </section>
-
 
     <!-- Upgrade Skills Section -->
     <section class="px-2 py-5 bg-white md:py-16 md:px-20 lg:px-4">
@@ -893,7 +893,7 @@
                                     <div
                                         class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                                         <div class="flex justify-center mb-6">
-                                            <img src="{{ $avatar }}" alt="{{ $tutor->name }}"
+                                            <img src="{{ $avatar }}" alt="{{ $tutor->full_name }}"
                                                 class="object-cover rounded-full w-31 h-31">
                                         </div>
 

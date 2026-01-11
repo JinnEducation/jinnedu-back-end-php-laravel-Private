@@ -31,13 +31,17 @@
             <nav aria-label="Breadcrumb" class="mb-6">
                 <div class="text-sm font-light text-black leading-relaxed">
                     <span>
-                        <a href="{{ route('home') }}" class="text-primary-600 hover:text-primary-700">Home</a>
+                        <a href="{{ route('home') }}" class="text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'site.Home', __('site.Home')) }}
+                        </a>
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i class="fas fa-chevron-right text-[10px]"></i>
                     </span>
                     <span>
-                        <a href="#" class="text-primary-600 hover:text-primary-700">Course</a>
+                        <a href="#" class="text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'site.Course', __('site.Course')) }}
+                        </a>
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i class="fas fa-chevron-right text-[10px]"></i>
@@ -71,21 +75,21 @@
                     <div class="flex gap-2 pb-6 mt-6 border-b-2 border-[#CAC6C6]">
                         <button
                             class="course-tab px-4 py-2 text-sm font-bold text-white bg-primary border border-primary rounded-lg transition"
-                            data-target="#about-course">About the course</button>
+                            data-target="#about-course">{{ label_text('global', 'site.About the course', __('site.About the course')) }}</button>
                         <button
                             class="course-tab px-6 py-2 text-sm text-black bg-white border border-[#CAC6C6] rounded-lg transition"
-                            data-target="#course-outputs">Outputs</button>
+                            data-target="#course-outputs">{{ label_text('global', 'site.Outputs', __('site.Outputs')) }}</button>
                         <button
                             class="course-tab px-6 py-2 text-sm text-black bg-white border border-[#CAC6C6] rounded-lg transition"
-                            data-target="#course-content">Units</button>
+                            data-target="#course-content">{{ label_text('global', 'site.Units', __('site.Units')) }}</button>
                         <button
                             class="course-tab px-6 py-2 text-sm text-black bg-white border border-[#CAC6C6] rounded-lg transition"
-                            data-target="#course-reviews">Evaluation</button>
+                            data-target="#course-reviews">{{ label_text('global', 'site.Evaluation', __('site.Evaluation')) }}</button>
                     </div>
 
                     <!-- About the course -->
                     <div id="about-course">
-                        <h2 class="text-lg font-bold text-black mt-2 mb-3">About the course</h2>
+                        <h2 class="text-lg font-bold text-black mt-2 mb-3">{{ label_text('global', 'site.About the course', __('site.About the course')) }}</h2>
                         @if (!empty($courseLang?->description))
                             <div class="text-[15px] text-black leading-7 space-y-4">
                                 {!! nl2br(e($courseLang->description)) !!}
@@ -97,7 +101,7 @@
                     @if (!empty($outcomes) && count($outcomes))
                         <div class="mt-6">
                             <h2 class="text-lg font-bold text-black mb-3">
-                                What you will learn
+                                {{ label_text('global', 'site.What you will learn', __('site.What you will learn')) }}
                             </h2>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -116,7 +120,7 @@
                     <!-- Course content (Accordions) -->
                     <div id="course-content" class="mt-6 border border-gray-300 p-4">
                         <div class="flex items-center justify-between gap-2 mb-4">
-                            <h2 class="text-[20px] font-semibold text-black">Course content</h2>
+                            <h2 class="text-[20px] font-semibold text-black">{{ label_text('global', 'site.Course content', __('site.Course content')) }}</h2>
                             <span class="text-[14px] text-gray-500">
                                 {{ $totalLabel((int) $totalSeconds) }} • {{ $course->category?->name ?? '—' }}
                             </span>
@@ -167,7 +171,7 @@
                     @if (!empty($requirements) && count($requirements))
                         <div id="requirements" class="mt-10">
                             <h2 class="text-lg font-bold text-black mb-3">
-                                Requirements
+                                {{ label_text('global', 'site.Requirements', __('site.Requirements')) }}
                             </h2>
 
                             <div class="space-y-2">
@@ -195,8 +199,9 @@
                                 class="w-full h-full object-cover">
 
                             <span
-                                class="absolute top-1 right-1 rtl:left-1 rtl:right-auto text-sm bg-primary text-white p-1.5 rounded-lg z-8">Certified
-                                Achievement Certificate</span>
+                                class="absolute top-1 right-1 rtl:left-1 rtl:right-auto text-sm bg-primary text-white p-1.5 rounded-lg z-8">
+                                {{ label_text('global', 'site.Certified Achievement Certificate', __('site.Certified Achievement Certificate')) }}
+                            </span>
                             @if (!empty($course->promo_video_url))
                                 <div class="absolute inset-0 flex items-center justify-center z-10">
                                     <button type="button" onclick="openPromoVideo()"
@@ -211,8 +216,9 @@
                             <!-- left: 50%;
                             transform: translate(-50%, -50%); -->
                             <button
-                                class="absolute left-1/2 -translate-1/2 z-10  bottom-0 text-white font-bold text-sm">View
-                                the course</button>
+                                class="absolute left-1/2 -translate-1/2 z-10  bottom-0 text-white font-bold text-sm">
+                                {{ label_text('global', 'site.View the course', __('site.View the course')) }}
+                            </button>
                             <span class="absolute bg-black opacity-15 w-full h-full top-0 z-1"></span>
                         </div>
                         <div class="p-5">
@@ -224,12 +230,12 @@
                             @endphp
 
                             <p class="text-[13px] text-black font-bold mb-1">
-                                {{ $isFree ? 'This course is free' : 'This paid course is included in the plans' }}
+                                {{ $isFree ? label_text('global', 'site.This course is free', __('site.This course is free')) : label_text('global', 'site.This paid course is included in the plans', __('site.This paid course is included in the plans')) }}
                             </p>
 
                             <div class="flex items-center gap-2">
                                 @if ($isFree)
-                                    <span class="text-[19px] font-bold text-primary">Free</span>
+                                    <span class="text-[19px] font-bold text-primary">{{ label_text('global', 'site.Free', __('site.Free')) }}</span>
                                 @else
                                     @if ($hasDiscount)
                                         <span
@@ -243,7 +249,7 @@
                             @if ($hasDiscount)
                                 <div class="mb-3 mt-2">
                                     <span class="text-[17px] text-primary bg-[#1B449C1A] rounded-full py-0.5 px-2">
-                                        Limited discount
+                                        {{ label_text('global', 'site.Limited discount', __('site.Limited discount')) }}
                                     </span>
                                 </div>
                             @endif
@@ -279,13 +285,13 @@
                                 @if ($course->has_certificate)
                                     <div class="flex items-start gap-2">
                                         <span class="w-1 h-1 rounded-full bg-black mt-1.5"></span>
-                                        <span>Certificate of completion</span>
+                                        <span>{{ label_text('global', 'site.Certificate of completion', __('site.Certificate of completion')) }}</span>
                                     </div>
                                 @endif
 
                                 <div class="flex items-start gap-2">
                                     <span class="w-1 h-1 rounded-full bg-black mt-1.5"></span>
-                                    <span>Lifetime access + updates</span>
+                                    <span>{{ label_text('global', 'site.Lifetime access + updates', __('site.Lifetime access + updates')) }}</span>
                                 </div>
                             </div>
                             @guest
@@ -309,7 +315,7 @@
                     @if ($course->has_certificate)
                         <!-- Certificate Card -->
                         <div class="border border-gray-200 rounded-xl p-3 bg-white shadow-lg">
-                            <p class="text-[13px] font-bold text-black mb-2">The certificate is shareable</p>
+                            <p class="text-[13px] font-bold text-black mb-2">{{ label_text('global', 'site.The certificate is shareable', __('site.The certificate is shareable')) }}</p>
                             <div class="flex items-center gap-2 mb-2">
                                 <span>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -331,7 +337,7 @@
                                     </svg>
 
                                 </span>
-                                <p class="text-[13px] font-light text-black">Share on your social media or LinkedIn</p>
+                                <p class="text-[13px] font-light text-black">{{ label_text('global', 'site.Share on your social media or LinkedIn', __('site.Share on your social media or LinkedIn')) }}</p>
                             </div>
 
                             <img src="{{ asset('front/assets/imgs/cer1.jpg') }}" alt="Certificate"
@@ -347,7 +353,7 @@
         <div class="container mx-auto px-4">
             <!-- Reviews Section -->
             <h2 class="text-[15px] font-bold text-black mb-3">
-                {{ number_format($avgRating, 1) }} ({{ $reviewsCount }} reviews)
+                {{ number_format($avgRating, 1) }} ({{ $reviewsCount }} {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }})
             </h2>
 
             <div id="course-reviews" class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -412,7 +418,7 @@
                                         <span class="font-bold text-black">{{ $review->rating }}</span>
 
                                         <p class="text-[#00000099]">
-                                            Reviewed on {{ $review->created_at->format('F d, Y') }}
+                                            {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }} {{ $review->created_at->format('F d, Y') }}
                                         </p>
                                     </div>
                                 </div>
@@ -427,7 +433,7 @@
                         </div>
                     @empty
                         <p class="text-sm text-gray-500">
-                            No reviews yet for this course.
+                            {{ label_text('global', 'site.No reviews yet for this course.', __('site.No reviews yet for this course.')) }}
                         </p>
                     @endforelse
                 </div>
@@ -440,7 +446,7 @@
     <section class="py-16">
         <div class="container mx-auto">
             <!-- Reviews Section -->
-            <h2 class="text-lg font-bold text-black mb-3">Courses You Might Be Interested In</h2>
+            <h2 class="text-lg font-bold text-black mb-3">{{ label_text('global', 'site.Courses You Might Be Interested In', __('site.Courses You Might Be Interested In')) }}</h2>
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @forelse($related as $item)
@@ -483,13 +489,13 @@
                                         <i class="text-sm fas fa-clock text-[#1B449C]"></i>
                                         <span class="text-sm text-black">
                                             {{-- مدة تقريبية مؤقتة --}}
-                                            Course duration
+                                            {{ label_text('global', 'site.Course duration', __('site.Course duration')) }}
                                         </span>
                                     </div>
 
                                     <span class="text-lg font-bold text-[#1B449C]">
                                         @if ($isFree)
-                                            Free
+                                        {{ label_text('global', 'site.Free', __('site.Free')) }}
                                         @else
                                             @if ($hasDiscount)
                                                 ${{ number_format($final, 2) }}
@@ -505,7 +511,7 @@
                                     class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
                                     <a href="{{ route('front.course.single', [app()->getLocale(), $item->id]) }}"
                                         class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 bg-[#1B449C]">
-                                        Preview this course
+                                        {{ label_text('global', 'site.Preview this course', __('site.Preview this course')) }}
                                     </a>
                                 </div>
                             </div>
@@ -514,7 +520,7 @@
 
                 @empty
                     <p class="text-sm text-gray-500">
-                        No related courses found.
+                        {{ label_text('global', 'site.No related courses found.', __('site.No related courses found.')) }}
                     </p>
                 @endforelse
             </div>
@@ -545,7 +551,7 @@
                 <video id="promoVideoPlayer" class="w-full h-auto max-h-[70vh]" controls playsinline
                     preload="metadata">
                     <source src="{{ asset($course->promo_video_url) }}" type="video/mp4">
-                    Your browser does not support the video tag.
+                    {{ label_text('global', 'site.Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}
                 </video>
 
             </div>

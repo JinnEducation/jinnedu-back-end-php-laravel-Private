@@ -462,6 +462,55 @@ conditions and the privacy policy of the Jien platform.'
 
     'register-email-not-found' => 'هذا البريد الإلكتروني غير مسجّل بعد، الرجاء إكمال إنشاء الحساب.',
 
+    'Recent courses'       => 'الدورات الحديثة',
+    'All categories'       => 'جميع التصنيفات',
+    'total hours'          => 'إجمالي الساعات',
+    'Self paced'           => 'ذاتي الوتيرة',
+    'Free'                 => 'مجاني',
+    'Preview this course'  => 'معاينة الدورة',
+    'Load More'            => 'تحميل المزيد',
+    'No courses found'     => 'لا توجد دورات',
+    'Learn with confidence.' => 'تعلّم بثقة',
 
+    'Home' => 'الرئيسية',
+    'Course' => 'الدورة',
+
+    'About the course' => 'عن الدورة',
+    'Outputs' => 'المخرجات',
+    'Units' => 'الوحدات',
+    'Evaluation' => 'التقييم',
+
+    'What you will learn' => 'ماذا ستتعلم',
+    'Course content' => 'محتوى الدورة',
+    'Requirements' => 'المتطلبات',
+
+    'Certified Achievement Certificate' => 'شهادة إنجاز معتمدة',
+    'View the course' => 'عرض الدورة',
+
+    'This course is free' => 'هذه الدورة مجانية',
+    'This paid course is included in the plans' => 'هذه الدورة المدفوعة مشمولة ضمن الخطط',
+
+    'Free' => 'مجاني',
+    'Limited discount' => 'خصم لفترة محدودة',
+
+    'Certificate of completion' => 'شهادة إتمام',
+    'Lifetime access + updates' => 'وصول مدى الحياة + تحديثات',
+
+    'Login to Book' => 'سجّل الدخول للحجز',
+    'Book Now' => 'احجز الآن',
+
+    'The certificate is shareable' => 'يمكن مشاركة الشهادة',
+    'Share on your social media or LinkedIn' => 'شاركها على وسائل التواصل أو لينكدإن',
+
+    'Reviewed on' => 'تمت المراجعة في',
+    'No reviews yet for this course.' => 'لا توجد مراجعات لهذه الدورة بعد',
+
+    'Courses You Might Be Interested In' => 'دورات قد تهمك',
+    'Course duration' => 'مدة الدورة',
+    'Preview this course' => 'معاينة الدورة',
+
+    'No related courses found.' => 'لا توجد دورات مشابهة',
+
+    'Your browser does not support the video tag.' => 'متصفحك لا يدعم تشغيل الفيديو',
 
 ];

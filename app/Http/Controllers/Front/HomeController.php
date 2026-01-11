@@ -44,6 +44,7 @@ class HomeController extends Controller
             $language = Language::first();
         }
         $languageId = $language ? $language->id : null;
+        $langShorts = $language->shortname;
         $sliders = Slider::with('langs')->orderBy('id')->get();
 
         // Our Numbers
@@ -86,7 +87,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
 
-        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId'));
+        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId','langShorts'));
     }
 
     public function blog(Request $request)
