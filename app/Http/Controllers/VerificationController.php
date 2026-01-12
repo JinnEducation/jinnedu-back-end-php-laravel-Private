@@ -54,4 +54,8 @@ class VerificationController extends Controller
                             'pageTitle' => __('Account Verification')
                         ]);
     }
+    public function verifyM(Request $request)
+    {
+        dd($request);
+    }
 }

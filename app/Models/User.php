@@ -39,6 +39,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'type',
         'email',
         'password',
+        'phone',
+        'google_id'
     ];
 
     /**
@@ -67,6 +69,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    protected $append = [
+        'full_name'
+    ];
+
     /**
      * Return the sluggable configuration array for this model.
      */
@@ -92,6 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // public function sendEmailVerificationNotification()
     // {
+    //     dd('d');
     //     $this->notify(new VerifyEmail);
     //     // $this->notify(new \App\Notifications\Auth\QueuedVerifyEmail);
     //     // \App\Jobs\QueuedVerifyEmailJob::dispatch($this);
@@ -597,6 +604,6 @@ class User extends Authenticatable implements MustVerifyEmail
     // Accessor for name
     public function getFullNameAttribute()
     {
-        return $this->profile?->first_name . ' ' . $this->profile?->last_name ?? ($this->name ?? 'Unknown');
+        return isset($this->profile?->first_name) ? $this->profile?->first_name . ' ' . $this->profile?->last_name : ($this->name ?? 'Unknown');
     }
 }

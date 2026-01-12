@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Mail\SendMail;
-use App\Mail\ContactUs;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\ContactUs;
+use App\Mail\SendMail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class MailController extends Controller
 {
-     public function send()
+    public function send()
     {
-        Mail::to('bou@gmail.com')->send(new SendMail());
+        Mail::to('bou@gmail.com')->send(new SendMail);
+
         return 'Done';
     }
 
+    public function contact()
+    {
 
-    public function contact(){
-        
         return view('front.contact');
     }
 
-
-    public function contact_data(Request $request){
+    public function contact_data(Request $request)
+    {
 
         //  dd($request->all());
 
@@ -36,8 +37,8 @@ class MailController extends Controller
 
         ]);
 
-          $data = $request->except('_token');
-         Mail::to('contactus@gmail.com')->send(new ContactUs($data));
-       
-}
+        $data = $request->except('_token');
+        Mail::to('contactus@gmail.com')->send(new ContactUs($data));
+
+    }
 }

@@ -147,7 +147,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     * Verification Routes
     */
     Route::get('/email/verify', [VerificationController::class,'show'])->name('verification.notice');
-    Route::get('/email/verify/{id}/{hash}', [VerificationController::class,'verify'])->name('verification.verify');
     Route::post('/email/resend', [VerificationController::class,'resend'])->name('verification.resend');
 
 
@@ -157,6 +156,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/send_code', [AuthController::class,'sendCode']);
     Route::post('/verify/email', [AuthController::class,'verifyEmail']);
 });
+
+
 
 Route::get('chat/blocked-words', function () {
     return \App\Models\ChatBlockedWord::where('is_active', true)
@@ -187,3 +188,6 @@ include 'api-admin.php';
 include 'api-tutor.php';
 include 'api-front.php';
 include 'api-dash.php';
+
+
+Route::get('/email/verify/{id}/{hash}', [AuthController::class,'verify'])->name('verification.verify');
