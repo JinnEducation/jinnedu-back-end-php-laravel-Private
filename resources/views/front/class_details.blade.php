@@ -141,63 +141,138 @@
                         </div>
 
                         <div class="flex gap-3 mt-4">
-                            <button class="cursor-pointer px-6 py-2 text-sm text-black bg-white rounded-md border border-gray-400 hover:bg-primary hover:text-white">
+                            <a href="{{ route('site.tutor_jinn', $group_class->tutor?->id) }}"
+                                class="cursor-pointer px-6 py-2 text-sm text-black bg-white rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
                                 {{ label_text('global','View profile', __('site.View profile')) }}
-                            </button>
-
-                            <button class="cursor-pointer px-6 py-2 text-sm text-white rounded-md bg-primary hover:bg-primary-800">
+                            </a>
+                            <a href="{{ route('redirect.dashboard') }}"
+                                class="cursor-pointer px-6 py-2 text-sm text-white bg-primary rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
                                 {{ label_text('global','Message tutor', __('site.Message tutor')) }}
-                            </button>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- FAQ -->
+                    <!-- FAQ Section -->
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
-                        <h2 class="mb-4 text-lg font-bold text-gray-900">
-                            {{ label_text('global','FAQ', __('site.FAQ')) }}
-                        </h2>
+                        <h2 class="mb-4 text-lg font-bold text-gray-900">FAQ</h2>
+                        <div class="space-y-3">
+                            <!-- FAQ Item 1 -->
+                            <div class="faq-item bg-gray-50 rounded-md border border-gray-200 overflow-hidden">
+                                <button
+                                    class="faq-question flex justify-between items-center p-4 w-full text-left transition-colors hover:bg-gray-100">
+                                    <span class="text-sm font-medium text-gray-900">Are sessions recorded ?</span>
+                                    <i class="text-sm transition-transform fas fa-chevron-down text-primary-600"></i>
+                                </button>
+                                <div class="faq-answer px-4 pb-4 text-sm text-gray-600 leading-relaxed"
+                                    style="display: none;">
+                                    Sessions are live; a short recap may be shared afterwards when possible.
+                                </div>
+                            </div>
+
+                            <!-- FAQ Item 2 -->
+                            <div class="faq-item bg-gray-50 rounded-md border border-gray-200 overflow-hidden">
+                                <button
+                                    class="faq-question flex justify-between items-center p-4 w-full text-left transition-colors hover:bg-gray-100">
+                                    <span class="text-sm font-medium text-gray-900">Can I cancel ?</span>
+                                    <i class="text-sm transition-transform fas fa-chevron-down text-primary-600"></i>
+                                </button>
+                                <div class="faq-answer px-4 pb-4 text-sm text-gray-600 leading-relaxed"
+                                    style="display: none;">
+                                    Free cancellation up to 12 hours before the session.
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Suggestions -->
+                    <!-- You might also like -->
                     <div class="mb-8 w-4/5">
-                        <h2 class="mb-4 text-lg font-bold text-gray-900">
-                            {{ label_text('global','You might also like', __('site.You might also like')) }}
-                        </h2>
+                        <h2 class="mb-4 text-lg font-bold text-gray-900">You might also like</h2>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            @foreach($suggestions as $suggestion)
+                            <div class="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="p-2.5 w-full">
+                                    <img src="{{ asset('storage/'.$suggestion->imageInfo?->path) }}"
+                                    alt="Essay Basics" class="object-cover w-full h-43 rounded-sm">
+                                </div>
+                                <div class="pb-4 px-2.5">
+                                    <div class="flex justify-between items-center my-2">
+                                        <h3 class="text-lg text-black">{{ $suggestion->langsAll?->first()->title }}</h3>
+                                        <p class="text-lg text-black font-light">{{ $suggestion->price }} USD</p>
+                                    </div>
+                                    <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $suggestion->id]) }}"
+                                        class="block text-center cursor-pointer w-full px-6 py-2 text-sm text-primary bg-white rounded-md border border-gray-400 transition-all duration-300 hover:bg-primary hover:text-white hover:border-primary">
+                                        View details
+                                    </a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
-
                 </div>
 
-                <!-- Booking -->
+                <!-- Right Column: Booking Card -->
                 <div class="lg:col-span-1">
+                    @if($exams->count() > 0)
+                    <a href="{{ route('site.take_exam', ['locale' => app()->getLocale(), 'group_class_id' => $group_class->id]) }}"
+                        class="block text-center px-6 py-3 mb-6 text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                        Take Exam
+                    </a>
+                    @endif
                     <div class="bg-white rounded-md border border-gray-200 shadow-sm p-6 sticky top-31">
-
-                        <h2 class="text-lg font-bold text-black mb-3">
-                            {{ label_text('global','Booking', __('site.Booking')) }}
-                        </h2>
-
-                        <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
-                            <span class="font-semibold">
-                                {{ label_text('global','Price', __('site.Price')) }}
-                            </span>
-                            <span class="font-semibold">
-                                {{ $group_class->price }} USD
-                            </span>
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-lg font-bold text-black">Booking</h2>
+                            <div class="relative group">
+                                <button id="fav-btn" class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
+                                    <i class="fa-regular fa-heart not-faved"></i>
+                                    <i class="fa-solid fa-heart text-red-600 faved !hidden"></i>
+                                </button>
+                                <div class="absolute left-1/2 -translate-x-1/2 mt-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none whitespace-nowrap">
+                                    Add to favorites
+                                </div>
+                            </div>
                         </div>
 
-                        @guest
-                            <button type="button" class="px-6 py-3 w-full text-white bg-primary-600 rounded-md">
-                                {{ label_text('global','Login to Book', __('site.Login to Book')) }}
-                            </button>
-                        @endguest
+                        <form action="{{ route('site.group_class_order', ['locale' => app()->getLocale(), 'id' => $group_class->id]) }}" method="post">
+                            @csrf
 
-                        @auth
-                            <button type="submit" class="px-6 py-3 w-full text-white bg-primary-600 rounded-md">
-                                {{ label_text('global','Book Now', __('site.Book Now')) }}
+                            <!-- Price -->
+                            <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
+                                <span class="text-[15px] font-semibold text-black">Price</span>
+                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD</span>
+                            </div>
+
+                            <!-- Date/Time Selection -->
+                            <div class="mb-4 space-y-3">
+                                <input type="hidden" name="group_class_id" value="{{ $group_class->id }}">
+                                @foreach($group_class->dates as $date)
+                                    <div class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
+                                        <span class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }} , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
+                                        <span class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @guest
+                            <button type="button" data-open="#loginModal"
+                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                Login to Book
                             </button>
-                        @endauth
+                            @endguest
+
+                            @auth
+                            <!-- Book Now Button -->
+                            <button type="submit"
+                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                Book Now
+                            </button>                                    
+                            @endauth
+                            
+                        </form>
+                        <p class="text-xs text-center text-gray-500">
+                            Secure payment — Free cancellation up to 12h
+                        </p>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>

@@ -160,10 +160,24 @@ Route::get('/bridge-login/{token}', function ($token) {
         abort(403);
     }
 
+    // check if user is logged in
+    if (Auth::check()) {
+        // logout the user
+        Auth::logout();
+    }
+
     $user = $tokenModel->tokenable;
 
     Auth::login($user, true);
     request()->session()->regenerate();
+
+    $requset = request();
+    if($requset?->has('redirect')){
+        $redirect = $requset->redirect;
+        if($redirect == 'profile'){
+            return redirect()->route('profile.edit');
+        }
+    }
 
     return redirect()->route('bridge-login-check');
 });
@@ -171,6 +185,12 @@ Route::get('/bridge-login/{token}', function ($token) {
 Route::get('/bridge-login-check', function () {
     return view('bridge-login-check');
 })->name('bridge-login-check');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/edit', [AuthController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/edit', [AuthController::class, 'editProfileStore'])->name('profile.edit.store');
+});
+
 Route::get('/show-video', function (\Illuminate\Http\Request $request) {
     $path = $request->query('path');
 
@@ -178,8 +198,17 @@ Route::get('/show-video', function (\Illuminate\Http\Request $request) {
         abort(404);
     }
 
+    $type = $request->query('type');
+
+    $pathStorage = '';
+    if($type == 'user') {
+        $pathStorage = 'video_files/';
+    }elseif($type == 'course') {
+        $pathStorage = 'courses/videos/';
+    }
+
     // حماية بسيطة: لازم يكون داخل courses/videos
-    if (!str_starts_with($path, 'courses/videos/')) {
+    if (!str_starts_with($path, $pathStorage)) {
         abort(403);
     }
 
@@ -189,3 +218,6 @@ Route::get('/show-video', function (\Illuminate\Http\Request $request) {
         'videoUrl' => $url,
     ]);
 })->name('show_video');
+
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');

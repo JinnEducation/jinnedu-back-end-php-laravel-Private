@@ -14,7 +14,10 @@ use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Rules\PhoneNumber;
 use Bouncer;
+
 use Illuminate\Auth\Access\AuthorizationException;
+
+
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -1161,6 +1164,7 @@ class AuthController extends Controller
         return view('auth.oauth-popup-close', compact('data'));
     }
 
+
     public function verify(Request $request,$id,$hash)
     {
         $user = User::findOrFail($id);
@@ -1190,4 +1194,5 @@ class AuthController extends Controller
                     ? new JsonResponse([], 204)
                     : redirect()->route('home')->with('verified', true);
     }
+
 }

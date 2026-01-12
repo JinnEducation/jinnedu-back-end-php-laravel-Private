@@ -1,15 +1,15 @@
 $(document).ready(function () {
-  let currentStep = 1;
-  let accountType = localStorage.getItem("accountType") || "";
+  let currentStep = 2;
+  let accountType = $("#account-type").val() || "";
 
   // Initialize
   goToStep(currentStep);
 
   $(".step-item, .step-item-mobile").click(function () {
     const step = parseInt($(this).data("step"));
-    if (step < currentStep) {
-      goToStep(step);
-    }
+    // if (step < currentStep) {
+    // }
+    goToStep(step);
   });
 
   // دالة للتحقق من الحقول المطلوبة في الخطوة الحالية
@@ -174,21 +174,6 @@ $(document).ready(function () {
   $(document).on("click", ".btn-continue", function (e) {
     e.preventDefault();
 
-    // التحقق من الخطوة الأولى (نوع الحساب)
-    if (currentStep == 1) {
-      let account_type = $("#account-type").val();
-      if (account_type === "" || account_type === null) {
-        $("#account-type-error")
-          .removeClass("hidden opacity-0")
-          .addClass("opacity-100 translate-y-0");
-        return;
-      } else {
-        $("#account-type-error")
-          .addClass("hidden opacity-0")
-          .removeClass("opacity-100 translate-y-0");
-      }
-    }
-
     // التحقق من الحقول المطلوبة في الخطوة الحالية
     if (!validateCurrentStep()) {
       showValidationError();
@@ -215,15 +200,8 @@ $(document).ready(function () {
     }
 
     if ($("#avatarInput").val() == null || $("#avatarInput").val() == "") {
-      if(isGoogleRegister){
-        if ($("#avatarInputUrl").val() == null || $("#avatarInputUrl").val() == ""){
-          showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
-          return;
-        }
-      }else{
-        showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
-        return;
-      }
+      showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
+      return;
     }
 
     let accountType = $("#account-type").val();
@@ -328,55 +306,32 @@ $(function () {
     });
   }
 
-  // Account type selection
-  $(".account-card").click(function () {
-    $(".account-card").removeClass("border-primary bg-blue-50");
-    $(this).addClass("border-primary bg-blue-50");
-    accountType = $(this).data("account");
-    localStorage.setItem("accountType", accountType);
-    $("#account-type").val(accountType);
-    if (accountType === 1) {
-      // إخفاء الخطوات 3-8
-      $(".step-item, .step-item-mobile").each(function () {
-        const step = $(this).data("step");
-        if ([1, 2].includes(step)) {
-          $(this).removeClass("hidden");
-        } else {
-          $(this).addClass("hidden");
-        }
-      });
-      // إزالة required من الحقول في الخطوات المخفية
-      manageRequiredFields(1);
-    }
-    if (accountType === 2) {
-      $(".step-item, .step-item-mobile").each(function () {
-        const step = $(this).data("step");
+  let accounTypeReadonly = $("#account-type").val() || "";
+  if (accounTypeReadonly == 1) {
+    // إخفاء الخطوات 3-8
+    $(".step-item, .step-item-mobile").each(function () {
+      const step = $(this).data("step");
+      if ([1, 2].includes(step)) {
         $(this).removeClass("hidden");
-      });
-      // إعادة required للحقول في الخطوات
-      manageRequiredFields(2);
-    }
-  });
-
-  // عند تحميل الصفحة: تطبيق الإعدادات إذا كان هناك نوع حساب محفوظ
-  const savedAccountType = localStorage.getItem("accountType");
-  if (savedAccountType) {
-    if (savedAccountType == 1) {
-      $(".step-item, .step-item-mobile").each(function () {
-        const step = $(this).data("step");
-        if (![1, 2].includes(step)) {
-          $(this).addClass("hidden");
-        }
-      });
-      manageRequiredFields(1);
-    } else if (savedAccountType == 2) {
-      manageRequiredFields(2);
-    }
-  } else {
-    // حتى لو لم يكن هناك نوع حساب محفوظ، نحفظ الحقول المطلوبة الأصلية
-    saveOriginalRequiredFields();
+      } else {
+        $(this).addClass("hidden");
+      }
+    });
+    // إزالة required من الحقول في الخطوات المخفية
+    manageRequiredFields(1);
   }
+  if (accounTypeReadonly == 2) {
+    $(".step-item, .step-item-mobile").each(function () {
+      const step = $(this).data("step");
+      $(this).removeClass("hidden");
+    });
+    // إعادة required للحقول في الخطوات
+    manageRequiredFields(2);
+  }
+
+  saveOriginalRequiredFields();
 });
+
 
 // Step 2
 $(function () {
@@ -402,34 +357,23 @@ $(function () {
 
   // التحقق من فورم البيانات
   // الحقول المطلوبة للتحقق
-  let $fields = $(
-    '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="password"], #account-info input[type="checkbox"], #terms'
+  const $fields = $(
+    '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="checkbox"]'
   );
 
-  const $googleBtn = $("#account-info .btn-google");
   const $continueBtn = $("#account-info .btn-continue");
   const $submitBtn = $("#account-info .btn-submit");
   let account_type_select = $("#account-type").val();
 
-
-  
   // اخفِ زر Continue بالبداية
-  $continueBtn.hide();
+  // $continueBtn.hide();
 
   // دالة فحص اكتمال الحقول
   function allFieldsFilled() {
-    if(isGoogleRegister){
-      $fields = $(
-        '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="checkbox"], #terms'
-      );
-    }
     let filled = true;
     $fields.each(function () {
       const $field = $(this);
       const type = $field.attr("type");
-      if ($field.is('#avatarInputUrl')) {
-        return true;
-      }     
       // فحص الحقول النصية والإيميلات وهكذا
       if (type === "checkbox") {
         // لازم يكون مختار (checked)
@@ -448,103 +392,28 @@ $(function () {
     return filled;
   }
 
-  // دالة تحقق الباسورد (مؤقتة – هنطورها لاحقاً)
-  function validatePasswords() {
-    if (isGoogleRegister) return true;
-    const password = $('input[name="password"]').val().trim();
-    const confirm = $('input[name="confirm_password"]').val().trim();
-    // الآن مجرد مقارنة بسيطة
-    return password !== "" && confirm !== "" && password === confirm;
-  }
-
-
-  const $email = $("#email");
-  const $msg = $("#email-msg");
-  let isAvailableEmail = false;
-
-  // regex أكثر دقة – يسمح بمعظم صيغ الإيميل القياسية
-  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-  $email.on("input blur", function () {
-    const val = $email.val().trim();
-
-    // إذا الحقل فاضي -> اخفي الرسالة تمامًا
-    if (val === "") {
-      $msg
-        .removeClass("text-red-500 text-green-600")
-        .addClass("text-gray-500")
-        .css("opacity", 0);
-      isAvailableEmail = false;
-      return;
-    }
-
-    // تحقق من الصيغة
-    const isValid = emailPattern.test(val);
-    let isAvailable = true;
-
-    $.ajax({
-      url: emailCheckUrl,
-      type: 'POST',
-      data: {
-        email: val,
-        _token: _token
-      },
-      success: function(response) {
-        if(response.isAvailable) {
-          isAvailable = true;
-        } else {
-          isAvailable = false;
-          isAvailableEmail = false;
-
-          $msg
-            .text("Invalid email format or Email already exists")
-            .removeClass("text-gray-500 text-green-600")
-            .addClass("text-red-500")
-            .css("opacity", 1);
-          return;
-        }
-      }
-    });
-
-    if (isValid && isAvailable) {
-      // ✅ إيميل صحيح
-      $msg
-        .text("Valid email address ✓ & Available")
-        .removeClass("text-gray-500 text-red-500")
-        .addClass("text-green-600")
-        .css("opacity", 1);
-      isAvailableEmail = true;
-    } else {
-      // ❌ إيميل خاطئ
-      $msg
-        .text("Invalid email format")
-        .removeClass("text-gray-500 text-green-600")
-        .addClass("text-red-500")
-        .css("opacity", 1);
-      isAvailableEmail = false;
-    }
-  });
-
   // عند أي تغيير على الحقول
   $fields.on("input blur", function () {
     const filled = allFieldsFilled();
-    const passwordsOK = validatePasswords();
-    const isAvailableEmailCheck = isAvailableEmail;
     account_type_select = $("#account-type").val();
 
     // لو كل الحقول مليانة (مش فارغة)
-    if (filled && passwordsOK && isAvailableEmailCheck) {
-      $googleBtn.fadeOut(200, function () {
-        if (account_type_select == 1) {
-          $submitBtn.fadeIn(200);
-        } else {
-          $continueBtn.fadeIn(200);
-        }
-      });
+    if (filled) {
+      if (account_type_select == 1) {
+        $submitBtn.fadeIn(200);
+        $continueBtn.fadeOut(200);
+        $continueBtn.attr("disabled", true);
+        $continueBtn.addClass("opacity-50");
+      } else {
+        $continueBtn.fadeIn(200);
+        $submitBtn.fadeOut(200);
+        $continueBtn.attr("disabled", false);
+        $continueBtn.removeClass("opacity-50");
+      }
     } else {
-      $continueBtn.fadeOut(200, function () {
-        $googleBtn.fadeIn(200);
-      });
+      $continueBtn.fadeIn(200);
+      $continueBtn.attr("disabled", true);
+      $continueBtn.addClass("opacity-50");
     }
   });
 
@@ -554,53 +423,6 @@ $(function () {
     $("#countty_tutor").val(val);
   });
 
-  // ===== Toggle Password Visibility =====
-  $(".toggle-password").on("click", function () {
-    const $input = $(this).siblings("input");
-    const type = $input.attr("type") === "password" ? "text" : "password";
-    $input.attr("type", type);
-    // toggle eye icon style
-    $(this).toggleClass("text-primary");
-  });
-
-  // ===== Password Strength =====
-  $("#password").on("input", function () {
-    const value = $(this).val();
-    const strength = checkPasswordStrength(value);
-    const $bars = $("#password-strength div");
-
-    $bars
-      .removeClass("bg-primary bg-yellow-400 bg-red-500")
-      .addClass("bg-gray-200");
-    if (strength === 1) $bars.eq(0).addClass("bg-red-500");
-    if (strength === 2) $bars.slice(0, 2).addClass("bg-yellow-400");
-    if (strength === 3) $bars.addClass("bg-primary");
-  });
-
-  // ===== Confirm Password Validation =====
-  $("#confirm-password").on("blur", function () {
-    const pass = $("#password").val().trim();
-    const confirm = $(this).val().trim();
-    const $error = $("#match-error");
-
-    if (confirm && pass !== confirm) {
-      $error
-        .removeClass("hidden opacity-0")
-        .addClass("opacity-100 translate-y-0");
-    } else {
-      $error.addClass("opacity-0");
-      setTimeout(() => $error.addClass("hidden"), 300);
-    }
-  });
-
-  // ===== Strength Check Function =====
-  function checkPasswordStrength(password) {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
-    return strength;
-  }
 });
 
 // Step 3

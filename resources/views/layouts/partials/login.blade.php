@@ -41,6 +41,16 @@
                             placeholder="{{ label_text('global', 'site.email-placeholder', __('site.name@email.com')) }}"
                             class="w-full h-11 pl-10 pr-3 rounded-lg border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                     </div>
+                    <!-- Email Validation Message -->
+                    <p id="email-msg"
+                        class="text-xs text-red-500 mt-1 hidden transition-all duration-300">
+                        {{ label_text(
+                            'global',
+                            'site.register-email-not-found',
+                            __('site.register-email-not-found')
+                        ) }}
+                        
+                    </p>
                 </div>
 
                 <!-- Password -->
@@ -120,7 +130,7 @@
             </div>
 
             <!-- Google Button -->
-            <button
+            <button onclick="openGooglePopup()"
                 class="relative w-full h-11 rounded-lg border border-gray-300 hover:bg-primary hover:text-white flex items-center justify-center font-medium text-gray-700 transition-all duration-350 courser-p">
                 <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google"
                     class="w-5 h-5 absolute left-4">
@@ -226,4 +236,50 @@
     });
 </script>
 @endif
+<script>
+    function openGooglePopup() {
+        const width = 500;
+        const height = 600;
+
+        const left = (screen.width / 2) - (width / 2);
+        const top = (screen.height / 2) - (height / 2);
+
+        window.open(
+            "{{ route('google.login') }}",
+            "googleLogin",
+            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+        );
+    }
+</script>
+
+<script>
+
+window.addEventListener('message', function (event) {
+    if (event.origin !== "{{ url('/') }}") return;
+
+    const data = event.data;
+    if (data.provider !== 'google') return;
+    console.log(data)
+
+    // إخفاء أي رسالة سابقة
+    const emailMsg = document.getElementById('email-msg');
+    emailMsg.classList.add('hidden');
+
+    if (data.loginNow) {
+        // مستخدم موجود → دخول مباشر
+        window.location.href = "{{ route('home') }}";
+        return;
+    }
+
+    // مستخدم غير موجود → أظهر رسالة
+    // emailMsg.textContent = 'هذا البريد غير مسجّل، الرجاء إكمال إنشاء الحساب.';
+    emailMsg.classList.remove('hidden');
+
+    // فوكس على الإيميل (UX)
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) {
+        emailInput.focus();
+    }
+});
+</script>
 @endpush

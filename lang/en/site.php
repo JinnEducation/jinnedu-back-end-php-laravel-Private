@@ -237,6 +237,7 @@ return [
     'Sunday' => 'Sunday',
     'Monday' => 'Monday',
     'Wednesday' => 'Wednesday',
+    'Tuesday' => 'Tuesday',
     'Thursday' => 'Thursday',
     'Friday' => 'Friday',
     'Saturday' => 'Saturday',
@@ -396,7 +397,6 @@ return [
 
     'characters' => 'characters',
 
-
     'Test Payment (Local Mode)' => 'Test Payment (Local Mode)',
 
     'This is a test payment page for development.' => 'This is a test payment page for development.',
@@ -466,22 +466,60 @@ return [
 
     'Profile Picture' => 'Profile Picture',
     'Google' => 'Google',
+    'Email Not Verified' => 'Email Not Verified',
+    'Update Profile' => 'Update Profile',
+    'register-email-not-found' => 'This email is not registered yet. Please complete your account registration.',
 
 
 
+    'Recent courses'       => 'Recent courses',
+    'All categories'       => 'All categories',
+    'total hours'          => 'total hours',
+    'Self paced'           => 'Self paced',
+    'Free'                 => 'Free',
+    'Preview this course'  => 'Preview this course',
+    'Load More'            => 'Load More',
+    'No courses found'     => 'No courses found',
+    'Learn with confidence.' => 'Learn with confidence.',
 
+    'Home' => 'Home',
+    'Course' => 'Course',
 
+    'About the course' => 'About the course',
+    'Outputs' => 'Outputs',
+    'Units' => 'Units',
+    'Evaluation' => 'Evaluation',
 
+    'What you will learn' => 'What you will learn',
+    'Course content' => 'Course content',
+    'Requirements' => 'Requirements',
 
+    'Certified Achievement Certificate' => 'Certified Achievement Certificate',
+    'View the course' => 'View the course',
 
+    'This course is free' => 'This course is free',
+    'This paid course is included in the plans' => 'This paid course is included in the plans',
 
+    'Free' => 'Free',
+    'Limited discount' => 'Limited discount',
 
+    'Certificate of completion' => 'Certificate of completion',
+    'Lifetime access + updates' => 'Lifetime access + updates',
 
+    'Login to Book' => 'Login to Book',
+    'Book Now' => 'Book Now',
 
+    'The certificate is shareable' => 'The certificate is shareable',
+    'Share on your social media or LinkedIn' => 'Share on your social media or LinkedIn',
 
+    'Reviewed on' => 'Reviewed on',
+    'No reviews yet for this course.' => 'No reviews yet for this course.',
 
+    'Courses You Might Be Interested In' => 'Courses You Might Be Interested In',
+    'Course duration' => 'Course duration',
+    'Preview this course' => 'Preview this course',
 
+    'No related courses found.' => 'No related courses found.',
 
-
-
+    'Your browser does not support the video tag.' => 'Your browser does not support the video tag.',
 ];
