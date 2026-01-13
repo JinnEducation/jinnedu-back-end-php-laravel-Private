@@ -557,14 +557,17 @@ class AuthController extends Controller
             }
         }
 
-        $user->videos = [];
+        $videos = [];
+
         if ($tutor && $tutor->video_path) {
-            $user->videos[] = (object) [
+            $videos[] = [
                 'file' => $tutor->video_path,
                 'approved' => (bool) $tutor->video_terms_agreed,
             ];
         }
-
+        
+        $user->videos = $videos;
+        
         return response([
             'success' => true,
             'message' => 'Profile retrieved Successfully',

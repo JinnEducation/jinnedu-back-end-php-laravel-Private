@@ -281,7 +281,7 @@
                 </div>
 
                 <div id="filter-container"
-                    class="flex md:justify-center overflow-x-auto scroll-smooth relative flex-nowrap gap-2 px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    class="block overflow-x-auto scroll-smooth relative flex-nowrap px-2 whitespace-nowrap md:px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
                     <!-- All -->
                     <button type="button"
@@ -1063,7 +1063,7 @@
                             </div>
 
                             <!-- Call to Action Button -->
-                            <button
+                            <a href="{{ route('register') }}"
                                 class="overflow-hidden relative px-16 py-3.5 w-full text-2xl font-bold text-white rounded-lg transition-all duration-300 transform lg:w-auto bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
                                 <span class="relative z-10">
                                     {{ label_text('global', 'site.Get-Started', __('site.Get Started')) }}
@@ -1071,7 +1071,7 @@
                                 <div
                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                 </div>
-                            </button>
+                            </a>
 
                         </div>
                     </div>

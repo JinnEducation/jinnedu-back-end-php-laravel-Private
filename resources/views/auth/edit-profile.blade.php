@@ -269,7 +269,7 @@
                                     <select name="country" required id="country_inp"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach($countries as $country)
-                                            <option value="{{ $country->id }}" {{ old('country', $profile->country ?? '') == $country->id ? 'selected' : '' }}>
+                                            <option value="{{ $country->id }}" {{ old('country', $profile->country ?? '') == $country->name ? 'selected' : '' }}>
                                                 {{ $country->name }} @if($country->phonecode)
                                                 ({{$country->phonecode}})@endif
                                             </option>
