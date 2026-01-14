@@ -157,11 +157,11 @@
                                         </span>
                                         <button id="prevWeek"
                                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
-                                            <i class="fas fa-chevron-left text-sm"></i>
+                                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}} text-sm"></i>
                                         </button>
                                         <button id="nextWeek"
                                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
-                                            <i class="fas fa-chevron-right text-sm"></i>
+                                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-sm"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -490,11 +490,11 @@
                         </span>
                         <button id="prevWeekModal"
                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
-                            <i class="fas fa-chevron-left text-sm"></i>
+                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}} text-sm"></i>
                         </button>
                         <button id="nextWeekModal"
                             class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-700 transition-colors">
-                            <i class="fas fa-chevron-right text-sm"></i>
+                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-sm"></i>
                         </button>
                     </div>
                 </div>

@@ -12,28 +12,28 @@
                             class="text-primary-600 hover:text-primary-700">Home</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="{{ route('site.online_group_classes', ['locale' => app()->getLocale()]) }}"
                             class="text-primary-600 hover:text-primary-700">Classes</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="{{ route('site.online_group_classes', ['locale' => app()->getLocale()]) }}"
                             class="text-primary-600 hover:text-primary-700">Online Group classes</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $group_class_id]) }}"
                             class="text-primary-600 hover:text-primary-700">{{ $group_class->name }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         Take Exam

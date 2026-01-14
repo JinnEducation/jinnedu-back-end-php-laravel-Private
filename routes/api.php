@@ -130,6 +130,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/change-avatar', [AuthController::class,'changeAvatar'])->name('avatar.change');
     Route::post('/change-name', [AuthController::class,'changeName'])->name('name.change');
     Route::get('/profile', [AuthController::class,'profile']);
+    Route::get('/profileUser', [AuthController::class,'profileUser']);
     //Route::post('/navigation',[NavigationController::class,'navigation']);
     Route::get('/navigation', [MenuController::class,'navigation'])->name('navigation');
     Route::get('/menu-abilities/{id}', [MenuController::class,'abilities'])->name('menu-bilities');

@@ -141,7 +141,7 @@
                                         <div class="flex gap-3 items-center">
                                             <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                                         </div>
-                                        <i class="text-xs fas fa-chevron-right group-hover:text-white"></i>
+                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
                                     </a>
                                     <!-- Subcategory -->
                                     <div
@@ -170,7 +170,7 @@
                                         <div class="flex gap-3 items-center">
                                             <span>Design</span>
                                         </div>
-                                        <i class="text-xs fas fa-chevron-right group-hover:text-white"></i>
+                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
                                     </a>
                                     <div
                                         class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
@@ -354,12 +354,18 @@
                                         <i class="fas fa-edit text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Update Profile', __('site.Update Profile')) }}</span>
                                     </a>
-                                    <a href="#"
+                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
-                                        <span>{{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}</span>
+                                        <span>
+                                            @if($user->type == 0)
+                                            {{ label_text('global', 'site.Courses Managment', __('site.Courses Managment')) }}
+                                            @else
+                                            {{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}
+                                            @endif
+                                        </span>
                                     </a>
-                                    <a href="#"
+                                    <a href="{{ route('profile.edit') }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-cog text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Settings', __('site.Settings')) }}</span>

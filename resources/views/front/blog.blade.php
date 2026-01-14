@@ -17,7 +17,7 @@
                     </li>
                     <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas fa-chevron-right"></i>
+                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                         </span>
                     </li>
                     <!-- Current Page -->
@@ -186,7 +186,7 @@
                     <button
                         class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
                         data-page="prev">
-                        <i class="fas fa-chevron-left"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}}"></i>
                     </button>
 
                     <div id="pagesNumbers" class="flex gap-1"></div>
@@ -194,7 +194,7 @@
                     <button
                         class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
                         data-page="next">
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                     </button>
                 </div>
 

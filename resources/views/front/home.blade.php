@@ -850,11 +850,11 @@
                     <!-- Custom Navigation Buttons -->
                     <button
                         class="flex absolute left-[-20px] top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-prev-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
-                        <i class="text-lg fas fa-chevron-left"></i>
+                        <i class="text-lg fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}}"></i>
                     </button>
                     <button
                         class="flex absolute right-[-20px] top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-next-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
-                        <i class="text-lg fas fa-chevron-right"></i>
+                        <i class="text-lg fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                     </button>
 
                     <!-- Swiper -->

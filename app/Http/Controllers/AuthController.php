@@ -14,16 +14,16 @@ use App\Models\User;
 use App\Notifications\GeneralNotification;
 use App\Rules\PhoneNumber;
 use Bouncer;
-
+use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
-
-
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\JsonResponse;
+// use Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-// use Notification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
@@ -34,8 +34,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use Mail;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -428,9 +426,204 @@ class AuthController extends Controller
         ]);
     }
 
+    public function profileUser(Request $request)
+    {
+        $user = $request->user_id
+            ? User::with(['profile', 'tutorProfile'])->find($request->user_id)
+            : Auth::user()?->load(['profile', 'tutorProfile']);
+
+        if (! $user) {
+            return response([
+                'success' => false,
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        $profile = $user->profile;       // user_profiles
+        $tutor = $user->tutorProfile;  // tutor_profiles
+
+        // ===== Avatar (Vue يستخدم user.avatar)
+        $avatarPath = $profile?->avatar_path;
+        $userAvatar = $avatarPath ? (str_starts_with($avatarPath, 'http') ? $avatarPath : Storage::url($avatarPath)) : null;
+
+        // ===== Country object (Vue يتوقع country.name)
+        $countryValue = $profile?->country; // ممكن تكون id أو نص
+        $countryObj = null;
+
+        if ($countryValue !== null && $countryValue !== '') {
+            if (is_numeric($countryValue)) {
+                // لو عندك Country model فعلي:
+                // $c = Country::find((int) $countryValue);
+                // $countryObj = $c ? ['id' => $c->id, 'name' => $c->name] : ['id' => (int)$countryValue, 'name' => (string)$countryValue];
+
+                // بدون جدول دول: رجّع id + name كـ fallback
+                $countryObj = ['id' => (int) $countryValue, 'name' => (string) $countryValue];
+            } else {
+                $countryObj = ['id' => null, 'name' => (string) $countryValue];
+            }
+        }
+
+        // ===== DOB + AGE (Vue يستخدم age)
+        $dob = $tutor?->dob;
+        $age = null;
+        if (! empty($dob)) {
+            try {
+                $age = Carbon::parse($dob)->age;
+            } catch (\Throwable $e) {
+                $age = null;
+            }
+        }
+
+        // ========= abouts[]
+        $abouts = [];
+        if ($profile) {
+            $abouts[] = (object) [
+                'first_name' => $profile->first_name,
+                'last_name' => $profile->last_name,
+                'email' => $user->email,
+
+                'phone' => $profile->contact_number,
+                'age' => $age,
+
+                // Vue عندك يستخدم profile.abouts[0].country.name
+                'country' => $countryObj ? (object) $countryObj : null,
+
+                // خليهم موجودين للتوافق
+                'country_id' => is_numeric($countryValue) ? (int) $countryValue : null,
+                'language_id' => null,
+                'subject_id' => null,
+                'experience_id' => null,
+                'situation_id' => null,
+
+                'date_of_birth' => $dob,
+
+                // توافق إضافي قديم
+                'contact_number' => $profile->contact_number,
+                'avatar' => $userAvatar,
+            ];
+        }
+        $user->abouts = $abouts;
+
+        // ========= Root avatar
+        $user->avatar = $userAvatar;
+
+        // ========= availabilities[]
+        $dayMap = [
+            'saturday' => 1,
+            'sunday' => 2,
+            'monday' => 3,
+            'tuesday' => 4,
+            'wednesday' => 5,
+            'thursday' => 6,
+            'friday' => 7,
+        ];
+
+        $availabilities = [];
+        $availabilityJson = $tutor?->availability_json;
+
+        // الأفضل: اعمل cast بالموديل (بوضح تحت)، بس هنا نخليه safe
+        if (is_string($availabilityJson)) {
+            $availabilityJson = json_decode($availabilityJson, true);
+        }
+
+        if (is_array($availabilityJson)) {
+            foreach ($availabilityJson as $dayKey => $slots) {
+                $dayId = $dayMap[strtolower($dayKey)] ?? null;
+                if (! $dayId || ! is_array($slots)) {
+                    continue;
+                }
+
+                foreach ($slots as $slot) {
+                    $from = $slot['from'] ?? null;
+                    $to = $slot['to'] ?? null;
+                    if (! $from || ! $to) {
+                        continue;
+                    }
+
+                    $availabilities[] = (object) [
+                        'id' => null,
+                        'day_id' => $dayId,
+                        'day' => (object) [
+                            'id' => $dayId,
+                            'name' => ucfirst(strtolower($dayKey)),
+                        ],
+                        'hour_from' => $from,
+                        'hour_to' => $to,
+                    ];
+                }
+            }
+        }
+        $user->availabilities = $availabilities;
+
+        // ========= descriptions[]
+        $descriptions = [];
+        if ($tutor) {
+            $descriptions[] = (object) [
+                'headline' => $tutor->headline,
+                'interests' => $tutor->interests,
+                'motivation' => $tutor->motivation,
+                'specialization_id' => null,
+                'experience' => $tutor->experience_bio,
+                'methodology' => $tutor->methodology,
+            ];
+        }
+        $user->descriptions = $descriptions;
+
+        // ========= hourlyPrices[]
+        $hourlyPrices = [];
+        if ($tutor && $tutor->hourly_rate !== null) {
+            $hourlyPrices[] = (object) ['price' => $tutor->hourly_rate];
+        }
+        $user->hourlyPrices = $hourlyPrices;
+
+        // ========= certifications/videos (اختياري)
+        $certifications = [];
+
+        $certs = $tutor?->certifications_json;
+
+        if (is_string($certs)) {
+            $certs = json_decode($certs, true);
+        }
+
+        if (is_array($certs)) {
+            foreach ($certs as $cert) {
+                $certifications[] = (object) [
+                    'name' => $cert['name'] ?? null,
+                    'description' => $cert['description'] ?? null,
+                    'issued_by' => $cert['issued_by'] ?? null,
+                    'year_from' => $cert['year_from'] ?? null,
+                    'year_to' => $cert['year_to'] ?? null,
+                    'file_path' => ! empty($cert['file_path'])
+                        ? Storage::url($cert['file_path'])
+                        : null,
+                ];
+            }
+        }
+
+        // اربطها مرة وحدة فقط
+        $user->setAttribute('certifications', $certifications);
+
+        $videos = [];
+
+        if ($tutor && $tutor->video_path) {
+            $videos[] = [
+                'file' => Storage::url($tutor->video_path),
+                'approved' => (bool) $tutor->video_terms_agreed,
+            ];
+        }
+
+        // اربطها مرة وحدة
+        $user->setAttribute('videos', $videos);
+
+        return response([
+            'success' => true,
+            'message' => 'Profile retrieved Successfully',
+            'result' => $user,
+        ]);
+    }
+
     public function profile(Request $request)
     {
-        // /** @var \App\Models\User $user */
         $user = $request->user_id ? User::find($request->user_id) : Auth::user();
 
         if (! $user) {
@@ -565,9 +758,9 @@ class AuthController extends Controller
                 'approved' => (bool) $tutor->video_terms_agreed,
             ];
         }
-        
+
         $user->videos = $videos;
-        
+
         return response([
             'success' => true,
             'message' => 'Profile retrieved Successfully',
@@ -1154,12 +1347,12 @@ class AuthController extends Controller
             'google_id' => $googleUser->id,
             'loginNow' => false,
         ];
-        
+
         $user = User::where('google_id', $data['google_id'])
             ->where('email', $data['email'])
             ->first();
-        
-        if($user){
+
+        if ($user) {
             $data['loginNow'] = true;
             Auth::login($user, true);
         }
@@ -1167,8 +1360,7 @@ class AuthController extends Controller
         return view('auth.oauth-popup-close', compact('data'));
     }
 
-
-    public function verify(Request $request,$id,$hash)
+    public function verify(Request $request, $id, $hash)
     {
         $user = User::findOrFail($id);
         if (! hash_equals((string) $request->route('id'), (string) $user->getKey())) {
@@ -1197,5 +1389,4 @@ class AuthController extends Controller
                     ? new JsonResponse([], 204)
                     : redirect()->route('home')->with('verified', true);
     }
-
 }

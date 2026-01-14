@@ -22,7 +22,7 @@
                     </li>
                     <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas fa-chevron-right"></i>
+                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                         </span>
                     </li>
                     {{-- <li>
@@ -30,7 +30,7 @@
                     </li> --}}
                     {{-- <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas fa-chevron-right"></i>
+                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                         </span>
                     </li> --}}
                     <!-- Current Page -->

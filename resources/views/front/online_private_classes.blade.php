@@ -11,13 +11,13 @@
                         <a href="index.html" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700"> {{ label_text('global', 'Classes', __('site.Classes')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         {{ label_text('global', 'Online Private classes', __('site.Online Private classes')) }}
