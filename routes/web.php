@@ -159,9 +159,6 @@ Route::get('/bridge-login/{token}', function ($token) {
     Auth::login($userNew, true);
     $request->session()->regenerate();
 
-    // احذف التوكن بعد الاستخدام (ONE-TIME TOKEN)
-    $tokenModel->delete();
-
     if ($request->has('redirect') && $request->redirect === 'profile') {
         return redirect()->route('profile.edit');
     }
@@ -171,6 +168,7 @@ Route::get('/bridge-login/{token}', function ($token) {
 
 Route::get('/bridge-logout/{token}', function ($token) {
     $tokenModel = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+    
     if (! $tokenModel) {
         abort(403);
     }
