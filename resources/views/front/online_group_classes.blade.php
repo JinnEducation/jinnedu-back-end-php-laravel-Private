@@ -17,13 +17,13 @@
                         <a href="index.html" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('site.Home')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Classes', __('site.Classes')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas fa-chevron-right text-[10px]"></i>
+                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         {{ label_text('global', 'Online Group classes', __('site.Online Group classes')) }}
@@ -45,7 +45,7 @@
                             <input type="number" step="any" min="0" id="price-from" placeholder=" "
                                 class="w-full px-3 pt-4 pb-1.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 peer placeholder-transparent">
                             <label for="price-from"
-                                class="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
+                                class="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
                                     peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary
                                     peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">{{ label_text('global', 'From', __('site.From')) }}</label>
                         </div>
@@ -54,7 +54,7 @@
                             <input type="number" step="any" min="0" id="price-to" placeholder=" "
                                 class="w-full px-3 pt-4 pb-1.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 peer placeholder-transparent">
                             <label for="price-to"
-                                class="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
+                                class="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-lg text-black transition-all duration-200 pointer-events-none
                                     peer-focus:top-2 peer-focus:text-sm peer-focus:text-primary
                                     peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-sm peer-[&:not(:placeholder-shown)]:text-primary">{{ label_text('global', 'To', __('site.To')) }}</label>
                         </div>
@@ -108,7 +108,7 @@
                     <div class="relative">
                         <select id="time-filter"
                             class="w-full h-[42px] px-3 pr-8 text-sm text-black bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200">
-                            <option value="" selected>Start time placeholder</option>
+                            <option value="" selected>{{ label_text('global', 'Start time placeholder', __('site.Start time placeholder')) }}</option>
                             <option value="morning">{{ label_text('global', 'Morning (8:00 - 12:00)', __('site.Morning (8:00 - 12:00)')) }}</option>
                             <option value="afternoon">{{ label_text('global', 'Afternoon (12:00 - 17:00)', __('site.Afternoon (12:00 - 17:00)')) }}</option>
                             <option value="evening">{{ label_text('global', 'Evening (17:00 - 21:00)', __('site.Evening (17:00 - 21:00)')) }}</option>
@@ -126,7 +126,7 @@
                 <div class="flex flex-col gap-2 min-w-[110px] flex-1 md:flex-none md:min-w-[130px]">
                     <label class="text-sm font-semibold text-primary">{{ label_text('global', 'Rate', __('site.Rate')) }}</label>
                     <div class="relative flex items-center h-[42px] px-3 bg-white border border-gray-300 rounded-md">
-                        <svg class="w-5 h-5 text-yellow-400 fill-current flex-shrink-0 mr-2" viewBox="0 0 20 20">
+                        <svg class="w-5 h-5 text-yellow-400 fill-current flex-shrink-0 me-2" viewBox="0 0 20 20">
                             <path
                                 d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                         </svg>
@@ -140,7 +140,7 @@
                 <div class="flex items-end w-full md:w-auto lg:ml-auto">
                     <button id="clear-filters-btn"
                         class="w-full h-[42px] px-8 text-sm font-semibold text-white bg-primary rounded-xl transition-all duration-200 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:w-auto">
-                       {{ label_text('global', ' Clear Filters', __('site. Clear Filters')) }}
+                       {{ label_text('global', 'Clear Filters', __('site.Clear Filters')) }}
                     </button>
                 </div>
             </div>
@@ -240,9 +240,9 @@
                                 </div>
                                 <div class="flex justify-between items-center pb-4 border-b border-gray-200">
                                     <div class="flex gap-2 items-center">
-                                        <img src="{{ asset('storage/'.$class->tutor?->avatar) }}" alt="{{ $class->tutor?->name }}"
+                                        <img src="{{ asset('storage/'.$class->tutor?->avatar) }}" alt="{{ $class->tutor?->full_name }}"
                                             class="w-10 h-10 rounded-full">
-                                        <span class="text-base font-semibold text-gray-800">{{ $class->tutor?->name }}</span>
+                                        <span class="text-base font-semibold text-gray-800">{{ $class->tutor?->full_name }}</span>
                                     </div>
                                     <span class="text-lg font-bold text-primary">{{ $class->price }} $</span>
                                 </div>
@@ -288,7 +288,7 @@
                         <button
                             class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
                             data-page="prev">
-                            <i class="fas fa-chevron-left"></i>
+                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}}"></i>
                         </button>
 
                         <div id="pagesNumbers" class="flex gap-1"></div>
@@ -296,7 +296,7 @@
                         <button
                             class="flex justify-center items-center w-8 h-8 text-black rounded-full transition-all duration-200 cursor-pointer hover:text-white hover:bg-primary"
                             data-page="next">
-                            <i class="fas fa-chevron-right"></i>
+                            <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                         </button>
                     </div>
 

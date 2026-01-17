@@ -32,6 +32,7 @@ return [
     'sign-up' => 'إنشاء حساب',
     'My Profile' => 'حسابي',
     'My Courses' => 'دوراتي',
+    'Courses Managment' => 'إدارة الدورات',
     'Settings' => 'الإعدادات',
     'Logout' => 'تسجيل الخروج',
     'Languages' => 'اللغات',
@@ -284,7 +285,6 @@ return [
     'eMAIL ME A LOGIN LINK' => 'أرسل لي رابط تسجيل الدخول عبر البريد',
     'Back to' => 'العودة إلى',
 
-
     'Classes' => 'الدورات',
     'Online Private classes' => 'دروس خاصة عبر الإنترنت',
     'Find a Tutor' => 'ابحث عن مدرس',
@@ -345,10 +345,8 @@ return [
     'Service' => 'الخدمة',
     'Tax / Fees' => 'الضرائب / الرسوم',
     'By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
-conditions and the privacy policy of the Jien platform.'
-    => 'بالنقر على إتمام الشراء، أقر بأنني قرأت ووافقت على الشروط والأحكام وسياسة الخصوصية الخاصة بمنصة جين.',
-    'All transactions are secure, processed, and authorized by payment service providers.'
-    => 'جميع المعاملات آمنة ويتم معالجتها واعتمادها من مزودي خدمات الدفع.',
+conditions and the privacy policy of the Jien platform.' => 'بالنقر على إتمام الشراء، أقر بأنني قرأت ووافقت على الشروط والأحكام وسياسة الخصوصية الخاصة بمنصة جين.',
+    'All transactions are secure, processed, and authorized by payment service providers.' => 'جميع المعاملات آمنة ويتم معالجتها واعتمادها من مزودي خدمات الدفع.',
 
     'reviews' => 'المراجعات',
     'Course preview' => 'معاينة الدورة',
@@ -404,8 +402,7 @@ conditions and the privacy policy of the Jien platform.'
     'Current Wallet:' => 'المحفظة الحالية:',
     '✓ Simulate Successful Payment' => '✓ محاكاة دفع ناجح',
     '✗ Cancel Payment' => '✗ إلغاء الدفع',
-    'This is a test mode. No real payment will be processed.'
-    => 'هذا وضع تجريبي. لن يتم تنفيذ أي عملية دفع حقيقية.',
+    'This is a test mode. No real payment will be processed.' => 'هذا وضع تجريبي. لن يتم تنفيذ أي عملية دفع حقيقية.',
 
     'Content will be available soon.' => 'سيتم توفير المحتوى قريباً.',
     'Return to Homepage' => 'العودة إلى الصفحة الرئيسية',
@@ -441,8 +438,7 @@ conditions and the privacy policy of the Jien platform.'
     'Join Now' => 'انضم الآن',
     'No tutors found.' => 'لم يتم العثور على مدرسين.',
 
-    'Your browser does not support the video tag.'
-    => 'متصفحك لا يدعم تشغيل الفيديو.',
+    'Your browser does not support the video tag.' => 'متصفحك لا يدعم تشغيل الفيديو.',
 
     'lessons' => 'الدروس',
     '50-min lesson' => 'درس لمدة 50 دقيقة',
@@ -454,7 +450,7 @@ conditions and the privacy policy of the Jien platform.'
     'Message' => 'رسالة',
     'Save to my list' => 'حفظ في قائمتي',
     'Full Schedule' => 'الجدول الكامل',
-    
+
     'Profile Picture' => 'صورة الملف الشخصي',
     'Google' => 'Google',
     'Email Not Verified' => 'الإيميل غير متحقق منه',
@@ -462,14 +458,14 @@ conditions and the privacy policy of the Jien platform.'
 
     'register-email-not-found' => 'هذا البريد الإلكتروني غير مسجّل بعد، الرجاء إكمال إنشاء الحساب.',
 
-    'Recent courses'       => 'الدورات الحديثة',
-    'All categories'       => 'جميع التصنيفات',
-    'total hours'          => 'إجمالي الساعات',
-    'Self paced'           => 'ذاتي الوتيرة',
-    'Free'                 => 'مجاني',
-    'Preview this course'  => 'معاينة الدورة',
-    'Load More'            => 'تحميل المزيد',
-    'No courses found'     => 'لا توجد دورات',
+    'Recent courses' => 'الدورات الحديثة',
+    'All categories' => 'جميع التصنيفات',
+    'total hours' => 'إجمالي الساعات',
+    'Self paced' => 'ذاتي الوتيرة',
+    'Free' => 'مجاني',
+    'Preview this course' => 'معاينة الدورة',
+    'Load More' => 'تحميل المزيد',
+    'No courses found' => 'لا توجد دورات',
     'Learn with confidence.' => 'تعلّم بثقة',
 
     'Home' => 'الرئيسية',
@@ -512,5 +508,15 @@ conditions and the privacy policy of the Jien platform.'
     'No related courses found.' => 'لا توجد دورات مشابهة',
 
     'Your browser does not support the video tag.' => 'متصفحك لا يدعم تشغيل الفيديو',
+
+    'Start time placeholder' => 'أختر وقت البداية',
+    'Morning (8:00 - 12:00)' => 'صباح (8:00 - 12:00)',
+    'Afternoon (12:00 - 17:00)' => 'بعد الظهر (12:00 - 17:00)',
+    'Evening (17:00 - 21:00)' => 'مساء (17:00 - 21:00)',
+
+    'Clear Filters' => 'مسح الفلاتر',
+    'Take Exam' => 'تقديم الامتحان',
+    'Add to favorites' => 'إضافة إلى المفضلة',
+    'Secure payment — Free cancellation up to 12h' => 'دفع آمن — إلغاء مجاني حتى 12 ساعة',
 
 ];

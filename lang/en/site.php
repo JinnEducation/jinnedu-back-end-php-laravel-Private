@@ -32,6 +32,7 @@ return [
     'sign-up' => 'Sign Up',
     'My Profile' => 'My Profile',
     'My Courses' => 'My Courses',
+    'Courses Managment' => 'Courses Managment',
     'Settings' => 'Settings',
     'Logout' => 'Logout',
     'Languages' => 'Languages',
@@ -522,4 +523,16 @@ return [
     'No related courses found.' => 'No related courses found.',
 
     'Your browser does not support the video tag.' => 'Your browser does not support the video tag.',
+
+    'Start time placeholder' => 'Start time placeholder',
+    'Morning (8:00 - 12:00)' => 'Morning (8:00 - 12:00)',
+    'Afternoon (12:00 - 17:00)' => 'Afternoon (12:00 - 17:00)',
+    'Evening (17:00 - 21:00)' => 'Evening (17:00 - 21:00)',
+
+
+    'Clear Filters' => 'Clear Filters',
+    'Take Exam' => 'Take Exam',
+    'Add to favorites' => 'Add to favorites',
+    'Secure payment — Free cancellation up to 12h' => 'Secure payment — Free cancellation up to 12h',
+    '' => '',
 ];
