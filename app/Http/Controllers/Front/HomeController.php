@@ -251,6 +251,10 @@ class HomeController extends Controller
     {
         return view('front.contact_us');
     }
+    public function coming_soon()
+    {
+        return view('front.coming_soon');
+    }
 
     public function online_group_classes()
     {

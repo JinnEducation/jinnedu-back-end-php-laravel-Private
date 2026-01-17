@@ -1,45 +1,30 @@
 <x-front-layout>
 
 
- <!-- Hero Section -->
-    <section class="flex overflow-hidden relative items-center py-10 bg-white">
+    <!-- Hero Section -->
+    <section class="flex overflow-hidden relative items-center bg-white py-10 mt-4">
         <!-- Main Container -->
-        <div class="container px-4 mx-auto w-full">
+        <div class="container z-10 px-4 mx-auto w-full">
             <!-- Breadcrumb -->
             <nav aria-label="Breadcrumb" class="mb-14">
                 <ul class="flex items-center space-x-1 text-sm font-light">
                     <!-- Home -->
                     <li>
-                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">
-                            {{ label_text('global', 'Home', __('site.Home')) }}
-                        </a>
+                        <a href="index.html" class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     </li>
                     <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
-                        </span>
-                    </li>
-                    <li>
-                        <a href="#" class="transition-colors text-primary-600 hover:text-primary-700">
-                            {{ label_text('global', 'About', __('site.About')) }}
-                        </a>
-                    </li>
-                    <li>
-                        <span class="text-gray-400">
-                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
+                            <i class="font-light fas fa-chevron-right"></i>
                         </span>
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-black">
-                            {{ label_text('global', 'Get In Touch', __('site.Get In Touch')) }}
-                        </span>
+                        <span class="text-gray-900">{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
                     </li>
                 </ul>
             </nav>
-
             <!-- Section Title -->
-            <div class="text-left">
+            <div>
                 <h1 class="mb-3 text-3xl font-bold text-black">
                     {{ label_text('global', 'Get In Touch', __('site.Get In Touch')) }}
                 </h1>
@@ -49,7 +34,6 @@
             </div>
         </div>
     </section>
-
     <!-- Contact Form Section -->
     <section class="pt-8 pb-32">
         <div class="container px-4 mx-auto">
@@ -62,7 +46,8 @@
                         <label for="firstName" class="block text-sm font-bold text-black" name="firstName">
                             {{ label_text('global', 'Your First Name', __('site.Your First Name')) }}
                         </label>
-                        <input type="text" id="firstName" name="firstName" placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
+                        <input type="text" id="firstName" name="firstName"
+                            placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -72,7 +57,8 @@
                         <label for="lastName" class="block text-sm font-bold text-black">
                             {{ label_text('global', 'Your Last Name', __('site.Your Last Name')) }}
                         </label>
-                        <input type="text" id="lastName" name="lastName" placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
+                        <input type="text" id="lastName" name="lastName"
+                            placeholder="{{ label_text('global', 'Your Last Name', __('site.Your Last Name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -85,7 +71,8 @@
                         <label for="email" class="block text-sm font-bold text-black">
                             {{ label_text('global', 'Your Email', __('site.Your Email')) }}
                         </label>
-                        <input type="email" id="email" name="email" placeholder="{{ label_text('global', 'Enter Your Email', __('site.Enter Your Email')) }}"
+                        <input type="email" id="email" name="email"
+                            placeholder="{{ label_text('global', 'Enter Your Email', __('site.Enter Your Email')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -95,7 +82,8 @@
                         <label for="mobile" class="block text-sm font-bold text-black">
                             {{ label_text('global', 'Your Mobile', __('site.Your Mobile')) }}
                         </label>
-                        <input type="tel" id="mobile" name="mobile" placeholder="{{ label_text('global', 'Enter Your Mobile', __('site.Enter Your Mobile')) }}"
+                        <input type="tel" id="mobile" name="mobile"
+                            placeholder="{{ label_text('global', 'Enter Your Mobile', __('site.Enter Your Mobile')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
                     </div>
@@ -106,7 +94,8 @@
                     <label for="message" class="block text-sm font-bold text-black">
                         {{ label_text('global', 'Your Message', __('site.Your Message')) }}
                     </label>
-                    <textarea id="message" name="message" rows="6" placeholder="{{ label_text('global', 'Enter Your Message', __('site.Enter Your Message')) }}"
+                    <textarea id="message" name="message" rows="6"
+                        placeholder="{{ label_text('global', 'Enter Your Message', __('site.Enter Your Message')) }}"
                         class="w-full px-4 py-4 text-black bg-gray-100 border-2 border-gray-200 rounded-md transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500 resize-vertical min-h-[120px]"
                         required></textarea>
                 </div>

@@ -136,26 +136,26 @@
 
                                 <!-- Programming with Subcategory -->
                                 <div class="relative border-b border-gray-100 subcategory-item group/sub">
-                                    <a href="#"
+                                    <a href="{{ route('site.coming_soon') }}"
                                         class="flex justify-between items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:font-bold hover:ps-6 group hover:rounded-xl">
                                         <div class="flex gap-3 items-center">
                                             <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                                         </div>
-                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
+                                        <i class="text-xs fas fa-chevron-right group-hover:text-white"></i>
                                     </a>
                                     <!-- Subcategory -->
                                     <div
                                         class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
                                         <div class="py-2">
-                                            <a href="#"
+                                            <a href="{{ route('site.coming_soon') }}"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
                                                 {{ label_text('global', 'site.Web Development', __('site.Web Development')) }}
                                             </a>
-                                            <a href="#"
+                                            <a href="{{ route('site.coming_soon') }}"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
                                                 {{ label_text('global', 'site.Mobile Apps', __('site.Mobile Apps')) }}
                                             </a>
-                                            <a href="#"
+                                            <a href="{{ route('site.coming_soon') }}"
                                                 class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
                                                 {{ label_text('global', 'site.Data Science', __('site.Data Science')) }}
                                             </a>
@@ -170,7 +170,7 @@
                                         <div class="flex gap-3 items-center">
                                             <span>Design</span>
                                         </div>
-                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
+                                        <i class="text-xs fas fa-chevron-right group-hover:text-white"></i>
                                     </a>
                                     <div
                                         class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
@@ -188,13 +188,13 @@
                                 </div> --}}
 
                                 <!-- Business -->
-                                <a href="#"
+                                <a href="{{ route('site.coming_soon') }}"
                                     class="flex gap-3 items-center px-4 py-3 text-black border-b border-gray-100 transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
                                     <span>{{ label_text('global', 'site.Business', __('site.Business')) }}</span>
                                 </a>
 
                                 <!-- Languages -->
-                                <a href="#"
+                                <a href="{{ route('site.coming_soon') }}"
                                     class="flex gap-3 items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
                                     <span>{{ label_text('global', 'site.Languages', __('site.Languages')) }}</span>
                                 </a>
@@ -203,7 +203,7 @@
                     </div>
 
                     <!-- K-12 Link -->
-                    <a href="#" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
+                    <a href="{{ route('site.coming_soon') }}" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
                         {{ label_text('global', 'site.K-12', __('site.K-12')) }}
                     </a>
 
@@ -235,7 +235,7 @@
                     </div>
 
                     <!-- Events Link -->
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('site.coming_soon') }}" class="nav-link">
                         {{ label_text('global', 'site.events', __('site.events')) }}
                     </a>
 
@@ -249,15 +249,11 @@
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                             <div class="py-3">
-                                <a href="#"
+                                <a href="{{ route('site.coming_soon') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.help-center', __('site.help-center')) }}
                                 </a>
-                                <a href="#"
-                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
-                                </a>
-                                <a href="#"
+                                <a href="{{ route('site.coming_soon') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'site.faq', __('site.faq')) }}</a>
                             </div>
                         </div>
@@ -289,7 +285,7 @@
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('site.contact') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
@@ -354,18 +350,12 @@
                                         <i class="fas fa-edit text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Update Profile', __('site.Update Profile')) }}</span>
                                     </a>
-                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
+                                    <a href="{{ route('site.coming_soon') }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
-                                        <span>
-                                            @if($user->type == 0)
-                                            {{ label_text('global', 'site.Courses Managment', __('site.Courses Managment')) }}
-                                            @else
-                                            {{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}
-                                            @endif
-                                        </span>
+                                        <span>{{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}</span>
                                     </a>
-                                    <a href="{{ route('profile.edit') }}"
+                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-cog text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Settings', __('site.Settings')) }}</span>
@@ -418,22 +408,22 @@
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-code text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-palette text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.Design', __('site.Design')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-briefcase text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.Business', __('site.Business')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-language text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.Languages', __('site.Languages')) }}</span>
@@ -442,7 +432,7 @@
             </div>
 
             <!-- K-12 Link -->
-            <a href="#"
+            <a href="{{ route('site.coming_soon') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-graduation-cap text-primary-600 me-2"></i>
                 <span>{{ label_text('global', 'site.K-12', __('site.K-12')) }}</span>
@@ -481,7 +471,7 @@
             </div>
 
             <!-- Events Link -->
-            <a href="#"
+            <a href="{{ route('site.coming_soon') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-calendar-alt text-primary-600 me-2"></i>
                 <span>{{ label_text('global', 'site.events', __('site.events')) }}</span>
@@ -498,17 +488,12 @@
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-life-ring text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.help-center', __('site.help-center')) }}</span>
                     </a>
-                    <a href="#"
-                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
-                    </a>
-                    <a href="#"
+                    <a href="{{ route('site.coming_soon') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-question text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.faq', __('site.faq')) }}</span>
@@ -547,7 +532,7 @@
                         <i class="w-5 text-center fas fa-shield-alt text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.contact') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
@@ -590,12 +575,12 @@
                             <i class="fas fa-user text-primary-600"></i>
                             <span>{{ label_text('global', 'site.My-Profile', __('site.My Profile')) }}</span>
                         </a>
-                        <a href="#"
+                        <a href="{{ route('site.coming_soon') }}"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-book text-primary-600"></i>
                             <span>{{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}</span>
                         </a>
-                        <a href="#"
+                        <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
                             class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-cog text-primary-600"></i>
                             <span>{{ label_text('global', 'site.Settings', __('site.Settings')) }}</span>
