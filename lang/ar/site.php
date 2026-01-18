@@ -519,4 +519,14 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Add to favorites' => 'إضافة إلى المفضلة',
     'Secure payment — Free cancellation up to 12h' => 'دفع آمن — إلغاء مجاني حتى 12 ساعة',
 
+    'Per hour' => 'لكل ساعة',
+'Review' => 'تقييم',
+'Students' => 'الطلاب',
+'Speaks' => 'يتحدث',
+'Message Now' => 'راسل الآن',
+'View Details' => 'عرض التفاصيل',
+'View Full Schedule' => 'عرض الجدول الكامل',
+'Native' => 'اللغة الأم',
+
+
 ];

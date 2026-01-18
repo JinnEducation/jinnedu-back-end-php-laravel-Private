@@ -38,15 +38,31 @@
     <section class="pt-8 pb-32">
         <div class="container px-4 mx-auto">
 
+        @if(session('success'))
+    <div class="p-4 mb-6 text-green-800 bg-green-100 border border-green-200 rounded-lg">
+        {{ session('success') }}
+    </div>
+@endif
+@if ($errors->any())
+    <div class="p-4 mb-6 text-red-800 bg-red-100 border border-red-200 rounded-lg">
+        <ul class="list-disc ms-5">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
             <form id="contactForm" class="space-y-8" action="{{route('site.contact_data')}}" method="post">
+                @csrf
                 <!-- First Row - Names -->
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <!-- First Name -->
                     <div class="space-y-2">
-                        <label for="firstName" class="block text-sm font-bold text-black" name="firstName">
+                        <label for="firstName" class="block text-sm font-bold text-black" name="f_name">
                             {{ label_text('global', 'Your First Name', __('site.Your First Name')) }}
                         </label>
-                        <input type="text" id="firstName" name="firstName"
+                        <input type="text" id="firstName" name="f_name"
                             placeholder="{{ label_text('global', 'Enter the first name', __('site.Enter the first name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>
@@ -57,7 +73,7 @@
                         <label for="lastName" class="block text-sm font-bold text-black">
                             {{ label_text('global', 'Your Last Name', __('site.Your Last Name')) }}
                         </label>
-                        <input type="text" id="lastName" name="lastName"
+                        <input type="text" id="lastName" name="l_name"
                             placeholder="{{ label_text('global', 'Your Last Name', __('site.Your Last Name')) }}"
                             class="px-4 py-4 w-full text-black bg-gray-100 rounded-md border-2 border-gray-200 transition-all duration-300 focus:border-primary focus:bg-white focus:ring-0 focus:outline-none placeholder:text-gray-500"
                             required>

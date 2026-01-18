@@ -13,8 +13,8 @@
         <p>Hope this email find you will</p>
         <br>
         <p>There is new contact message with this information:</p>
-        <p><b> First Name:</b> <span style="color: rgb(48, 48, 48)">{{ $data['firstName'] }}</span></p>
-        <p><b> Last Name:</b> <span style="color: rgb(48, 48, 48)">{{ $data['lastName'] }}</span></p>
+        <p><b> First Name:</b> <span style="color: rgb(48, 48, 48)">{{ $data['f_name'] }}</span></p>
+        <p><b> Last Name:</b> <span style="color: rgb(48, 48, 48)">{{ $data['l_name'] }}</span></p>
         <p><b>Email:</b> <span style="color: rgb(48, 48, 48)"> {{ $data['email'] }}</span> </p>
         <p><b>Phone:</b> <span style="color: rgb(48, 48, 48)"> {{ $data['mobile'] }}</span> </p>
         <p><b>Message:</b> <span style="color: rgb(48, 48, 48)"> {{ $data['message'] }}</span> </p>
