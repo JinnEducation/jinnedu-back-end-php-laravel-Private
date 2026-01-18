@@ -839,7 +839,7 @@
             <div class="container relative z-10 py-16 mx-auto">
                 <!-- Section Header -->
                 <div class="flex justify-end items-center pr-3 mb-2">
-                    <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
+                    <a href="{{ route('site.online_private_classes') }}"
                         class="text-lg font-medium underline transition-all duration-300 text-primary-700 hover:text-primary hover:scale-105">
                         {{ label_text('global', 'site.view-all-tutors', __('site.View all tutors')) }}
                     </a>
@@ -877,11 +877,7 @@
                                     $maxStars = 5;
                                     $fullStars = (int) floor($avg);
                                     $locale = app()->getLocale();
-                                    $trialLessonUrl = route('site.contact', [
-                                        'locale' => $locale,
-                                        'tutor' => $tutor->id,
-                                        'type' => 'trial',
-                                    ]);
+                                    
                                     $messageUrl = route('site.contact', [
                                         'locale' => $locale,
                                         'tutor' => $tutor->id,
@@ -929,11 +925,11 @@
                                             </div>
 
                                             <div class="flex gap-2 justify-between my-3">
-                                                <a href="{{ $trialLessonUrl }}"
+                                                <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
                                                     {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>
-                                                <a href="{{ $messageUrl }}"
+                                                <a href="{{ route('redirect.dashboard', ['redirect_to'=> '/chats/private-chat']) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
                                                     {{ label_text('global', 'site.message-tutor', __('site.Message')) }}
                                                 </a>

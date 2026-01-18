@@ -36,6 +36,8 @@ return [
     'Settings' => 'Settings',
     'Logout' => 'Logout',
     'Languages' => 'Languages',
+    'Go To Class' => 'Go To Class',
+    
 
     // Header - search, language & misc
     'search-what-you-need' => 'Search what you need',
@@ -535,4 +537,5 @@ return [
     'Add to favorites' => 'Add to favorites',
     'Secure payment — Free cancellation up to 12h' => 'Secure payment — Free cancellation up to 12h',
     '' => '',
+    'Read More' => 'Read More',
 ];

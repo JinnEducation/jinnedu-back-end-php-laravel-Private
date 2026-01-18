@@ -427,13 +427,10 @@
                                                         class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
                                                         View Details
                                                     </a>
-                                                    <button
-                                                        type="button"
-                                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 w-full">
+                                                    <a href="{{ route('redirect.dashboard', ['redirect_to'=> '/chats/private-chat']) }}"
+                                                        class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300">
                                                         Message Now
-                                                    </button>
-
-
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>

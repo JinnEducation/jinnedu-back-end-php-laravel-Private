@@ -290,15 +290,15 @@ class WalletController extends Controller
         // dd($responseData);
         $json = json_decode($responseData);
 
-        if ($order->status == 0) {
-            $order->metadata = $responseData;
-            if (isset($json->status) && $json->status == 'APPROVED') {
-                $order->status = 1;
-            } else {
-                $order->status = 2;
-            }
-            $order->save();
-        }
+        // if ($order->status == 0) {
+        //     $order->metadata = $responseData;
+        //     if (isset($json->status) && $json->status == 'APPROVED') {
+        //         $order->status = 1;
+        //     } else {
+        //         $order->status = 2;
+        //     }
+        //     $order->save();
+        // }
 
         if (isset($json->status) && $json->status == 'APPROVED') {
 
