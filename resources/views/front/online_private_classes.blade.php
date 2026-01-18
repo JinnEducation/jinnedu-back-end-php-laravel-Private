@@ -360,7 +360,7 @@
                                                                 {{ $hourlyRate }}$
 
                                                             </span>
-                                                            <span class="text-sm text-black">Per hour</span>
+                                                            <span class="text-sm text-black">  {{ label_text('global', 'Per hour', __('site.Per hour')) }} </span>
                                                         </div>
                                                         <div class="flex flex-col items-start justify-end">
                                                             <div class="flex items-center gap-1">
@@ -374,7 +374,7 @@
                                                                 </span>
                                                             </div>
                                                             <span class="text-sm text-black">
-                                                                {{ $reviewsCount }} Reviews
+                                                                {{ $reviewsCount }} {{ label_text('global', 'Review', __('site.Review')) }} 
                                                             </span>
                                                         </div>
                                                     </div>
@@ -401,7 +401,7 @@
                                                             <path
                                                                 d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                                         </svg>
-                                                        <span>{{ $studentsCount }} Students</span>
+                                                        <span>{{ $studentsCount }}  {{ label_text('global', 'Students', __('site.Students')) }}</span>
                                                     </div>
 
                                                     {{-- اللغة الأم --}}
@@ -413,9 +413,9 @@
                                                                 clip-rule="evenodd" />
                                                         </svg>
                                                         <span>
-                                                            Speaks
+                                                           {{ label_text('global', 'Speaks', __('site.Speaks')) }}  
                                                             <span class="text-primary font-semibold">
-                                                                {{ $nativeLangName ?? 'N/A' }} (Native)
+                                                                {{ $nativeLangName ?? 'N/A' }}  {{ label_text('global', 'Native', __('site.Native')) }} 
                                                             </span>
                                                         </span>
                                                     </div>
@@ -425,11 +425,11 @@
                                                 <div class="flex gap-3 w-2/3">
                                                     <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
                                                         class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                                        View Details
+                                                       {{ label_text('global', 'View Details', __('site.View Details')) }} 
                                                     </a>
                                                     <a href="{{ route('redirect.dashboard', ['redirect_to'=> '/chats/private-chat']) }}"
                                                         class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300">
-                                                        Message Now
+                                                        {{ label_text('global', 'Message Now', __('site.Message Now')) }}
                                                     </a>
                                                 </div>
                                             </div>
@@ -451,8 +451,8 @@
                             <img id="scheduleTutorAvatar" src="./assets/imgs/tutors/1.jpg" alt="Tutor"
                                 class="w-12 h-12 rounded-full object-cover">
                             <div class="flex-1">
-                                <h3 id="scheduleTutorName" class="font-bold text-primary">Tutor Jinn</h3>
-                                <p id="scheduleTutorSubject" class="text-sm text-gray-600">English language</p>
+                                <h3 id="scheduleTutorName" class="font-bold text-primary"> {{ label_text('global', 'Tutor Jinn', __('site.Tutor Jinn')) }} </h3>
+                                <p id="scheduleTutorSubject" class="text-sm text-gray-600"> {{ label_text('global', 'English language', __('site.English language')) }} </p>
                             </div>
                             <button class="p-2 text-primary hover:bg-gray-100 rounded-lg transition-all">
                                 <svg width="53" height="50" viewBox="0 0 53 50" fill="none"
@@ -544,7 +544,7 @@
                         <button
                             class="w-full py-3 text-center font-semibold text-white bg-primary hover:bg-primary-700 rounded-lg transition-all duration-300"
                             id="viewFullScheduleBtn">
-                            View Full Schedule
+                          {{ label_text('global', 'View Full Schedule', __('site.View Full Schedule')) }}   
                         </button>
                     </div>
                 </div>

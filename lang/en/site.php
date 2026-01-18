@@ -536,6 +536,18 @@ return [
     'Take Exam' => 'Take Exam',
     'Add to favorites' => 'Add to favorites',
     'Secure payment — Free cancellation up to 12h' => 'Secure payment — Free cancellation up to 12h',
+
+    'Per hour' => 'Per hour',
+    'Review' => 'Review',
+    'Students' => 'Students',
+    'Speaks' => 'Per hour',
+   'Message Now' => 'Message Now',
+   'View Details' => 'View Details',
+   'View Full Schedule' => 'View Full Schedule',
+   'View Details' => 'View Details',
+   'Native' => 'Native',
+  
+
     '' => '',
     'Read More' => 'Read More',
 ];
