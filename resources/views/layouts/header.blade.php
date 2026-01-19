@@ -350,7 +350,7 @@
                                         <i class="fas fa-edit text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Update Profile', __('site.Update Profile')) }}</span>
                                     </a>
-                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
+                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '/group-classes/index']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
                                         <span>

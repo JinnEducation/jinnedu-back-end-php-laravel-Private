@@ -15,7 +15,4 @@ frontend
 user type           
 
 
-npx tailwindcss \
-  -i ./resources/css/tailwind-input.css \
-  -o ./public/front/assets/css/tailwind.css \
-  --watch
+npx tailwindcss  -i ./resources/css/tailwind-input.css  -o ./public/front/assets/css/tailwind.css  --watch
