@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             case 'country': {
                 // من data-country-id
-                const value = (card.dataset.countryId || '').toLowerCase();
+                const value = (card.dataset.country || '').toLowerCase();
                 return !filterValue || value === filterValue;
             }
 
@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sortBy: filters.sortBy ? filters.sortBy.value : '',
             fullName: filters.fullName ? filters.fullName.value.trim().toLowerCase() : '',
         };
+        console.log(activeFilters.country)
 
         // فلترة الكروت
         let filteredCards = cards.filter(card => {

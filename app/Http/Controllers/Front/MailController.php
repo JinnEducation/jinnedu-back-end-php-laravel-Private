@@ -48,7 +48,7 @@ class MailController extends Controller
         $data = $request->except('_token');
         Mail::to('contactus@gmail.com')->send(new ContactUs($data));
 
-         return back()->with('success', __('site.Message sent successfully'));
+        return back()->with('success', __('site.Message sent successfully'));
 
     }
 }

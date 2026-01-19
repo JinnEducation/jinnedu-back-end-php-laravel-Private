@@ -98,7 +98,7 @@
                             <div class="flex justify-center items-center h-full transition-all duration-500 ease-out hero-image {{ $isActive ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-95 hidden' }}"
                                 data-slide="{{ $index }}">
                                 <img src="{{ $imgUrl }}" alt="{{ $slideTitle }}"
-                                    class="object-contain w-full max-w-full h-full">
+                                    class="object-contain w-full max-w-full h-full rtl:rotate-y-180">
                             </div>
                         @endforeach
                     </div>
@@ -295,7 +295,7 @@
                     @foreach ($categories as $cat)
                         <button type="button"
                             class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
-                            {{ (string)$categoryId === (string)$cat->id ? 'active text-primary font-bold' : 'text-black' }}
+                            {{ (string) $categoryId === (string) $cat->id ? 'active text-primary font-bold' : 'text-black' }}
                             hover:text-primary hover:scale-105 hover:font-bold"
                             data-category-id="{{ $cat->id }}">
                             {{ $cat->name }}
@@ -320,7 +320,7 @@
                         // ===== Title (multilang) =====
                         $langRow = $course->langs?->firstWhere('lang', $langShorts) ?? $course->langs?->first();
                         $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
-                        $desc  = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
+                        $desc = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
 
                         // ===== Image =====
                         $image = $course->image
@@ -331,7 +331,7 @@
 
                         // ===== URL (عدّلي حسب routes عندك) =====
                         // $courseUrl = url('/course/' . $course->id);
-                        $courseUrl = route('site.singlecourse',$course->id);
+                        $courseUrl = route('site.singlecourse', $course->id);
 
                         // ===== Duration =====
                         $hours = $course->total_hours ?? $course->duration_hours ?? null;
@@ -345,7 +345,7 @@
                             $oldPrice = $price;
 
                             $dtype = $course->activeDiscount->discount_type ?? null;
-                            $dval  = (float) ($course->activeDiscount->discount_value ?? 0);
+                            $dval = (float) ($course->activeDiscount->discount_value ?? 0);
 
                             if ($dtype === 'percent') {
                                 $finalPrice = max(0, $price - ($price * ($dval / 100)));
@@ -503,6 +503,7 @@
     <!-- Find a Tutor Section -->
     <section class="px-0 py-16 bg-white md:px-20 lg:px-4">
         <div class="mx-auto lg:container">
+            <form action="{{ route('site.online_private_classes') }}" method="get">
             <!-- Filter Form -->
             <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-lg md:p-8">
 
@@ -515,32 +516,21 @@
                 </div>
                 <div class="grid grid-cols-2 gap-6 mb-6 md:grid-cols-3 lg:grid-cols-5">
 
-                    <!-- What to Learn -->
+                    
+                    {{-- What to Learn? --}}
                     <div class="flex flex-col">
                         <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.find-tutor-what-to-learn', __('site.What to Learn?')) }}
+                            {{ label_text('global', 'What to Learn?', __('site.What to Learn?')) }}
                         </label>
                         <div class="relative">
-                            <select
+                            <select id="filterSubject" name="filterSubject"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.find-tutor-subject', __('site.Subject')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.find-tutor-mathematics', __('site.Mathematics')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.find-tutor-english', __('site.English')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.find-tutor-science', __('site.Science')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.find-tutor-history', __('site.History')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Programming', __('site.Programming')) }}
-                                </option>
+                                <option value="">{{ label_text('global', 'Subject', __('site.Subject')) }}</option>
+                                @foreach ($subjects as $subject)
+                                    <option value="{{ $subject->name }}">
+                                        {{ $subject->name }}
+                                    </option>
+                                @endforeach
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -549,29 +539,24 @@
 
                     <!-- Price Range -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.find-tutor-price-range', __('site.Price Range')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Price Range', __('site.Price Range')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.price-5-50', __('site.5 USD - 50 USD')) }}
+                            <select id="filterPriceRange" name="filterPriceRange"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">{{ label_text('global', 'Any price', __('site.Any price')) }}</option>
+                                <option value="0-10">{{ label_text('global', 'Under 10 USD', __('site.Under 10 USD')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.price-under-10', __('site.Under 10 USD')) }}
+                                <option value="10-25">
+                                    {{ label_text('global', '10 USD - 25 USD', __('site.10 USD - 25 USD')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.price-10-25', __('site.10 USD - 25 USD')) }}
+                                <option value="25-50">
+                                    {{ label_text('global', '25 USD - 50 USD', __('site.25 USD - 50 USD')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.price-25-50', __('site.25 USD - 50 USD')) }}
+                                <option value="50-100">
+                                    {{ label_text('global', '50 USD - 100 USD', __('site.50 USD - 100 USD')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.price-50-100', __('site.50 USD - 100 USD')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.price-100-plus', __('site.100 USD+')) }}
+                                <option value="100-9999">{{ label_text('global', '100 USD+', __('site.100 USD+')) }}
                                 </option>
                             </select>
                             <i
@@ -582,32 +567,18 @@
                     <!-- Native Language -->
                     <div class="flex flex-col">
                         <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.find-tutor-native-language', __('site.Native Language')) }}
-                        </label>
+                            {{ label_text('global', 'Native Language', __('site.Native Language')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.native-language', __('site.Native Language')) }}
+                            <select id="filterNativeLanguage" name="filterNativeLanguage"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">
+                                    {{ label_text('global', 'Native Language', __('site.Native Language')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.English', __('site.English')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Spanish', __('site.Spanish')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.French', __('site.French')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.German', __('site.German')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Arabic', __('site.Arabic')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Chinese', __('site.Chinese')) }}
-                                </option>
+                                @foreach ($languages as $language)
+                                    <option value="{{ $language->name }}">
+                                        {{ $language->name }}
+                                    </option>
+                                @endforeach
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -616,61 +587,48 @@
 
                     <!-- Availability Time -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.find-tutor-availability-time', __('site.Availability Time')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Availability Time', __('site.Availability Time')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.any-time', __('site.Any Time')) }}
+                            <select id="filterAvailability" name="filterAvailability"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">{{ label_text('global', 'Any Time', __('site.Any Time')) }}</option>
+                                <option value="morning">
+                                    {{ label_text('global', 'Morning (6AM - 12PM)', __('site.Morning (6AM - 12PM)')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.morning', __('site.Morning (6AM - 12PM)')) }}
+                                <option value="afternoon">
+                                    {{ label_text('global', 'Afternoon (12PM - 6PM)', __('site.Afternoon (12PM - 6PM)')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.afternoon', __('site.Afternoon (12PM - 6PM)')) }}
+                                <option value="evening">
+                                    {{ label_text('global', 'Evening (6PM - 10PM)', __('site.Evening (6PM - 10PM)')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.evening', __('site.Evening (6PM - 10PM)')) }}
+                                <option value="night">
+                                    {{ label_text('global', 'Night (10PM - 6AM)', __('site.Night (10PM - 6AM)')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.night', __('site.Night (10PM - 6AM)')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.weekends-only', __('site.Weekends Only')) }}
+                                <option value="weekend">
+                                    {{ label_text('global', 'Weekends Only', __('site.Weekends Only')) }}
                                 </option>
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
                         </div>
                     </div>
+
                     <!-- Specializations -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.Specializations', __('site.Specializations')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Specializations', __('site.Specializations')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.Specializations', __('site.Specializations')) }}
+                            <select id="filterSpecialization" name="filterSpecialization"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">
+                                    {{ label_text('global', 'Specializations', __('site.Specializations')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.Test-Preparation', __('site.Test Preparation')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Academic-Support', __('site.Academic Support')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Language-Learning', __('site.Language Learning')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Professional-Development', __('site.Professional Development')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Creative-Arts', __('site.Creative Arts')) }}
-                                </option>
+                                @foreach ($specializations as $spec)
+                                    <option value="{{ $spec->name }}">
+                                        {{ $spec->name }}
+                                    </option>
+                                @endforeach
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -679,36 +637,18 @@
 
                     <!-- Country -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.Country', __('site.Country')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Country', __('site.Country')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.Country', __('site.Country')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.United-States', __('site.United States')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.United-Kingdom', __('site.United Kingdom')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Canada', __('site.Canada')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Australia', __('site.Australia')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Germany', __('site.Germany')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.France', __('site.France')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Other', __('site.Other')) }}
-                                </option>
+                            <select id="filterCountry" name="filterCountry"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">{{ label_text('global', 'Country', __('site.Country')) }}</option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->name }}">
+                                        {{-- عندك بالـ DB أعمدة name / en_name / ar_name --}}
+                                        {{ $country->en_name ?? ($country->name ?? $country->ar_name) }}
+                                    </option>
+                                @endforeach
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
@@ -717,70 +657,42 @@
 
                     <!-- Also Speaks -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.Also-Speaks', __('site.Also Speaks')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Also Speaks', __('site.Also Speaks')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.Also-Speaks', __('site.Also Speaks')) }}
+                            <select id="filterAlsoSpeaks" name="filterAlsoSpeaks"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">{{ label_text('global', 'Also Speaks', __('site.Also Speaks')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.English', __('site.English')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Spanish', __('site.Spanish')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.French', __('site.French')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.German', __('site.German')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Arabic', __('site.Arabic')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Chinese', __('site.Chinese')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Japanese', __('site.Japanese')) }}
-                                </option>
+                                @foreach ($languages as $language)
+                                    <option value="{{ $language->name }}">
+                                        {{ $language->name }}
+                                    </option>
+                                @endforeach
                             </select>
                             <i
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
                         </div>
                     </div>
-
                     <!-- Sort By -->
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.Sort-By', __('site.Sort By')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Sort By', __('site.Sort By')) }}</label>
                         <div class="relative">
-                            <select
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
-                                <option>
-                                    {{ label_text('global', 'site.Sort-By', __('site.Sort By')) }}
+                            <select id="filterSortBy" name="filterSortBy"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
+                                <option value="">{{ label_text('global', 'Sort By', __('site.Sort By')) }}</option>
+                                <option value="price_low_high">
+                                    {{ label_text('global', 'Price: Low to High', __('site.Price: Low to High')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.Price-low-high', __('site.Price: Low to High')) }}
+                                <option value="price_high_low">
+                                    {{ label_text('global', 'Price: High to Low', __('site.Price: High to Low')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.Price-high-low', __('site.Price: High to Low')) }}
+                                <option value="rating_high_low">
+                                    {{ label_text('global', 'Rating: High to Low', __('site.Rating: High to Low')) }}
                                 </option>
-                                <option>
-                                    {{ label_text('global', 'site.Rating-high-low', __('site.Rating: High to Low')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Most-Popular', __('site.Most Popular')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Newest-First', __('site.Newest First')) }}
-                                </option>
-                                <option>
-                                    {{ label_text('global', 'site.Experience', __('site.Experience')) }}
+                                <option value="most_popular">
+                                    {{ label_text('global', 'Most Popular', __('site.Most Popular')) }}
                                 </option>
                             </select>
                             <i
@@ -788,14 +700,14 @@
                         </div>
                     </div>
 
+                    {{-- Full name --}}
                     <div class="flex flex-col">
-                        <label class="mb-2 text-[15px] tracking-wide text-primary uppercase">
-                            {{ label_text('global', 'site.Tutor-full-name', __('site.Tutor full name')) }}
-                        </label>
+                        <label
+                            class="mb-2 text-[15px] tracking-wide text-primary uppercase">{{ label_text('global', 'Full name', __('site.Full name')) }}</label>
                         <div class="relative">
-                            <input type="text"
-                                placeholder="{{ label_text('global', 'site.Tutor-full-name-placeholder', __('site.Enter tutor full name')) }}"
-                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-primary-200 focus:outline-none">
+                            <input type="text" id="filterFullName" name="filterFullName"
+                                placeholder="{{ label_text('global', 'Search by tutor name', __('site.Search by tutor name')) }}"
+                                class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                         </div>
                     </div>
 
@@ -803,7 +715,7 @@
 
                 <!-- Search Button -->
                 <div class="flex justify-center mt-8">
-                    <button id="search-button"
+                    <button type="submit"
                         class="overflow-hidden relative px-8 py-4 text-lg text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:-translate-y-2 hover:shadow-xl">
                         <i class="mr-2 fas fa-search rtl:mr-0 rtl:ml-2"></i>
                         <span class="relative z-10">
@@ -816,6 +728,8 @@
                 </div>
 
             </div>
+
+            </form>
 
         </div>
     </section>
@@ -839,7 +753,7 @@
             <div class="container relative z-10 py-16 mx-auto">
                 <!-- Section Header -->
                 <div class="flex justify-end items-center pr-3 mb-2">
-                    <a href="{{ route('site.contact', ['locale' => app()->getLocale(), 'type' => 'tutors']) }}"
+                    <a href="{{ route('site.online_private_classes') }}"
                         class="text-lg font-medium underline transition-all duration-300 text-primary-700 hover:text-primary hover:scale-105">
                         {{ label_text('global', 'site.view-all-tutors', __('site.View all tutors')) }}
                     </a>
@@ -877,11 +791,7 @@
                                     $maxStars = 5;
                                     $fullStars = (int) floor($avg);
                                     $locale = app()->getLocale();
-                                    $trialLessonUrl = route('site.contact', [
-                                        'locale' => $locale,
-                                        'tutor' => $tutor->id,
-                                        'type' => 'trial',
-                                    ]);
+
                                     $messageUrl = route('site.contact', [
                                         'locale' => $locale,
                                         'tutor' => $tutor->id,
@@ -929,11 +839,11 @@
                                             </div>
 
                                             <div class="flex gap-2 justify-between my-3">
-                                                <a href="{{ $trialLessonUrl }}"
+                                                <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
                                                     {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>
-                                                <a href="{{ $messageUrl }}"
+                                                <a href="{{ route('redirect.dashboard', ['redirect_to' => '/chats/private-chat']) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
                                                     {{ label_text('global', 'site.message-tutor', __('site.Message')) }}
                                                 </a>
@@ -1113,37 +1023,37 @@
     </section>
 
     @push('scripts')
-<script>
-    // ===== Category filter (reload with query) =====
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const id = this.getAttribute('data-category-id');
-            const url = new URL(window.location.href);
-            if (id) url.searchParams.set('category_id', id);
-            else url.searchParams.delete('category_id');
-            window.location.href = url.toString();
-        });
-    });
+        <script>
+            // ===== Category filter (reload with query) =====
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.getAttribute('data-category-id');
+                    const url = new URL(window.location.href);
+                    if (id) url.searchParams.set('category_id', id);
+                    else url.searchParams.delete('category_id');
+                    window.location.href = url.toString();
+                });
+            });
 
-    // ===== Load more (show next batch) =====
-    (function () {
-        const btn = document.getElementById('loadMoreBtn');
-        if (!btn) return;
+            // ===== Load more (show next batch) =====
+            (function () {
+                const btn = document.getElementById('loadMoreBtn');
+                if (!btn) return;
 
-        const step = 4; // كل كبسة بتظهر 4 كورسات
-        btn.addEventListener('click', function () {
-            const hidden = Array.from(document.querySelectorAll('.course-card'))
-                .filter(el => el.style.display === 'none');
+                const step = 4; // كل كبسة بتظهر 4 كورسات
+                btn.addEventListener('click', function () {
+                    const hidden = Array.from(document.querySelectorAll('.course-card'))
+                        .filter(el => el.style.display === 'none');
 
-            hidden.slice(0, step).forEach(el => el.style.display = '');
+                    hidden.slice(0, step).forEach(el => el.style.display = '');
 
-            const stillHidden = Array.from(document.querySelectorAll('.course-card'))
-                .some(el => el.style.display === 'none');
+                    const stillHidden = Array.from(document.querySelectorAll('.course-card'))
+                        .some(el => el.style.display === 'none');
 
-            if (!stillHidden) btn.style.display = 'none';
-        });
-    })();
-</script>
-@endpush
+                    if (!stillHidden) btn.style.display = 'none';
+                });
+            })();
+        </script>
+    @endpush
 
 </x-front-layout>

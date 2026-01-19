@@ -2,32 +2,31 @@
 
 namespace App\Http\Controllers\Front;
 
-use Carbon\Carbon;
-use App\Models\Blog;
-use App\Models\Exam;
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Course;
-use App\Models\Slider;
-use App\Models\Country;
-use App\Models\Subject;
-use App\Models\Category;
-use App\Models\Language;
-use App\Models\CateqBlog;
-use App\Models\OurCourse;
-use App\Models\Conference;
-use App\Models\GroupClass;
-use App\Models\ExamAttempt;
-use App\Models\TutorReview;
-use Illuminate\Http\Request;
-use App\Models\Specialization;
-use App\Models\GroupClassTutor;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\GroupClassController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
-use App\Http\Controllers\GroupClassController;
+use App\Models\Blog;
+use App\Models\Category;
+use App\Models\CateqBlog;
+use App\Models\Conference;
+use App\Models\Country;
+use App\Models\Course;
+use App\Models\Exam;
+use App\Models\ExamAttempt;
+use App\Models\GroupClass;
+use App\Models\GroupClassTutor;
+use App\Models\Language;
+use App\Models\Order;
+use App\Models\Slider;
+use App\Models\Specialization;
+use App\Models\Subject;
+use App\Models\TutorReview;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -66,7 +65,7 @@ class HomeController extends Controller
             ->get();
 
         $coursesQuery = Course::query()
-            ->with(['category:id,name','instructor:id,name','langs','activeDiscount'])
+            ->with(['category:id,name', 'instructor:id,name', 'langs', 'activeDiscount'])
             ->where('status', 'published')
             ->latest('id');
 
@@ -75,6 +74,11 @@ class HomeController extends Controller
         }
 
         $courses = $coursesQuery->limit(12)->get();
+
+        $subjects = Subject::query()->orderBy('name')->get();
+        $languages = Language::query()->orderBy('name')->get();
+        $countries = Country::query()->orderBy('en_name')->get();
+        $specializations = Specialization::query()->orderBy('name')->get();
 
         // Popular Tutors
         $tutors = User::query()
@@ -87,7 +91,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
 
-        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId','langShorts'));
+        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId', 'langShorts', 'subjects', 'languages', 'countries', 'specializations'));
     }
 
     public function blog(Request $request)
@@ -251,6 +255,7 @@ class HomeController extends Controller
     {
         return view('front.contact_us');
     }
+
     public function coming_soon()
     {
         return view('front.coming_soon');
@@ -441,6 +446,12 @@ class HomeController extends Controller
         });
         $group_class->dates = $dates;
 
+        $order = Order::where('user_id', Auth::id())->where('ref_type', 1)->where('ref_id', $id)->where('status', 1)->first();
+        $hasOrder = false;
+        if ($order) {
+            $hasOrder = true;
+        }
+
         $exams = collect([]);
         $attempts = ExamAttempt::where('exam_id', $group_class->exams?->first()?->id)->where('student_id', Auth::user()?->id)->orderBy('id', 'desc')->first();
         $result = $attempts ? $attempts->result : null;
@@ -510,7 +521,7 @@ class HomeController extends Controller
         });
 
         // dd($group_class,$suggestions,$languageId);
-        return view('front.class_details', compact('group_class', 'exams', 'suggestions', 'languageId', 'result', 'attempts'));
+        return view('front.class_details', compact('group_class', 'exams', 'suggestions', 'languageId', 'result', 'attempts', 'hasOrder'));
     }
 
     public function groupClassOrder(string $locale, Request $request, string|int $id)
@@ -522,18 +533,26 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'Class not found');
             }
 
-            $order = Order::where('user_id',Auth::id())->where('ref_type', 1)->where('ref_id', $id)->first();
-            if($order){
+            $order = Order::where('user_id', Auth::id())->where('ref_type', 1)->where('ref_id', $id)->first();
+            $orderNotPay = false;
+            $orderId = null;
+            if ($order && $order->status == 1) {
                 return redirect()->route('redirect.dashboard')->with('error', 'You have already booked a lesson with this tutor');
             }
+            if ($order && $order->status != 1) {
+                $orderNotPay = true;
+                $orderId = $order->id;
+            }
 
-            $orderController = new OrderController;
-            $response = $orderController->groupClass($request, $id);
-            $original = $response->getOriginalContent();
-
-            if ($original['success']) {
-                $orderId = $original['order_id'] ?? $original['result']['id'];
-
+            if (! $order) {
+                $orderController = new OrderController;
+                $response = $orderController->groupClass($request, $id);
+                $original = $response->getOriginalContent();
+                if ($original['success']) {
+                    $orderId = $original['order_id'] ?? $original['result']['id'];
+                }
+            }
+            if ($orderId) {
                 $walletController = new WalletController;
                 $responseCheckout = $walletController->checkout($orderId);
                 $originalCheckout = $responseCheckout->getOriginalContent();
@@ -601,26 +620,37 @@ class HomeController extends Controller
         }
     }
 
-    public function online_private_classes()
+    public function online_private_classes(Request $request)
     {
+        $filters = [
+            'filterSubject' => $request->filterSubject,
+            'filterPriceRange' => $request->filterPriceRange,
+            'filterNativeLanguage' => $request->filterNativeLanguage,
+            'filterAvailability' => $request->filterAvailability,
+            'filterSpecialization' => $request->filterSpecialization,
+            'filterCountry' => $request->filterCountry,
+            'filterAlsoSpeaks' => $request->filterAlsoSpeaks,
+            'filterSortBy' => $request->filterSortBy,
+            'filterFullName' => $request->filterFullName,
+        ];
+
         $tutors = User::where('type', 2)
-            ->with([
-                'profile',
-                'tutorProfile',
-            ])
+            ->with(['profile', 'tutorProfile'])
             ->orderBy('id', 'desc')
             ->get();
-        $subjects = Subject::query()->orderBy('name')->get();
-        $languages = Language::query()->orderBy('name')->get();
-        $countries = Country::query()->orderBy('en_name')->get();
-        $specializations = Specialization::query()->orderBy('name')->get();
+
+        $subjects = Subject::orderBy('name')->get();
+        $languages = Language::orderBy('name')->get();
+        $countries = Country::orderBy('en_name')->get();
+        $specializations = Specialization::orderBy('name')->get();
 
         return view('front.online_private_classes', compact(
             'tutors',
             'subjects',
             'languages',
             'countries',
-            'specializations'
+            'specializations',
+            'filters'
         ));
     }
 
@@ -634,30 +664,30 @@ class HomeController extends Controller
         if (! $tutor->tutorProfile) {
             abort(404);
         }
-        $orderTrial = Order::where('user_id',Auth::id())->where('ref_type', 3)->where('ref_id',$tutor->id)->first();
+        $orderTrial = Order::where('user_id', Auth::id())->where('ref_type', 3)->where('ref_id', $tutor->id)->first();
         $orderTrialExists = false;
         $orderTrialFinash = false;
-        if($orderTrial){
-            $orderTrialExists = true; 
-            $conferences = Conference::where('order_id',$orderTrial->id)->first();
-            if($conferences){
+        if ($orderTrial) {
+            $orderTrialExists = true;
+            $conferences = Conference::where('order_id', $orderTrial->id)->first();
+            if ($conferences) {
                 $status = $conferences->status;
-                if($status == 1){
+                if ($status == 1) {
                     $orderTrialFinash = true;
                 }
             }
-        } 
-        $order = Order::where('user_id',Auth::id())->where('ref_type', 4)->where('tutor_id',$tutor->id)->first();
+        }
+        $order = Order::where('user_id', Auth::id())->where('ref_type', 4)->where('tutor_id', $tutor->id)->first();
         $checkAllowOrder = false;
-        if($order){
-            $conferences = Conference::where('order_id',$order->id)->first();
-            if($conferences){
+        if ($order) {
+            $conferences = Conference::where('order_id', $order->id)->first();
+            if ($conferences) {
                 $status = $conferences->status;
-                if($status == 1){
+                if ($status == 1) {
                     $checkAllowOrder = true;
                 }
             }
-            if(!$conferences){
+            if (! $conferences) {
                 $checkAllowOrder = true;
             }
             // $order->dates = json_decode($order->dates);
@@ -665,7 +695,7 @@ class HomeController extends Controller
 
             // // نتأكد إذا الوقت مر أو لا، والتخزين بيكون true إذا الوقت انتهى و false إذا لسه
             // $checkAllowOrder = Carbon::now()->lt(Carbon::parse($time));
-        }else{
+        } else {
             $checkAllowOrder = true;
         }
 
@@ -675,14 +705,14 @@ class HomeController extends Controller
                 'profile',
                 'tutorProfile',
             ])
-            ->where('id','!=',$tutor->id)
+            ->where('id', '!=', $tutor->id)
             ->take(2)
             ->orderBy('id', 'desc')
             ->get();
-        $reviews = TutorReview::where('tutor_id',$tutor->id)->get();
+        $reviews = TutorReview::where('tutor_id', $tutor->id)->get();
         $reviewsCount = $reviews->count();
 
-        return view('front.tutor_jinn', compact('tutor', 'availabilities','tutorsSuggestions','reviewsCount','reviews','checkAllowOrder','orderTrialExists','orderTrialFinash'));
+        return view('front.tutor_jinn', compact('tutor', 'availabilities', 'tutorsSuggestions', 'reviewsCount', 'reviews', 'checkAllowOrder', 'orderTrialExists', 'orderTrialFinash'));
     }
 
     public function privateLessonOrder(string $locale, Request $request, string|int $id)
@@ -694,12 +724,12 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'Tutor not found');
             }
 
-            $order = Order::where('user_id',Auth::id())->where('ref_type', 4)->where('tutor_id',$tutor->id)->first();
-            if($order){
-                $conferences = Conference::where('order_id',$order->id)->first();
-                if($conferences){
+            $order = Order::where('user_id', Auth::id())->where('ref_type', 4)->where('tutor_id', $tutor->id)->first();
+            if ($order) {
+                $conferences = Conference::where('order_id', $order->id)->first();
+                if ($conferences) {
                     $status = $conferences->status;
-                    if($status == 1){
+                    if ($status == 1) {
                         return redirect()->route('redirect.dashboard')->with('error', 'You have already booked a lesson with this tutor');
                     }
                 }
@@ -712,7 +742,6 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'No available time found');
             }
 
-            
             $response = $orderController->privateLesson($request, $id);
             $original = $response->getOriginalContent();
             if ($original['success']) {
@@ -746,7 +775,7 @@ class HomeController extends Controller
                     $originalCheckout = $responseCheckout->getOriginalContent();
 
                     if ($originalCheckout['success']) {
-                        $walletController->addTutorFinance($order,$order->ref_id, 4);
+                        $walletController->addTutorFinance($order, $order->ref_id, 4);
                         DB::commit();
 
                         return redirect()->route('redirect.dashboard')
@@ -802,13 +831,11 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'No available time found');
             }
 
-            
-            $order = Order::where('user_id',Auth::id())->where('ref_type', 3)->where('ref_id',$tutor->id)->first();
-            if($order){
+            $order = Order::where('user_id', Auth::id())->where('ref_type', 3)->where('ref_id', $tutor->id)->first();
+            if ($order) {
                 return redirect()->back()->with('error', 'You have already booked a trial lesson with this tutor');
             }
 
-            
             $response = $orderController->trialLesson($request, $id);
             $original = $response->getOriginalContent();
             if ($original['success']) {
@@ -818,6 +845,7 @@ class HomeController extends Controller
 
                 if (! $order) {
                     DB::rollBack();
+
                     return redirect()->back()->with('error', 'Order not found');
                 }
 
