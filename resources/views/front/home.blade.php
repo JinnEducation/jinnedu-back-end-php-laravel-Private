@@ -791,7 +791,11 @@
                                     $maxStars = 5;
                                     $fullStars = (int) floor($avg);
                                     $locale = app()->getLocale();
-
+                                    $trialLessonUrl = route('site.contact', [
+                                        'locale' => $locale,
+                                        'tutor' => $tutor->id,
+                                        'type' => 'trial',
+                                    ]);
                                     $messageUrl = route('site.contact', [
                                         'locale' => $locale,
                                         'tutor' => $tutor->id,
@@ -843,7 +847,7 @@
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
                                                     {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>
-                                                <a href="{{ route('redirect.dashboard', ['redirect_to' => '/chats/private-chat']) }}"
+                                                <a href="{{ $messageUrl }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
                                                     {{ label_text('global', 'site.message-tutor', __('site.Message')) }}
                                                 </a>
@@ -1050,10 +1054,10 @@
                     const stillHidden = Array.from(document.querySelectorAll('.course-card'))
                         .some(el => el.style.display === 'none');
 
-                    if (!stillHidden) btn.style.display = 'none';
-                });
-            })();
-        </script>
-    @endpush
+            if (!stillHidden) btn.style.display = 'none';
+        });
+    })();
+</script>
+@endpush
 
 </x-front-layout>

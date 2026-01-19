@@ -22,13 +22,13 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-gray-900">{{ label_text('global', 'Blog', __('auth.Blog')) }}</span>
+                        <span class="text-gray-900">{{ label_text('global', 'Blog', __('site.Blog')) }}</span>
                     </li>
                 </ul>
             </nav>
 
             <!-- Section Title -->
-            <h2 class="mb-7 text-3xl font-bold">{{ label_text('global', 'Explore-Our-Blogs', __('auth.Explore Our Blogs')) }}</h2>
+            <h2 class="mb-7 text-3xl font-bold">{{ label_text('global', 'Explore-Our-Blogs', __('site.Explore Our Blogs')) }}</h2>
 
             <!-- Category Filter -->
             <div class="relative mx-[-30px]" dir="ltr">
@@ -92,17 +92,17 @@
 
                 @continue(!$categorySlug || !$blogTranslation)
 
-                <div class="block overflow-hidden bg-white rounded-md shadow-lg transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102"
+                <div class="cursor-pointer block bg-white rounded-md shadow-lg transition-all duration-300 course-blogs-card hover:shadow-lg hover:scale-102"
                     data-type="{{ $categorySlug }}">
-                    <div class="overflow-hidden relative h-54">
+                    <div class="overflow-hidden relative h-54" onclick="window.location.href=`{{ route('site.showBlog', $blogTranslation->slug) }}`"> 
                         <img src="{{ $blog->image_url }}"
                             alt="{{ $blogTranslation->title }}" class="object-cover w-full h-full" />
                     </div>
                     <div class="p-4 pb-0">
-                        <h3 class="mb-2 font-bold text-black text-[15px]">
+                        <h3 class="mb-2 font-bold text-black text-[15px]" onclick="window.location.href=`{{ route('site.showBlog', $blogTranslation->slug) }}`">
                             {{ $blogTranslation->title }}
                         </h3>
-                        <p class="mb-4 text-[13px] text-gray-400">
+                        <p class="mb-4 text-[13px] text-gray-400" onclick="window.location.href=`{{ route('site.showBlog', $blogTranslation->slug) }}`">
                             {{ \Illuminate\Support\Str::limit(strip_tags($blogTranslation->description ?? ''), 120) }}
                         </p>
                         <div class="flex justify-between items-center">
@@ -112,12 +112,12 @@
                                 <span class="text-sm text-gray-500">(0)</span>
                             </div>
                             <a href="{{ route('site.showBlog', $blogTranslation->slug) }}"
-                                class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">{{ label_text('global', 'Read More', __('auth.Read More')) }}</a>
+                                class="text-sm font-medium text-[#0553FC] underline hover:text-primary hover:mr-3 rtl:hover:ml-3 transition-all duration-300">{{ label_text('global', 'Read More', __('site.Read More')) }}</a>
                         </div>
                         <div class="py-2 mt-3 border-t border-[#E5E7EB]">
                             <div class="flex justify-between items-center transition-all duration-300">
-                                <a href="#"
-                                    class="p-1.5 rounded-full transition-all duration-300 hover:scale-105 hover:ml-1 rtl:hover:mr-1">
+                                <a href="#" data-url="{{ route('site.showBlog', $blogTranslation->slug) }}"
+                                    class="share-btn p-1.5 rounded-full transition-all duration-300 hover:scale-105 hover:ml-1 rtl:hover:mr-1">
                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path

@@ -9,27 +9,30 @@
                 <div class="text-sm font-light text-gray-600 leading-relaxed">
                     <span>
                         <a href="index.html" class="text-primary-600 hover:text-primary-700">
-                            {{ label_text('global','Home', __('site.Home')) }}
+                            {{ label_text('global', 'Home', __('site.Home')) }}
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                        <i
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
-                            {{ label_text('global','Classes', __('site.Classes')) }}
+                            {{ label_text('global', 'Classes', __('site.Classes')) }}
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                        <i
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
-                            {{ label_text('global','Online Group classes', __('site.Online Group classes')) }}
+                            {{ label_text('global', 'Online Group classes', __('site.Online Group classes')) }}
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                        <i
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         {{ $group_class->langsAll?->first()->title }}
@@ -76,7 +79,7 @@
 
                             <span class="text-md text-primary">
                                 {{ $group_class->reviews->count() }}
-                                {{ label_text('global','reviews', __('site.reviews')) }}
+                                {{ label_text('global', 'reviews', __('site.reviews')) }}
                             </span>
                         </div>
                     </div>
@@ -84,36 +87,37 @@
                     <!-- Course Image -->
                     @if ($group_class->imageInfo?->path)
                         <div class="overflow-hidden mb-6 bg-white rounded-md border border-gray-400 shadow-md">
-                            <img src="{{ asset('storage/'.$group_class->imageInfo->path) }}"
-                                 alt="{{ label_text('global','Course preview', __('site.Course preview')) }}"
-                                 class="object-cover w-full h-96.5">
+                            <img src="{{ asset('storage/' . $group_class->imageInfo->path) }}"
+                                alt="{{ label_text('global', 'Course preview', __('site.Course preview')) }}"
+                                class="object-cover w-full h-96.5">
                         </div>
                     @endif
 
                     <!-- Tags -->
                     <div class="flex flex-wrap gap-2 mb-8">
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
-                            {{ label_text('global','Level', __('site.Level')) }} :
+                            {{ label_text('global', 'Level', __('site.Level')) }} :
                             {{ $group_class->level->name }}
                         </span>
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
-                            {{ label_text('global','duration', __('site.duration')) }} :
-                            {{ ($group_class->total_classes_length ?? 0) / 60 }} {{ app()->getLocale() == 'ar' ? 'س' : 'h'}}
+                            {{ label_text('global', 'duration', __('site.duration')) }} :
+                            {{ ($group_class->classes ?? 0) }}
+                            {{ app()->getLocale() == 'ar' ? 'أيام' : 'Days'}}
                         </span>
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
-                            {{ label_text('global','Classes', __('site.Classes')) }} :
+                            {{ label_text('global', 'Classes', __('site.Classes')) }} :
                             {{ $group_class->classes }}
                         </span>
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
-                            {{ label_text('global','teacher', __('site.teacher')) }} :
+                            {{ label_text('global', 'teacher', __('site.teacher')) }} :
                             {{ $group_class->tutor?->name }}
                         </span>
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
-                            {{ label_text('global','Language', __('site.Language')) }} :
+                            {{ label_text('global', 'Language', __('site.Language')) }} :
                             {{ $group_class->language?->name }}
                         </span>
                     </div>
@@ -126,9 +130,8 @@
                     <!-- Instructor -->
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
                         <div class="flex gap-4 items-center mb-4">
-                            <img src="{{ asset('storage/'.$group_class->tutor?->avatar) }}"
-                                 alt="{{ $group_class->tutor?->full_name }}"
-                                 class="object-cover w-21 h-21 rounded-full">
+                            <img src="{{ asset('storage/' . $group_class->tutor?->avatar) }}"
+                                alt="{{ $group_class->tutor?->full_name }}" class="object-cover w-21 h-21 rounded-full">
 
                             <div>
                                 <h3 class="text-sm font-semibold text-black">
@@ -143,11 +146,11 @@
                         <div class="flex gap-3 mt-4">
                             <a href="{{ route('site.tutor_jinn', $group_class->tutor?->id) }}"
                                 class="cursor-pointer px-6 py-2 text-sm text-black bg-white rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
-                                {{ label_text('global','View profile', __('site.View profile')) }}
+                                {{ label_text('global', 'View profile', __('site.View profile')) }}
                             </a>
                             <a href="{{ route('redirect.dashboard') }}"
                                 class="cursor-pointer px-6 py-2 text-sm text-white bg-primary rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
-                                {{ label_text('global','Message tutor', __('site.Message tutor')) }}
+                                {{ label_text('global', 'Message tutor', __('site.Message tutor')) }}
                             </a>
                         </div>
                     </div>
@@ -155,7 +158,7 @@
                     <!-- FAQ Section -->
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
                         <h2 class="mb-4 text-lg font-bold text-gray-900">
-                            {{ label_text('global','FAQ', __('site.FAQ')) }}
+                            {{ label_text('global', 'FAQ', __('site.FAQ')) }}
                         </h2>
                         <div class="space-y-3">
                             <!-- FAQ Item 1 -->
@@ -189,26 +192,26 @@
                     <!-- You might also like -->
                     <div class="mb-8 w-4/5">
                         <h2 class="mb-4 text-lg font-bold text-gray-900">
-                            {{ label_text('global','You might also like', __('site.You might also like')) }}
+                            {{ label_text('global', 'You might also like', __('site.You might also like')) }}
                         </h2>
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             @foreach($suggestions as $suggestion)
-                            <div class="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
-                                <div class="p-2.5 w-full">
-                                    <img src="{{ asset('storage/'.$suggestion->imageInfo?->path) }}"
-                                    alt="Essay Basics" class="object-cover w-full h-43 rounded-sm">
-                                </div>
-                                <div class="pb-4 px-2.5">
-                                    <div class="flex justify-between items-center my-2">
-                                        <h3 class="text-lg text-black">{{ $suggestion->langsAll?->first()->title }}</h3>
-                                        <p class="text-lg text-black font-light">{{ $suggestion->price }} USD</p>
+                                <div class="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
+                                    <div class="p-2.5 w-full">
+                                        <img src="{{ asset('storage/' . $suggestion->imageInfo?->path) }}" alt="Essay Basics"
+                                            class="object-cover w-full h-43 rounded-sm">
                                     </div>
-                                    <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $suggestion->id]) }}"
-                                        class="block text-center cursor-pointer w-full px-6 py-2 text-sm text-primary bg-white rounded-md border border-gray-400 transition-all duration-300 hover:bg-primary hover:text-white hover:border-primary">
-                                        View details
-                                    </a>
+                                    <div class="pb-4 px-2.5">
+                                        <div class="flex justify-between items-center my-2">
+                                            <h3 class="text-lg text-black">{{ $suggestion->langsAll?->first()->title }}</h3>
+                                            <p class="text-lg text-black font-light">{{ $suggestion->price }} USD</p>
+                                        </div>
+                                        <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $suggestion->id]) }}"
+                                            class="block text-center cursor-pointer w-full px-6 py-2 text-sm text-primary bg-white rounded-md border border-gray-400 transition-all duration-300 hover:bg-primary hover:text-white hover:border-primary">
+                                            View details
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -217,34 +220,39 @@
                 <!-- Right Column: Booking Card -->
                 <div class="lg:col-span-1">
                     @if($exams->count() > 0)
-                    <a href="{{ route('site.take_exam', ['locale' => app()->getLocale(), 'group_class_id' => $group_class->id]) }}"
-                        class="block text-center px-6 py-3 mb-6 text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                        {{ label_text('global','Take Exam', __('site.Take Exam')) }}
-                    </a>
+                        <a href="{{ route('site.take_exam', ['locale' => app()->getLocale(), 'group_class_id' => $group_class->id]) }}"
+                            class="block text-center px-6 py-3 mb-6 text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                            {{ label_text('global', 'Take Exam', __('site.Take Exam')) }}
+                        </a>
                     @endif
                     <div class="bg-white rounded-md border border-gray-200 shadow-sm p-6 sticky top-31">
                         <div class="flex justify-between items-center mb-3">
                             <h2 class="text-lg font-bold text-black">
-                                {{ label_text('global','Booking', __('site.Booking')) }}
+                                {{ label_text('global', 'Booking', __('site.Booking')) }}
                             </h2>
                             <div class="relative group">
-                                <button id="fav-btn" class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
+                                <button id="fav-btn"
+                                    class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
                                     <i class="fa-regular fa-heart not-faved"></i>
                                     <i class="fa-solid fa-heart text-red-600 faved !hidden"></i>
                                 </button>
-                                <div class="absolute left-1/2 -translate-x-1/2 mt-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none whitespace-nowrap">
-                                    {{ label_text('global','Add to favorites', __('site.Add to favorites')) }}
+                                <div
+                                    class="absolute left-1/2 -translate-x-1/2 mt-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none whitespace-nowrap">
+                                    {{ label_text('global', 'Add to favorites', __('site.Add to favorites')) }}
                                 </div>
                             </div>
                         </div>
 
-                        <form action="{{ route('site.group_class_order', ['locale' => app()->getLocale(), 'id' => $group_class->id]) }}" method="post">
+                        <form
+                            action="{{ route('site.group_class_order', ['locale' => app()->getLocale(), 'id' => $group_class->id]) }}"
+                            method="post">
                             @csrf
 
                             <!-- Price -->
-                            <div class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
+                            <div
+                                class="flex justify-between items-center rounded-md p-3 mb-4 border border-gray-300 bg-[#1B449C03]">
                                 <span class="text-[15px] font-semibold text-black">
-                                    {{ label_text('global','Price', __('site.Price')) }}
+                                    {{ label_text('global', 'Price', __('site.Price')) }}
                                 </span>
                                 <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD</span>
                             </div>
@@ -253,31 +261,39 @@
                             <div class="mb-4 space-y-3">
                                 <input type="hidden" name="group_class_id" value="{{ $group_class->id }}">
                                 @foreach($group_class->dates as $date)
-                                    <div class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
-                                        <span class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }} , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
-                                        <span class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
+                                    <div
+                                        class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
+                                        <span
+                                            class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }}
+                                            , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
                                     </div>
                                 @endforeach
                             </div>
 
                             @guest
-                            <button type="button" data-open="#loginModal"
-                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                                {{ label_text('global','Login to Book', __('site.Login to Book')) }}
-                            </button>
+                                <button type="button" data-open="#loginModal"
+                                    class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                    {{ label_text('global', 'Login to Book', __('site.Login to Book')) }}
+                                </button>
                             @endguest
 
                             @auth
-                            <!-- Book Now Button -->
-                            <button type="submit"
-                                class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
-                                {{ label_text('global','Book Now', __('site.Book Now')) }}
-                            </button>                                    
+                                <!-- Book Now Button -->
+                                <button type="submit"
+                                    class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
+                                    @if ($hasOrder)
+                                    {{ label_text('global', 'Go To Class', __('site.Go To Class')) }}
+                                    @else
+                                    {{ label_text('global', 'Book Now', __('site.Book Now')) }}
+                                    @endif
+                                </button>
                             @endauth
-                            
+
                         </form>
                         <p class="text-xs text-center text-gray-500">
-                            {{ label_text('global','Secure payment — Free cancellation up to 12h', __('site.Secure payment — Free cancellation up to 12h')) }}
+                            {{ label_text('global', 'Secure payment — Free cancellation up to 12h', __('site.Secure payment — Free cancellation up to 12h')) }}
                         </p>
                     </div>
                 </div>

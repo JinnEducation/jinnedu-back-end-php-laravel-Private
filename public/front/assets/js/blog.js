@@ -214,3 +214,34 @@ $(function () {
     });
   }
 });
+$(document).on('click', '.share-btn', function (e) {
+    e.preventDefault();
+
+    const $btn = $(this);
+    const url = $btn.data('url');
+    if (!url) return;
+
+    navigator.clipboard.writeText(url).then(() => {
+
+        // احذف أي رسالة سابقة
+        $btn.find('.copy-msg').remove();
+
+        // أنشئ الرسالة
+        const $msg = $('<span/>', {
+            class: 'copy-msg absolute text-xs bg-black text-white px-2 py-1 rounded ml-2 rtl:mr-2',
+            text: 'تم نسخ الرابط'
+        });
+
+        $btn.addClass('relative').append($msg);
+
+        // إخفاء الرسالة
+        setTimeout(() => {
+            $msg.fadeOut(200, function () {
+                $(this).remove();
+            });
+        }, 1200);
+
+    }).catch(err => {
+        console.error('Copy failed', err);
+    });
+});

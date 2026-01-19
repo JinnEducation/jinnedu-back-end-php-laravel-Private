@@ -464,23 +464,27 @@
                                         </div>
                                     </div>
 
-                                    <!-- Buttons -->
-                                    <div class="flex gap-3 w-2/3">
-                                        <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
-                                            class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
-                                            {{ label_text('global', 'View Details', __('site.View Details')) }}
-                                        </a>
-                                        <a href="{{ route('redirect.dashboard', ['redirect_to' => '/chats/private-chat']) }}"
-                                            class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300">
-                                            {{ label_text('global', 'Message Now', __('site.Message Now')) }}
-                                        </a>
+                                                <!-- Buttons -->
+                                                <div class="flex gap-3 w-2/3">
+                                                    <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
+                                                        class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
+                                                       {{ label_text('global', 'View Details', __('site.View Details')) }} 
+                                                    </a>
+                                                    <button
+                                                        type="button"
+                                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 w-full">
+                                                      {{ label_text('global', 'Message Now', __('site.Message Now')) }}   
+                                                    </button>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <p class="text-gray-500">No tutors found.</p>
-                    @endforelse
+
+                                    @empty
+                                    <p class="text-gray-500">No tutors found.</p>
+                                    @endforelse
 
                 </div>
 

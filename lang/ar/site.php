@@ -36,6 +36,7 @@ return [
     'Settings' => 'الإعدادات',
     'Logout' => 'تسجيل الخروج',
     'Languages' => 'اللغات',
+    'Go To Class' => 'الذهاب للكلاس',
 
     // Header - search, language & misc
     'search-what-you-need' => 'ابحث عما تحتاجه',
@@ -518,6 +519,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Take Exam' => 'تقديم الامتحان',
     'Add to favorites' => 'إضافة إلى المفضلة',
     'Secure payment — Free cancellation up to 12h' => 'دفع آمن — إلغاء مجاني حتى 12 ساعة',
+    'Read More' => 'قراءة اكثر',
 
     'Per hour' => 'لكل ساعة',
 'Review' => 'تقييم',

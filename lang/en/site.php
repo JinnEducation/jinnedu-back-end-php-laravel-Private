@@ -36,6 +36,8 @@ return [
     'Settings' => 'Settings',
     'Logout' => 'Logout',
     'Languages' => 'Languages',
+    'Go To Class' => 'Go To Class',
+    
 
     // Header - search, language & misc
     'search-what-you-need' => 'Search what you need',
@@ -546,4 +548,6 @@ return [
    'Native' => 'Native',
   
 
+    '' => '',
+    'Read More' => 'Read More',
 ];

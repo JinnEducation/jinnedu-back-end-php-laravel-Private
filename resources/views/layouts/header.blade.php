@@ -235,7 +235,7 @@
                     </div>
 
                     <!-- Events Link -->
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('site.coming_soon') }}" class="nav-link">
                         {{ label_text('global', 'site.events', __('site.events')) }}
                     </a>
 
@@ -252,10 +252,6 @@
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.help-center', __('site.help-center')) }}
-                                </a>
-                                <a href="#"
-                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
                                 <a href="#"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'site.faq', __('site.faq')) }}</a>
@@ -277,7 +273,7 @@
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.about-us', __('site.about-us')) }}
                                 </a>
-                                <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
+                                <a href="{{ route('site.pages.show', ['slug' => 'how-jin-works']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.how-jin-works', __('site.how-jin-works')) }}
                                 </a>
@@ -289,7 +285,7 @@
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('site.contact',['']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
@@ -354,7 +350,7 @@
                                         <i class="fas fa-edit text-primary-600"></i>
                                         <span>{{ label_text('global', 'site.Update Profile', __('site.Update Profile')) }}</span>
                                     </a>
-                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '']) }}"
+                                    <a href="{{ route('redirect.dashboard', ['redirect_to' => '/group-classes/index']) }}"
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
                                         <span>
@@ -532,7 +528,7 @@
                         <i class="w-5 text-center fas fa-building text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.about-us', __('site.about-us')) }}</span>
                     </a>
-                    <a href="{{ route('site.pages.show', ['slug' => 'How-JinnEdu-Works']) }}"
+                    <a href="{{ route('site.pages.show', ['slug' => 'how-jin-works']) }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.how-jin-works', __('site.how-jin-works')) }}</span>
