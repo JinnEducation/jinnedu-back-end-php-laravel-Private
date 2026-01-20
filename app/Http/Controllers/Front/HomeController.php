@@ -446,6 +446,12 @@ class HomeController extends Controller
         });
         $group_class->dates = $dates;
 
+        $order = Order::where('user_id', Auth::id())->where('ref_type', 1)->where('ref_id', $id)->where('status', 1)->first();
+        $hasOrder = false;
+        if ($order) {
+            $hasOrder = true;
+        }
+
         $exams = collect([]);
         $attempts = ExamAttempt::where('exam_id', $group_class->exams?->first()?->id)->where('student_id', Auth::user()?->id)->orderBy('id', 'desc')->first();
         $result = $attempts ? $attempts->result : null;
@@ -527,18 +533,26 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'Class not found');
             }
 
-            $order = Order::where('user_id',Auth::id())->where('ref_type', 1)->where('ref_id', $id)->first();
-            if($order){
+            $order = Order::where('user_id', Auth::id())->where('ref_type', 1)->where('ref_id', $id)->first();
+            $orderNotPay = false;
+            $orderId = null;
+            if ($order && $order->status == 1) {
                 return redirect()->route('redirect.dashboard')->with('error', 'You have already booked a lesson with this tutor');
             }
+            if ($order && $order->status != 1) {
+                $orderNotPay = true;
+                $orderId = $order->id;
+            }
 
-            $orderController = new OrderController;
-            $response = $orderController->groupClass($request, $id);
-            $original = $response->getOriginalContent();
-
-            if ($original['success']) {
-                $orderId = $original['order_id'] ?? $original['result']['id'];
-
+            if (! $order) {
+                $orderController = new OrderController;
+                $response = $orderController->groupClass($request, $id);
+                $original = $response->getOriginalContent();
+                if ($original['success']) {
+                    $orderId = $original['order_id'] ?? $original['result']['id'];
+                }
+            }
+            if ($orderId) {
                 $walletController = new WalletController;
                 $responseCheckout = $walletController->checkout($orderId);
                 $originalCheckout = $responseCheckout->getOriginalContent();

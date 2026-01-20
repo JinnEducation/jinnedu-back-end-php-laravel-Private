@@ -98,7 +98,7 @@
                             <div class="flex justify-center items-center h-full transition-all duration-500 ease-out hero-image {{ $isActive ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-95 hidden' }}"
                                 data-slide="{{ $index }}">
                                 <img src="{{ $imgUrl }}" alt="{{ $slideTitle }}"
-                                    class="object-contain w-full max-w-full h-full rtl:rotate-y-180">
+                                    class="object-contain w-full max-w-full h-full">
                             </div>
                         @endforeach
                     </div>
@@ -791,16 +791,6 @@
                                     $maxStars = 5;
                                     $fullStars = (int) floor($avg);
                                     $locale = app()->getLocale();
-                                    $trialLessonUrl = route('site.contact', [
-                                        'locale' => $locale,
-                                        'tutor' => $tutor->id,
-                                        'type' => 'trial',
-                                    ]);
-                                    $messageUrl = route('site.contact', [
-                                        'locale' => $locale,
-                                        'tutor' => $tutor->id,
-                                        'type' => 'message',
-                                    ]);
                                 @endphp
 
                                 <div class="swiper-slide">
@@ -847,7 +837,7 @@
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
                                                     {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>
-                                                <a href="{{ $messageUrl }}"
+                                                <a href="{{ route('redirect.dashboard', ['redirect_to'=>'/chats/private-chat?user_id=' . $tutor->id]) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center rounded-lg border border-[#1B449C] text-[#1B449C] transition-all duration-300 hover:bg-[#1B449C] hover:text-white">
                                                     {{ label_text('global', 'site.message-tutor', __('site.Message')) }}
                                                 </a>
