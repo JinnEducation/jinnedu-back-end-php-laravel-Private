@@ -153,7 +153,6 @@ Route::group([
 
 
 
-
 Route::get('/bridge-login/{token}', function ($token) {
     $tokenModel = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
 
@@ -161,27 +160,45 @@ Route::get('/bridge-login/{token}', function ($token) {
         abort(403);
     }
 
-    // check if user is logged in
-    if (Auth::check()) {
-        // logout the user
+    $request = request();
+    $userNew = $tokenModel->tokenable;
+
+    // لو في مستخدم حالي ومختلف
+    if (Auth::check() && Auth::id() !== $userNew->id) {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
     }
 
-    $user = $tokenModel->tokenable;
+    // تسجيل دخول المستخدم الجديد (حتى لو كان نفس المستخدم)
+    Auth::login($userNew, true);
+    $request->session()->regenerate();
 
-    Auth::login($user, true);
-    request()->session()->regenerate();
-
-    $requset = request();
-    if($requset?->has('redirect')){
-        $redirect = $requset->redirect;
-        if($redirect == 'profile'){
-            return redirect()->route('profile.edit');
-        }
+    if ($request->has('redirect') && $request->redirect === 'profile') {
+        return redirect()->route('profile.edit');
     }
 
     return redirect()->route('bridge-login-check');
 });
+
+Route::get('/bridge-logout/{token}', function ($token) {
+    $tokenModel = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+    
+    if (! $tokenModel) {
+        abort(403);
+    }
+
+    // 1. حذف التوكن (Sanctum)
+    $tokenModel->delete();
+
+    // 2. تسجيل خروج الويب
+    Auth::guard('web')->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect()->route('bridge-login-check');
+});
+
 
 Route::get('/bridge-login-check', function () {
     return view('bridge-login-check');

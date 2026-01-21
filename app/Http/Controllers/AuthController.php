@@ -323,7 +323,7 @@ class AuthController extends Controller
         $vueApp = in_array(env('APP_ENV'), ['local', 'development']) ? 'http://localhost:5173/me' : env('APP_URL').'me'; // محلي
 
         // 🔹 نحول المستخدم إلى صفحة التحقق داخل Vue
-        $redirectUrl = "{$vueApp}/auth/sign-in-check?token={$plainTextToken}&email={$user->email}&to={$redirectPath}";
+        $redirectUrl = "{$vueApp}/sign-in-check?token={$plainTextToken}&email={$user->email}&to={$redirectPath}";
 
         return redirect()->away($redirectUrl);
     }
