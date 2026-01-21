@@ -286,6 +286,19 @@
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                 </div>
                             </div>
+
+                            
+                            <div class="flex items-start gap-2 mb-6">
+                                <input type="hidden" name="google_id" id="google_id" value="">
+                                <input type="checkbox" id="terms" name="confirm_terms" required checked
+                                    class="mt-1 w-4 h-4 accent-primary rounded border-gray-300">
+                                <label for="terms" class="text-sm text-gray-600">
+                                    {{ label_text('global', 'site.register-agree-terms', __('site.Agree Terms')) }}
+                                    <a href="#" class="text-primary hover:underline">
+                                        {{ label_text('global', 'site.register-terms-and-conditions', __('site.Terms And Conditions')) }}
+                                    </a>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -308,11 +321,11 @@
                                 {{ label_text('global', 'site.sign-in-google-short', __('site.Google')) }}
                             </button> --}}
                             <button type="button"
-                                class="cursor-pointer btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
+                                class="cursor-pointer {{$user->type == 1 ? 'hidden' : '' }} btn-continue bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
                                 {{ label_text('global', 'site.register-continue', __('site.Continue →')) }}
                             </button>
                             <button type="submit"
-                                class="cursor-pointer hidden btn-submit bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
+                                class="cursor-pointer {{$user->type != 1 ? 'hidden' : '' }} btn-submit bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors">
                                 {{ label_text('global', 'site.register-submit', __('site.Submit')) }}
                             </button>
                         </div>

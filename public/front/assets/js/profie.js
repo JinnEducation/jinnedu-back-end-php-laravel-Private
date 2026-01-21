@@ -358,7 +358,7 @@ $(function () {
   // التحقق من فورم البيانات
   // الحقول المطلوبة للتحقق
   const $fields = $(
-    '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="checkbox"]'
+    '#account-info input[type="text"], #account-info input[type="email"], #account-info input[type="tel"], #account-info input[type="checkbox"],#terms'
   );
 
   const $continueBtn = $("#account-info .btn-continue");
@@ -402,8 +402,8 @@ $(function () {
       if (account_type_select == 1) {
         $submitBtn.fadeIn(200);
         $continueBtn.fadeOut(200);
-        $continueBtn.attr("disabled", true);
-        $continueBtn.addClass("opacity-50");
+        $submitBtn.attr("disabled", false);
+        $submitBtn.removeClass("opacity-50");
       } else {
         $continueBtn.fadeIn(200);
         $submitBtn.fadeOut(200);
@@ -411,9 +411,15 @@ $(function () {
         $continueBtn.removeClass("opacity-50");
       }
     } else {
-      $continueBtn.fadeIn(200);
-      $continueBtn.attr("disabled", true);
-      $continueBtn.addClass("opacity-50");
+      if (account_type_select == 1) {
+        $submitBtn.fadeIn(200);
+        $submitBtn.attr("disabled", true);
+        $submitBtn.addClass("opacity-50");
+      } else {
+        $continueBtn.fadeIn(200);
+        $continueBtn.attr("disabled", true);
+        $continueBtn.addClass("opacity-50");
+      }
     }
   });
 
