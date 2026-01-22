@@ -112,8 +112,11 @@
 
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <img src="{{ asset('front/assets/imgs/logo.png') }}"
-                        alt="{{ label_text('global', 'site.logo-alt', __('site.JINN Education')) }}" class="w-auto h-10">
+                    <a href="{{ route('home') }}">
+                        <img src="{{ asset('front/assets/imgs/logo.png') }}"
+                            alt="{{ label_text('global', 'site.logo-alt', __('site.JINN Education')) }}"
+                            class="w-auto h-10">
+                    </a>
                 </div>
 
                 <!-- Desktop Navigation -->
@@ -141,7 +144,8 @@
                                         <div class="flex gap-3 items-center">
                                             <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
                                         </div>
-                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
+                                        <i
+                                            class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} group-hover:text-white"></i>
                                     </a>
                                     <!-- Subcategory -->
                                     <div
@@ -162,7 +166,7 @@
                                         </div>
                                     </div>
                                 </div>
-{{-- 
+                                {{-- 
                                 <!-- Design with Subcategory -->
                                 <div class="relative border-b border-gray-100 subcategory-item group/sub">
                                     <a href="#"
@@ -217,7 +221,8 @@
                     <div class="relative nav-dropdown">
                         <button class="flex gap-1 items-center nav-link group">
                             <span>{{ label_text('global', 'site.Classes', __('site.Classes')) }}</span>
-                            <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
+                            <i
+                                class="text-xs transition-transform duration-300 transform fas fa-chevron-down group-hover:rotate-180"></i>
                         </button>
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
@@ -285,7 +290,7 @@
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.privacy-policy', __('site.privacy-policy')) }}
                                 </a>
-                                <a href="{{ route('site.contact',['']) }}"
+                                <a href="{{ route('site.contact', ['']) }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                     {{ label_text('global', 'site.contact-us', __('site.contact-us')) }}
                                 </a>
@@ -302,7 +307,8 @@
                         <div class="flex items-center guest-auth text-[15px]">
                             <button type="button" data-open="#loginModal" id="btn-open-loginModal"
                                 class="cursor-pointer overflow-hidden relative px-2 py-0 font-medium text-gray-700 transition-all	duration-300 hover:text-primary-600 group rtl:border-black rtl:border-l-2">
-                                <span class="relative z-10">{{ label_text('global', 'site.login', __('site.login')) }}</span>
+                                <span
+                                    class="relative z-10">{{ label_text('global', 'site.login', __('site.login')) }}</span>
                                 <span
                                     class="absolute bottom-0 w-0 h-0.5 transition-all duration-500 start-0 bg-primary-600 group-hover:w-full"></span>
                             </button>
@@ -328,8 +334,9 @@
                                     alt="User" class="w-8 h-8 rounded-full">
                                 <div class="flex flex-col gap-0.5 items-start">
                                     <span class="font-medium">{{ $user->full_name }}</span>
-                                    @if(!$user->email_verified_at)
-                                        <span class="text-white bg-red-500 rounded-md px-1 py-0.5" style="font-size: 10px;">{{ label_text('global', 'site.email-not-verified', __('site.Email Not Verified')) }}</span>
+                                    @if (!$user->email_verified_at)
+                                        <span class="text-white bg-red-500 rounded-md px-1 py-0.5"
+                                            style="font-size: 10px;">{{ label_text('global', 'site.email-not-verified', __('site.Email Not Verified')) }}</span>
                                     @endif
                                 </div>
 
@@ -354,10 +361,10 @@
                                         class="flex gap-3 items-center px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
                                         <i class="fas fa-book text-primary-600"></i>
                                         <span>
-                                            @if($user->type == 0)
-                                            {{ label_text('global', 'site.Courses Managment', __('site.Courses Managment')) }}
+                                            @if ($user->type == 0)
+                                                {{ label_text('global', 'site.Courses Managment', __('site.Courses Managment')) }}
                                             @else
-                                            {{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}
+                                                {{ label_text('global', 'site.My-Courses', __('site.My Courses')) }}
                                             @endif
                                         </span>
                                     </a>
