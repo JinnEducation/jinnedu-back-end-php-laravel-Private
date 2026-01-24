@@ -86,7 +86,7 @@ class BlogController extends Controller
                 ]);
             }
 
-            $blog->load(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language']);
+            $blog->load(['category', 'category.langs', 'users:id,name', 'langsAll.language']);
             DB::commit();
 
             return response()->json($blog);
@@ -150,7 +150,7 @@ class BlogController extends Controller
                 }
             }
 
-            $blog->load(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language']);
+            $blog->load(['category', 'category.langs', 'users:id,name', 'langsAll.language']);
             DB::commit();
 
             return new BlogResource($blog);
