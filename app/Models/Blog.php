@@ -55,7 +55,7 @@ class Blog extends Model
 
     public function courses()
     {
-        return $this->hasMany(OurCourse::class, 'blog_id');
+        return $this->hasMany(Course::class, 'blog_id');
     }
 
     public function getImageUrlAttribute() // $this->image_url

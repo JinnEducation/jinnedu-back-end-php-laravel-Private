@@ -20,7 +20,7 @@ class BlogController extends Controller
     {
         $user = $request->user();
         $type = $user->type;
-        if($type == 1) {
+        if($type == 0) {
             $blogs = Blog::filter($request->query())
                 ->with('category', 'category.langs', 'users:id,name', 'langsAll.language')
                 ->paginate(10);
@@ -100,7 +100,7 @@ class BlogController extends Controller
     public function show($id)
     {
 
-        $blog = Blog::with(['category', 'category.langs', 'users:id,name', 'courses:id,name,blog_id', 'langsAll.language'])
+        $blog = Blog::with(['category', 'category.langs', 'users:id,name', 'langsAll.language'])
             ->findOrFail($id);
 
         return new BlogResource($blog);

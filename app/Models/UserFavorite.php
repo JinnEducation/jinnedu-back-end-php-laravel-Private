@@ -27,7 +27,7 @@ class UserFavorite extends Model
 
     public function course()
     {
-        return $this->belongsTo(OurCourse::class,'ref_id');
+        return $this->belongsTo(Course::class,'ref_id');
     }
    
     public function group_class()

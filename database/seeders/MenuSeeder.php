@@ -16,7 +16,6 @@ use App\Models\UserLanguage;
 use App\Models\UserHourlyPrice;
 
 use App\Models\GroupClass;
-use App\Models\OurCourse;
 
 use App\Models\UserFavorite;
 use App\Models\UserInterest;
@@ -303,14 +302,14 @@ class MenuSeeder extends Seeder
         ]);
         //================================================
         $this->createMenuSubMenus([
-            'type' => OurCourse::class, 
-            'name' => 'our-courses',
-            'title' => 'our-courses-management',
-            'indexTitle' => ['our-courses-list',0],
-            'createTitle' => ['add-our-courses',0],
-            'editTitle' => ['update-our-courses',1],
-            'showTitle' => ['view-our-courses',1],
-            'destroyTitle' => ['delete-our-courses',1],
+            'type' => Course::class, 
+            'name' => 'courses',
+            'title' => 'courses-management',
+            'indexTitle' => ['courses-list',0],
+            'createTitle' => ['add-courses',0],
+            'editTitle' => ['update-courses',1],
+            'showTitle' => ['view-courses',1],
+            'destroyTitle' => ['delete-courses',1],
             'svg' => 'Communication/Group.svg',
             'others' => [
                 ['name' => 'register-as-tutor','title'=>'register-as-tutor','invisible' => 1],
