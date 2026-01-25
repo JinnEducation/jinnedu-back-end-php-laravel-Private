@@ -455,10 +455,14 @@
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
                                         {{ label_text('global', 'Message', __('site.Message')) }} {{ $profile?->full_name }}
                                     </button>
-                                    <button
-                                        class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
-                                        {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
-                                    </button>
+                                    <button id="favTutorBtn"
+    type="button"
+    data-ref="{{ $tutor->id }}"
+    data-type="1"
+    class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
+    {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
+</button>
+
                                 </div>
                             @endauth
                         </div>
@@ -511,6 +515,7 @@
 
     @push('scripts')
         <script src="{{ asset('front/assets/js/tutor_profile.js') }}"></script>
+        <script src="{{ asset('front/assets/js/user_favorite.js') }}"></script>
     @endpush
 
 </x-front-layout>

@@ -232,7 +232,10 @@
                             </h2>
                             <div class="relative group">
                                 <button id="fav-btn"
-                                    class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
+                                data-ref="{{ $group_class->id }}"
+    data-type="3"
+    class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
+                                   
                                     <i class="fa-regular fa-heart not-faved"></i>
                                     <i class="fa-solid fa-heart text-red-600 faved !hidden"></i>
                                 </button>
@@ -301,7 +304,65 @@
         </div>
     </section>
 
-    @push('scripts')
-        <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
-    @endpush
+   @push('scripts')
+    <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('fav-btn');
+            if (!btn) return;
+
+            const iconNotFaved = btn.querySelector('.not-faved');
+            const iconFaved    = btn.querySelector('.faved');
+
+            const setUI = (isFaved) => {
+                if (isFaved) {
+                    iconNotFaved.classList.add('!hidden');
+                    iconFaved.classList.remove('!hidden');
+                } else {
+                    iconFaved.classList.add('!hidden');
+                    iconNotFaved.classList.remove('!hidden');
+                }
+            };
+
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch("{{ route('site.user_favorites.toggle') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            ref_id: parseInt(btn.dataset.ref),
+                            type: parseInt(btn.dataset.type) // 3 group class
+                        })
+                    });
+
+                    if (res.status === 401) {
+                        window.location.href = "{{ route('login') }}";
+                        return;
+                    }
+
+                    const data = await res.json();
+
+                    if (data.status === 'added') setUI(true);
+                    if (data.status === 'removed') setUI(false);
+
+                } catch (err) {
+                    console.error(err);
+                    alert('Error saving favorite');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        });
+    </script>
+@endpush
+
 </x-front-layout>

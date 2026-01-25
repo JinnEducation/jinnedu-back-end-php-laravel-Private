@@ -20,18 +20,29 @@ class UserFavorite extends Model
         return $this->belongsTo(User::class,'user_id');
     }
     
-    public function tutor()
-    {
-        return $this->belongsTo(Tutor::class,'ref_id');
-    }
+    // public function tutor()
+    // {
+    //     return $this->belongsTo(Tutor::class,'ref_id');
+    // }
 
     public function course()
     {
         return $this->belongsTo(Course::class,'ref_id');
     }
    
-    public function group_class()
-    {
-        return $this->belongsTo(GroupClass::class,'ref_id');
-    }
+    // public function group_class()
+    // {
+    //     return $this->belongsTo(GroupClass::class,'ref_id');
+    // }
+
+    public function tutor()
+{
+    return $this->belongsTo(Tutor::class, 'ref_id')->where('type', 1);
+}
+
+public function group_class()
+{
+    return $this->belongsTo(GroupClass::class, 'ref_id')->where('type', 3);
+}
+
 }
