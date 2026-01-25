@@ -63,6 +63,10 @@ class ChatContactsController extends Controller
             ->select('id', 'name', 'email', 'avatar', 'type')
             ->limit(20)
             ->get();
+        $users->each(function ($user) {
+            $user->append('full_name');
+            $user->name = $user->full_name;
+        });
 
         return response()->json([
             'data' => $users,

@@ -298,7 +298,7 @@ class AuthController extends Controller
     {
         // لازم المستخدم يكون داخل مسبقاً
         if (! Auth::check()) {
-            return redirect('/');
+            return redirect()->route('login');
         }
 
         $user = Auth::user();
@@ -307,7 +307,7 @@ class AuthController extends Controller
 
         // نوع المستخدم يحدد المسار في Vue
         $redirectPathReq = $request->redirect_to ?? '';
-        $redirectPath = 'me/dashboard'.$redirectPathReq;
+        $redirectPath = 'dashboard'.$redirectPathReq;
 
         // ✳️ أنشئ التوكن بالطريقة المضمونة
         $tokenResult = $user->createToken('main');

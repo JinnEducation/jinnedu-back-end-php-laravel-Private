@@ -60,11 +60,18 @@ class ChatContactService
 
     public function getContact(int $userId, int $contactId): ?ChatContact
     {
-        return ChatContact::query()
+        $chat = ChatContact::query()
             ->forUser($userId)
             ->where('contact_id', $contactId)
             ->with(['contact:id,name,email'])
             ->first();
+
+    if ($chat?->contact) {
+        $chat->contact->append('full_name');
+        $chat->contact->name = $chat->contact->full_name;
+    }
+
+        return $chat;
     }
 
     public function ensurePair(int $userId, int $contactId): void

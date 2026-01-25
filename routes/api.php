@@ -14,7 +14,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use App\Http\Controllers\Api\Chat\ChatContactsController;
 use App\Http\Controllers\Api\Chat\ChatMessagesController;
 use App\Http\Controllers\Api\Chat\ChatStatusController;
-
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,16 +31,17 @@ use App\Http\Controllers\Api\Chat\ChatStatusController;
 
 
 
-Route::post('/forgot-password', [AuthController::class,'forgotPassword'])->name('api.password.forgot');
-Route::post('/reset-password', [AuthController::class,'passwordUpdate'])->name('api.password.update');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.password.forgot');
+Route::post('/reset-password', [AuthController::class, 'passwordUpdate'])->name('api.password.update');
 
-Route::post('/register', [AuthController::class,'register'])->name('api.register');
-Route::post('/check_mail', [AuthController::class,'checkMail']);
-Route::post('/login', [AuthController::class,'login'])->name('api.login');
-Route::post('/social_login', [AuthController::class,'socialLogin'])->name('social_login');
-Route::get('/locales/lang/{lang}', [LocalController::class,'localesLang'])->name('localesLang');
-Route::get('/locales/langs', [LocalController::class,'localesLangs'])->name('localesLangs');
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+Route::post('/check_mail', [AuthController::class, 'checkMail']);
+Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/social_login', [AuthController::class, 'socialLogin'])->name('social_login');
+Route::get('/locales/lang/{lang}', [LocalController::class, 'localesLang'])->name('localesLang');
+Route::get('/locales/langs', [LocalController::class, 'localesLangs'])->name('localesLangs');
 
+/*
 Route::post('/auth/check-token', function (Request $request) {
     $fullToken = $request->token;
     $email = $request->email;
@@ -89,6 +90,13 @@ Route::post('/auth/check-token', function (Request $request) {
             'user'    => $user,
             'token'   => $newToken
         ]);
+    } else {
+        $user = User::where('email', $email)->first();
+        $check_user = Auth::check($user->id);
+
+        if (!$check_user) {
+            Auth::login($user, true);
+        }
     }
 
     // تحقق من الهاش
@@ -110,52 +118,72 @@ Route::post('/auth/check-token', function (Request $request) {
         'user' => $user
     ], 200);
 });
+*/
+Route::post('/auth/check-token', function (Request $request) {
+    $request->validate([
+        'token' => 'required|string',
+    ]);
+
+    $user = \Laravel\Sanctum\PersonalAccessToken::findToken($request->token)?->tokenable;
+
+    if (! $user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid token'
+        ], 401);
+    }
+
+    return response()->json([
+        'success' => true,
+        'user' => $user,
+    ]);
+});
+
 
 Route::get('/tlocales/lang/{lang}', function () {
     echo '123';
     exit;
 });
 
-Route::get('/locall/lang/{lang}', [LocalController::class,'localesLang'])->name('localesLang');
-Route::get('/locall/langs', [LocalController::class,'localesLangs'])->name('localesLangs');
+Route::get('/locall/lang/{lang}', [LocalController::class, 'localesLang'])->name('localesLang');
+Route::get('/locall/langs', [LocalController::class, 'localesLangs'])->name('localesLangs');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    Route::post('/logout', [AuthController::class,'logout'])->name('api.logout');
-    Route::post('/change-password', [AuthController::class,'changePassword'])->name('password.change');
-    Route::post('/change-email', [AuthController::class,'changeEmail'])->name('email.change');
-    Route::post('/change-avatar', [AuthController::class,'changeAvatar'])->name('avatar.change');
-    Route::post('/change-name', [AuthController::class,'changeName'])->name('name.change');
-    Route::get('/profile', [AuthController::class,'profile']);
-    Route::get('/profileUser', [AuthController::class,'profileUser']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::post('/change-password', [AuthController::class, 'changePassword'])->name('password.change');
+    Route::post('/change-email', [AuthController::class, 'changeEmail'])->name('email.change');
+    Route::post('/change-avatar', [AuthController::class, 'changeAvatar'])->name('avatar.change');
+    Route::post('/change-name', [AuthController::class, 'changeName'])->name('name.change');
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/profileUser', [AuthController::class, 'profileUser']);
     //Route::post('/navigation',[NavigationController::class,'navigation']);
-    Route::get('/navigation', [MenuController::class,'navigation'])->name('navigation');
-    Route::get('/menu-abilities/{id}', [MenuController::class,'abilities'])->name('menu-bilities');
+    Route::get('/navigation', [MenuController::class, 'navigation'])->name('navigation');
+    Route::get('/menu-abilities/{id}', [MenuController::class, 'abilities'])->name('menu-bilities');
     //======================================================================
 
-    Route::post('/update-profile', [AuthController::class,'updateProfile'])->name('profile.update');
+    Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('profile.update');
 
-    Route::delete('/delete-account', [AuthController::class,'deleteAccount'])->name('account.delete');
-
+    Route::delete('/delete-account', [AuthController::class, 'deleteAccount'])->name('account.delete');
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /**
-    * Verification Routes
-    */
-    Route::get('/email/verify', [VerificationController::class,'show'])->name('verification.notice');
-    Route::post('/email/resend', [VerificationController::class,'resend'])->name('verification.resend');
+     * Verification Routes
+     */
+    Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+    Route::post('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
 
     /**
      *  Verify email for mobile
      */
-    Route::get('/send_code', [AuthController::class,'sendCode']);
-    Route::post('/verify/email', [AuthController::class,'verifyEmail']);
+    Route::get('/send_code', [AuthController::class, 'sendCode']);
+    Route::post('/verify/email', [AuthController::class, 'verifyEmail']);
 });
 
 
@@ -191,4 +219,4 @@ include 'api-front.php';
 include 'api-dash.php';
 
 
-Route::get('/email/verify/{id}/{hash}', [AuthController::class,'verify'])->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
