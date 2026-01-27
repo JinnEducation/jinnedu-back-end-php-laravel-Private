@@ -778,32 +778,31 @@
                             <!-- Tutor Cards -->
                             @forelse($tutors as $tutor)
                                 @php
-                                    $avatar = $tutor->avatar
-                                        ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
-                                            ? $tutor->avatar
-                                            : asset($tutor->avatar))
-                                        : asset('front/assets/imgs/tutors/1.jpg');
+                                    // $avatar = $tutor->avatar
+                                    //     ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
+                                    //         ? $tutor->avatar
+                                    //         : asset($tutor->avatar))
+                                    //     : asset('front/assets/imgs/tutors/1.jpg');
 
-                                    $notAvailable = label_text('global', 'site.not-available', __('site.Not available'));
-                                    $country = $tutor->abouts?->country?->name ?? $notAvailable;
-                                    $spec = optional($tutor->descriptions->first()?->specialization)->name ?? $notAvailable;
-                                    $avg = 4.0;
-                                    $maxStars = 5;
-                                    $fullStars = (int) floor($avg);
-                                    $locale = app()->getLocale();
+                                    // $notAvailable = label_text('global', 'site.not-available', __('site.Not available'));
+                                    // $country = $tutor->abouts?->country?->name ?? $notAvailable;
+                                    // $spec = optional($tutor->descriptions->first()?->specialization)->name ?? $notAvailable;
+                                    $avg = $tutor->reviews->avg('stars') ?? 0;
+                                    $fullStars = floor($avg);
+                                    // $locale = app()->getLocale();
                                 @endphp
 
                                 <div class="swiper-slide">
                                     <div
                                         class="px-7 py-4 mx-2 bg-white rounded-xl shadow-lg transition-all duration-300 transform md:p-4 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                                         <div class="flex justify-center mb-6">
-                                            <img src="{{ $avatar }}" alt="{{ $tutor->full_name }}"
+                                            <img src="{{ $tutor->avatar }}" alt="{{ $tutor->full_name }}"
                                                 class="object-cover rounded-full w-31 h-31">
                                         </div>
 
-                                        <div class="text-left rtl:text-left">
+                                        <div class="text-left rtl:text-right">
                                             <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->full_name }}</h3>
-                                            <p class="mb-4 font-medium text-black">{{ $spec }}</p>
+                                            <p class="mb-4 font-medium text-black">{{ $tutor->tutorProfile?->specializations }}</p>
 
                                             <div class="flex items-center mb-4 text-gray-500">
                                                 <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
@@ -814,12 +813,12 @@
                                                             fill="#1B449C" />
                                                     </svg>
                                                 </i>
-                                                <span class="text-sm">{{ $country }}</span>
+                                                <span class="text-sm">{{ $tutor->profile?->country }}</span>
                                             </div>
 
                                             <div class="flex flex-col items-left rtl:items-right">
                                                 <div class="flex items-center mr-3 rtl:ml-3 rtl:mr-0">
-                                                    @for ($i = 1; $i <= $maxStars; $i++)
+                                                    @for ($i = 1; $i <= 5; $i++)
                                                         @if ($i <= $fullStars)
                                                             <i class="mr-1 fas fa-star text-[#FFC700]"></i>
                                                         @else

@@ -15,6 +15,7 @@ use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\PaymentResponseController;
 use App\Http\Controllers\WalletPaymentTransactionController;
 use App\Http\Controllers\Front\PageController as FrontPageController;
+use App\Http\Controllers\Front\UserFavoriteController;
 
 /*
 |--------------------------------------------------------------------------

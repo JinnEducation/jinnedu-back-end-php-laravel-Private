@@ -244,8 +244,9 @@
         const left = (screen.width / 2) - (width / 2);
         const top = (screen.height / 2) - (height / 2);
 
+        let url = "{{ route('google.login') }}" + "?type=" + 1;
         window.open(
-            "{{ route('google.login') }}",
+            url,
             "googleLogin",
             `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
         );

@@ -59,7 +59,8 @@
                                         <i class="fas fa-comment text-primary"></i>
                                         <span>
                                             {{ label_text('global', 'Speaks', __('site.Speaks')) }}
-                                            {{ $nativeLanguage }}
+                                            {{-- {{ $nativeLanguage }} --}}
+                                            {{ label_text('languages', $nativeLanguage, __('languages.' . $nativeLanguage)) }}
                                             {{ label_text('global', 'Language', __('site.Language')) }}
                                         </span>
                                     </div>
@@ -430,7 +431,7 @@
                                     </form>
                                     @endif
                                     @if($orderTrialExists && !$orderTrialFinash)
-                                    <a href="route('redirect.dashboard')"
+                                    <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
                                         class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                         {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
                                     </a>
@@ -446,7 +447,7 @@
                                     </form>
                                     @endif
                                     @if($orderTrialExists && $orderTrialFinash && !$checkAllowOrder)
-                                    <a href="route('redirect.dashboard')"
+                                    <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
                                         class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                         {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
                                     </a>

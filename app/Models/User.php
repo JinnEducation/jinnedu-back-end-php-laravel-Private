@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -70,7 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $append = [
-        'full_name'
+        'full_name',
+        'avatar'
     ];
 
     /**
@@ -144,7 +146,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserAbout::class, 'user_id');
     }
 
-    
+
 
     /**
      * Unified availabilities accessor.
@@ -191,7 +193,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
             /**
              * Eloquent: $user->availabilities()->get()
-            */
+             */
             public function get()
             {
                 /*
@@ -268,10 +270,10 @@ class User extends Authenticatable implements MustVerifyEmail
                         foreach ($bookedConferences as $conference) {
                             $start = new \DateTime($conference->start_date_time);
                             $end = new \DateTime($conference->end_date_time);
-                            
+
                             $startMinutes = (int)$start->format('H') * 60 + (int)$start->format('i');
                             $endMinutes = (int)$end->format('H') * 60 + (int)$end->format('i');
-                            
+
                             for ($min = $startMinutes; $min < $endMinutes; $min++) {
                                 $bookedSlots[$min] = true;
                             }
@@ -317,28 +319,28 @@ class User extends Authenticatable implements MustVerifyEmail
                             if ($this->filterDate && !empty($bookedSlots)) {
                                 $fromMinutes = $this->timeToMinutes($from);
                                 $toMinutes = $this->timeToMinutes($to);
-                                
+
                                 // فحص إذا كانت الفترة متاحة (يوجد على الأقل فترة واحدة غير محجوزة)
                                 $hasAvailableSlot = false;
                                 $checkInterval = 30; // فحص كل 30 دقيقة
-                                
+
                                 for ($checkTime = $fromMinutes; $checkTime <= ($toMinutes - $this->period); $checkTime += $checkInterval) {
                                     $slotEnd = $checkTime + $this->period;
                                     $isBooked = false;
-                                    
+
                                     for ($min = $checkTime; $min < $slotEnd; $min++) {
                                         if (isset($bookedSlots[$min])) {
                                             $isBooked = true;
                                             break;
                                         }
                                     }
-                                    
+
                                     if (!$isBooked) {
                                         $hasAvailableSlot = true;
                                         break;
                                     }
                                 }
-                                
+
                                 if (!$hasAvailableSlot) {
                                     continue; // تخطي هذه الفترة لأنها محجوزة بالكامل
                                 }
@@ -367,7 +369,6 @@ class User extends Authenticatable implements MustVerifyEmail
             {
                 [$hours, $minutes] = explode(':', $time);
                 return (int)$hours * 60 + (int)$minutes;
-
             }
         };
     }
@@ -518,7 +519,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getFilteredAvailabilities($daysForward = 30, $period = 60)
     {
         $allAvailabilities = $this->availabilities()->get();
-        
+
         // إذا لم يكن هناك أوقات متاحة، ارجع collection فارغة
         if ($allAvailabilities->isEmpty()) {
             return $allAvailabilities;
@@ -527,7 +528,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // جلب جميع الأوقات المحجوزة للمعلم في الأيام القادمة
         $now = now();
         $futureDate = $now->copy()->addDays($daysForward);
-        
+
         $bookedConferences = \App\Models\Conference::where('tutor_id', $this->id)
             ->whereBetween('start_date_time', [$now->format('Y-m-d H:i:s'), $futureDate->format('Y-m-d H:i:s')])
             ->whereNotNull('start_date_time')
@@ -539,15 +540,15 @@ class User extends Authenticatable implements MustVerifyEmail
         foreach ($bookedConferences as $conference) {
             $start = new \DateTime($conference->start_date_time);
             $dayName = strtolower($start->format('l')); // monday, tuesday, etc.
-            
+
             if (!isset($bookedSlotsByDay[$dayName])) {
                 $bookedSlotsByDay[$dayName] = [];
             }
-            
+
             $startMinutes = (int)$start->format('H') * 60 + (int)$start->format('i');
             $end = new \DateTime($conference->end_date_time);
             $endMinutes = (int)$end->format('H') * 60 + (int)$end->format('i');
-            
+
             // إضافة جميع الدقائق المحجوزة
             for ($min = $startMinutes; $min < $endMinutes; $min++) {
                 $bookedSlotsByDay[$dayName][$min] = true;
@@ -555,19 +556,19 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         // دالة مساعدة لتحويل الوقت إلى دقائق
-        $timeToMinutes = function($time) {
+        $timeToMinutes = function ($time) {
             [$hours, $minutes] = explode(':', $time);
             return (int)$hours * 60 + (int)$minutes;
         };
 
         // فلترة الأوقات المتاحة
-        return $allAvailabilities->filter(function($availability) use ($bookedSlotsByDay, $period, $timeToMinutes) {
+        return $allAvailabilities->filter(function ($availability) use ($bookedSlotsByDay, $period, $timeToMinutes) {
             if (!isset($availability->day) || !isset($availability->day->name)) {
                 return true; // إذا لم يكن هناك معلومات اليوم، نرجعها كما هي
             }
-            
+
             $dayName = strtolower($availability->day->name);
-            
+
             // إذا لم يكن هناك أوقات محجوزة لهذا اليوم، نرجع الفترة كما هي
             if (empty($bookedSlotsByDay[$dayName])) {
                 return true;
@@ -576,26 +577,26 @@ class User extends Authenticatable implements MustVerifyEmail
             // التحقق من أن الفترة المتاحة غير محجوزة بالكامل
             $fromMinutes = $timeToMinutes($availability->hour_from);
             $toMinutes = $timeToMinutes($availability->hour_to);
-            
+
             // فحص إذا كانت هناك فترة واحدة متاحة على الأقل
             $checkInterval = 30; // فحص كل 30 دقيقة
             for ($checkTime = $fromMinutes; $checkTime <= ($toMinutes - $period); $checkTime += $checkInterval) {
                 $slotEnd = $checkTime + $period;
                 $isBooked = false;
-                
+
                 for ($min = $checkTime; $min < $slotEnd; $min++) {
                     if (isset($bookedSlotsByDay[$dayName][$min])) {
                         $isBooked = true;
                         break;
                     }
                 }
-                
+
                 // إذا وجدنا فترة واحدة متاحة على الأقل، نرجع true
                 if (!$isBooked) {
                     return true;
                 }
             }
-            
+
             // إذا كانت جميع الفترات محجوزة، نرجع false
             return false;
         });
@@ -605,5 +606,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getFullNameAttribute()
     {
         return isset($this->profile?->first_name) ? $this->profile?->first_name . ' ' . $this->profile?->last_name : ($this->name ?? 'Unknown');
+    }
+    public function getAvatarAttribute() // $user->avatar
+    {
+        if (Str::startsWith($this->profile?->avatar_path, ['http', 'https'])) {
+            return $this->profile?->avatar_path;
+        }
+        if ($this->profile?->avatar_path) {
+            return asset('storage/' . $this->profile?->avatar_path);
+        }
+
+
+        return asset('front/assets/imgs/tutors/1.jpg');
     }
 }

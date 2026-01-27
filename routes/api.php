@@ -9,12 +9,10 @@ use App\Http\Controllers\LocalController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\VerificationController;
 
-use Laravel\Sanctum\PersonalAccessToken;
 
 use App\Http\Controllers\Api\Chat\ChatContactsController;
 use App\Http\Controllers\Api\Chat\ChatMessagesController;
 use App\Http\Controllers\Api\Chat\ChatStatusController;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,104 +39,7 @@ Route::post('/social_login', [AuthController::class, 'socialLogin'])->name('soci
 Route::get('/locales/lang/{lang}', [LocalController::class, 'localesLang'])->name('localesLang');
 Route::get('/locales/langs', [LocalController::class, 'localesLangs'])->name('localesLangs');
 
-/*
-Route::post('/auth/check-token', function (Request $request) {
-    $fullToken = $request->token;
-    $email = $request->email;
-
-    if (!$fullToken || !$email) {
-        return response([
-            'success' => false,
-            'message' => 'Missing parameters'
-        ], 400);
-    }
-
-    // نقسم التوكن إلى جزئين (id | actual token)
-    $parts = explode('|', $fullToken, 2);
-
-    if (count($parts) !== 2) {
-        return response([
-            'success' => false,
-            'message' => 'Malformed token'
-        ], 400);
-    }
-
-    [$tokenId, $plainToken] = $parts;
-
-    // نبحث عن صف التوكن في الجدول
-    $dbToken = PersonalAccessToken::query()->where('id', $tokenId)->first();
-
-    // لو مش موجود → نعيد توليده للمستخدم بدل الخطأ
-    if (!$dbToken) {
-        // نحاول إيجاد المستخدم مباشرة
-        $user = \App\Models\User::where('email', $email)->first();
-
-        if (!$user) {
-            return response(['success' => false, 'message' => 'User not found']);
-        }
-
-        // ✳️ أنشئ توكن جديد مضمون وسجله فورًا
-        $newTokenResult = $user->createToken('auto-generated');
-        $newToken = $newTokenResult->plainTextToken;
-
-        $user->remember_token = $newToken;
-        $user->save();
-
-        return response([
-            'success' => true,
-            'message' => 'New token created automatically',
-            'user'    => $user,
-            'token'   => $newToken
-        ]);
-    } else {
-        $user = User::where('email', $email)->first();
-        $check_user = Auth::check($user->id);
-
-        if (!$check_user) {
-            Auth::login($user, true);
-        }
-    }
-
-    // تحقق من الهاش
-    $expectedHash = hash('sha256', $plainToken);
-
-    if (!hash_equals($dbToken->token, $expectedHash)) {
-        return response([
-            'success' => false,
-            'message' => 'Invalid token hash'
-        ], 401);
-    }
-
-    // جلب المستخدم المرتبط بالتوكن
-    $user = $dbToken->tokenable;
-
-    return response([
-        'success' => true,
-        'message' => 'Token verified successfully',
-        'user' => $user
-    ], 200);
-});
-*/
-Route::post('/auth/check-token', function (Request $request) {
-    $request->validate([
-        'token' => 'required|string',
-    ]);
-
-    $user = \Laravel\Sanctum\PersonalAccessToken::findToken($request->token)?->tokenable;
-
-    if (! $user) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid token'
-        ], 401);
-    }
-
-    return response()->json([
-        'success' => true,
-        'user' => $user,
-    ]);
-});
-
+Route::post('/auth/check-token', [AuthController::class, 'check_token'])->name('api.check_token');
 
 Route::get('/tlocales/lang/{lang}', function () {
     echo '123';

@@ -301,7 +301,7 @@ class OrderController extends Controller
             ], 200);
         }
 
-        $checkAllowOrder = Order::where('user_id', $user->id)->where('ref_type', 3)->first(); // ->where('ref_id',$tutor->id)
+        $checkAllowOrder = Order::where('user_id', $user->id)->where('ref_type', 3)->where('ref_id',$tutor->id)->first(); // ->where('ref_id',$tutor->id)
         if ($checkAllowOrder) {
             return response([
                 'success' => false,

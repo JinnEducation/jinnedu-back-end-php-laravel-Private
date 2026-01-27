@@ -149,38 +149,7 @@
                 </a>
             </div>
         </aside>
-        {{--
-        <!-- Mobile Sidebar -->
-        <div class="md:hidden w-full bg-primary text-white p-4">
-            <details class="bg-primary" open>
-                <summary class="cursor-pointer font-semibold text-lg list-none">
-                    <div class="flex items-center justify-between">
-                        <span>Navigation Steps</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </summary>
-                <div class="mt-4 space-y-3 text-sm">
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="1">1. Account Type</div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="2">2. Account Information
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="3">3. Personal Information
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="4">4. Tutor's Biography
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="5">5. Tutor's
-                        Availability
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="6">6. Tutor's Hourly Rate
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="7">7. Qualifications
-                    </div>
-                    <div class="step-item-mobile cursor-pointer hover:underline" data-step="8">8. Profile Video</div>
-                </div>
-            </details>
-        </div> --}}
-
+        
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
             @if($errors->any())
@@ -1556,11 +1525,16 @@
             const left = (screen.width / 2) - (width / 2);
             const top = (screen.height / 2) - (height / 2);
 
+            let account_type = $("#account-type").val();
+
+            let url = "{{ route('google.login') }}" + "?type=" + account_type;
+
             window.open(
-                "{{ route('google.login') }}",
+                url,
                 "googleLogin",
                 `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
             );
+
         }
     </script>
     

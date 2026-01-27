@@ -444,7 +444,10 @@ class UserController extends Controller
             ->distinct()
             ->leftJoin('assigned_roles', 'users.id', '=', 'assigned_roles.entity_id')
             ->leftJoin('roles', 'roles.id', '=', 'assigned_roles.role_id')
-            ->where('roles.name', '!=', 'superadmin');
+            ->where(function ($q) {
+                $q->where('roles.name', '!=', 'superadmin')
+                  ->orWhereNull('roles.name');
+            });
 
         if($request->type != null) {
             $items->where('users.type', $request->type);
@@ -464,6 +467,16 @@ class UserController extends Controller
 
         // $items = $items->paginate($limit);
         $items = paginate($items, $limit);
+        $items->each(function ($user) {
+            $user->append('full_name');
+            $user->name = $user->full_name;
+        
+            // ✅ مثال تعديل خصائص أخرى
+            $user->is_admin = $user->roles?->contains('name', 'admin') ?? false;
+            $user->avatar_url = $user->avatar 
+                ? asset('storage/'.$user->avatar) 
+                : asset('images/default.png');
+        });
 
         foreach($items as $key=>$item) {
             $item->roles = Bouncer::role()->get();

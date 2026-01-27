@@ -307,11 +307,11 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    Route::prefix('courses')->name('courses.')->group(function () {
-        $routeController = CourseController::class;
-        $routeModel = 'Course';
-        include 'rest_inc.php';
-    });
+    // Route::prefix('courses')->name('courses.')->group(function () {
+    //     $routeController = CourseController::class;
+    //     $routeModel = 'Course';
+    //     include 'rest_inc.php';
+    // });
 
     Route::prefix('navigations')->name('navigations.')->group(function () {
         $routeController = NavigationController::class;

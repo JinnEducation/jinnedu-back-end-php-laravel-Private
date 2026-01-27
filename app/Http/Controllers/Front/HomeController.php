@@ -84,12 +84,14 @@ class HomeController extends Controller
         $tutors = User::query()
             ->where('type', 2)
             ->with([
-                'abouts.country:id,name',
-                'descriptions.specialization:id,name',
+                'profile',
+                'tutorProfile',
+                'reviews'
             ])
             ->latest('id')
             ->limit(12)
             ->get();
+
 
         return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId', 'langShorts', 'subjects', 'languages', 'countries', 'specializations'));
     }
@@ -851,7 +853,7 @@ class HomeController extends Controller
 
                 DB::commit();
 
-                return redirect()->route('redirect.dashboard')
+                return redirect()->route('redirect.dashboard',['redirect_to'=> '/conferences/student-index'])
                     ->with('success', 'Trial lesson booked successfully');
             } else {
                 DB::rollBack();

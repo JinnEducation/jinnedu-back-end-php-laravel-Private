@@ -50,7 +50,7 @@ class AuthController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email,'.$request->user_id ?? null,
+            'email' => 'required|email|unique:users,email,' . $request->user_id ?? null,
         ]);
 
         // // If validation fails, throw an exception
@@ -68,7 +68,6 @@ class AuthController extends Controller
 
         // Validation passed, return a success response
         return response()->json(['success' => true, 'message' => 'Validation passed successfully'], 200);
-
     }
 
     public function emailCheck(Request $request)
@@ -115,7 +114,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'type' => $request->type,
             'fcm' => $request->fcm,
-            'phone' => $country ? $country->phonecode.$request->phone : $request->phone,
+            'phone' => $country ? $country->phonecode . $request->phone : $request->phone,
         ]);
 
         // Assign roles based on user type
@@ -207,7 +206,6 @@ class AuthController extends Controller
                 'message' => 'The Login info is not correct',
                 'msg-code' => '111',
             ], 500);
-
         }
 
         /*if(!$user->verified) return response([
@@ -254,7 +252,11 @@ class AuthController extends Controller
                         foreach ($submenu->childrens as $subnav) {
                             $subnav->checked = false;
                             if (isset($item)) {
-                                $subnav->checked = $item->can($subnav->name, $subnav->type);
+                                if ($item->name == 'superadmin') {
+                                    $subnav->checked = true;
+                                } else {
+                                    $subnav->checked = $item->can($subnav->name, $subnav->type);
+                                }
                             }
                         }
                     }
@@ -263,7 +265,11 @@ class AuthController extends Controller
                     foreach ($menu->childrens as $subnav) {
                         $subnav->checked = false;
                         if (isset($item)) {
-                            $subnav->checked = $item->can($subnav->name, $subnav->type);
+                            if ($item->name == 'superadmin') {
+                                $subnav->checked = true;
+                            } else {
+                                $subnav->checked = $item->can($subnav->name, $subnav->type);
+                            }
                         }
                     }
                 }
@@ -282,6 +288,66 @@ class AuthController extends Controller
         ]);
     }
 
+    public function check_token(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+        ]);
+
+        $user = \Laravel\Sanctum\PersonalAccessToken::findToken($request->token)?->tokenable;
+
+        foreach ($user->roles as $index => $role) {
+            if (Bouncer::is($user)->a($role->name)) {
+                $item = Bouncer::role()->find($role->id);
+            }
+
+            $menus = Menu::parents()->get();
+            foreach ($menus as $menu) {
+                if ($menu->type == '') {
+                    $menu->childrens = $menu->childes()->get();
+                    foreach ($menu->childrens as $submenu) {
+                        $submenu->childrens = $submenu->childes()->get();
+                        foreach ($submenu->childrens as $subnav) {
+                            $subnav->checked = false;
+                            if (isset($item)) {
+                                if ($item->name == 'superadmin') {
+                                    $subnav->checked = true;
+                                } else {
+                                    $subnav->checked = $item->can($subnav->name, $subnav->type);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    $menu->childrens = $menu->childes()->get();
+                    foreach ($menu->childrens as $subnav) {
+                        $subnav->checked = false;
+                        if (isset($item)) {
+                            if ($item->name == 'superadmin') {
+                                $subnav->checked = true;
+                            } else {
+                                $subnav->checked = $item->can($subnav->name, $subnav->type);
+                            }
+                        }
+                    }
+                }
+            }
+
+            $user->roles[$index]->permissions = $menus;
+        }
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid token'
+            ], 401);
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => $user,
+        ]);
+    }
     public function logout()
     {
 
@@ -307,7 +373,7 @@ class AuthController extends Controller
 
         // نوع المستخدم يحدد المسار في Vue
         $redirectPathReq = $request->redirect_to ?? '';
-        $redirectPath = 'dashboard'.$redirectPathReq;
+        $redirectPath = 'dashboard' . $redirectPathReq;
 
         // ✳️ أنشئ التوكن بالطريقة المضمونة
         $tokenResult = $user->createToken('main');
@@ -320,7 +386,7 @@ class AuthController extends Controller
         $user->save();
 
         // 🔹 عنوان مشروع Vue المحلي
-        $vueApp = in_array(env('APP_ENV'), ['local', 'development']) ? 'http://localhost:5173/me' : env('APP_URL').'me'; // محلي
+        $vueApp = in_array(env('APP_ENV'), ['local', 'development']) ? 'http://localhost:5173/me' : env('APP_URL') . 'me'; // محلي
 
         // 🔹 نحول المستخدم إلى صفحة التحقق داخل Vue
         $redirectUrl = "{$vueApp}/sign-in-check?token={$plainTextToken}&email={$user->email}&to={$redirectPath}";
@@ -371,7 +437,7 @@ class AuthController extends Controller
     {
         // Validation
         $request->validate([
-            'email' => 'required | email | unique:users,email,'.auth()->user()->id,
+            'email' => 'required | email | unique:users,email,' . auth()->user()->id,
         ]);
         $user = Auth::user();
 
@@ -423,7 +489,7 @@ class AuthController extends Controller
         Notification::send($user, $notifyData);
 
         return response([
-            'url' => url('/').$user->avatar,
+            'url' => url('/') . $user->avatar,
         ]);
     }
 
@@ -773,7 +839,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:200',
-            'email' => 'required|email|unique:users,email,'.auth()->id(),
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
             'phone' => 'nullable|string|max:50',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
@@ -827,7 +893,6 @@ class AuthController extends Controller
                 'success' => true,
                 'message' => 'Profile updated successfully',
             ]);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
@@ -852,7 +917,6 @@ class AuthController extends Controller
             $status = Password::sendResetLink(
                 $request->only('email')
             );
-
         } catch (\Exception $e) {
 
             return response([
@@ -866,7 +930,6 @@ class AuthController extends Controller
             'success' => $status === Password::RESET_LINK_SENT ? true : false,
             'result' => __($status),
         ]);
-
     }
 
     public function resetPassword($token)
@@ -876,7 +939,6 @@ class AuthController extends Controller
             'success' => true,
             'token' => $token,
         ]);
-
     }
 
     public function passwordUpdate(Request $request)
@@ -904,7 +966,6 @@ class AuthController extends Controller
                 try {
 
                     @event(new PasswordReset($user));
-
                 } catch (\Exception $e) {
 
                     return response([
@@ -922,7 +983,6 @@ class AuthController extends Controller
             'success' => $success,
             'result' => __($status),
         ], 200);
-
     }
 
     public function socialLogin(Request $request)
@@ -1015,22 +1075,22 @@ class AuthController extends Controller
                 $directory = 'users/';
 
                 // Save the avatar image to the specified directory
-                $tempPath = $directory.$filename;
+                $tempPath = $directory . $filename;
 
                 file_put_contents(public_path($tempPath), $avatarContents);
 
-                $datePath = date('Y').'/'.date('m').'/'.date('d');
+                $datePath = date('Y') . '/' . date('m') . '/' . date('d');
 
                 $path = storage_path('app/public/');
-                $destinationDirectory = $path.$directory.$datePath;
+                $destinationDirectory = $path . $directory . $datePath;
 
-                $moved = move_uploaded_file($tempPath, $destinationDirectory.'/'.$filename);
+                $moved = move_uploaded_file($tempPath, $destinationDirectory . '/' . $filename);
 
                 if ($moved) {
                     unlink(public_path($tempPath));
                 }
 
-                $user->avatar = $directory.$filename;
+                $user->avatar = $directory . $filename;
                 $user->save();
             }
 
@@ -1129,7 +1189,6 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'user-deleted-successfully',
         ], 200);
-
     }
 
     public function editProfile()
@@ -1313,7 +1372,6 @@ class AuthController extends Controller
                         'video_terms_agreed' => $request->has('agree_terms'),
                     ]
                 );
-
             }
 
             DB::commit();
@@ -1321,7 +1379,6 @@ class AuthController extends Controller
             return redirect()
                 ->route('home')
                 ->with('success', __('site.Update Profile'));
-
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -1329,8 +1386,9 @@ class AuthController extends Controller
     }
 
     // Redirect to Google
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        session(['account_type_login_google' => $request->type]);
         return Socialite::driver('google')->redirect();
     }
 
@@ -1348,6 +1406,7 @@ class AuthController extends Controller
             'google_id' => $googleUser->id,
             'loginNow' => false,
         ];
+        $account_type_login_google = session('account_type_login_google');
 
         $user = User::where('google_id', $data['google_id'])
             ->where('email', $data['email'])
@@ -1357,6 +1416,32 @@ class AuthController extends Controller
             $data['loginNow'] = true;
             Auth::login($user, true);
         }
+
+        if (!$user && $account_type_login_google == 1) {
+            $user = User::create([
+                'type' => 1,
+                'email' => $googleUser->email,
+                'password' => null,
+                'phone' => null,
+                'google_id' => $googleUser->id ?? null
+            ]);
+
+            //إنشاء الملف العام (User Profile)
+            $user->profile()->create([
+                'first_name' => $data['first_name'] ?? null,
+                'last_name' => $data['last_name'] ?? null,
+                'email_display' => $data['email'] ?? null,
+                'country' => null,
+                'contact_number' => null,
+                'avatar_path' => $googleUser->avatar ?? null,
+                'terms_agreed' => true,
+            ]);
+
+            $data['loginNow'] = true;
+            Auth::login($user, true);
+        }
+
+        session()->forget('account_type_login_google');
 
         return view('auth.oauth-popup-close', compact('data'));
     }
@@ -1374,8 +1459,8 @@ class AuthController extends Controller
 
         if ($user->hasVerifiedEmail()) {
             return $request->wantsJson()
-                        ? new JsonResponse([], 204)
-                        : redirect()->route('home')->with('verified', true);
+                ? new JsonResponse([], 204)
+                : redirect()->route('home')->with('verified', true);
         }
 
         if ($user->markEmailAsVerified()) {
@@ -1387,7 +1472,7 @@ class AuthController extends Controller
         // }
 
         return $request->wantsJson()
-                    ? new JsonResponse([], 204)
-                    : redirect()->route('home')->with('verified', true);
+            ? new JsonResponse([], 204)
+            : redirect()->route('home')->with('verified', true);
     }
 }
