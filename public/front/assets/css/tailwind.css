@@ -3630,6 +3630,11 @@
       width: calc(3/4 * 100%);
     }
   }
+  .md\:w-100 {
+    @media (width >= 48rem) {
+      width: calc(var(--spacing) * 100);
+    }
+  }
   .md\:w-auto {
     @media (width >= 48rem) {
       width: auto;
@@ -4249,11 +4254,6 @@
   .rtl\:pr-14 {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       padding-right: calc(var(--spacing) * 14);
-    }
-  }
-  .rtl\:text-left {
-    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-      text-align: left;
     }
   }
   .rtl\:text-right {

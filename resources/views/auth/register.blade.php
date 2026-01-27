@@ -28,7 +28,7 @@
     <div class="flex min-h-screen flex-col md:flex-row">
         <!-- Sidebar Desktop -->
         <aside
-            class="block relative h-full w-100 bg-primary text-white p-10 md:sticky top-0 md:h-screen overflow-y-auto  scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            class="block relative h-full w-full md:w-100 bg-primary text-white p-10 md:sticky top-0 md:h-screen overflow-y-auto  scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <!-- Logo -->
             <div>
                 <div class="my-12 flex justify-center items-center">
