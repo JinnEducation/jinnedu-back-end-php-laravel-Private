@@ -999,11 +999,11 @@
 
             <!-- Second Image Container -->
             <div class="w-full">
-                <div class="px-4 mx-auto max-w-full lg:max-w-[90%]">
-                    <img src="{{ asset('front/assets/imgs/steps/img2.png') }}"
+                <a href="{{ route('register') }}" class="px-4 mx-auto max-w-full lg:max-w-[90%]">
+                    <img src="{{ app()->getLocale() != 'ar' ? asset('front/assets/imgs/steps/img2.png') : asset('front/assets/imgs/steps/rig-ar.jpg') }}"
                         alt="{{ label_text('global', 'site.steps-image2-alt', __('site.Learning steps infographic')) }}"
                         class="object-cover w-full h-auto">
-                </div>
+                </a>
             </div>
         </div>
     </section>
