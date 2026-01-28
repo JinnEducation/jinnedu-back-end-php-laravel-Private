@@ -16,7 +16,7 @@ class SliderController extends Controller
 
     public function __construct()
     {
-         $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum');
     }
     public function index()
     {
@@ -26,17 +26,18 @@ class SliderController extends Controller
         return SliderResource::collection($slider);
     }
 
-    
+
     public function store(Request $request)
     {
         $languages = $request->langs;
         DB::beginTransaction();
         try {
-            
-         $dataSlider = $request->validate([
-            'image' => 'required', 
-            'btn_url' => 'required',
-        ]);
+
+            $dataSlider = $request->validate([
+                'image' => 'required',
+                'image_ar' => 'nullable',
+                'btn_url' => 'required',
+            ]);
 
             $dataLang = $request->validate([
                 'title.*' => 'required|string',
@@ -56,9 +57,21 @@ class SliderController extends Controller
             } else {
                 $dataSlider['image'] = $request->image ?? null;
             }
+            if ($request->hasFile('image_ar')) {
+                $file = $request->file('image_ar');
 
-          
-             $slider = Slider::create( $dataSlider);
+                if (! $file->isValid()) {
+                    return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                }
+
+                $imageArPath = $file->store('uploads/sliders', 'public');
+                $dataSlider['image_ar'] = $imageArPath;
+            } else {
+                $dataSlider['image_ar'] = $request->image_ar ?? null;
+            }
+
+
+            $slider = Slider::create($dataSlider);
 
             foreach ($languages as $language) {
                 SliderLang::create([
@@ -68,11 +81,11 @@ class SliderController extends Controller
                     'sub_title' => $request->sub_title[$language['id']],
                     'btn_name' => $request->btn_name[$language['id']],
 
-    
+
                 ]);
             }
 
-             $slider->load('langs');
+            $slider->load('langs');
             DB::commit();
 
             return response()->json($slider);
@@ -83,24 +96,25 @@ class SliderController extends Controller
         }
     }
 
-    
+
     public function show($id)
     {
-         $slider = Slider::with('langs')->findOrFail($id);
-         return new SliderResource($slider);
+        $slider = Slider::with('langs')->findOrFail($id);
+        return new SliderResource($slider);
     }
 
 
     public function update(Request $request, $id)
     {
-         $slider = Slider::findOrFail($id);
+        $slider = Slider::findOrFail($id);
         $languages = $request->langs;
         DB::beginTransaction();
         try {
-                $dataSlider = $request->validate([
-            'image'         => ['sometimes', 'nullable'],
-            'btn_url'          => ['sometimes', 'required'],
-        ]);
+            $dataSlider = $request->validate([
+                'image'         => ['sometimes', 'nullable'],
+                'image_ar'         => ['sometimes', 'nullable'],
+                'btn_url'          => ['sometimes', 'required'],
+            ]);
             $dataLang = $request->validate([
                 'title.*' => ['sometimes', 'required'],
                 'sub_title.*' => ['sometimes', 'required'],
@@ -119,19 +133,31 @@ class SliderController extends Controller
             } else {
                 $dataSlider['image'] = $request->image ?? $slider->image;
             }
+            if ($request->hasFile('image_ar')) {
+                $file = $request->file('image_ar');
+
+                if (! $file->isValid()) {
+                    return response()->json(['message' => 'Uploaded image is not valid.'], 422);
+                }
+
+                $imageArPath = $file->store('uploads/sliders', 'public');
+                $dataSlider['image_ar'] = $imageArPath;
+            } else {
+                $dataSlider['image_ar'] = $request->image_ar ?? $slider->image_ar;
+            }
 
 
-           
+
 
             if (! empty($dataSlider)) {
-                 $slider->update($dataSlider);
+                $slider->update($dataSlider);
             }
 
             if (! empty($dataLang)) {
-                foreach($languages as $language){
+                foreach ($languages as $language) {
                     SliderLang::updateOrCreate([
-                       'slider_id'     => $slider->id,
-                        'language_id' => $language['id'],    
+                        'slider_id'     => $slider->id,
+                        'language_id' => $language['id'],
                     ], [
                         'title' => $request->title[$language['id']],
                         'sub_title' => $request->sub_title[$language['id']],
@@ -140,11 +166,10 @@ class SliderController extends Controller
                 }
             }
 
-           $slider->load(['langs']);
+            $slider->load(['langs']);
             DB::commit();
 
-           return new SliderResource($slider);
-
+            return new SliderResource($slider);
         } catch (\Exception $e) {
             DB::rollBack();
 

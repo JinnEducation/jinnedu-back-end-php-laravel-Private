@@ -378,6 +378,13 @@ $(function () {
   }
 });
 
+$(function(){
+  if (go_tutor === 'tutor') {
+    $('.account-card[data-type="2"]').trigger('click');
+    $('#continue-step-1').trigger('click');
+  }
+});
+
 // Step 2
 $(function () {
   // لما تضغط على زر القلم يفتح اختيار الصورة

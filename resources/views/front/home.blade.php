@@ -86,8 +86,11 @@
                         @foreach ($sliders as $index => $slider)
                             @php
                                 $isActive = $index === 0;
-                                $imgPath = $slider->image_url ?? null;
-                                $imgUrl = $imgPath ?? asset('front/assets/imgs/hero/girl1.png');
+                                // $imgPath = $slider->image_url ?? null;
+                                // $imgUrl = $imgPath ?? asset('front/assets/imgs/hero/girl1.png');
+                                $imgUrl = app()->getLocale() == 'en' 
+                                        ? $slider->image_url 
+                                        : ($slider->image_ar_url ?? $slider->image_url);
                                 $langRow = null;
                                 if (isset($languageId) && $languageId) {
                                     $langRow = $slider->langs->firstWhere('language_id', $languageId);
@@ -778,18 +781,8 @@
                             <!-- Tutor Cards -->
                             @forelse($tutors as $tutor)
                                 @php
-                                    // $avatar = $tutor->avatar
-                                    //     ? (filter_var($tutor->avatar, FILTER_VALIDATE_URL)
-                                    //         ? $tutor->avatar
-                                    //         : asset($tutor->avatar))
-                                    //     : asset('front/assets/imgs/tutors/1.jpg');
-
-                                    // $notAvailable = label_text('global', 'site.not-available', __('site.Not available'));
-                                    // $country = $tutor->abouts?->country?->name ?? $notAvailable;
-                                    // $spec = optional($tutor->descriptions->first()?->specialization)->name ?? $notAvailable;
                                     $avg = $tutor->reviews->avg('stars') ?? 0;
                                     $fullStars = floor($avg);
-                                    // $locale = app()->getLocale();
                                 @endphp
 
                                 <div class="swiper-slide">
@@ -802,7 +795,7 @@
 
                                         <div class="text-left rtl:text-right">
                                             <h3 class="mb-2 text-xl font-bold text-[#1B449C]">{{ $tutor->full_name }}</h3>
-                                            <p class="mb-4 font-medium text-black">{{ $tutor->tutorProfile?->specializations }}</p>
+                                            <p class="mb-4 font-medium text-black">{{ $tutor->tutorProfile?->specializations ?? '--' }}</p>
 
                                             <div class="flex items-center mb-4 text-gray-500">
                                                 <i class="text-[#1B449C] mr-2 rtl:ml-2 rtl:mr-0">
@@ -813,7 +806,7 @@
                                                             fill="#1B449C" />
                                                     </svg>
                                                 </i>
-                                                <span class="text-sm">{{ $tutor->profile?->country }}</span>
+                                                <span class="text-sm">{{ $tutor->profile?->country ?? '--' }}</span>
                                             </div>
 
                                             <div class="flex flex-col items-left rtl:items-right">
@@ -966,7 +959,7 @@
                             </div>
 
                             <!-- Call to Action Button -->
-                            <a href="{{ route('register') }}"
+                            <a href="{{ Auth::check() ? route('redirect.dashboard') :route('register',['go'=>'tutor']) }}"
                                 class="overflow-hidden relative px-16 py-3.5 w-full text-2xl font-bold text-white rounded-lg transition-all duration-300 transform lg:w-auto bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
                                 <span class="relative z-10">
                                     {{ label_text('global', 'site.Get-Started', __('site.Get Started')) }}

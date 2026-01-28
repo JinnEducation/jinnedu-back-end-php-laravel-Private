@@ -36,6 +36,7 @@ class SliderResource extends JsonResource
             'sub_title' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['sub_title']]),
             'btn_name' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['btn_name']]),
             'image' => $this->image_url,
+            'image_ar' => $this->image_ar_url,
             'btn_url' => $this->btn_url,
         ];
     }

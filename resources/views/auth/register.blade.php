@@ -1516,6 +1516,9 @@
         const emailCheckUrl = "{{ route('auth.email-check') }}";
         let isGoogleRegister = false;
     </script>
+    <script>
+        const go_tutor = @json(request('go'));
+    </script>
     <script src="{{ asset('front/assets/js/signup.js') }}"></script>
     <script>
         function openGooglePopup() {

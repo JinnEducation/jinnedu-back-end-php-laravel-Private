@@ -12,7 +12,7 @@ class Slider extends Model
     use HasFactory;
     protected $guarded = [];
 
-    protected $append = ['image_url'];
+    protected $append = ['image_url','image_ar_url'];
 
 
     public function langs()
@@ -37,9 +37,19 @@ class Slider extends Model
             return $this->image;
         }
         if (empty($this->image)) {
-            return null;
+            return asset('front/assets/imgs/hero/girl1.png');
         }
         return asset('storage/'.$this->image);
+    }
+    public function getImageArUrlAttribute() // $this->image_ar_url
+    {
+        if (Str::startsWith($this->image_ar, ['http', 'https'])) {
+            return $this->image_ar;
+        }
+        if (empty($this->image_ar)) {
+            return null;
+        }
+        return asset('storage/'.$this->image_ar);
     }
 
 }
