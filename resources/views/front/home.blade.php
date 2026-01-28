@@ -474,7 +474,7 @@
                                 {{ label_text('global', 'site.upgrade-skills-text', __('site.Learn anytime, anywhere with expert-led courses designed for you.')) }}
                             </p>
 
-                            <a href="{{ route('site.coming_soon') }}"
+                            <button onclick="window.location.href='{{ route('site.coming_soon') }}'"
                                 class="overflow-hidden relative px-8 py-4 text-lg text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
                                 <span class="relative z-10">
                                     {{ label_text('global', 'site.upgrade-skills-cta', __('site.Explore 400+ Free Courses')) }}
@@ -482,7 +482,7 @@
                                 <div
                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                 </div>
-                            </a>
+                            </button>
                         </div>
                     </div>
 
@@ -781,7 +781,7 @@
                             <!-- Tutor Cards -->
                             @forelse($tutors as $tutor)
                                 @php
-                                    $avg = $tutor->reviews->avg('stars') ?? 0;
+                                    $avg = $tutor->reviews->avg('stars') ?? 4.5;
                                     $fullStars = floor($avg);
                                 @endphp
 
@@ -959,7 +959,7 @@
                             </div>
 
                             <!-- Call to Action Button -->
-                            <a href="{{ Auth::check() ? route('redirect.dashboard') :route('register',['go'=>'tutor']) }}"
+                            <button onclick="window.location.href='{{ Auth::check() ? route('redirect.dashboard') : route('register',['go'=>'tutor']) }}'"
                                 class="overflow-hidden relative px-16 py-3.5 w-full text-2xl font-bold text-white rounded-lg transition-all duration-300 transform lg:w-auto bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
                                 <span class="relative z-10">
                                     {{ label_text('global', 'site.Get-Started', __('site.Get Started')) }}
@@ -967,7 +967,7 @@
                                 <div
                                     class="absolute inset-0 bg-white opacity-0 transition-all duration-500 transform -translate-x-full group-hover:translate-x-0 group-hover:opacity-10">
                                 </div>
-                            </a>
+                            </button>
 
                         </div>
                     </div>

@@ -1,4 +1,7 @@
 <x-front-layout>
+    @php
+        Carbon\Carbon::setLocale(app()->getLocale());
+    @endphp
 
     <!-- Hero Section -->
     <section class="flex overflow-hidden relative items-center bg-white mt-[120px] py-5 md:py-10">
@@ -14,7 +17,7 @@
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i
-                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
@@ -23,7 +26,7 @@
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i
-                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
@@ -32,7 +35,7 @@
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i
-                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         {{ $group_class->langsAll?->first()->title }}
@@ -64,8 +67,8 @@
                         <!-- Rating -->
                         <div class="flex gap-2 items-center mb-4">
                             <div class="flex gap-1 items-center">
-                                @for($i = 1; $i <= 5; $i++)
-                                    @if($i <= $group_class->rating)
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= $group_class->rating)
                                         <i class="text-yellow-400 fas fa-star text-sm"></i>
                                     @else
                                         <i class="text-gray-400 fas fa-star text-sm"></i>
@@ -102,8 +105,8 @@
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
                             {{ label_text('global', 'duration', __('site.duration')) }} :
-                            {{ ($group_class->classes ?? 0) }}
-                            {{ app()->getLocale() == 'ar' ? 'أيام' : 'Days'}}
+                            {{ $group_class->classes ?? 0 }}
+                            {{ app()->getLocale() == 'ar' ? 'أيام' : 'Days' }}
                         </span>
 
                         <span class="px-4 py-2 text-sm text-black border border-gray-400 rounded-md">
@@ -131,7 +134,8 @@
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
                         <div class="flex gap-4 items-center mb-4">
                             <img src="{{ asset('storage/' . $group_class->tutor?->avatar) }}"
-                                alt="{{ $group_class->tutor?->full_name }}" class="object-cover w-21 h-21 rounded-full">
+                                alt="{{ $group_class->tutor?->full_name }}"
+                                class="object-cover w-21 h-21 rounded-full">
 
                             <div>
                                 <h3 class="text-sm font-semibold text-black">
@@ -195,15 +199,16 @@
                             {{ label_text('global', 'You might also like', __('site.You might also like')) }}
                         </h2>
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            @foreach($suggestions as $suggestion)
+                            @foreach ($suggestions as $suggestion)
                                 <div class="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
                                     <div class="p-2.5 w-full">
-                                        <img src="{{ asset('storage/' . $suggestion->imageInfo?->path) }}" alt="Essay Basics"
-                                            class="object-cover w-full h-43 rounded-sm">
+                                        <img src="{{ asset('storage/' . $suggestion->imageInfo?->path) }}"
+                                            alt="Essay Basics" class="object-cover w-full h-43 rounded-sm">
                                     </div>
                                     <div class="pb-4 px-2.5">
                                         <div class="flex justify-between items-center my-2">
-                                            <h3 class="text-lg text-black">{{ $suggestion->langsAll?->first()->title }}</h3>
+                                            <h3 class="text-lg text-black">{{ $suggestion->langsAll?->first()->title }}
+                                            </h3>
                                             <p class="text-lg text-black font-light">{{ $suggestion->price }} USD</p>
                                         </div>
                                         <a href="{{ route('site.group_class_details', ['locale' => app()->getLocale(), 'id' => $suggestion->id]) }}"
@@ -219,7 +224,7 @@
 
                 <!-- Right Column: Booking Card -->
                 <div class="lg:col-span-1">
-                    @if($exams->count() > 0)
+                    @if ($exams->count() > 0)
                         <a href="{{ route('site.take_exam', ['locale' => app()->getLocale(), 'group_class_id' => $group_class->id]) }}"
                             class="block text-center px-6 py-3 mb-6 text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
                             {{ label_text('global', 'Take Exam', __('site.Take Exam')) }}
@@ -231,11 +236,9 @@
                                 {{ label_text('global', 'Booking', __('site.Booking')) }}
                             </h2>
                             <div class="relative group">
-                                <button id="fav-btn"
-                                data-ref="{{ $group_class->id }}"
-    data-type="3"
-    class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
-                                   
+                                <button id="fav-btn" data-ref="{{ $group_class->id }}" data-type="3"
+                                    class="cursor-pointer transition-all duration-300 text-gray-300 flex items-center">
+
                                     <i class="fa-regular fa-heart not-faved"></i>
                                     <i class="fa-solid fa-heart text-red-600 faved !hidden"></i>
                                 </button>
@@ -257,20 +260,21 @@
                                 <span class="text-[15px] font-semibold text-black">
                                     {{ label_text('global', 'Price', __('site.Price')) }}
                                 </span>
-                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }} USD</span>
+                                <span class="text-[15px] font-semibold text-black">{{ $group_class->price }}
+                                    USD</span>
                             </div>
 
                             <!-- Date/Time Selection -->
                             <div class="mb-4 space-y-3">
                                 <input type="hidden" name="group_class_id" value="{{ $group_class->id }}">
-                                @foreach($group_class->dates as $date)
+                                @foreach ($group_class->dates as $date)
                                     <div
                                         class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
                                         <span
-                                            class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->format('l') }}
-                                            , {{ Carbon\Carbon::parse($date->class_date)->format('M . d , Y') }}</span>
+                                            class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->translatedFormat('l') }}
+                                            , {{ \Carbon\Carbon::parse($date->class_date)->locale(app()->getLocale())->translatedFormat('M d, Y') }}</span>
                                         <span
-                                            class="text-sm font-medium text-gray-900">{{ Carbon\Carbon::parse($date->class_date)->format('h:i A') }}</span>
+                                            class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($date->class_date)->locale(app()->getLocale())->translatedFormat('h:i A') }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -287,9 +291,9 @@
                                 <button type="submit"
                                     class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
                                     @if ($hasOrder)
-                                    {{ label_text('global', 'Go To Class', __('site.Go To Class')) }}
+                                        {{ label_text('global', 'Go To Class', __('site.Go To Class')) }}
                                     @else
-                                    {{ label_text('global', 'Book Now', __('site.Book Now')) }}
+                                        {{ label_text('global', 'Book Now', __('site.Book Now')) }}
                                     @endif
                                 </button>
                             @endauth
@@ -304,65 +308,65 @@
         </div>
     </section>
 
-   @push('scripts')
-    <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
+    @push('scripts')
+        <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('fav-btn');
-            if (!btn) return;
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const btn = document.getElementById('fav-btn');
+                if (!btn) return;
 
-            const iconNotFaved = btn.querySelector('.not-faved');
-            const iconFaved    = btn.querySelector('.faved');
+                const iconNotFaved = btn.querySelector('.not-faved');
+                const iconFaved = btn.querySelector('.faved');
 
-            const setUI = (isFaved) => {
-                if (isFaved) {
-                    iconNotFaved.classList.add('!hidden');
-                    iconFaved.classList.remove('!hidden');
-                } else {
-                    iconFaved.classList.add('!hidden');
-                    iconNotFaved.classList.remove('!hidden');
-                }
-            };
-
-            btn.addEventListener('click', async (e) => {
-                e.preventDefault();
-
-                btn.disabled = true;
-
-                try {
-                    const res = await fetch("{{ route('site.user_favorites.toggle') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            ref_id: parseInt(btn.dataset.ref),
-                            type: parseInt(btn.dataset.type) // 3 group class
-                        })
-                    });
-
-                    if (res.status === 401) {
-                        window.location.href = "{{ route('login') }}";
-                        return;
+                const setUI = (isFaved) => {
+                    if (isFaved) {
+                        iconNotFaved.classList.add('!hidden');
+                        iconFaved.classList.remove('!hidden');
+                    } else {
+                        iconFaved.classList.add('!hidden');
+                        iconNotFaved.classList.remove('!hidden');
                     }
+                };
 
-                    const data = await res.json();
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
 
-                    if (data.status === 'added') setUI(true);
-                    if (data.status === 'removed') setUI(false);
+                    btn.disabled = true;
 
-                } catch (err) {
-                    console.error(err);
-                    alert('Error saving favorite');
-                } finally {
-                    btn.disabled = false;
-                }
+                    try {
+                        const res = await fetch("{{ route('site.user_favorites.toggle') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                ref_id: parseInt(btn.dataset.ref),
+                                type: parseInt(btn.dataset.type) // 3 group class
+                            })
+                        });
+
+                        if (res.status === 401) {
+                            window.location.href = "{{ route('login') }}";
+                            return;
+                        }
+
+                        const data = await res.json();
+
+                        if (data.status === 'added') setUI(true);
+                        if (data.status === 'removed') setUI(false);
+
+                    } catch (err) {
+                        console.error(err);
+                        alert('Error saving favorite');
+                    } finally {
+                        btn.disabled = false;
+                    }
+                });
             });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
 
 </x-front-layout>

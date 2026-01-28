@@ -124,5 +124,7 @@ $(document).ready(function() {
             $(this).find('img').removeClass('scale-105');
         }
     );
+
+    $('#tutorsListContainer .tutor-card').first().trigger('click');
 });
 
