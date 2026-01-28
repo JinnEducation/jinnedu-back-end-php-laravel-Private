@@ -598,7 +598,9 @@
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($languages as $language)
-                                            <option value=" {{$language->name}} ">{{$language->name}}</option>
+                                            <option value=" {{$language->name}} ">
+                                                {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
