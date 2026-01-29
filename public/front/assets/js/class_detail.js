@@ -176,3 +176,59 @@ $(document).ready(function () {
     }
   });
 });
+
+$(function () {
+
+  const $btn = $('#fav-btn');
+  if (!$btn.length) return;
+
+
+
+  const $iconNotFaved = $btn.find('.not-faved');
+  const $iconFaved = $btn.find('.faved');
+
+  const setUI = function (isFaved) {
+    if (isFaved) {
+      $iconNotFaved.addClass('!hidden');
+      $iconFaved.removeClass('!hidden');
+    } else {
+      $iconFaved.addClass('!hidden');
+      $iconNotFaved.removeClass('!hidden');
+    }
+  };
+
+  $btn.on('click', function (e) {
+    e.preventDefault();
+
+    $btn.prop('disabled', true);
+
+    $.ajax({
+      url: toggleUrl,
+      method: 'POST',
+      contentType: 'application/json',
+      headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json'
+      },
+      data: JSON.stringify({
+        ref_id: parseInt($btn.data('ref')),
+        type: parseInt($btn.data('type')) // 3 = group class
+      }),
+      success: function (data) {
+        if (data.status === 'added') setUI(true);
+        if (data.status === 'removed') setUI(false);
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          window.location.href = loginUrl;
+          return;
+        }
+        alert('Error saving favorite');
+      },
+      complete: function () {
+        $btn.prop('disabled', false);
+      }
+    });
+  });
+
+});

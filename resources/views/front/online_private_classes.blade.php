@@ -41,6 +41,7 @@
                         {{ label_text('global', 'Find a Tutor', __('site.Find a Tutor')) }}
                     </h2>
                 </div>
+
                 <div class="grid grid-cols-2 gap-6 mb-3 md:grid-cols-3 lg:grid-cols-5">
 
                     {{-- What to Learn? --}}
@@ -54,7 +55,7 @@
                                 <option value="">{{ label_text('global', 'Subject', __('site.Subject')) }}</option>
                                 @foreach ($subjects as $subject)
                                     <option value="{{ $subject->name }}" {{ ($filters['filterSubject'] ?? '') == $subject->name ? 'selected' : '' }}>
-                                        {{ $subject->name }}
+                                        {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -71,7 +72,8 @@
                             <select id="filterPriceRange"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">{{ label_text('global', 'Any price', __('site.Any price')) }}</option>
-                                <option value="0-10" {{ ($filters['filterPriceRange'] ?? '') == '0-10' ? 'selected' : '' }}>{{ label_text('global', 'Under 10 USD', __('site.Under 10 USD')) }}
+                                <option value="0-10" {{ ($filters['filterPriceRange'] ?? '') == '0-10' ? 'selected' : '' }}>
+                                    {{ label_text('global', 'Under 10 USD', __('site.Under 10 USD')) }}
                                 </option>
                                 <option value="10-25" {{ ($filters['filterPriceRange'] ?? '') == '10-25' ? 'selected' : '' }}>
                                     {{ label_text('global', '10 USD - 25 USD', __('site.10 USD - 25 USD')) }}
@@ -82,7 +84,8 @@
                                 <option value="50-100" {{ ($filters['filterPriceRange'] ?? '') == "50-100" ? 'selected' : '' }}>
                                     {{ label_text('global', '50 USD - 100 USD', __('site.50 USD - 100 USD')) }}
                                 </option>
-                                <option value="100-9999" {{ ($filters['filterPriceRange'] ?? '') == "100-9999" ? 'selected' : '' }}>{{ label_text('global', '100 USD+', __('site.100 USD+')) }}
+                                <option value="100-9999" {{ ($filters['filterPriceRange'] ?? '') == "100-9999" ? 'selected' : '' }}>
+                                    {{ label_text('global', '100 USD+', __('site.100 USD+')) }}
                                 </option>
                             </select>
                             <i
@@ -102,7 +105,7 @@
                                 </option>
                                 @foreach ($languages as $language)
                                     <option value="{{ $language->name }}" {{ ($filters['filterNativeLanguage'] ?? '') == $language->name ? 'selected' : '' }}>
-                                        {{ $language->name }}
+                                        {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -152,7 +155,7 @@
                                 </option>
                                 @foreach ($specializations as $spec)
                                     <option value="{{ $spec->name }}"  {{ ($filters['filterSpecialization'] ?? '') == $spec->name ? 'selected' : '' }}>
-                                        {{ $spec->name }}
+                                        {{ label_text('specializations', $spec->name, __('specializations.' . $spec->name)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -171,8 +174,7 @@
                                 <option value="">{{ label_text('global', 'Country', __('site.Country')) }}</option>
                                 @foreach ($countries as $country)
                                     <option value="{{ $country->name }}" {{ ($filters['filterCountry'] ?? '') == $country->name ? 'selected' : '' }}>
-                                        {{-- عندك بالـ DB أعمدة name / en_name / ar_name --}}
-                                        {{ $country->en_name ?? ($country->name ?? $country->ar_name) }}
+                                        {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -192,7 +194,7 @@
                                 </option>
                                 @foreach ($languages as $language)
                                     <option value="{{ $language->name }}" {{ ($filters['filterAlsoSpeaks'] ?? '') == $language->name ? 'selected' : '' }}>
-                                        {{ $language->name }}
+                                        {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -200,6 +202,7 @@
                                 class="absolute right-4 top-1/2 text-sm text-gray-400 transform -translate-y-1/2 pointer-events-none fas fa-chevron-down rtl:right-auto rtl:left-4"></i>
                         </div>
                     </div>
+
                     <!-- Sort By -->
                     <div class="flex flex-col">
                         <label
@@ -208,16 +211,17 @@
                             <select id="filterSortBy"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
                                 <option value="">{{ label_text('global', 'Sort By', __('site.Sort By')) }}</option>
-                                <option value="price_low_high" {{ ($filters['filterAvailability'] ?? '') == "price_low_high" ? 'selected' : '' }}>
+
+                                <option value="price_low_high" {{ ($filters['filterSortBy'] ?? '') == "price_low_high" ? 'selected' : '' }}>
                                     {{ label_text('global', 'Price: Low to High', __('site.Price: Low to High')) }}
                                 </option>
-                                <option value="price_high_low" {{ ($filters['filterAvailability'] ?? '') == "price_high_low" ? 'selected' : '' }}>
+                                <option value="price_high_low" {{ ($filters['filterSortBy'] ?? '') == "price_high_low" ? 'selected' : '' }}>
                                     {{ label_text('global', 'Price: High to Low', __('site.Price: High to Low')) }}
                                 </option>
-                                <option value="rating_high_low" {{ ($filters['filterAvailability'] ?? '') == "rating_high_low" ? 'selected' : '' }}>
+                                <option value="rating_high_low" {{ ($filters['filterSortBy'] ?? '') == "rating_high_low" ? 'selected' : '' }}>
                                     {{ label_text('global', 'Rating: High to Low', __('site.Rating: High to Low')) }}
                                 </option>
-                                <option value="most_popular" {{ ($filters['filterAvailability'] ?? '') == "most_popular" ? 'selected' : '' }}>
+                                <option value="most_popular" {{ ($filters['filterSortBy'] ?? '') == "most_popular" ? 'selected' : '' }}>
                                     {{ label_text('global', 'Most Popular', __('site.Most Popular')) }}
                                 </option>
                             </select>
@@ -293,32 +297,23 @@
                                     $spansMidnight = $fromMinutes > $toMinutes;
 
                                     if ($spansMidnight) {
-                                        // فترة تمتد من ليلة اليوم إلى صباح اليوم التالي
-                                        // Night: من 22:00 إلى 06:00
                                         $periods[] = 'night';
-                                        // Morning: إذا كانت الفترة تمتد بعد 06:00
                                         if ($toMinutes > $morningStart) {
                                             $periods[] = 'morning';
                                         }
                                     } else {
-                                        // فترة في نفس اليوم
-
-                                        // Morning: 06:00 - 12:00
                                         if ($fromMinutes < $morningEnd && $toMinutes > $morningStart) {
                                             $periods[] = 'morning';
                                         }
 
-                                        // Afternoon: 12:00 - 18:00
                                         if ($fromMinutes < $afternoonEnd && $toMinutes > $afternoonStart) {
                                             $periods[] = 'afternoon';
                                         }
 
-                                        // Evening: 18:00 - 22:00
                                         if ($fromMinutes < $eveningEnd && $toMinutes > $eveningStart) {
                                             $periods[] = 'evening';
                                         }
 
-                                        // Night: 22:00 - 24:00 أو 00:00 - 06:00
                                         if ($fromMinutes >= $nightStart || $toMinutes <= $nightEndNext) {
                                             $periods[] = 'night';
                                         }
@@ -337,7 +332,6 @@
                                     }
                                 }
 
-                                // Get unique values and re-index
                                 $availabilityPeriods = array_values(
                                     array_unique(array_filter($availabilityPeriods))
                                 );
@@ -360,19 +354,21 @@
                             data-tutor-subject="{{ $subjectName }}"
                             data-tutor-avatar="{{ $tutor->profile?->avatar_path ? asset('storage/' . $tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/' . $tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}"
                             data-tutor-slug="{{ $tutor->slug ?? $tutor->id }}"
-                            data-availability="{{ json_encode($availabilities->map(function ($av) {
-            return ['day_id' => $av->day->id ?? 0, 'day_name' => $av->day->name ?? '', 'hour_from' => $av->hour_from ?? '', 'hour_to' => $av->hour_to ?? '']; })->toArray()) }}"
-                            data-full-name="{{ strtolower($fullName) }}" data-subject-id="{{ $tp->teaching_subject ?? '' }}"
-                            data-price="{{ $hourlyRate ?? 0 }}" data-native-language-id="{{ $tp->native_language ?? '' }}"
+                            data-availability="{{ json_encode($availabilities->map(function ($av) { return ['day_id' => $av->day->id ?? 0, 'day_name' => $av->day->name ?? '', 'hour_from' => $av->hour_from ?? '', 'hour_to' => $av->hour_to ?? '']; })->toArray()) }}"
+                            data-full-name="{{ strtolower($fullName) }}"
+                            data-subject-id="{{ $tp->teaching_subject ?? '' }}"
+                            data-price="{{ $hourlyRate ?? 0 }}"
+                            data-native-language-id="{{ $tp->native_language ?? '' }}"
                             data-country="{{ $profile->country ?? '' }}"
                             data-specialization="{{ $tp?->specializations }}"
                             data-also-speaks="{{ $tp?->other_languages ?? '' }}"
-                            data-availability-periods="{{ implode(',', $availabilityPeriods) }}" data-rating="{{ $rating }}"
+                            data-availability-periods="{{ implode(',', $availabilityPeriods) }}"
+                            data-rating="{{ $rating }}"
                             data-students="{{ $studentsCount }}">
+
                             <div class="flex gap-4">
                                 <!-- Tutor Image -->
                                 <div class="flex-shrink-0">
-                                    {{-- لو عندك صورة في البروفايل عدّلي السطر الجاي --}}
                                     <img src="{{ $tutor->profile?->avatar_path ? asset('storage/' . $tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/' . $tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}"
                                         alt="{{ $fullName }}" class="w-53 h-full object-cover transition-all duration-300"
                                         loading="lazy">
@@ -396,12 +392,11 @@
                                         <div class="flex items-center justify-between gap-3">
                                             <div class="flex flex-col items-start justify-end">
                                                 <span class="text-lg font-bold text-primary">
-
                                                     {{ $hourlyRate }}$
-
                                                 </span>
                                                 <span class="text-sm text-black">
-                                                    {{ label_text('global', 'Per hour', __('site.Per hour')) }} </span>
+                                                    {{ label_text('global', 'Per hour', __('site.Per hour')) }}
+                                                </span>
                                             </div>
                                             <div class="flex flex-col items-start justify-end">
                                                 <div class="flex items-center gap-1">
@@ -423,6 +418,7 @@
 
                                     <!-- Info Rows -->
                                     <div class="space-y-2 mb-4">
+
                                         {{-- المادة التي يدرّسها --}}
                                         <div class="flex items-center gap-2 text-sm text-gray-700">
                                             <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
@@ -430,9 +426,7 @@
                                                 <path
                                                     d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                             </svg>
-                                            <span>
-                                                {{ $subjectName }}
-                                            </span>
+                                            <span>{{ $subjectName }}</span>
                                         </div>
 
                                         {{-- عدد الطلاب --}}
@@ -442,8 +436,7 @@
                                                 <path
                                                     d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                             </svg>
-                                            <span>{{ $studentsCount }}
-                                                {{ label_text('global', 'Students', __('site.Students')) }}</span>
+                                            <span>{{ $studentsCount }} {{ label_text('global', 'Students', __('site.Students')) }}</span>
                                         </div>
 
                                         {{-- اللغة الأم --}}
@@ -462,6 +455,7 @@
                                                 </span>
                                             </span>
                                         </div>
+
                                     </div>
 
                                                 <!-- Buttons -->
@@ -477,17 +471,15 @@
                                                     </button>
 
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    @empty
-                                    <p class="text-gray-500">No tutors found.</p>
-                                    @endforelse
+                    @empty
+                        <p class="text-gray-500">No tutors found.</p>
+                    @endforelse
 
                 </div>
-
 
                 <!-- Right Column: Schedule Preview -->
                 <div class="lg:col-span-4">
@@ -505,6 +497,7 @@
                                 </p>
                             </div>
                             <button class="p-2 text-primary hover:bg-gray-100 rounded-lg transition-all">
+                                {{-- SVG same as you provided --}}
                                 <svg width="53" height="50" viewBox="0 0 53 50" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -523,7 +516,6 @@
                                         d="M19.4436 6.72607C19.1868 6.58611 18.8754 6.59191 18.6245 6.74097C18.3728 6.89003 18.2188 7.16083 18.2188 7.45316V27.3282C18.2188 27.6205 18.3728 27.8913 18.6245 28.0403C18.8754 28.1894 19.1868 28.1952 19.4436 28.0553L37.6623 18.1178C37.9281 17.9728 38.0938 17.6938 38.0938 17.3907C38.0938 17.0876 37.9281 16.8085 37.6623 16.6636L19.4436 6.72607Z"
                                         fill="white" />
                                 </svg>
-
                             </button>
                         </div>
 
@@ -541,10 +533,8 @@
 
                         <!-- Schedule Grid -->
                         <div id="scheduleGrid" class="space-y-1 mb-4">
-                            <!-- Morning Row -->
                             <div class="grid grid-cols-8 gap-1" data-period="morning">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Morning<br>6AM
-                                    -<br>12PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Morning<br>6AM -<br>12PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -554,10 +544,8 @@
                                 <div class="h-12 bg-gray-100 rounded" data-day="sunday"></div>
                             </div>
 
-                            <!-- Afternoon Row -->
                             <div class="grid grid-cols-8 gap-1" data-period="afternoon">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Afternoon<br>12PM
-                                    -<br>6PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Afternoon<br>12PM -<br>6PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -567,10 +555,8 @@
                                 <div class="h-12 bg-gray-100 rounded" data-day="sunday"></div>
                             </div>
 
-                            <!-- Evening Row -->
                             <div class="grid grid-cols-8 gap-1" data-period="evening">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Evening<br>6PM
-                                    -<br>10PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Evening<br>6PM -<br>10PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -580,10 +566,8 @@
                                 <div class="h-12 bg-gray-100 rounded" data-day="sunday"></div>
                             </div>
 
-                            <!-- Night Row -->
                             <div class="grid grid-cols-8 gap-1" data-period="night">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Night<br>10PM
-                                    -<br>6AM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Night<br>10PM -<br>6AM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -606,7 +590,6 @@
             </div>
         </div>
     </section>
-
 
     @push('scripts')
         <script src="{{ asset('front/assets/js/tutors_list.js') }}"></script>

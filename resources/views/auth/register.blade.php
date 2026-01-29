@@ -1,6 +1,6 @@
 @php
-    $htmlLocale = str_replace('_', '-', app()->getLocale());
-    $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->first()->direction;
+$htmlLocale = str_replace('_', '-', app()->getLocale());
+$htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->first()->direction;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $htmlLocale }}" dir="{{ $htmlDirection }}">
@@ -149,26 +149,26 @@
                 </a>
             </div>
         </aside>
-        
+
         <!-- Main Content -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto mt-12">
             @if($errors->any())
-                <div class="text-white rounded-lg bg-danger">
-                    <ul>
-                        @foreach ($errors->all() as $key => $error)
-                            <li>{{ $key + 1 . ' - ' . $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="text-white rounded-lg bg-danger">
+                <ul>
+                    @foreach ($errors->all() as $key => $error)
+                    <li>{{ $key + 1 . ' - ' . $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             @php
-                $countries = App\Models\Country::get();
-                $languages = App\Models\Language::get();
-                $subjects = App\Models\Subject::get();
-                $experiences = App\Models\Experience::get();
-                $situations = App\Models\Situation::get();
-                $specializations = App\Models\Specialization::get();
+            $countries = App\Models\Country::get();
+            $languages = App\Models\Language::get();
+            $subjects = App\Models\Subject::get();
+            $experiences = App\Models\Experience::get();
+            $situations = App\Models\Situation::get();
+            $specializations = App\Models\Specialization::get();
             @endphp
 
             <form method="post" id="signup-form" action="{{ route('register') }}" enctype="multipart/form-data">
@@ -347,15 +347,19 @@
                                     </label>
                                     {{-- <input type="text"
                                         placeholder="{{ label_text('global', 'site.register-country-placeholder', __('site.egypt (+20)')) }}"
-                                        name="country" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                    name="country" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     --}}
 
                                     <select name="country" required id="country_inp"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($countries as $country)
-                                            <option value="{{$country->name}}">{{$country->name}}@if($country->phonecode)
-                                            ({{$country->phonecode}})@endif</option>
+                                        <option value="{{ $country->name }}">
+                                            {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
+                                            @if($country->phonecode)
+                                            ({{ $country->phonecode }})
+                                            @endif
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -555,18 +559,19 @@
                                         </select>
 
                                         <select id="monthSelect" class="border rounded-lg px-2 py-1 text-sm w-1/2">
-                                            <option value="0">January</option>
-                                            <option value="1">February</option>
-                                            <option value="2">March</option>
-                                            <option value="3">April</option>
-                                            <option value="4">May</option>
-                                            <option value="5">June</option>
-                                            <option value="6">July</option>
-                                            <option value="7">August</option>
-                                            <option value="8">September</option>
-                                            <option value="9">October</option>
-                                            <option value="10">November</option>
-                                            <option value="11">December</option>
+                                            <option value="0">{{ label_text('site', 'January', __('site.January')) }}</option>
+                                            <option value="1">{{ label_text('site', 'February', __('site.February')) }}</option>
+                                            <option value="2">{{ label_text('site', 'March', __('site.March')) }}</option>
+                                            <option value="3">{{ label_text('site', 'April', __('site.April')) }}</option>
+                                            <option value="4">{{ label_text('site', 'May', __('site.May')) }}</option>
+                                            <option value="5">{{ label_text('site', 'June', __('site.June')) }}</option>
+                                            <option value="6">{{ label_text('site', 'July', __('site.July')) }}</option>
+                                            <option value="7">{{ label_text('site', 'August', __('site.August')) }}</option>
+                                            <option value="8">{{ label_text('site', 'September', __('site.September')) }}</option>
+                                            <option value="9">{{ label_text('site', 'October', __('site.October')) }}</option>
+                                            <option value="10">{{ label_text('site', 'November', __('site.November')) }}</option>
+                                            <option value="11">{{ label_text('site', 'December', __('site.December')) }}</option>
+
                                         </select>
                                     </div>
 
@@ -587,7 +592,8 @@
                                     <select name="countty_tutor" required id="countty_tutor"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($countries as $country)
-                                            <option value=" {{$country->name}} ">{{$country->name}}</option>
+                                        <option value=" {{$country->name}} "> {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -598,9 +604,10 @@
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($languages as $language)
-                                            <option value=" {{$language->name}} ">
-                                                {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
-                                            </option>
+                                        <option value="{{ $language->name }}">
+                                            {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
+                                        </option>
+
                                         @endforeach
                                     </select>
                                 </div>
@@ -611,7 +618,9 @@
                                     <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($subjects as $subject)
-                                            <option value=" {{$subject->name}} ">{{$subject->name}}</option>
+                                        <option value=" {{$subject->name}} ">
+                                            {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -625,7 +634,10 @@
                                     <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                         @foreach ($experiences as $experience)
-                                            <option value=" {{$experience->name}} ">{{$experience->name}}</option>
+                                        <option value="{{ $experience->name }}">
+                                            {{ label_text('experiences', $experience->name, __('experiences.' . $experience->name)) }}
+                                        </option>
+
                                         @endforeach
                                     </select>
                                     <p class="text-[#AAAAAA]">
@@ -641,7 +653,10 @@
                                 <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
                                     @foreach ($situations as $situation)
-                                        <option value=" {{$situation->name}} ">{{$situation->name}}</option>
+                                    <option value="{{ $situation->name }}">
+                                        {{ label_text('situations', $situation->name, __('situations.' . $situation->name)) }}
+                                    </option>
+
                                     @endforeach
                                 </select>
                             </div>
@@ -704,7 +719,10 @@
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
                                     @foreach ($specializations as $specialization)
-                                        <option value="{{$specialization->name}}">{{$specialization->name}}</option>
+                                    <option value="{{ $specialization->name }}">
+                                        {{ label_text('specializations', $specialization->name, __('specializations.' . $specialization->name)) }}
+                                    </option>
+
                                     @endforeach
                                 </select>
                             </div>
@@ -926,14 +944,14 @@
                                 <div class="empty-state hidden">
                                     <div
                                         class="inline-flex items-center px-4 py-3 rounded-lg border border-dashed border-gray-300 text-gray-400 text-[15px]">
-                                        No ranges yet
+                                       {{ label_text('global', 'site.No-ranges-yet', __('site.No ranges yet')) }}
                                     </div>
                                 </div>
 
                                 <div class="mt-4">
                                     <button type="button"
                                         class="btn-add inline-flex items-center gap-2 text-[15px] text-gray-800 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50">
-                                        <span class="text-xl">+</span> Add time range
+                                        <span class="text-xl">+</span> {{ label_text('global', 'site.Add-time-range', __('site.Add time range')) }}
                                     </button>
                                 </div>
                             </section>
@@ -943,9 +961,9 @@
                                 data-day="tuesday">
                                 <header class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
-                                        <h3 class="text-[18px] font-semibold text-gray-900">Tuesday</h3>
+                                        <h3 class="text-[18px] font-semibold text-gray-900">{{ label_text('global', 'site.Tuesday', __('site.Tuesday')) }}</h3>
                                         <span
-                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">Unavailable</span>
+                                            class="badge inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium bg-gray-100 text-gray-500">{{ label_text('global', 'site.Unavailable', __('site.Unavailable')) }}</span>
                                     </div>
                                     <button type="button"
                                         class="toggle relative w-[46px] h-[26px] rounded-full bg-gray-300"
@@ -1354,7 +1372,7 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
                                     @foreach ($subjects as $subject)
 
-                                        <option value="{{$subject->name}}">{{$subject->name}}</option>
+                                    <option value="{{$subject->name}}"> {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -1542,15 +1560,15 @@
 
         }
     </script>
-    
+
     <script>
-        window.addEventListener('message', function (event) {
+        window.addEventListener('message', function(event) {
             if (event.origin !== "{{ url('/') }}") return;
 
             const data = event.data;
             if (data.provider !== 'google') return;
 
-            if(data.loginNow){
+            if (data.loginNow) {
                 window.location.href = "{{ route('home') }}"
             }
 
@@ -1581,7 +1599,7 @@
                 $("#google_id").val(data.google_id);
             }
 
-            $('.btn-google').attr('disabled',true);
+            $('.btn-google').attr('disabled', true);
             $('input[name="email"]')
                 .prop('readonly', true)
                 .addClass('bg-gray-100 cursor-not-allowed');
