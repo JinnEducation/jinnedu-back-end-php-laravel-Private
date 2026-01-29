@@ -529,6 +529,18 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
 'View Details' => 'عرض التفاصيل',
 'View Full Schedule' => 'عرض الجدول الكامل',
 'Native' => 'اللغة الأم',
+ 'January'   => 'يناير',
+    'February'  => 'فبراير',
+    'March'     => 'مارس',
+    'April'     => 'أبريل',
+    'May'       => 'مايو',
+    'June'      => 'يونيو',
+    'July'      => 'يوليو',
+    'August'    => 'أغسطس',
+    'September' => 'سبتمبر',
+    'October'   => 'أكتوبر',
+    'November'  => 'نوفمبر',
+    'December'  => 'ديسمبر',
 
 
 ];

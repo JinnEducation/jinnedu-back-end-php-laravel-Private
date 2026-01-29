@@ -59,16 +59,16 @@
                                         <i class="fas fa-comment text-primary"></i>
                                         <span>
                                             {{ label_text('global', 'Speaks', __('site.Speaks')) }}
-                                            {{-- {{ $nativeLanguage }} --}}
                                             {{ label_text('languages', $nativeLanguage, __('languages.' . $nativeLanguage)) }}
                                             {{ label_text('global', 'Language', __('site.Language')) }}
                                         </span>
                                     </div>
+
                                     <div class="flex items-center gap-2 text-gray-700">
                                         <i class="fas fa-book text-primary"></i>
                                         <span>
                                             {{ label_text('global', 'Teaches', __('site.Teaches')) }}
-                                            {{ $teachingSubject }}
+                                            {{ label_text('subjects', $teachingSubject, __('subjects.' . $teachingSubject)) }}
                                             {{ label_text('global', 'Subject', __('site.Subject')) }}
                                         </span>
                                     </div>
@@ -78,7 +78,7 @@
                                             <i class="fas fa-globe text-primary"></i>
                                             <span>
                                                 {{ label_text('global', 'From', __('site.From')) }}
-                                                {{ $tutorCountry }}
+                                                {{ label_text('countries', $tutorCountry, __('countries.' . $tutorCountry)) }}
                                             </span>
                                         </div>
                                     @endif
@@ -189,7 +189,6 @@
                                     {{ label_text('global', 'Reviews', __('site.Reviews')) }} ({{ $reviewsCount }})
                                 </h3>
 
-                                {{-- Placeholder ثابت حالياً، لاحقاً يمكن ربطه بجدول التقييمات --}}
                                 <div class="space-y-6">
                                     @foreach($reviews as $review)
                                         @php
@@ -254,8 +253,7 @@
                                     $reviewsCount = $tpSuggestion->reviews_count ?? 0;
                                     $studentsCount = $tpSuggestion->students_count ?? 0;
                                 @endphp
-                                <div
-                                    class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+                                <div class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
                                     <div class="flex gap-4">
                                         <!-- Tutor Image -->
                                         <div class="flex-shrink-0">
@@ -269,24 +267,21 @@
                                                 <div>
                                                     <h3 class="text-xl font-bold text-primary mb-1">{{ $fullName }}</h3>
                                                 </div>
+
                                                 <!-- Price & Rating -->
                                                 <div class="flex items-center justify-between gap-3">
                                                     <div class="flex flex-col items-start justify-end">
-                                                        <span
-                                                            class="text-lg font-bold text-primary">{{ $hourlyRate }}$</span>
+                                                        <span class="text-lg font-bold text-primary">{{ $hourlyRate }}$</span>
                                                         <span class="text-sm text-black">
                                                             {{ label_text('global', 'Per hour', __('site.Per hour')) }}
                                                         </span>
                                                     </div>
                                                     <div class="flex flex-col items-start justify-end">
                                                         <div class="flex items-center gap-1">
-                                                            <svg class="w-4 h-4 text-yellow-400 fill-current"
-                                                                viewBox="0 0 20 20">
-                                                                <path
-                                                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                                            <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                                             </svg>
-                                                            <span
-                                                                class="text-lg text-gray-700">{{ number_format($rating, 1) }}</span>
+                                                            <span class="text-lg text-gray-700">{{ number_format($rating, 1) }}</span>
                                                         </div>
                                                         <span class="text-sm text-black">
                                                             {{ $reviewsCount }} {{ label_text('global', 'Reviews', __('site.Reviews')) }}
@@ -298,24 +293,21 @@
                                             <!-- Info Rows -->
                                             <div class="space-y-2 mb-4">
                                                 <div class="flex items-center gap-2 text-sm text-gray-700">
-                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                        viewBox="0 0 20 20">
-                                                        <path
-                                                            d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.115 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                                     </svg>
-                                                    <span>{{ $subjectName }}</span>
+                                                    <span>{{ label_text('subjects', $subjectName, __('subjects.' . $subjectName)) }}</span>
                                                 </div>
+
                                                 <div class="flex items-center gap-2 text-sm text-gray-700">
-                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                        viewBox="0 0 20 20">
-                                                        <path
-                                                            d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                                     </svg>
                                                     <span>{{ $studentsCount }} {{ label_text('global', 'Students', __('site.Students')) }}</span>
                                                 </div>
+
                                                 <div class="flex items-center gap-2 text-sm text-gray-700">
-                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor"
-                                                        viewBox="0 0 20 20">
+                                                    <svg class="w-4 h-4 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd"
                                                             d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.723 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z"
                                                             clip-rule="evenodd" />
@@ -323,7 +315,7 @@
                                                     <span>
                                                         {{ label_text('global', 'Speaks', __('site.Speaks')) }}
                                                         <span class="text-primary font-semibold">
-                                                            {{ $nativeLangName ?? 'N/A' }}
+                                                            {{ label_text('languages', $nativeLangName, __('languages.' . $nativeLangName)) }}
                                                             {{ label_text('global', '(Native)', __('site.(Native)')) }}
                                                         </span>
                                                     </span>
@@ -336,11 +328,9 @@
                                                     class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
                                                     {{ label_text('global', 'View Details', __('site.View Details')) }}
                                                 </a>
-                                                <form
-                                                    action="{{ route('site.private_lesson_order', ['id' => $suggestion->id]) }}"
-                                                    method="POST">
-                                                    @csrf
 
+                                                <form action="{{ route('site.private_lesson_order', ['id' => $suggestion->id]) }}" method="POST">
+                                                    @csrf
                                                     <button type="submit"
                                                         class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn w-full">
                                                         {{ label_text('global', 'Join Now', __('site.Join Now')) }}
@@ -366,8 +356,7 @@
                             <!-- Price at Top -->
                             <div class="text-center mb-4">
                                 <div class="text-4xl font-bold text-primary mb-1">
-                                    {{ $tutor?->tutorProfile?->hourly_rate }} <span
-                                        class="text-2xl text-black">USD</span>
+                                    {{ $tutor?->tutorProfile?->hourly_rate }} <span class="text-2xl text-black">USD</span>
                                 </div>
                             </div>
 
@@ -409,7 +398,6 @@
                             </div>
 
                             @guest
-                                <!-- Guest Action Buttons -->
                                 <div class="space-y-3">
                                     <button type="button" data-open="#loginModal"
                                         class="px-6 py-3 mb-3 w-full text-base font-medium text-white rounded-md bg-primary-600 transition-colors hover:bg-primary-700">
@@ -417,53 +405,54 @@
                                     </button>
                                 </div>
                             @endguest
+
                             @auth
-                                <!-- Action Buttons -->
                                 <div class="space-y-3">
                                     @if(!$orderTrialExists)
-                                    <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}"
-                                        method="POST" class="w-full">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                            {{ label_text('global', 'Book trial lesson', __('site.Book trial lesson')) }}
-                                        </button>
-                                    </form>
+                                        <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}" method="POST" class="w-full">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                                {{ label_text('global', 'Book trial lesson', __('site.Book trial lesson')) }}
+                                            </button>
+                                        </form>
                                     @endif
+
                                     @if($orderTrialExists && !$orderTrialFinash)
-                                    <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
-                                        class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
-                                    </a>
+                                        <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
+                                            class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
+                                        </a>
                                     @endif
+
                                     @if($orderTrialFinash && $checkAllowOrder)
-                                    <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
-                                        method="POST" class="w-full">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                            {{ label_text('global', 'Book Lesson', __('site.Book Lesson')) }}
-                                        </button>
-                                    </form>
+                                        <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}" method="POST" class="w-full">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                                {{ label_text('global', 'Book Lesson', __('site.Book Lesson')) }}
+                                            </button>
+                                        </form>
                                     @endif
+
                                     @if($orderTrialExists && $orderTrialFinash && !$checkAllowOrder)
-                                    <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
-                                        class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
-                                        {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
-                                    </a>
+                                        <a href="{{ route('redirect.dashboard',['redirect_to'=> '/conferences/student-index']) }}"
+                                            class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                                            {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
+                                        </a>
                                     @endif
-                                    <button
-                                        class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
+
+                                    <button class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
                                         {{ label_text('global', 'Message', __('site.Message')) }} {{ $profile?->full_name }}
                                     </button>
-                                    <button id="favTutorBtn"
-    type="button"
-    data-ref="{{ $tutor->id }}"
-    data-type="1"
-    class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
-    {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
-</button>
 
+                                    <button id="favTutorBtn"
+                                        type="button"
+                                        data-ref="{{ $tutor->id }}"
+                                        data-type="1"
+                                        class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
+                                        {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
+                                    </button>
                                 </div>
                             @endauth
                         </div>
@@ -486,7 +475,7 @@
                         <i class="fas fa-times text-2xl"></i>
                     </button>
                 </div>
-                
+
                 <!-- Title and Date Navigation -->
                 <div class="mb-6">
                     <div class="flex items-center gap-3">
