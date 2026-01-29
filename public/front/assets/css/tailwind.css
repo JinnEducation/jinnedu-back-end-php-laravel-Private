@@ -519,6 +519,9 @@
   .m-0 {
     margin: calc(var(--spacing) * 0);
   }
+  .m-16\.5 {
+    margin: calc(var(--spacing) * 16.5);
+  }
   .mx-1 {
     margin-inline: calc(var(--spacing) * 1);
   }
@@ -2817,6 +2820,13 @@
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         color: var(--color-blue-600);
+      }
+    }
+  }
+  .group-hover\:text-primary-600 {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        color: var(--color-primary-600);
       }
     }
   }

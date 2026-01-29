@@ -513,6 +513,7 @@ return [
     'Login to Book' => 'Login to Book',
     'Book Now' => 'Book Now',
 
+    'balance' => 'Balance',
     'share' => 'share',
     'Share via:' => 'Share via:',
     'The certificate is shareable' => 'The certificate is shareable',

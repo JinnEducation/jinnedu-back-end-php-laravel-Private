@@ -531,6 +531,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
 'View Full Schedule' => 'عرض الجدول الكامل',
 'Native' => 'اللغة الأم',
 
+    'balance' => 'الرصيد',
     'share' => 'مشاركة',
     'Share via:' => 'مشاركة عبر:',
 
