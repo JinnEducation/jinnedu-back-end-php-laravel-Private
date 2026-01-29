@@ -200,8 +200,10 @@ $(document).ready(function () {
     }
 
     if ($("#avatarInput").val() == null || $("#avatarInput").val() == "") {
-      showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
-      return;
+      if(avatarCheck != "1"){
+        showValidationError("يرجى تعبئة الصورة الخاصة بالمستخدم");
+        return;
+      }
     }
 
     let accountType = $("#account-type").val();

@@ -1040,6 +1040,7 @@
     <script>
         const _token = "{{ csrf_token() }}";
         const emailCheckUrl = "{{ route('auth.email-check') }}";
+        const avatarCheck = "{{ isset($profile?->avatar_path) }}"
     </script>
     <script src="{{ asset('front/assets/js/profie.js') }}"></script>
 </body>

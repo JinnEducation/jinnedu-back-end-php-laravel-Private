@@ -105,10 +105,9 @@ $(document).ready(function () {
 
     for (let i = 1; i <= totalPages; i++) {
       container.append(
-        `<button class="min-w-8 h-8 px-2 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${
-          i === currentPage
-            ? "bg-primary text-white shadow-sm"
-            : "text-black hover:text-white hover:bg-primary"
+        `<button class="min-w-8 h-8 px-2 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ${i === currentPage
+          ? "bg-primary text-white shadow-sm"
+          : "text-black hover:text-white hover:bg-primary"
         }" data-page="${i}">${i}</button>`
       );
     }
@@ -214,34 +213,89 @@ $(function () {
     });
   }
 });
-$(document).on('click', '.share-btn', function (e) {
-    e.preventDefault();
+$(document).ready(function () {
+  let currentUrl = '';
 
+  // فتح الـ popup عند الضغط على زر المشاركة
+  $(document).on('click', '.share-btn', function (e) {
+    e.preventDefault();
+    currentUrl = $(this).data('url');
+
+    if (!currentUrl) return;
+
+    // تعيين الرابط في الـ input
+    $('#shareUrl').val(currentUrl);
+
+    // إعادة تعيين أيقونة النسخ
+    $('.copy-icon').removeClass('hidden');
+    $('.check-icon').addClass('hidden');
+
+    // تحديث روابط المشاركة
+    updateSocialLinks(currentUrl);
+
+    // إظهار الـ popup
+    $('#sharePopup').removeClass('hidden').css('display', 'flex');
+  });
+
+  // إغلاق الـ popup
+  $(document).on('click', '.close-popup, #sharePopup', function (e) {
+    if (e.target === this) {
+      $('#sharePopup').addClass('hidden');
+    }
+  });
+
+  // منع إغلاق الـ popup عند الضغط على المحتوى
+  $(document).on('click', '.popup-content', function (e) {
+    e.stopPropagation();
+  });
+
+  // نسخ الرابط
+  $(document).on('click', '#copyBtn', function (e) {
+    e.preventDefault();
     const $btn = $(this);
-    const url = $btn.data('url');
-    if (!url) return;
+    const url = $('#shareUrl').val();
 
     navigator.clipboard.writeText(url).then(() => {
+      // إخفاء أيقونة النسخ وإظهار أيقونة الصح
+      $btn.find('.copy-icon').addClass('hidden');
+      $btn.find('.check-icon').removeClass('hidden').addClass('copy-success');
 
-        // احذف أي رسالة سابقة
-        $btn.find('.copy-msg').remove();
+      // تغيير لون الـ border
+      $btn.closest('.flex').removeClass('border-gray-200').addClass('border-green-400');
 
-        // أنشئ الرسالة
-        const $msg = $('<span/>', {
-            class: 'copy-msg absolute text-xs bg-black text-white px-2 py-1 rounded ml-2 rtl:mr-2',
-            text: 'تم نسخ الرابط'
-        });
-
-        $btn.addClass('relative').append($msg);
-
-        // إخفاء الرسالة
-        setTimeout(() => {
-            $msg.fadeOut(200, function () {
-                $(this).remove();
-            });
-        }, 1200);
-
+      // إعادة الحالة الافتراضية بعد ثانيتين
+      setTimeout(() => {
+        $btn.find('.copy-icon').removeClass('hidden');
+        $btn.find('.check-icon').addClass('hidden').removeClass('copy-success');
+        $btn.closest('.flex').removeClass('border-green-400').addClass('border-gray-200');
+      }, 2000);
     }).catch(err => {
-        console.error('Copy failed', err);
+      console.error('فشل النسخ:', err);
+      alert('فشل نسخ الرابط');
     });
+  });
+
+  // تحديث روابط المشاركة على مواقع التواصل
+  function updateSocialLinks(url) {
+    const encodedUrl = encodeURIComponent(url);
+
+    // WhatsApp
+    $('.whatsapp-share').attr('href', `https://wa.me/?text=${encodedUrl}`);
+
+    // Facebook
+    $('.facebook-share').attr('href', `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
+
+    // Twitter
+    $('.twitter-share').attr('href', `https://twitter.com/intent/tweet?url=${encodedUrl}`);
+
+    // Telegram
+    $('.telegram-share').attr('href', `https://t.me/share/url?url=${encodedUrl}`);
+  }
+
+  // إغلاق عند الضغط على ESC
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape') {
+      $('#sharePopup').addClass('hidden');
+    }
+  });
 });

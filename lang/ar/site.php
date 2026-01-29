@@ -286,7 +286,7 @@ return [
     'eMAIL ME A LOGIN LINK' => 'أرسل لي رابط تسجيل الدخول عبر البريد',
     'Back to' => 'العودة إلى',
 
-    'Classes' => 'الدورات',
+    'Classes' => 'الحصص',
     'Online Private classes' => 'دروس خاصة عبر الإنترنت',
     'Find a Tutor' => 'ابحث عن مدرس',
     'Availability Time' => 'أوقات التوفر',
@@ -411,7 +411,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Category' => 'التصنيف',
     'Posted-By' => 'نشر بواسطة',
 
-    'Explore-Related-Courses' => 'استكشف الدورات ذات الصلة',
+    'Explore-Related-Courses' => 'استكشف الحصص ذات الصلة',
     'Free-Learn' => 'تعلم مجاناً',
     'Load-More' => 'تحميل المزيد',
 
@@ -450,6 +450,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Go to dashboard' => 'الانتقال إلى لوحة التحكم',
     'Message' => 'رسالة',
     'Save to my list' => 'حفظ في قائمتي',
+    'Saved to your list' => 'تم الحفظ في قائمتك',
     'Full Schedule' => 'الجدول الكامل',
 
     'Profile Picture' => 'صورة الملف الشخصي',
@@ -542,5 +543,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'November'  => 'نوفمبر',
     'December'  => 'ديسمبر',
 
+    'share' => 'مشاركة',
+    'Share via:' => 'مشاركة عبر:',
 
 ];

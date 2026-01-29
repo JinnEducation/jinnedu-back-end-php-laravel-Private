@@ -68,6 +68,9 @@
                                         <i class="fas fa-book text-primary"></i>
                                         <span>
                                             {{ label_text('global', 'Teaches', __('site.Teaches')) }}
+
+
+                                            {{-- {{ $teachingSubject }} --}}
                                             {{ label_text('subjects', $teachingSubject, __('subjects.' . $teachingSubject)) }}
                                             {{ label_text('global', 'Subject', __('site.Subject')) }}
                                         </span>

@@ -474,12 +474,11 @@
                         <i class="w-5 text-center fas fa-video text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.Online-Group-Classes', __('site.Online Group Classes')) }}</span>
                     </a>
-                    <a href="{{ route('site.group_class_details', ['id' => 1]) }}"
+                    <a href="{{ route('site.online_private_classes') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-users text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'site.Group-Classes', __('site.Group Classes')) }}</span>
+                        <span>{{ label_text('global', 'site.Group-Classes', __('site.Private Classes')) }}</span>
                     </a>
-
                 </div>
             </div>
 
