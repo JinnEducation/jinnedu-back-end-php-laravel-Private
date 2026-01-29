@@ -519,6 +519,9 @@
   .m-0 {
     margin: calc(var(--spacing) * 0);
   }
+  .m-16 {
+    margin: calc(var(--spacing) * 16);
+  }
   .m-16\.5 {
     margin: calc(var(--spacing) * 16.5);
   }
@@ -1383,6 +1386,9 @@
   }
   .items-start {
     align-items: flex-start;
+  }
+  .justify-around {
+    justify-content: space-around;
   }
   .justify-between {
     justify-content: space-between;
@@ -4261,6 +4267,11 @@
       right: calc(var(--spacing) * 3);
     }
   }
+  .rtl\:right-\[-20px\] {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      right: -20px;
+    }
+  }
   .rtl\:right-auto {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       right: auto;
@@ -4289,6 +4300,11 @@
   .rtl\:left-6 {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       left: calc(var(--spacing) * 6);
+    }
+  }
+  .rtl\:left-\[-20px\] {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      left: -20px;
     }
   }
   .rtl\:left-auto {

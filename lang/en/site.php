@@ -514,6 +514,7 @@ return [
     'Book Now' => 'Book Now',
 
     'balance' => 'Balance',
+    'buy_credit' => 'Buy credit',
     'share' => 'share',
     'Share via:' => 'Share via:',
     'The certificate is shareable' => 'The certificate is shareable',

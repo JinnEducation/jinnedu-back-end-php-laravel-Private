@@ -544,6 +544,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'December'  => 'ديسمبر',
 
     'balance' => 'الرصيد',
+    'buy_credit' => 'شراء رصيد',
     'share' => 'مشاركة',
     'Share via:' => 'مشاركة عبر:',
 
