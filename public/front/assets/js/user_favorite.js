@@ -1,54 +1,55 @@
+$(function () {
+
+    const $btn = $('#favTutorBtn');
+    if (!$btn.length) return;
 
 
-   
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('favTutorBtn');
-            if (!btn) return;
+    $btn.on('click', function () {
 
-            btn.addEventListener('click', async () => {
-                const refId = btn.dataset.ref;
-                const type  = btn.dataset.type; // 1 tutor
+        const refId = parseInt($btn.data('ref'));
+        const type = parseInt($btn.data('type')); // 1 = tutor
 
-                btn.disabled = true;
+        $btn.prop('disabled', true);
 
-                try {
-                    const res = await fetch("{{ route('site.user_favorites.toggle') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            ref_id: parseInt(refId),
-                            type: parseInt(type),
-                        })
-                    });
-
-                    if (res.status === 401) {
-                        // لو مش عامل login
-                        window.location.href = "{{ route('login') }}";
-                        return;
-                    }
-
-                    const data = await res.json();
-
-                    // تغيير شكل الزر (اختياري)
-                    if (data.status === 'added') {
-                        btn.classList.add('bg-primary','text-white');
-                        btn.classList.remove('text-primary','border-primary');
-                    } else {
-                        btn.classList.remove('bg-primary','text-white');
-                        btn.classList.add('text-primary','border','border-primary');
-                    }
-
-                } catch (e) {
-                    console.error(e);
-                    alert('Error saving favorite');
-                } finally {
-                    btn.disabled = false;
+        $.ajax({
+            url: toggleUrl,
+            method: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            data: JSON.stringify({
+                ref_id: refId,
+                type: type
+            }),
+            success: function (data) {
+                if (data.status === 'added') {
+                    $btn
+                        .text(savedWords || 'Saved to your list')
+                        .addClass('bg-primary text-white')
+                        .removeClass('text-primary border border-primary');
+                } else {
+                    $btn
+                        .text(unSavedWords || 'Save to my list')
+                        .removeClass('bg-primary text-white')
+                        .addClass('text-primary border border-primary');
                 }
-            });
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                alert('Error saving favorite');
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
         });
-    
+
+    });
+
+});
+
 
