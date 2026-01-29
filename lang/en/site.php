@@ -465,6 +465,7 @@ return [
     'Go to dashboard' => 'Go to dashboard',
     'Message' => 'Message',
     'Save to my list' => 'Save to my list',
+    'Saved to your list' => 'Saved to your list',
     'Full Schedule' => 'Full Schedule',
 
     'Profile Picture' => 'Profile Picture',
@@ -512,6 +513,8 @@ return [
     'Login to Book' => 'Login to Book',
     'Book Now' => 'Book Now',
 
+    'share' => 'share',
+    'Share via:' => 'Share via:',
     'The certificate is shareable' => 'The certificate is shareable',
     'Share on your social media or LinkedIn' => 'Share on your social media or LinkedIn',
 

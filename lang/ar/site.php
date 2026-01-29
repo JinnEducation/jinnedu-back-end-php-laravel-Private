@@ -450,6 +450,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Go to dashboard' => 'الانتقال إلى لوحة التحكم',
     'Message' => 'رسالة',
     'Save to my list' => 'حفظ في قائمتي',
+    'Saved to your list' => 'تم الحفظ في قائمتك',
     'Full Schedule' => 'الجدول الكامل',
 
     'Profile Picture' => 'صورة الملف الشخصي',
@@ -530,5 +531,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
 'View Full Schedule' => 'عرض الجدول الكامل',
 'Native' => 'اللغة الأم',
 
+    'share' => 'مشاركة',
+    'Share via:' => 'مشاركة عبر:',
 
 ];
