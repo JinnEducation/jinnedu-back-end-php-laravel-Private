@@ -4292,6 +4292,11 @@
       left: calc(var(--spacing) * 1);
     }
   }
+  .rtl\:left-3 {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      left: calc(var(--spacing) * 3);
+    }
+  }
   .rtl\:left-4 {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       left: calc(var(--spacing) * 4);
@@ -4367,10 +4372,28 @@
       }
     }
   }
+  .rtl\:border-r {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      border-right-style: var(--tw-border-style);
+      border-right-width: 1px;
+    }
+  }
+  .rtl\:border-r-0 {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      border-right-style: var(--tw-border-style);
+      border-right-width: 0px;
+    }
+  }
   .rtl\:border-r-4 {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       border-right-style: var(--tw-border-style);
       border-right-width: 4px;
+    }
+  }
+  .rtl\:border-l {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      border-left-style: var(--tw-border-style);
+      border-left-width: 1px;
     }
   }
   .rtl\:border-l-0 {

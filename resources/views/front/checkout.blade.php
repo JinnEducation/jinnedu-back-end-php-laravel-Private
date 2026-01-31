@@ -7,20 +7,22 @@
             <!-- Page Title -->
             <div class="mb-6 mt-14 text-center">
                 <h1 class="mb-3 text-2xl font-bold text-black md:text-3xl">
-                    @if($checkoutType === 'pay')
+                    @if ($checkoutType === 'pay')
                         {{ label_text('global', 'Complete Payment', __('site.Complete Payment')) }}
                     @else
                         {{ label_text('global', 'Complete checkout', __('site.Complete checkout')) }}
                     @endif
                 </h1>
                 <div class="inline-block px-4 py-1.5 mb-3 text-xs text-black border border-gray-200 rounded-md">
-                    {{ label_text('global', 'Your wallet', __('site.Your wallet')) }} : <span id="wallet-balance">{{ number_format($walletBalance, 2) }}</span> {{ label_text('global', 'USD', __('site.USD')) }}
+                    {{ label_text('global', 'Your wallet', __('site.Your wallet')) }} : <span
+                        id="wallet-balance">{{ number_format($walletBalance, 2) }}</span>
+                    {{ label_text('global', 'USD', __('site.USD')) }}
                 </div>
                 <p class="text-xs text-gray-500">
-                    @if($checkoutType === 'pay')
-                        {{ label_text('global', 'Complete your payment: 1) Review items 2) Choose a payment method.', __('site.Complete your payment: 1) Review items 2) Choose a payment method.')) }}
+                    @if ($checkoutType === 'pay')
+                        {{ label_text('global', 'Complete-your-payment', __('site.Complete-your-payment')) }}
                     @else
-                        {{ label_text('global', 'Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.', __('site.Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.')) }}
+                        {{ label_text('global', 'Top-up-your-wallet', __('site.Top-up-your-wallet')) }}
                     @endif
                 </p>
             </div>
@@ -29,114 +31,127 @@
             <div class="max-w-2xl mx-auto bg-white rounded-md border border-gray-200 shadow-md p-6 md:p-8">
 
                 <!-- Hidden Fields -->
-                <input type="hidden" name="checkout_type" id="checkout-type" value="{{ $checkoutType }}" data-checkout-url="{{ route('checkout.checkout') }}">
+                <input type="hidden" name="checkout_type" id="checkout-type" value="{{ $checkoutType }}"
+                    data-checkout-url="{{ route('checkout.checkout') }}">
                 <input type="hidden" name="order_ids" id="order-ids" value="{{ $orders->pluck('id')->implode(',') }}">
 
                 <!-- Items Section (for payment mode) -->
-                @if($checkoutType === 'pay')
-                    @if($orders->isNotEmpty())
-                    <div class="mb-6 bg-white border border-gray-300 rounded-lg">
-                        <div class="flex justify-between items-center mb-4 bg-[#E9EDF6] p-4 border-b border-gray-300 rounded-t-lg">
-                            <h3 class="text-base font-bold text-black">{{ label_text('global', 'Items', __('site.Items')) }}</h3>
-                            <h3 class="text-base font-bold text-black">{{ label_text('global', 'Price', __('site.Price')) }}</h3>
-                        </div>
-                        <div class="space-y-4 px-4 pb-4" id="element">
-                            @foreach($orders as $order)
-                            <div class="flex justify-between items-center element-item" data-price="{{ $order->price }}">
-                                <div class="flex flex-col">
-                                    <span class="text-base text-black font-medium">{{ label_text('global', 'Order', __('site.Order')) }} #{{ $order->id }}</span>
-                                    @if($order->status == 1)
-                                        <span class="text-xs text-green-600">({{ label_text('global', 'Already Paid', __('site.Already Paid')) }})</span>
-                                    @elseif($order->status == 2)
-                                        <span class="text-xs text-red-600">({{ label_text('global', 'Failed', __('site.Failed')) }})</span>
-                                    @else
-                                        <span class="text-xs text-blue-600">({{ label_text('global', 'Pending', __('site.Pending')) }})</span>
-                                    @endif
-                                </div>
-                                <span class="text-base text-black font-semibold">{{ number_format($order->price, 2) }}$</span>
+                @if ($checkoutType === 'pay')
+                    @if ($orders->isNotEmpty())
+                        <div class="mb-6 bg-white border border-gray-300 rounded-lg">
+                            <div
+                                class="flex justify-between items-center mb-4 bg-[#E9EDF6] p-4 border-b border-gray-300 rounded-t-lg">
+                                <h3 class="text-base font-bold text-black">
+                                    {{ label_text('global', 'Items', __('site.Items')) }}</h3>
+                                <h3 class="text-base font-bold text-black">
+                                    {{ label_text('global', 'Price', __('site.Price')) }}</h3>
                             </div>
-                            @endforeach
+                            <div class="space-y-4 px-4 pb-4" id="element">
+                                @foreach ($orders as $order)
+                                    <div class="flex justify-between items-center element-item"
+                                        data-price="{{ $order->price }}">
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="text-base text-black font-medium">{{ label_text('global', 'Order', __('site.Order')) }}
+                                                #{{ $order->id }}</span>
+                                            @if ($order->status == 1)
+                                                <span
+                                                    class="text-xs text-green-600">({{ label_text('global', 'Already Paid', __('site.Already Paid')) }})</span>
+                                            @elseif($order->status == 2)
+                                                <span
+                                                    class="text-xs text-red-600">({{ label_text('global', 'Failed', __('site.Failed')) }})</span>
+                                            @else
+                                                <span
+                                                    class="text-xs text-blue-600">({{ label_text('global', 'Pending', __('site.Pending')) }})</span>
+                                            @endif
+                                        </div>
+                                        <span
+                                            class="text-base text-black font-semibold">{{ number_format($order->price, 2) }}$</span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
                     @else
-                    {{-- Show message if no orders found --}}
-                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <p class="text-sm text-red-800 mb-2">
-                            <strong>⚠️ No orders found or orders are already paid.</strong>
-                        </p>
-                        @if(request()->has('order_ids'))
-                        <p class="text-xs text-red-600">
-                            Requested Order IDs: {{ request()->get('order_ids') }}
-                        </p>
-                        @endif
-                        <p class="text-xs text-red-600 mt-2">
-                            Please check your order status or contact support.
-                        </p>
-                    </div>
+                        {{-- Show message if no orders found --}}
+                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="text-sm text-red-800 mb-2">
+                                <strong>
+                                    {{ label_text('global', 'no_orders_found', __('site.no_orders_found')) }}
+                                </strong>
+                            </p>
+                            @if (request()->has('order_ids'))
+                                <p class="text-xs text-red-600">
+                                    {{ label_text('global', 'requested_order_ids', __('site.requested_order_ids')) }}:
+                                    {{ request()->get('order_ids') }}
+                                </p>
+                            @endif
+                            <p class="text-xs text-red-600 mt-2">
+                                {{ label_text('global', 'check_order_or_support', __('site.check_order_or_support')) }}
+                            </p>
+                        </div>
                     @endif
                 @endif
 
                 <!-- Wallet Amount -->
                 <div class="mb-6">
                     <label class="block mb-2 text-base font-bold text-black">
-                        @if($checkoutType === 'pay')
-                            Total Amount
+                        @if ($checkoutType === 'pay')
+                            {{ label_text('global', 'total_amount', __('site.total_amount')) }}
                         @else
-                            Wallet amount
+                            {{ label_text('global', 'wallet_amount', __('site.wallet_amount')) }}
                         @endif
                     </label>
                     <div class="flex gap-3 items-center mb-3 relative">
-                        <input type="number" 
-                            id="wallet-amount" 
-                            value="{{ $checkoutType === 'pay' ? number_format($totalAmount, 2, '.', '') : 10 }}" 
-                            min="0"
-                            {{ $checkoutType === 'pay' ? 'readonly' : '' }}
+                        <input type="number" id="wallet-amount"
+                            value="{{ $checkoutType === 'pay' ? number_format($totalAmount, 2, '.', '') : 10 }}"
+                            min="0" {{ $checkoutType === 'pay' ? 'readonly' : '' }}
                             class="flex-1 px-4 py-3 text-base text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 {{ $checkoutType === 'pay' ? 'bg-gray-50' : '' }}">
                         <span
-                            class="px-4 py-3 text-base font-medium text-black bg-white absolute top-[1px] right-0 border-r border-gray-300 rounded-lg">
+                            class="px-4 py-3 text-base font-medium text-black bg-white absolute top-[1px] right-0 rtl:left-0 rtl:right-auto border-r rtl:border-l rtl:border-r-0 border-gray-300 rounded-lg">
                             USD
                         </span>
                     </div>
                     <!-- Preset Amount Buttons (only for topup) -->
-                    @if($checkoutType === 'topup')
-                    <div class="flex gap-2 flex-wrap">
-                        <button
-                            class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
-                            data-amount="10">
-                            +10
-                        </button>
-                        <button
-                            class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
-                            data-amount="20">
-                            +20
-                        </button>
-                        <button
-                            class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
-                            data-amount="50">
-                            +50
-                        </button>
-                        <button
-                            class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
-                            data-amount="100">
-                            +100
-                        </button>
-                    </div>
+                    @if ($checkoutType === 'topup')
+                        <div class="flex gap-2 flex-wrap">
+                            <button
+                                class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+                                data-amount="10">
+                                +10
+                            </button>
+                            <button
+                                class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+                                data-amount="20">
+                                +20
+                            </button>
+                            <button
+                                class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+                                data-amount="50">
+                                +50
+                            </button>
+                            <button
+                                class="preset-btn px-4 py-2 text-xs text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
+                                data-amount="100">
+                                +100
+                            </button>
+                        </div>
                     @endif
                 </div>
 
                 <!-- Country Select -->
                 <div class="mb-6">
                     <label class="block mb-3 text-base font-semibold text-black">
-                        Payment Data
+                        {{ label_text('global', 'payment_data', __('site.payment_data')) }}
                     </label>
                     <div class="mb-6">
                         <label class="block mb-2 text-sm text-black">
-                            Country
+                            {{ label_text('global', 'country', __('site.country')) }}
                         </label>
                         <select id="country-select"
                             class="w-full px-4 py-3 text-base text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
-                            @foreach($countries as $code => $name)
-                                <option value="{{ $code }}" {{ $loop->first ? 'selected' : '' }}>{{ $name }}</option>
+                            @foreach ($countries as $code => $name)
+                                <option value="{{ $code }}" {{ $loop->first ? 'selected' : '' }}>
+                                    {{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -145,27 +160,30 @@
                 <!-- Payment Method -->
                 <div class="mb-6">
                     <label class="block mb-3 text-base font-semibold text-black">
-                       {{ label_text('global', ' Payment method', __('site.Complete Payment')) }}
+                        {{ label_text('global', ' Payment method', __('site.Complete Payment')) }}
                     </label>
                     <input type="hidden" name="payment_gateway" id="payment-gateway">
-                    
-                    
+
+
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4" id="payment-gateway-container">
-                        @foreach($paymentGateways as $gatewayCode => $gateway)
+                        @foreach ($paymentGateways as $gatewayCode => $gateway)
                             <div class="payment-gateway shadow-md cursor-pointer border-2 border-gray-200 rounded-md p-2.5 hover:border-primary transition-all duration-200 {{ $gatewayCode === 'my-wallet' && $checkoutType === 'pay' && $walletBalance < $totalAmount ? 'opacity-50 cursor-not-allowed' : '' }}"
                                 data-gateway="{{ $gatewayCode }}"
                                 data-countries="{{ json_encode($gateway['countries']) }}"
                                 data-min-balance="{{ $gatewayCode === 'my-wallet' && $checkoutType === 'pay' ? $totalAmount : 0 }}"
                                 id="{{ $gatewayCode }}-gateway">
-                                @if($gatewayCode === 'my-wallet' && $checkoutType === 'pay' && $walletBalance < $totalAmount)
+                                @if ($gatewayCode === 'my-wallet' && $checkoutType === 'pay' && $walletBalance < $totalAmount)
                                     <div class="relative">
-                                        <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg opacity-50">
+                                        <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}"
+                                            class="rounded-lg opacity-50">
                                         <div class="absolute inset-0 flex items-center justify-center">
-                                            <span class="text-xs font-bold text-red-600 bg-white px-2 py-1 rounded"> {{ label_text('global', 'Insufficient', __('site.Insufficient')) }}</span>
+                                            <span class="text-xs font-bold text-red-600 bg-white px-2 py-1 rounded">
+                                                {{ label_text('global', 'Insufficient', __('site.Insufficient')) }}</span>
                                         </div>
                                     </div>
                                 @else
-                                    <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}" class="rounded-lg">
+                                    <img src="{{ asset($gateway['image_path']) }}" alt="{{ $gateway['name'] }}"
+                                        class="rounded-lg">
                                 @endif
                             </div>
                         @endforeach
@@ -175,14 +193,15 @@
                 <!-- Paym Discount -->
                 <div class="mb-6">
                     <label class="block mb-2 text-base font-semibold text-black">
-                       {{ label_text('global', 'Paym Discount', __('site.Paym Discount')) }} 
+                        {{ label_text('global', 'Paym Discount', __('site.Paym Discount')) }}
                     </label>
                     <div class="flex gap-3 relative">
-                        <input type="text" id="discount-code" placeholder="Enter the code"
+                        <input type="text" id="discount-code"
+                            placeholder="{{ label_text('global', 'enter_code', __('site.enter_code')) }}"
                             class="flex-1 px-5 py-6 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
                         <button id="apply-discount-btn"
-                            class="absolute top-1/2 right-3 transform translate-y-[-50%] translate-x-[-3%] px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200">
-                             {{ label_text('global', 'Application', __('site.Application')) }} 
+                            class="absolute top-1/2 right-3 rtl:left-3 rtl:right-auto transform translate-y-[-50%] translate-x-[-3%] px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200">
+                            {{ label_text('global', 'Application', __('site.Application')) }}
                         </button>
                     </div>
                 </div>
@@ -191,25 +210,30 @@
                 <div class="mb-6 py-4 border-t border-gray-200">
                     <div class="space-y-3 w-1/3">
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black"> {{ label_text('global', 'Total', __('site.Total')) }} </span>
+                            <span class="font-bold text-black"> {{ label_text('global', 'Total', __('site.Total')) }}
+                            </span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="total-amount">7.46 $</span>
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black">{{ label_text('global', 'Discount', __('site.Discount')) }}</span>
+                            <span
+                                class="font-bold text-black">{{ label_text('global', 'Discount', __('site.Discount')) }}</span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="discount-amount">0.00 $</span>
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black"> {{ label_text('global', 'Tax / Fees', __('site.Tax / Fees')) }}</span>
+                            <span class="font-bold text-black">
+                                {{ label_text('global', 'Tax / Fees', __('site.Tax / Fees')) }}</span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="tax-amount">%0</span>
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-base">
-                            <span class="font-bold text-black">{{ label_text('global', 'Service', __('site.Service')) }} </span>
+                            <span
+                                class="font-bold text-black">{{ label_text('global', 'Service', __('site.Service')) }}
+                            </span>
                             <span class="text-center w-20">
                                 <span class="font-semibold text-black" id="service-amount">0.00 $</span>
                             </span>
@@ -218,16 +242,19 @@
                 </div>
 
                 <!-- Total Price and Purchase Button -->
-                <div class="flex justify-between items-center gap-4 mb-6 px-2.5 py-4 border border-gray-200 rounded-lg">
+                <div
+                    class="flex justify-between items-center gap-4 mb-6 px-2.5 py-4 border border-gray-200 rounded-lg">
                     <div class="flex justify-between items-center w-1/3">
-                        <span class="text-lg font-bold text-black">{{ label_text('global', 'Total price', __('site.Total price')) }}</span>
+                        <span class="text-lg font-bold text-black">
+                            {{ label_text('global', 'Total price', __('site.Total price')) }}
+                        </span>
                         <span class="text-center w-20">
                             <span class="font-bold text-lg text-black" id="final-total">7.46 $</span>
                         </span>
                     </div>
                     <button id="purchase-btn"
                         class="px-4 py-3 text-xs text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm">
-                       {{ label_text('global', 'Purchase confirmation', __('site.Purchase confirmation')) }} 
+                        {{ label_text('global', 'purchase_confirmation', __('site.purchase_confirmation')) }}
                     </button>
                 </div>
 
@@ -263,11 +290,9 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            {{ label_text('global', ' By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
-                            conditions and the privacy policy of the Jien platform.', __('site. By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and
-                            conditions and the privacy policy of the Jien platform.')) }}
-                           
+                            {{ label_text('global', 'agree_terms', __('site.agree_terms')) }}
                         </p>
+
                     </div>
                     <div class="flex gap-3 items-start">
                         <div class="flex-shrink-0 w-6 h-6 flex justify-center">
@@ -290,8 +315,7 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            {{ label_text('global', 'All transactions are secure, processed, and authorized by payment service providers.', __('site.All transactions are secure, processed, and authorized by payment service providers.')) }}
-                            
+                            {{ label_text('global', 'secure_transactions', __('site.secure_transactions')) }}
                         </p>
                     </div>
                     <div class="flex gap-3 items-start">
@@ -318,10 +342,7 @@
 
                         </div>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            {{ label_text('global', "The price you see on the payment provider's page may vary slightly due to differences in
-                            exchange rates.", __("site.The price you see on the payment provider's page may vary slightly due to differences in
-                            exchange rates.")) }}
-                            
+                            {{ label_text('global', 'price_variation_notice', __('site.price_variation_notice')) }}
                         </p>
                     </div>
                 </div>
@@ -334,7 +355,7 @@
 
     @push('scripts')
         <script>
-            let apply_discount_url = "{{ route('checkout.applyDiscountCode')}}";
+            let apply_discount_url = "{{ route('checkout.applyDiscountCode') }}";
         </script>
         <script src="{{ asset('front/assets/js/wallet-checkout.js') }}"></script>
     @endpush

@@ -261,7 +261,7 @@
                                     // أسماء لطيفة للعرض
                                     $subjectName = $tpSuggestion?->teaching_subject ?? '-';
                                     $nativeLangName = $tpSuggestion?->native_language ?? '-';
-                                    $countryName = $tpSuggestion?->tutor_country;
+                                    $countryName = $profileSuggestion?->country;
 
                                     $hourlyRate = $tpSuggestion->hourly_rate ?? null;
 
