@@ -18,7 +18,7 @@
         $headline = $tp?->headline ?? '';
         $nativeLanguage = $tp?->native_language ?? 'N/A';
         $teachingSubject = $tp?->teaching_subject ?? 'N/A';
-        $tutorCountry = $tp?->tutor_country ?? $profile?->country;
+        $tutorCountry = $profile?->country;
 
         // نص الـ About
         $aboutMain = $tp?->experience_bio ?? ($tp?->motivation ?? '');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Student\StudentCourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MuxController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\PaymentResponseController;
 use App\Http\Controllers\WalletPaymentTransactionController;
 use App\Http\Controllers\Front\PageController as FrontPageController;
 use App\Http\Controllers\Front\UserFavoriteController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,24 +34,20 @@ Route::group([
     'prefix' => '{locale?}',
     'where' => ['locale' => '[a-zA-Z]{2}(?:-[a-zA-Z0-9]{2,4})?'],
 ], function () {
-    require __DIR__.'/fortify.php';
-    
-    Route::get('/',[HomeController::class,'index'])->name('home');
+    require __DIR__ . '/fortify.php';
 
-
-    Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     Route::post('/email-check', [AuthController::class, 'emailCheck'])->name('auth.email-check');
 
+    Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
+    Route::get('/mux', [MuxController::class, 'index']);
+    Route::get('/zoom', [ZoomController::class, 'index']);
+    Route::post('/zoom', [ZoomController::class, 'meetingsdkSignature']);
 
-    Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('password.reset');
-    Route::get('/mux',[MuxController::class,'index']);
-    Route::get('/zoom',[ZoomController::class,'index']);
-    Route::post('/zoom',[ZoomController::class,'meetingsdkSignature']);
 
-
-    Route::get('/paypal/{id}',[PaypalCheckoutController::class,'paypalRequest'])->name('paypal');
-    Route::get('/paypal-response/{id}/{status}',[PaypalCheckoutController::class,'paypalResponse'])->name('paypal-response');
+    Route::get('/paypal/{id}', [PaypalCheckoutController::class, 'paypalRequest'])->name('paypal');
+    Route::get('/paypal-response/{id}/{status}', [PaypalCheckoutController::class, 'paypalResponse'])->name('paypal-response');
 
     /*
     Route::get('/paypal/{id}','PaypalCheckoutController@paypalRequest')->name('paypal');
@@ -58,12 +56,12 @@ Route::group([
 
     //Stripe
     Route::prefix('stripe')->name('stripe.')->group(function () {
-        Route::get('/{order_id}', [StripeCheckoutController::class,'checkout'])->name('checkout');
-        Route::get('/success', [StripeCheckoutController::class,'success'])->name('success');
-        Route::get('/cancel', [StripeCheckoutController::class,'cancel'])->name('cancel');
+        Route::get('/{order_id}', [StripeCheckoutController::class, 'checkout'])->name('checkout');
+        Route::get('/success', [StripeCheckoutController::class, 'success'])->name('success');
+        Route::get('/cancel', [StripeCheckoutController::class, 'cancel'])->name('cancel');
     });
 
-    Route::get('/payment-response/{id}/{status}',[WalletPaymentTransactionController::class,'handlePaymentResponse'])->name('checkout-response');
+    Route::get('/payment-response/{id}/{status}', [WalletPaymentTransactionController::class, 'handlePaymentResponse'])->name('checkout-response');
 
     //site route
     Route::get('blog', [HomeController::class, 'blog'])->name('site.blog');
@@ -75,7 +73,7 @@ Route::group([
     Route::get('send-mail', [MailController::class, 'send']);
     Route::get('contact', [MailController::class, 'contact'])->name('site.contact');
     Route::post('contact', [MailController::class, 'contact_data'])->name('site.contact_data');
-    
+
     Route::get('online-group-classes', [HomeController::class, 'online_group_classes'])->name('site.online_group_classes');
     Route::get('group-class-details/{id}', [HomeController::class, 'groupClassDetails'])->name('site.group_class_details');
     Route::post('group-class-order/{id}', [HomeController::class, 'groupClassOrder'])->middleware('check_student')->name('site.group_class_order');
@@ -95,7 +93,7 @@ Route::group([
     //course
     Route::get('single-course/{id}', [CourseController::class, 'singlecourse'])->name('site.singlecourse');
 
-    Route::middleware(['auth:web', 'check_student'])->group(function() {
+    Route::middleware(['auth:web', 'check_student'])->group(function () {
 
         // exam
         Route::get('take-exam/{group_class_id}', [ExamController::class, 'index'])->name('site.take_exam');
@@ -111,38 +109,38 @@ Route::group([
 
         //course
         Route::post('course/{id}/book', [CourseController::class, 'bookCourse'])->name('site.bookCourse');
-        
+
         // Local test payment (for development)
-        Route::get('local-payment-test', function(Request $request) {
+        Route::get('local-payment-test', function (Request $request) {
             $referenceId = $request->get('reference_id');
             $transaction = \App\Models\WalletPaymentTransaction::where('reference_id', $referenceId)->first();
-            
-            if(!$transaction) {
+
+            if (!$transaction) {
                 abort(404, 'Transaction not found');
             }
-            
+
             return view('front.local-payment-test', compact('transaction'));
         })->name('local-payment-test');
-        
-        Route::post('local-payment-test/complete', function(Request $request) {
+
+        Route::post('local-payment-test/complete', function (Request $request) {
             $referenceId = $request->get('reference_id');
             $transaction = \App\Models\WalletPaymentTransaction::where('reference_id', $referenceId)->first();
-            
-            if(!$transaction) {
+
+            if (!$transaction) {
                 return response()->json(['success' => false, 'message' => 'Transaction not found'], 404);
             }
 
-            
+
             // Process payment through LocalTestService
             $service = new \App\Services\Payment\LocalTestService();
             $result = $service->success($request);
-            if($result->getData()->success ?? false) {
+            if ($result->getData()->success ?? false) {
                 return redirect()->route('checkout-response-get', [
                     'id' => $transaction->id,
                     'status' => 'success'
                 ]);
             }
-            
+
             return redirect()->route('checkout')
                 ->with('error', 'Payment processing failed');
         })->name('local-payment-test-complete');
@@ -184,7 +182,7 @@ Route::get('/bridge-login/{token}', function ($token) {
 
 Route::get('/bridge-logout/{token}', function ($token) {
     $tokenModel = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
-    
+
     if (! $tokenModel) {
         abort(403);
     }
@@ -220,9 +218,9 @@ Route::get('/show-video', function (\Illuminate\Http\Request $request) {
     $type = $request->query('type');
 
     $pathStorage = '';
-    if($type == 'user') {
+    if ($type == 'user') {
         $pathStorage = 'video_files/';
-    }elseif($type == 'course') {
+    } elseif ($type == 'course') {
         $pathStorage = 'courses/videos/';
     }
 
@@ -244,3 +242,6 @@ Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback
 Route::post('/user-favorites/toggle', [UserFavoriteController::class, 'toggle'])
     ->name('site.user_favorites.toggle')
     ->middleware('auth');
+
+Route::get('admin/student/courses/{course}/certificate', [StudentCourseController::class, 'certificate']);
+Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');

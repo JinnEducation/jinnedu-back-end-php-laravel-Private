@@ -325,19 +325,12 @@
                         $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
                         $desc = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
 
-                        // ===== Image =====
-                        $image = $course->image
-                            ?? $course->thumbnail
-                            ?? $course->cover
-                            ?? $course->image_url
-                            ?? asset('front/assets/imgs/Rectangle 1904355.png');
-
                         // ===== URL (عدّلي حسب routes عندك) =====
                         // $courseUrl = url('/course/' . $course->id);
                         $courseUrl = route('site.singlecourse', $course->id);
 
                         // ===== Duration =====
-                        $hours = $course->total_hours ?? $course->duration_hours ?? null;
+                        $hours = $course->course_duration_hours ?? $course->duration_hours ?? 0;
 
                         // ===== Pricing + Discount =====
                         $price = (float) ($course->price ?? 0);
@@ -368,7 +361,7 @@
                         data-course-index="{{ $index }}">
 
                         <div class="overflow-hidden relative h-48 rounded-sm">
-                            <img src="{{ $image }}" alt="{{ $title }}" class="object-cover w-full h-full">
+                            <img src="{{ $course->course_image_full }}" alt="{{ $title }}" class="object-cover w-full h-full">
                         </div>
 
                         <div class="pt-4">

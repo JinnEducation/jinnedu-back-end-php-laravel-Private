@@ -195,7 +195,7 @@
                     <div class="rounded-md bg-white shadow-lg">
                         <!-- Video Card -->
                         <div class="relative rounded-t-lg w-full h-[216px] bg-gray-200 overflow-hidden">
-                            <img src="{{ asset('front/assets/imgs/blogs/2.jpg') }}" alt="Course video"
+                            <img src="{{ $course->course_image_full }}" alt="Course video"
                                 class="w-full h-full object-cover">
 
                             <span
@@ -340,7 +340,7 @@
                                 <p class="text-[13px] font-light text-black">{{ label_text('global', 'site.Share on your social media or LinkedIn', __('site.Share on your social media or LinkedIn')) }}</p>
                             </div>
 
-                            <img src="{{ asset('front/assets/imgs/cer1.jpg') }}" alt="Certificate"
+                            <img src="{{ $course->certificate_image_full }}" alt="Certificate"
                                 class="w-full object-contain rounded-b-lg">
                         </div>
                     @endif
@@ -540,15 +540,15 @@
 
     @if (!empty($course->promo_video_url))
         <div id="promoVideoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
-            <div class="bg-black w-full max-w-2xl relative rounded-lg overflow-hidden" style="max-height: 70vh">
+            <div class="bg-black w-full max-w-2xl relative" style="max-height: 70vh">
 
                 <!-- close -->
-                <button onclick="closePromoVideo()" class="absolute top-2 right-2 text-white text-xl z-10">
-                    ✕
+                <button onclick="closePromoVideo()" class="absolute flex -top-4 -right-4 rtl:-left-4 rtl:right-auto bg-primary p-2 rounded-full text-white text-xl z-10">
+                    <i class="text-xl fas fa-x !w-5 !h-5"></i>
                 </button>
 
                 <!-- video -->
-                <video id="promoVideoPlayer" class="w-full h-auto max-h-[70vh]" controls playsinline
+                <video id="promoVideoPlayer" class="w-full h-auto max-h-[70vh] overflow-hidden rounded-lg" controls playsinline
                     preload="metadata">
                     <source src="{{ asset($course->promo_video_url) }}" type="video/mp4">
                     {{ label_text('global', 'site.Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}

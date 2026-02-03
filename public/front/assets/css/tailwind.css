@@ -19,6 +19,7 @@
     --color-amber-200: oklch(92.4% 0.12 95.746);
     --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-amber-700: oklch(55.5% 0.163 48.998);
+    --color-amber-800: oklch(47.3% 0.137 46.201);
     --color-yellow-100: oklch(97.3% 0.071 103.193);
     --color-yellow-400: oklch(85.2% 0.199 91.936);
     --color-yellow-700: oklch(55.4% 0.135 66.442);
@@ -324,6 +325,9 @@
   .-top-2 {
     top: calc(var(--spacing) * -2);
   }
+  .-top-4 {
+    top: calc(var(--spacing) * -4);
+  }
   .-top-\[10px\] {
     top: calc(10px * -1);
   }
@@ -362,6 +366,12 @@
   }
   .top-full {
     top: 100%;
+  }
+  .-right-2 {
+    right: calc(var(--spacing) * -2);
+  }
+  .-right-4 {
+    right: calc(var(--spacing) * -4);
   }
   .right-0 {
     right: calc(var(--spacing) * 0);
@@ -419,6 +429,9 @@
   }
   .bottom-\[-200px\] {
     bottom: -200px;
+  }
+  .-left-4 {
+    left: calc(var(--spacing) * -4);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
@@ -808,6 +821,9 @@
   .\!h-2 {
     height: calc(var(--spacing) * 2) !important;
   }
+  .\!h-5 {
+    height: calc(var(--spacing) * 5) !important;
+  }
   .h-0 {
     height: calc(var(--spacing) * 0);
   }
@@ -975,6 +991,9 @@
   }
   .\!w-2 {
     width: calc(var(--spacing) * 2) !important;
+  }
+  .\!w-5 {
+    width: calc(var(--spacing) * 5) !important;
   }
   .w-0 {
     width: calc(var(--spacing) * 0);
@@ -1759,6 +1778,9 @@
   }
   .bg-\[\#fffffff0\] {
     background-color: #fffffff0;
+  }
+  .bg-amber-800 {
+    background-color: var(--color-amber-800);
   }
   .bg-black {
     background-color: var(--color-black);
@@ -4282,6 +4304,11 @@
       right: 100%;
     }
   }
+  .rtl\:-left-4 {
+    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+      left: calc(var(--spacing) * -4);
+    }
+  }
   .rtl\:left-0 {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       left: calc(var(--spacing) * 0);
@@ -4370,12 +4397,6 @@
       :where(& > :not(:last-child)) {
         --tw-space-x-reverse: 1;
       }
-    }
-  }
-  .rtl\:border-r {
-    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-      border-right-style: var(--tw-border-style);
-      border-right-width: 1px;
     }
   }
   .rtl\:border-r-0 {
