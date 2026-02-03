@@ -26,7 +26,7 @@ class GroupClassController extends Controller
     public function registerAsTutor(Request $request, $group_class_id)
     {
         $user = Auth::user() ?? $request->user()->id;
-        
+
         $tutor = Tutor::find($user->id);
 
         if (! $tutor) {
@@ -123,18 +123,16 @@ class GroupClassController extends Controller
 
         $groupClassTutorsIds = GroupClassTutor::where('group_class_id', $group_class->id)->pluck('tutor_id')->toArray();
 
-        $items = Tutor::whereIn('id', $groupClassTutorsIds);
+        $items = Tutor::with(['profile', 'tutorProfile'])->whereIn('id', $groupClassTutorsIds);
 
         $items = paginate($items, $limit);
 
 
-        foreach($items as $tutor){
-
-            $tutor->price = optional($tutor->hourlyPrices()?->first())->price ?? 0;
-            $tutor->rating = $tutor->reviews()->avg('stars');
-
-            $tutor->specialization = $tutor->descriptions()->first()->specialization ?? '';
-
+        foreach ($items as $tutor) {
+            $tutor->price = $tutor->tutorProfile?->hourly_rate ?? optional($tutor->hourlyPrices()?->first())->price ?? 0;
+            $tutor->rating = $tutor->tutorProfile?->rating ??  $tutor->reviews()->avg('stars') ?? 0;
+            $tutor->name = $tutor->full_name;
+            $tutor->specialization = $tutor->tutorProfile?->specializations ?? $tutor->descriptions()->first()->specialization ?? '';
         }
 
         $data = [
@@ -202,23 +200,22 @@ class GroupClassController extends Controller
         // إرسال إشعار للطلاب المسجلين بتعيين المدرّس
         $studentIds = GroupClassStudent::where('class_id', $group_class->id)->pluck('student_id');
         $tutor = User::find($request->tutor_id);
-        if($tutor && $studentIds->isNotEmpty()) {
-            foreach($studentIds as $studentId) {
+        if ($tutor && $studentIds->isNotEmpty()) {
+            foreach ($studentIds as $studentId) {
                 $student = User::find($studentId);
-                if($student && $student->fcm) {
+                if ($student && $student->fcm) {
                     $info = [
                         'type' => 'tutor_assigned',
                         'group_class_id' => $group_class->id,
-                        'tutor_name' => $tutor->name
+                        'tutor_name' => $tutor->full_name
                     ];
                     sendFCMNotification(
-    'Tutor Assigned',
-    'A tutor has been assigned to your group class: ' . $group_class->name,
-    $student->fcm,
-    $info,
-    $student->id
-);
-
+                        'Tutor Assigned',
+                        'A tutor has been assigned to your group class: ' . $group_class->name,
+                        $student->fcm,
+                        $info,
+                        $student->id
+                    );
                 }
             }
         }
@@ -227,7 +224,6 @@ class GroupClassController extends Controller
             'success' => true,
             'message' => 'Tutor assigned successfully.',
         ], 200);
-
     }
 
     public function unAssignTutorToGroupClass(Request $request)
@@ -255,7 +251,7 @@ class GroupClassController extends Controller
 
         // حفظ معلومات المدرّس قبل الحذف للإشعار
         $oldTutorId = $group_class->tutor_id;
-        
+
         GroupClassTutor::where('group_class_id', $group_class->id)->where('tutor_id', $group_class->tutor_id)->update(['status' => 'rejected']);
 
         Conference::where('ref_type', 1)->where('ref_id', $group_class->id)->update(['tutor_id' => null]);
@@ -264,48 +260,45 @@ class GroupClassController extends Controller
 
         // إرسال إشعار للطلاب المسجلين بإلغاء تعيين المدرّس
         $studentIds = GroupClassStudent::where('class_id', $group_class->id)->pluck('student_id');
-        if($studentIds->isNotEmpty()) {
-            foreach($studentIds as $studentId) {
+        if ($studentIds->isNotEmpty()) {
+            foreach ($studentIds as $studentId) {
                 $student = User::find($studentId);
-                if($student && $student->fcm) {
+                if ($student && $student->fcm) {
                     $info = [
                         'type' => 'tutor_unassigned',
                         'group_class_id' => $group_class->id
                     ];
                     sendFCMNotification(
-    'Tutor Removed',
-    'The tutor has been removed from your group class: ' . $group_class->name,
-    $student->fcm,
-    $info,
-    $student->id
-);
-
+                        'Tutor Removed',
+                        'The tutor has been removed from your group class: ' . $group_class->name,
+                        $student->fcm,
+                        $info,
+                        $student->id
+                    );
                 }
             }
         }
-        
+
         // إرسال إشعار للمدرّس السابق
         $oldTutor = User::find($oldTutorId);
-        if($oldTutor && $oldTutor->fcm) {
+        if ($oldTutor && $oldTutor->fcm) {
             $info = [
                 'type' => 'removed_from_class',
                 'group_class_id' => $group_class->id
             ];
             sendFCMNotification(
-    'Tutor Removed',
-    'The tutor has been removed from your group class: ' . $group_class->name,
-    $student->fcm,
-    $info,
-    $student->id
-);
-
+                'Tutor Removed',
+                'The tutor has been removed from your group class: ' . $group_class->name,
+                $student->fcm,
+                $info,
+                $student->id
+            );
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Tutor un assigned successfully.',
         ], 200);
-
     }
 
     public function getAssignedGroupClass(Request $request, $slug = null)
@@ -336,11 +329,8 @@ class GroupClassController extends Controller
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
 
-                                
-                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
+                $items->tutor->price = $items->tutor->tutorProfile?->hourly_rate ?? optional($items->tutor->hourlyPrices()?->first())->price ?? 0;
 
-
-                $items->tutor->price = $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
                 $tutor_about = $items->tutor->abouts()->first();
                 if ($tutor_about) {
@@ -355,6 +345,7 @@ class GroupClassController extends Controller
 
                 if ($items->tutor) {
                     $items->tutor->email = null;
+                    $items->tutor->name = $items->tutor->full_name;
                 }
                 /*$items->outlines = $items->outlines()->get();
 
@@ -387,6 +378,7 @@ class GroupClassController extends Controller
                     $suggestion->tutor;
                     if ($suggestion->tutor) {
                         $suggestion->tutor->email = null;
+                        $suggestion->tutor->name = $suggestion->tutor->full_name;
                     }
 
                     /*$item->students = $item->students()->get();
@@ -489,11 +481,11 @@ class GroupClassController extends Controller
             if (! empty($request->topic)) {
                 $topic = $request->topic;
                 $items->where(function ($query) use ($topic) {
-                    $query->whereRaw(filterTextDB('group_class_langs.title').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.about').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.about').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.headline').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.information').' like ?', ['%'.filterText($topic).'%']);
+                    $query->whereRaw(filterTextDB('group_class_langs.title') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.about') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.about') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.headline') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.information') . ' like ?', ['%' . filterText($topic) . '%']);
                 });
             }
 
@@ -517,7 +509,7 @@ class GroupClassController extends Controller
                 $item->tutor;
 
                 if ($item->tutor) {
-                    $item->tutor->price = $item->tutor->hourlyPrices()?->first()?->price ?? 0;
+                    $item->tutor->price = $item->tutor->tutorProfile?->hourly_rate ?? optional($item->tutor->hourlyPrices()?->first())->price ?? 0;
                     $tutor_about = $item->tutor->abouts()->first();
 
                     if ($tutor_about) {
@@ -530,6 +522,7 @@ class GroupClassController extends Controller
 
                     $item->tutor->videos = $item->tutor->videos()->get();
                     $item->tutor->email = null;
+                    $item->tutor->name = $item->tutor->full_name;
                 }
 
                 /*$item->students = $item->students()->get();
@@ -589,7 +582,7 @@ class GroupClassController extends Controller
                 if (! empty($request->topic)) {
                     $topic = $request->topic;
                     $query->whereHas('langs', function ($subQuery) use ($topic) {
-                        $subQuery->where('title', 'like ?', '%'.$topic.'%');
+                        $subQuery->where('title', 'like ?', '%' . $topic . '%');
                     });
                 }
             })
@@ -606,7 +599,6 @@ class GroupClassController extends Controller
             'message' => 'items-retrieved-successfully',
             'result' => $items,
         ], 200);
-
     }
 
     public function tutorIndex(Request $request)
@@ -633,6 +625,7 @@ class GroupClassController extends Controller
 
             if ($item->tutor) {
                 $item->tutor->email = null;
+                $item->tutor->name = $item->tutor->full_name;
             }
 
             $item->tutor_status = GroupClassTutor::where('group_class_id', $item->id)->where('tutor_id', $user->id)->first() ? 1 : 0;
@@ -699,11 +692,9 @@ class GroupClassController extends Controller
                 $items->rating = $items->reviews()->avg('stars');
                 $items->tutor;
 
-                                
-                $items->tutor->price =  $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
+                $items->tutor->price =  $items->tutor->tutorProfile?->hourly_rate ?? optional($items->tutor->hourlyPrices()?->first())->price ?? 0;
 
-                $items->tutor->price = $items->tutor->hourlyPrices()?->first()?->price ?? 0;
 
                 $tutor_about = $items->tutor->abouts()->first();
                 if ($tutor_about) {
@@ -716,7 +707,9 @@ class GroupClassController extends Controller
 
                 if ($items->tutor) {
                     $items->tutor->email = null;
+                    $items->tutor->name = $items->tutor->full_name;
                 }
+                
                 /*$items->outlines = $items->outlines()->get();
 
                 foreach($items->outlines as $outline){
@@ -732,11 +725,11 @@ class GroupClassController extends Controller
                 $items->appliedTutors;
                 foreach ($items->appliedTutors as $appliedTutor) {
                     $appliedTutor->tutor;
-                    $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
-                    $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
+                    $appliedTutor->tutor->name = $appliedTutor->tutor->full_name;
+                    $appliedTutor->tutor->price = $appliedTutor->tutor->tutorProfile?->hourly_rate ?? optional($appliedTutor->tutor->hourlyPrices()?->first())->price ?? 0;
+                    $appliedTutor->tutor->rating = $appliedTutor->tutor->tutorProfile?->rating ??  $appliedTutor->tutor->reviews()->avg('stars') ?? 0;
 
-                    $appliedTutor->tutor->specialization = $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
-
+                    $appliedTutor->tutor->specialization = $appliedTutor->tutor->tutorProfile?->specializations ?? $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
                 }
 
                 $suggestions = GroupClass::where('category_id', $items->category_id)->where('id', '<>', $items->id)->limit(6)->get();
@@ -754,6 +747,7 @@ class GroupClassController extends Controller
                     $suggestion->tutor;
                     if ($suggestion->tutor) {
                         $suggestion->tutor->email = null;
+                        $suggestion->tutor->name = $suggestion->tutor->full_name;
                     }
 
                     /*$item->students = $item->students()->get();
@@ -779,7 +773,7 @@ class GroupClassController extends Controller
             $limit = setDataTablePerPageLimit($request->limit);
 
             // get all group classes
-            $items = GroupClass::with('level','language')->select('group_classes.*');
+            $items = GroupClass::with('level', 'language')->select('group_classes.*');
             // join group class langs
             $items->leftjoin('group_class_langs', 'group_class_langs.classid', 'group_classes.id');
             if (! empty($request->tutor_id)) {
@@ -848,18 +842,18 @@ class GroupClassController extends Controller
             if (! empty($request->topic)) {
                 $topic = $request->topic;
                 $items->where(function ($query) use ($topic) {
-                    $query->whereRaw(filterTextDB('group_class_langs.title').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.about').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.about').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.headline').' like ?', ['%'.filterText($topic).'%']);
-                    $query->orwhereRaw(filterTextDB('group_class_langs.information').' like ?', ['%'.filterText($topic).'%']);
+                    $query->whereRaw(filterTextDB('group_class_langs.title') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.about') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.about') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.headline') . ' like ?', ['%' . filterText($topic) . '%']);
+                    $query->orwhereRaw(filterTextDB('group_class_langs.information') . ' like ?', ['%' . filterText($topic) . '%']);
                 });
             }
 
             if (! empty($request->q)) {
                 $items->whereRaw(
-                    '('.filterTextDB('group_classes.name').' LIKE ?)',
-                    ['%'.filterText($request->q).'%']
+                    '(' . filterTextDB('group_classes.name') . ' LIKE ?)',
+                    ['%' . filterText($request->q) . '%']
                 );
             }
 
@@ -884,20 +878,19 @@ class GroupClassController extends Controller
 
                 if ($item->tutor) {
                     $item->tutor->email = null;
+                    $item->tutor->name = $item->tutor->full_name;
                 }
 
                 $item->appliedTutors;
                 foreach ($item->appliedTutors as $appliedTutor) {
                     $appliedTutor->tutor;
                     if ($appliedTutor->tutor) {
-                        $price = $appliedTutor->tutor?->hourlyPrices()?->first()?->price ?? 0;
-                        $appliedTutor->tutor->setAttribute('price', $price);
-                        $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
+                        $appliedTutor->tutor->price = $appliedTutor->tutor->tutorProfile?->hourly_rate ?? optional($appliedTutor->tutor->hourlyPrices()?->first())->price ?? 0;
+                        $appliedTutor->tutor->rating = $appliedTutor->tutor->tutorProfile?->rating ??  $appliedTutor->tutor->reviews()->avg('stars') ?? 0;
 
-                        $appliedTutor->tutor->specialization =  $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
+                        $appliedTutor->tutor->specialization = $appliedTutor->tutor->tutorProfile?->specializations ?? $appliedTutor->tutor->descriptions()->first()->specialization ?? '';
+                        $appliedTutor->tutor->name = $appliedTutor->tutor->full_name;
                     }
-                    
-
                 }
                 $item->tutor_status = GroupClassTutor::where('group_class_id', $item->id)->where('tutor_id', $user->id)->first() ? 1 : 0;
 
@@ -927,7 +920,7 @@ class GroupClassController extends Controller
                 //     }
                 // }
                 $item->level_number = $item->level?->level_number;
-                if($item->level_number > 1){
+                if ($item->level_number > 1) {
                     $item->have_exams = $item->exams?->count() > 0 ? 1 : 0;
                 }
             }
@@ -982,10 +975,9 @@ class GroupClassController extends Controller
                     'message' => $validator->errors()->first(),
                     'msg-code' => 'validation-error',
                 ], 200);
-
             }
 
-            $data = $request->only(['name', 'category_id', 'price', 'level_id','language_id', 'classes', 'class_length', 'total_classes_length', 'frequency_id', 'min_size', 'metadata', 'embed', 'image', 'attachment', 'status', 'publish', 'publish_date', 'start_month', 'sessions_hour']); // 'tutor_id'
+            $data = $request->only(['name', 'category_id', 'price', 'level_id', 'language_id', 'classes', 'class_length', 'total_classes_length', 'frequency_id', 'min_size', 'metadata', 'embed', 'image', 'attachment', 'status', 'publish', 'publish_date', 'start_month', 'sessions_hour']); // 'tutor_id'
             $user = Auth::user();
             $data['user_id'] = $user->id;
             $data['ipaddress'] = $request->ip();
@@ -1004,7 +996,7 @@ class GroupClassController extends Controller
                 if ($dateTime !== false) {
                     $data['sessions_hour'] = $dateTime->format('H:i:s');
                 } else {
-                    error_log('Invalid time input: '.$sessions_hour);
+                    error_log('Invalid time input: ' . $sessions_hour);
                     throw new \InvalidArgumentException("Invalid time format. Expected 'h:i A' or 'H:i:s'.");
                 }
             }
@@ -1018,7 +1010,7 @@ class GroupClassController extends Controller
                 // Change the month
                 $originalDate->setDate($originalDate->format('Y'), $newMonth, $originalDate->format('d'));
 
-                $group_class_dates[]['class_date'] = $originalDate->format('Y-m-d').' '.$data['sessions_hour'];
+                $group_class_dates[]['class_date'] = $originalDate->format('Y-m-d') . ' ' . $data['sessions_hour'];
             }
 
             if ($id == 0 && empty($group_class_dates)) {
@@ -1043,7 +1035,7 @@ class GroupClassController extends Controller
                 foreach ($group_class_dates as $date) {
                     $now = new DateTime('now');
                     $start_date = $date['class_date'];
-                    $end_date = date('Y-m-d H:i:s', strtotime($start_date.' +15 minutes'));
+                    $end_date = date('Y-m-d H:i:s', strtotime($start_date . ' +15 minutes'));
                     $book_start = new DateTime($start_date);
                     $book_end = new DateTime($end_date);
                     if ($book_start <= $now) {
@@ -1119,7 +1111,6 @@ class GroupClassController extends Controller
                 'message' => 'item-added-successfully',
                 'result' => $item,
             ], 200);
-
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -1150,7 +1141,7 @@ class GroupClassController extends Controller
             $conference->title = $groupClass->name;
 
             $conference->start_time = $date->class_date;
-            $conference->end_time = date('Y-m-d H:i:s', strtotime($conference->start_time.' +40 minutes'));
+            $conference->end_time = date('Y-m-d H:i:s', strtotime($conference->start_time . ' +40 minutes'));
 
             $start_time = explode(' ', $conference->start_time);
             $end_time = explode(' ', $conference->end_time);
@@ -1323,7 +1314,7 @@ class GroupClassController extends Controller
         $item->appliedTutors;
         foreach ($item->appliedTutors as $appliedTutor) {
             $appliedTutor->tutor;
-            if($appliedTutor->tutor) {
+            if ($appliedTutor->tutor) {
                 $appliedTutor->tutor->price = $appliedTutor->tutor->hourlyPrices()?->first()?->price ?? 0;
                 $appliedTutor->tutor->rating = $appliedTutor->tutor->reviews()->avg('stars');
 
@@ -1386,42 +1377,40 @@ class GroupClassController extends Controller
 
         // إرسال إشعارات للطلاب والمدرّس قبل حذف الكلاس
         $studentIds = GroupClassStudent::where('class_id', $item->id)->pluck('student_id');
-        if($studentIds->isNotEmpty()) {
-            foreach($studentIds as $studentId) {
+        if ($studentIds->isNotEmpty()) {
+            foreach ($studentIds as $studentId) {
                 $student = User::find($studentId);
-                if($student && $student->fcm) {
+                if ($student && $student->fcm) {
                     $info = [
                         'type' => 'class_cancelled',
                         'group_class_id' => $item->id
                     ];
                     sendFCMNotification(
-    'Class Cancelled',
-    'The group class "' . $item->name . '" has been cancelled',
-    $student->fcm,
-    $info,
-    $student->id
-);
-
+                        'Class Cancelled',
+                        'The group class "' . $item->name . '" has been cancelled',
+                        $student->fcm,
+                        $info,
+                        $student->id
+                    );
                 }
             }
         }
-        
+
         // إشعار للمدرّس
-        if($item->tutor_id) {
+        if ($item->tutor_id) {
             $tutor = User::find($item->tutor_id);
-            if($tutor && $tutor->fcm) {
+            if ($tutor && $tutor->fcm) {
                 $info = [
                     'type' => 'class_cancelled',
                     'group_class_id' => $item->id
                 ];
-               sendFCMNotification(
-    'Class Cancelled',
-    'The group class "' . $item->name . '" has been cancelled',
-    $tutor->fcm,
-    $info,
-    $tutor->id
-);
-
+                sendFCMNotification(
+                    'Class Cancelled',
+                    'The group class "' . $item->name . '" has been cancelled',
+                    $tutor->fcm,
+                    $info,
+                    $tutor->id
+                );
             }
         }
 
@@ -1451,7 +1440,7 @@ class GroupClassController extends Controller
         foreach ($conferences as $key => $conference) {
             // $conference->is_taken = ConferenceAttendance::where('conference_id', $conference->id)->exists();
             $conference->is_taken = !empty($studentIds);
-            $conference['students'] = $students->map(function ($student) use ($conference,$group_class) {
+            $conference['students'] = $students->map(function ($student) use ($conference, $group_class) {
                 $student_attendance = GroupClassStudent::where([
                     'student_id' => $student->id,
                     'class_id' => $group_class->id,
@@ -1475,6 +1464,6 @@ class GroupClassController extends Controller
                 'group_class' => $group_class,
                 'conferences' => $conferences,
             ],
-        ] , 200);
+        ], 200);
     }
 }
