@@ -358,7 +358,7 @@ class HomeController extends Controller
             // Tutor summary
             if ($class->tutor) {
                 $class->tutor->email = null;
-                $class->tutor_name = $class->tutor->name;
+                $class->tutor_name = $class->tutor->full_name;
                 $class->tutor_price = $class->tutor->hourlyPrices()->first()->price ?? 0;
             } else {
                 $class->tutor_name = null;

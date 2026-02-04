@@ -240,7 +240,7 @@
                                 </div>
                                 <div class="flex justify-between items-center pb-4 border-b border-gray-200">
                                     <div class="flex gap-2 items-center">
-                                        <img src="{{ asset('storage/'.$class->tutor?->avatar) }}" alt="{{ $class->tutor?->full_name }}"
+                                        <img src="{{ $class->tutor?->avatar }}" alt="{{ $class->tutor?->full_name }}"
                                             class="w-10 h-10 rounded-full">
                                         <span class="text-base font-semibold text-gray-800">{{ $class->tutor?->full_name }}</span>
                                     </div>

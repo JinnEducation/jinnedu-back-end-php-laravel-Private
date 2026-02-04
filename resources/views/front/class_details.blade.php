@@ -133,7 +133,7 @@
                     <!-- Instructor -->
                     <div class="mb-8 rounded-md border border-gray-300 p-6">
                         <div class="flex gap-4 items-center mb-4">
-                            <img src="{{ asset('storage/' . $group_class->tutor?->avatar) }}"
+                            <img src="{{ $group_class->tutor?->avatar }}"
                                 alt="{{ $group_class->tutor?->full_name }}"
                                 class="object-cover w-21 h-21 rounded-full">
 
@@ -142,7 +142,7 @@
                                     {{ $group_class->tutor?->full_name }}
                                 </h3>
                                 <p class="text-sm text-gray-600">
-                                    {{ $group_class->tutor?->descriptions?->first()->specialization }}
+                                    {{ $group_class->tutor?->descriptions?->first()?->specialization }}
                                 </p>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                                 class="cursor-pointer px-6 py-2 text-sm text-black bg-white rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
                                 {{ label_text('global', 'View profile', __('site.View profile')) }}
                             </a>
-                            <a href="{{ route('redirect.dashboard') }}"
+                            <a href="{{ route('redirect.dashboard', ['redirect_to'=>'/chats/private-chat?user_id=' . $group_class->tutor?->id]) }}"
                                 class="cursor-pointer px-6 py-2 text-sm text-white bg-primary rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
                                 {{ label_text('global', 'Message tutor', __('site.Message tutor')) }}
                             </a>
@@ -272,7 +272,8 @@
                                         class="flex justify-between items-center p-3 rounded-md border border-gray-200 cursor-pointer transition-all hover:border-primary-600 hover:bg-primary-50">
                                         <span
                                             class="text-sm text-black">{{ Carbon\Carbon::parse($date->class_date)->translatedFormat('l') }}
-                                            , {{ \Carbon\Carbon::parse($date->class_date)->locale(app()->getLocale())->translatedFormat('M d, Y') }}</span>
+                                            ,
+                                            {{ \Carbon\Carbon::parse($date->class_date)->locale(app()->getLocale())->translatedFormat('M d, Y') }}</span>
                                         <span
                                             class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($date->class_date)->locale(app()->getLocale())->translatedFormat('h:i A') }}</span>
                                     </div>
@@ -309,64 +310,12 @@
     </section>
 
     @push('scripts')
-        <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
-
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const btn = document.getElementById('fav-btn');
-                if (!btn) return;
-
-                const iconNotFaved = btn.querySelector('.not-faved');
-                const iconFaved = btn.querySelector('.faved');
-
-                const setUI = (isFaved) => {
-                    if (isFaved) {
-                        iconNotFaved.classList.add('!hidden');
-                        iconFaved.classList.remove('!hidden');
-                    } else {
-                        iconFaved.classList.add('!hidden');
-                        iconNotFaved.classList.remove('!hidden');
-                    }
-                };
-
-                btn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-
-                    btn.disabled = true;
-
-                    try {
-                        const res = await fetch("{{ route('site.user_favorites.toggle') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Accept": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                ref_id: parseInt(btn.dataset.ref),
-                                type: parseInt(btn.dataset.type) // 3 group class
-                            })
-                        });
-
-                        if (res.status === 401) {
-                            window.location.href = "{{ route('login') }}";
-                            return;
-                        }
-
-                        const data = await res.json();
-
-                        if (data.status === 'added') setUI(true);
-                        if (data.status === 'removed') setUI(false);
-
-                    } catch (err) {
-                        console.error(err);
-                        alert('Error saving favorite');
-                    } finally {
-                        btn.disabled = false;
-                    }
-                });
-            });
+            const toggleUrl = "{{ route('site.user_favorites.toggle') }}";
+            const loginUrl = "{{ route('login') }}";
+            const csrfToken = "{{ csrf_token() }}";
         </script>
+        <script src="{{ asset('front/assets/js/class_detail.js') }}"></script>
     @endpush
 
 </x-front-layout>

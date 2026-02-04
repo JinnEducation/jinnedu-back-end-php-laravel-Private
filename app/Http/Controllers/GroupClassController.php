@@ -633,6 +633,7 @@ class GroupClassController extends Controller
 
             if ($item->tutor) {
                 $item->tutor->email = null;
+                $item->tutor->name = $item->tutor->full_name;
             }
 
             $item->tutor_status = GroupClassTutor::where('group_class_id', $item->id)->where('tutor_id', $user->id)->first() ? 1 : 0;
@@ -716,6 +717,7 @@ class GroupClassController extends Controller
 
                 if ($items->tutor) {
                     $items->tutor->email = null;
+                    $items->tutor->name = $items->tutor->full_name;
                 }
                 /*$items->outlines = $items->outlines()->get();
 
