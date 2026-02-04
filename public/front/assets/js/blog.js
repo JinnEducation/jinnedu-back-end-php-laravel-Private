@@ -238,10 +238,8 @@ $(document).ready(function () {
   });
 
   // إغلاق الـ popup
-  $(document).on('click', '.close-popup, #sharePopup', function (e) {
-    if (e.target === this) {
-      $('#sharePopup').addClass('hidden');
-    }
+  $(document).on('click', '.close-popup', function (e) {
+    $('#sharePopup').addClass('hidden').css('display', 'none');
   });
 
   // منع إغلاق الـ popup عند الضغط على المحتوى

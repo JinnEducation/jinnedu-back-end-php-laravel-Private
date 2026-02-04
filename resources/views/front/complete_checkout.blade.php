@@ -5,7 +5,8 @@
         <div class="container h-full">
             <div class="flex flex-col gap-8 justify-center items-center h-full text-center">
                 <div>
-                    <svg width="248" height="257" viewBox="0 0 248 257" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="248" height="257" viewBox="0 0 248 257" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M123.75 133.037C89.5777 133.037 61.875 160.74 61.875 194.912C61.875 229.084 89.5777 256.787 123.75 256.787C157.922 256.787 185.625 229.084 185.625 194.912C185.625 160.74 157.922 133.037 123.75 133.037ZM155.062 186.006L124.125 216.943C122.312 218.756 119.937 219.662 117.562 219.662C115.188 219.662 112.813 218.756 111 216.943L92.4375 198.381C88.8117 194.755 88.8117 188.882 92.4375 185.257C96.0634 181.632 101.937 181.631 105.561 185.257L117.561 197.257L141.936 172.882C145.562 169.256 151.435 169.256 155.06 172.882C158.685 176.508 158.688 182.381 155.062 186.006Z"
                             fill="#1B449C" />
@@ -15,8 +16,12 @@
                     </svg>
                 </div>
                 <div class="space-y-3">
-                    <h2 class="text-3xl font-bold text-black">Complete Checkout</h2>
-                    <span class="text-lg text-gray-500">checkout - Successfully - P</span>
+                    <h2 class="text-3xl font-bold text-black">
+                        {{ label_text('global', 'complete_checkout', __('site.complete_checkout')) }}
+                    </h2>
+                    <span class="text-lg text-gray-500">
+                        {{ label_text('global', 'checkout_success_status', __('site.checkout_success_status')) }}
+                    </span>
                 </div>
             </div>
         </div>

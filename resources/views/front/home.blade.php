@@ -325,19 +325,12 @@
                         $title = $langRow->title ?? $course->title ?? $course->name ?? 'Course';
                         $desc = $langRow->short_description ?? $langRow->description ?? $course->short_description ?? null;
 
-                        // ===== Image =====
-                        $image = $course->image
-                            ?? $course->thumbnail
-                            ?? $course->cover
-                            ?? $course->image_url
-                            ?? asset('front/assets/imgs/Rectangle 1904355.png');
-
                         // ===== URL (عدّلي حسب routes عندك) =====
                         // $courseUrl = url('/course/' . $course->id);
                         $courseUrl = route('site.singlecourse', $course->id);
 
                         // ===== Duration =====
-                        $hours = $course->total_hours ?? $course->duration_hours ?? null;
+                        $hours = $course->course_duration_hours ?? $course->duration_hours ?? 0;
 
                         // ===== Pricing + Discount =====
                         $price = (float) ($course->price ?? 0);
@@ -368,7 +361,7 @@
                         data-course-index="{{ $index }}">
 
                         <div class="overflow-hidden relative h-48 rounded-sm">
-                            <img src="{{ $image }}" alt="{{ $title }}" class="object-cover w-full h-full">
+                            <img src="{{ $course->course_image_full }}" alt="{{ $title }}" class="object-cover w-full h-full">
                         </div>
 
                         <div class="pt-4">
@@ -766,11 +759,11 @@
                 <div class="relative">
                     <!-- Custom Navigation Buttons -->
                     <button
-                        class="flex absolute left-[-20px] top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-prev-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
+                        class="flex absolute left-[-20px] rtl:right-[-20px] rtl:left-auto top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-prev-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
                         <i class="text-lg fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}}"></i>
                     </button>
                     <button
-                        class="flex absolute right-[-20px] top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-next-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
+                        class="flex absolute right-[-20px] rtl:left-[-20px] rtl:right-auto top-1/2 z-20 justify-center items-center w-12 h-12 rounded-full shadow-lg transition-all duration-300 transform -translate-y-1/2 swiper-button-next-custom bg-white border border-primary text-primary hover:bg-primary hover:text-white hover:cursor-pointer hover:scale-110">
                         <i class="text-lg fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
                     </button>
 

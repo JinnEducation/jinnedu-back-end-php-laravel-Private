@@ -13,7 +13,7 @@
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i
-                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
@@ -21,7 +21,7 @@
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i
-                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} text-[10px]"></i>
                     </span>
                     <span class="text-gray-900 break-words">
                         {{ label_text('global', 'Online Private classes', __('site.Online Private classes')) }}
@@ -52,9 +52,11 @@
                         <div class="relative">
                             <select id="filterSubject"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Subject', __('site.Subject')) }}</option>
+                                <option value="">{{ label_text('global', 'Subject', __('site.Subject')) }}
+                                </option>
                                 @foreach ($subjects as $subject)
-                                    <option value="{{ $subject->name }}" {{ ($filters['filterSubject'] ?? '') == $subject->name ? 'selected' : '' }}>
+                                    <option value="{{ $subject->name }}"
+                                        {{ ($filters['filterSubject'] ?? '') == $subject->name ? 'selected' : '' }}>
                                         {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}
                                     </option>
                                 @endforeach
@@ -71,20 +73,26 @@
                         <div class="relative">
                             <select id="filterPriceRange"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Any price', __('site.Any price')) }}</option>
-                                <option value="0-10" {{ ($filters['filterPriceRange'] ?? '') == '0-10' ? 'selected' : '' }}>
+                                <option value="">{{ label_text('global', 'Any price', __('site.Any price')) }}
+                                </option>
+                                <option value="0-10"
+                                    {{ ($filters['filterPriceRange'] ?? '') == '0-10' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Under 10 USD', __('site.Under 10 USD')) }}
                                 </option>
-                                <option value="10-25" {{ ($filters['filterPriceRange'] ?? '') == '10-25' ? 'selected' : '' }}>
+                                <option value="10-25"
+                                    {{ ($filters['filterPriceRange'] ?? '') == '10-25' ? 'selected' : '' }}>
                                     {{ label_text('global', '10 USD - 25 USD', __('site.10 USD - 25 USD')) }}
                                 </option>
-                                <option value="25-50" {{ ($filters['filterPriceRange'] ?? '') == "25-50" ? 'selected' : '' }}>
+                                <option value="25-50"
+                                    {{ ($filters['filterPriceRange'] ?? '') == '25-50' ? 'selected' : '' }}>
                                     {{ label_text('global', '25 USD - 50 USD', __('site.25 USD - 50 USD')) }}
                                 </option>
-                                <option value="50-100" {{ ($filters['filterPriceRange'] ?? '') == "50-100" ? 'selected' : '' }}>
+                                <option value="50-100"
+                                    {{ ($filters['filterPriceRange'] ?? '') == '50-100' ? 'selected' : '' }}>
                                     {{ label_text('global', '50 USD - 100 USD', __('site.50 USD - 100 USD')) }}
                                 </option>
-                                <option value="100-9999" {{ ($filters['filterPriceRange'] ?? '') == "100-9999" ? 'selected' : '' }}>
+                                <option value="100-9999"
+                                    {{ ($filters['filterPriceRange'] ?? '') == '100-9999' ? 'selected' : '' }}>
                                     {{ label_text('global', '100 USD+', __('site.100 USD+')) }}
                                 </option>
                             </select>
@@ -104,7 +112,8 @@
                                     {{ label_text('global', 'Native Language', __('site.Native Language')) }}
                                 </option>
                                 @foreach ($languages as $language)
-                                    <option value="{{ $language->name }}" {{ ($filters['filterNativeLanguage'] ?? '') == $language->name ? 'selected' : '' }}>
+                                    <option value="{{ $language->name }}"
+                                        {{ ($filters['filterNativeLanguage'] ?? '') == $language->name ? 'selected' : '' }}>
                                         {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
                                     </option>
                                 @endforeach
@@ -121,20 +130,26 @@
                         <div class="relative">
                             <select id="filterAvailability"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Any Time', __('site.Any Time')) }}</option>
-                                <option value="morning"  {{ ($filters['filterAvailability'] ?? '') == "morning" ? 'selected' : '' }}>
+                                <option value="">{{ label_text('global', 'Any Time', __('site.Any Time')) }}
+                                </option>
+                                <option value="morning"
+                                    {{ ($filters['filterAvailability'] ?? '') == 'morning' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Morning (6AM - 12PM)', __('site.Morning (6AM - 12PM)')) }}
                                 </option>
-                                <option value="afternoon" {{ ($filters['filterAvailability'] ?? '') == "afternoon" ? 'selected' : '' }}>
+                                <option value="afternoon"
+                                    {{ ($filters['filterAvailability'] ?? '') == 'afternoon' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Afternoon (12PM - 6PM)', __('site.Afternoon (12PM - 6PM)')) }}
                                 </option>
-                                <option value="evening" {{ ($filters['filterAvailability'] ?? '') == "evening" ? 'selected' : '' }}>
+                                <option value="evening"
+                                    {{ ($filters['filterAvailability'] ?? '') == 'evening' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Evening (6PM - 10PM)', __('site.Evening (6PM - 10PM)')) }}
                                 </option>
-                                <option value="night" {{ ($filters['filterAvailability'] ?? '') == "night" ? 'selected' : '' }}>
+                                <option value="night"
+                                    {{ ($filters['filterAvailability'] ?? '') == 'night' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Night (10PM - 6AM)', __('site.Night (10PM - 6AM)')) }}
                                 </option>
-                                <option value="weekend" {{ ($filters['filterAvailability'] ?? '') == "weekend" ? 'selected' : '' }}>
+                                <option value="weekend"
+                                    {{ ($filters['filterAvailability'] ?? '') == 'weekend' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Weekends Only', __('site.Weekends Only')) }}
                                 </option>
                             </select>
@@ -154,7 +169,8 @@
                                     {{ label_text('global', 'Specializations', __('site.Specializations')) }}
                                 </option>
                                 @foreach ($specializations as $spec)
-                                    <option value="{{ $spec->name }}"  {{ ($filters['filterSpecialization'] ?? '') == $spec->name ? 'selected' : '' }}>
+                                    <option value="{{ $spec->name }}"
+                                        {{ ($filters['filterSpecialization'] ?? '') == $spec->name ? 'selected' : '' }}>
                                         {{ label_text('specializations', $spec->name, __('specializations.' . $spec->name)) }}
                                     </option>
                                 @endforeach
@@ -171,9 +187,11 @@
                         <div class="relative">
                             <select id="filterCountry"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Country', __('site.Country')) }}</option>
+                                <option value="">{{ label_text('global', 'Country', __('site.Country')) }}
+                                </option>
                                 @foreach ($countries as $country)
-                                    <option value="{{ $country->name }}" {{ ($filters['filterCountry'] ?? '') == $country->name ? 'selected' : '' }}>
+                                    <option value="{{ $country->name }}"
+                                        {{ ($filters['filterCountry'] ?? '') == $country->name ? 'selected' : '' }}>
                                         {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
                                     </option>
                                 @endforeach
@@ -190,10 +208,12 @@
                         <div class="relative">
                             <select id="filterAlsoSpeaks"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Also Speaks', __('site.Also Speaks')) }}
+                                <option value="">
+                                    {{ label_text('global', 'Also Speaks', __('site.Also Speaks')) }}
                                 </option>
                                 @foreach ($languages as $language)
-                                    <option value="{{ $language->name }}" {{ ($filters['filterAlsoSpeaks'] ?? '') == $language->name ? 'selected' : '' }}>
+                                    <option value="{{ $language->name }}"
+                                        {{ ($filters['filterAlsoSpeaks'] ?? '') == $language->name ? 'selected' : '' }}>
                                         {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
                                     </option>
                                 @endforeach
@@ -210,18 +230,23 @@
                         <div class="relative">
                             <select id="filterSortBy"
                                 class="text-[13px] px-4 py-3 w-full text-black bg-white rounded-lg border border-gray-300 transition-all duration-300 appearance-none focus:border-blue-500 focus:ring-2 focus:ring-primary-200 focus:outline-none">
-                                <option value="">{{ label_text('global', 'Sort By', __('site.Sort By')) }}</option>
+                                <option value="">{{ label_text('global', 'Sort By', __('site.Sort By')) }}
+                                </option>
 
-                                <option value="price_low_high" {{ ($filters['filterSortBy'] ?? '') == "price_low_high" ? 'selected' : '' }}>
+                                <option value="price_low_high"
+                                    {{ ($filters['filterSortBy'] ?? '') == 'price_low_high' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Price: Low to High', __('site.Price: Low to High')) }}
                                 </option>
-                                <option value="price_high_low" {{ ($filters['filterSortBy'] ?? '') == "price_high_low" ? 'selected' : '' }}>
+                                <option value="price_high_low"
+                                    {{ ($filters['filterSortBy'] ?? '') == 'price_high_low' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Price: High to Low', __('site.Price: High to Low')) }}
                                 </option>
-                                <option value="rating_high_low" {{ ($filters['filterSortBy'] ?? '') == "rating_high_low" ? 'selected' : '' }}>
+                                <option value="rating_high_low"
+                                    {{ ($filters['filterSortBy'] ?? '') == 'rating_high_low' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Rating: High to Low', __('site.Rating: High to Low')) }}
                                 </option>
-                                <option value="most_popular" {{ ($filters['filterSortBy'] ?? '') == "most_popular" ? 'selected' : '' }}>
+                                <option value="most_popular"
+                                    {{ ($filters['filterSortBy'] ?? '') == 'most_popular' ? 'selected' : '' }}>
                                     {{ label_text('global', 'Most Popular', __('site.Most Popular')) }}
                                 </option>
                             </select>
@@ -326,21 +351,19 @@
                                     if (isset($availability->hour_from) && isset($availability->hour_to)) {
                                         $periods = $getPeriodsFromTimeRange(
                                             $availability->hour_from,
-                                            $availability->hour_to
+                                            $availability->hour_to,
                                         );
                                         $availabilityPeriods = array_merge($availabilityPeriods, $periods);
                                     }
                                 }
 
-                                $availabilityPeriods = array_values(
-                                    array_unique(array_filter($availabilityPeriods))
-                                );
+                                $availabilityPeriods = array_values(array_unique(array_filter($availabilityPeriods)));
                             }
 
                             // أسماء لطيفة للعرض
                             $subjectName = $tp?->teaching_subject ?? '-';
                             $nativeLangName = $tp?->native_language ?? '-';
-                            $countryName = $tp?->tutor_country;
+                            $countryName = $profile?->country;
 
                             $hourlyRate = $tp->hourly_rate ?? null;
 
@@ -354,24 +377,22 @@
                             data-tutor-subject="{{ $subjectName }}"
                             data-tutor-avatar="{{ $tutor->profile?->avatar_path ? asset('storage/' . $tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/' . $tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}"
                             data-tutor-slug="{{ $tutor->slug ?? $tutor->id }}"
-                            data-availability="{{ json_encode($availabilities->map(function ($av) { return ['day_id' => $av->day->id ?? 0, 'day_name' => $av->day->name ?? '', 'hour_from' => $av->hour_from ?? '', 'hour_to' => $av->hour_to ?? '']; })->toArray()) }}"
+                            data-availability="{{ json_encode($availabilities->map(function ($av) {return ['day_id' => $av->day->id ?? 0, 'day_name' => $av->day->name ?? '', 'hour_from' => $av->hour_from ?? '', 'hour_to' => $av->hour_to ?? ''];})->toArray()) }}"
                             data-full-name="{{ strtolower($fullName) }}"
-                            data-subject-id="{{ $tp->teaching_subject ?? '' }}"
-                            data-price="{{ $hourlyRate ?? 0 }}"
+                            data-subject-id="{{ $tp->teaching_subject ?? '' }}" data-price="{{ $hourlyRate ?? 0 }}"
                             data-native-language-id="{{ $tp->native_language ?? '' }}"
                             data-country="{{ $profile->country ?? '' }}"
                             data-specialization="{{ $tp?->specializations }}"
                             data-also-speaks="{{ $tp?->other_languages ?? '' }}"
                             data-availability-periods="{{ implode(',', $availabilityPeriods) }}"
-                            data-rating="{{ $rating }}"
-                            data-students="{{ $studentsCount }}">
+                            data-rating="{{ $rating }}" data-students="{{ $studentsCount }}">
 
                             <div class="flex gap-4">
                                 <!-- Tutor Image -->
                                 <div class="flex-shrink-0">
                                     <img src="{{ $tutor->profile?->avatar_path ? asset('storage/' . $tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/' . $tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}"
-                                        alt="{{ $fullName }}" class="w-53 h-full object-cover transition-all duration-300"
-                                        loading="lazy">
+                                        alt="{{ $fullName }}"
+                                        class="w-53 h-full object-cover transition-all duration-300" loading="lazy">
                                 </div>
 
                                 <!-- Tutor Info -->
@@ -383,7 +404,7 @@
                                             </h3>
                                             @if ($countryName)
                                                 <p class="text-xs text-gray-500 mt-1">
-                                                    {{ $countryName }}
+                                                    {{ label_text('countries', $countryName, __('countries.' . $countryName)) }}
                                                 </p>
                                             @endif
                                         </div>
@@ -400,7 +421,8 @@
                                             </div>
                                             <div class="flex flex-col items-start justify-end">
                                                 <div class="flex items-center gap-1">
-                                                    <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                                    <svg class="w-4 h-4 text-yellow-400 fill-current"
+                                                        viewBox="0 0 20 20">
                                                         <path
                                                             d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                                     </svg>
@@ -426,7 +448,8 @@
                                                 <path
                                                     d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                             </svg>
-                                            <span>{{ $subjectName }}</span>
+                                            <span>{{ label_text('subjects', $subjectName, __('subjects.' . $subjectName)) }}</span>
+
                                         </div>
 
                                         {{-- عدد الطلاب --}}
@@ -436,7 +459,8 @@
                                                 <path
                                                     d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                             </svg>
-                                            <span>{{ $studentsCount }} {{ label_text('global', 'Students', __('site.Students')) }}</span>
+                                            <span>{{ $studentsCount }}
+                                                {{ label_text('global', 'Students', __('site.Students')) }}</span>
                                         </div>
 
                                         {{-- اللغة الأم --}}
@@ -450,8 +474,8 @@
                                             <span>
                                                 {{ label_text('global', 'Speaks', __('site.Speaks')) }}
                                                 <span class="text-primary font-semibold">
-                                                    {{ $nativeLangName ?? 'N/A' }}
-                                                    {{ label_text('global', 'Native', __('site.Native')) }}
+                                                    {{ label_text('languages', $nativeLangName, __('languages.' . $nativeLangName)) }}
+                                                    {{ label_text('global', '(Native)', __('site.(Native)')) }}
                                                 </span>
                                             </span>
                                         </div>
@@ -464,18 +488,21 @@
                                             class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
                                             {{ label_text('global', 'View Details', __('site.View Details')) }}
                                         </a>
-                                        <button type="button"
+                                        <button
+                                            onclick="window.location.href='{{ route('redirect.dashboard', ['redirect_to' => '/chats/private-chat?user_id=' . $tutor->id]) }}'"
+                                            type="button"
                                             class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 w-full">
                                             {{ label_text('global', 'Message Now', __('site.Message Now')) }}
                                         </button>
-                                    </div>
 
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                    @empty
-                        <p class="text-gray-500">No tutors found.</p>
+                        @empty
+                            <p class="text-gray-500">No tutors found.</p>
                     @endforelse
 
                 </div>
@@ -533,7 +560,8 @@
                         <!-- Schedule Grid -->
                         <div id="scheduleGrid" class="space-y-1 mb-4">
                             <div class="grid grid-cols-8 gap-1" data-period="morning">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Morning<br>6AM -<br>12PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Morning<br>6AM
+                                    -<br>12PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -544,7 +572,8 @@
                             </div>
 
                             <div class="grid grid-cols-8 gap-1" data-period="afternoon">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Afternoon<br>12PM -<br>6PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Afternoon<br>12PM
+                                    -<br>6PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -555,7 +584,8 @@
                             </div>
 
                             <div class="grid grid-cols-8 gap-1" data-period="evening">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Evening<br>6PM -<br>10PM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Evening<br>6PM
+                                    -<br>10PM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>
@@ -566,7 +596,8 @@
                             </div>
 
                             <div class="grid grid-cols-8 gap-1" data-period="night">
-                                <div class="text-xs text-gray-500 flex items-center justify-center">Night<br>10PM -<br>6AM</div>
+                                <div class="text-xs text-gray-500 flex items-center justify-center">Night<br>10PM
+                                    -<br>6AM</div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="monday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="tuesday"></div>
                                 <div class="h-12 bg-gray-100 rounded" data-day="wednesday"></div>

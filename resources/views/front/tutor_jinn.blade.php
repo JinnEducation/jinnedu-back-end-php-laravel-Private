@@ -251,8 +251,10 @@
                                     // اسم المعلم
                                     $fullName = trim(
                                         ($profileSuggestion?->first_name ?? '') .
+
                                         ' ' .
                                         ($profileSuggestion?->last_name ?? ''),
+
                                     );
                                     if ($fullName === '') {
                                         $fullName = $suggestion?->name ?? 'Tutor';
@@ -373,8 +375,10 @@
                                 </div>
                             @empty
                                 <p class="text-gray-500">
+
                                     {{ label_text('global', 'No tutors found.', __('site.No tutors found.')) }}
                                 </p>
+
                             @endforelse
                         </div>
                     </div>
@@ -402,7 +406,8 @@
                                         {{ label_text('global', 'Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}
                                     </video>
                                 @else
-                                    <img src="{{ $avatar }}" alt="{{ $fullName }}" class="w-full h-full object-cover">
+                                    <img src="{{ $avatar }}" alt="{{ $fullName }}"
+                                        class="w-full h-full object-cover">
                                 @endif
                             </div>
                         </div>
@@ -418,22 +423,28 @@
                                         </span>
                                     </div>
                                     <div class="text-xs text-black">{{ $reviewsCount }}
+
                                         {{ label_text('global', 'reviews', __('site.reviews')) }}
                                     </div>
+
                                 </div>
                                 <div>
                                     <div class="font-bold text-lg text-primary mb-1">{{ $lessonsCount }}</div>
                                     <div class="text-xs text-black">
+
                                         {{ label_text('global', 'lessons', __('site.lessons')) }}
                                     </div>
+
                                 </div>
                                 <div>
                                     <div class="font-bold text-lg text-primary mb-1">
                                         {{ $hourlyRate ?? 0 }} USD
                                     </div>
                                     <div class="text-xs text-black">
+
                                         {{ label_text('global', '50-min lesson', __('site.50-min lesson')) }}
                                     </div>
+
                                 </div>
                             </div>
 
@@ -458,6 +469,7 @@
                             @auth
                                 <div class="space-y-3">
                                     @if(!$orderTrialExists)
+
                                         <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}"
                                             method="POST" class="w-full">
                                             @csrf
@@ -497,6 +509,8 @@
                                         class="cursor-pointer w-full px-4 py-3 text-sm font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-all duration-300">
                                         {{ label_text('global', 'Save to my list', __('site.Save to my list')) }}
                                     </button>
+
+     
 
                                 </div>
                             @endauth

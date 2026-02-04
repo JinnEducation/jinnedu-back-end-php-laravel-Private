@@ -37,7 +37,7 @@ return [
     'Logout' => 'Logout',
     'Languages' => 'Languages',
     'Go To Class' => 'Go To Class',
-    
+
 
     // Header - search, language & misc
     'search-what-you-need' => 'Search what you need',
@@ -513,6 +513,8 @@ return [
     'Login to Book' => 'Login to Book',
     'Book Now' => 'Book Now',
 
+    'balance' => 'Balance',
+    'buy_credit' => 'Buy credit',
     'share' => 'share',
     'Share via:' => 'Share via:',
     'The certificate is shareable' => 'The certificate is shareable',
@@ -544,14 +546,14 @@ return [
     'Review' => 'Review',
     'Students' => 'Students',
     'Speaks' => 'Per hour',
-   'Message Now' => 'Message Now',
-   'View Details' => 'View Details',
-   'View Full Schedule' => 'View Full Schedule',
-   'View Details' => 'View Details',
-   'Native' => 'Native',
-  
+    'Message Now' => 'Message Now',
+    'View Details' => 'View Details',
+    'View Full Schedule' => 'View Full Schedule',
+    'View Details' => 'View Details',
+    'Native' => 'Native',
+
     'Read More' => 'Read More',
-     'January'   => 'January',
+    'January'   => 'January',
     'February'  => 'February',
     'March'     => 'March',
     'April'     => 'April',
@@ -564,5 +566,25 @@ return [
     'November'  => 'November',
     'December'  => 'December',
 
-    
+
+    'Top-up-your-wallet'  => 'Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.',
+    'Complete-your-payment'  => 'Complete your payment: 1) Review items 2) Choose a payment method.',
+
+    'no_orders_found' => '⚠️ No orders found or orders are already paid.',
+    'requested_order_ids' => 'Requested Order IDs',
+    'check_order_or_support' => 'Please check your order status or contact support.',
+    'total_amount' => 'Total Amount',
+    'wallet_amount' => 'Wallet Amount',
+    'payment_data' => 'Payment Data',
+    'country' => 'Country',
+    'purchase_confirmation' => 'Purchase Confirmation',
+    'agree_terms' => 'By clicking Complete Purchase, I acknowledge that I have read and agree to the terms and conditions and the privacy policy of the Jien platform.',
+    'secure_transactions' => 'All transactions are secure, processed, and authorized by payment service providers.',
+    'price_variation_notice' => 'The price you see on the payment provider\'s page may vary slightly due to differences in exchange rates.',
+    'enter_code' => 'Enter the code',
+    'Discount'    => 'Discount',
+    'Total price' => 'Total price',
+    'complete_checkout' => 'Complete Checkout',
+    'checkout_success_status' => 'Checkout - Successfully',
+
 ];

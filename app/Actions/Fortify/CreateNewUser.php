@@ -97,7 +97,7 @@ class CreateNewUser implements CreatesNewUsers
 
                 $user->tutorProfile()->create([
                     'dob' => ! empty($input['date_of_birth']) ? date('Y-m-d', strtotime($input['date_of_birth'])) : null,
-                    'tutor_country' => $input['countty_tutor'] ?? null,
+                    'tutor_country' => $input['country'] ?? null,
                     'native_language' => $input['language'] ?? null,
                     'teaching_subject' => $input['teaching_subject'] ?? null,
                     'teaching_experience' => $input['teaching_experience'] ?? null,
