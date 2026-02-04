@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Student\EnrollmentController;
 use App\Http\Controllers\Api\Student\PlayerController;
 use App\Http\Controllers\Api\Student\ProgressController;
 use App\Http\Controllers\Api\Student\ReviewController;
+use App\Http\Controllers\Api\Student\StudentCourseController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('blog', BlogController::class);
@@ -40,7 +41,7 @@ Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'de
     ->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     Route::get('instructors', [CourseAdminController::class, 'instructors']);
     // ================== ADMIN ==================
     Route::prefix('admin')->group(function () {
@@ -81,7 +82,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
             // Catalog (list + single)
             Route::get('courses', [CourseCatalogController::class, 'index']);
+            Route::get('courses/my-courses', [StudentCourseController::class, 'myCourses']);
             Route::get('courses/{course}', [CourseCatalogController::class, 'show']);
+
 
             // Enrollment
             Route::post('courses/{course}/enroll', [EnrollmentController::class, 'enroll']); // free or paid(order_id)
@@ -97,5 +100,4 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('courses/{course}/reviews', [ReviewController::class, 'store']);
         });
     });
-
 });

@@ -117,7 +117,6 @@ class MenuController extends Controller
         //$navigation[] = [ "name" =>  "Dashboard", "icon" => "HomeIcon", "current" => true, "href" => "#" ];
 
         $menus = Menu::parents()->get();
-
         foreach($menus as $menu) {
             $isCanAny = true;
             $children = [];

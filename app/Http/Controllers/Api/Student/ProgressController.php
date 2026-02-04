@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 
 class ProgressController extends Controller
 {
-    public function update(Request $request, CourseItem $item)
+    public function update(Request $request, $id)
     {
         $user = $request->user();
+        $item = CourseItem::findOrFail($id);
         $course = $item->course;
 
         $data = $request->validate([

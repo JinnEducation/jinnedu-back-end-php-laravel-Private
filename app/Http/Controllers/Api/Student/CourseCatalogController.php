@@ -15,7 +15,7 @@ class CourseCatalogController extends Controller
         $q = Course::query()
             ->where('status', 'published')
             ->with([
-                'category:id,name,slug',
+                'category:id,name',
                 'instructor:id,name',
                 'langs' => fn($qq) => $qq->where('lang', $lang),
             ]);
@@ -32,7 +32,7 @@ class CourseCatalogController extends Controller
         abort_if($course->status !== 'published', 404);
 
         $course->load([
-            'category:id,name,slug',
+            'category:id,name',
             'instructor:id,name',
             'langs' => fn($q) => $q->where('lang', $lang),
             'sections.langs' => fn($q) => $q->where('lang', $lang),

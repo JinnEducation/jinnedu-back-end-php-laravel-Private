@@ -12,6 +12,7 @@ use App\Models\CateqBlog;
 use App\Models\Conference;
 use App\Models\Country;
 use App\Models\Course;
+use App\Models\CourseCategory;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
 use App\Models\GroupClass;
@@ -56,10 +57,10 @@ class HomeController extends Controller
 
         // our course
         $categoryId = $request->query('category_id');
-        $categories = Category::query()
+
+        $course_categories = CourseCategory::query()
             // ->with('langs')
-            ->select('id', 'name', 'parent_id')
-            ->where('parent_id', 0)     // بدّلناها بدل whereNull
+            ->select('id', 'name')
             // ->where('status', 1)      // اختياري لو بدك المفعّلة فقط
             ->orderBy('id')
             ->get();
@@ -93,7 +94,7 @@ class HomeController extends Controller
             ->get();
 
 
-        return view('front.home', compact('tutors', 'stats', 'categories', 'courses', 'categoryId', 'sliders', 'languageId', 'langShorts', 'subjects', 'languages', 'countries', 'specializations'));
+        return view('front.home', compact('tutors', 'stats', 'course_categories', 'courses', 'categoryId', 'sliders', 'languageId', 'langShorts', 'subjects', 'languages', 'countries', 'specializations'));
     }
 
     public function blog(Request $request)

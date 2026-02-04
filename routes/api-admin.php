@@ -43,6 +43,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\Constants\CourseCategoryController;
 use App\Http\Controllers\Constants\ForbiddenWordsController;
 use App\Http\Controllers\OrderController;
 
@@ -136,6 +137,11 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
     Route::prefix('specializations')->name('specializations.')->group(function () {
         $routeController = SpecializationController::class;
         $routeModel = 'Specialization';
+        include 'rest_inc.php';
+    });
+    Route::prefix('course_categories')->name('course_categories.')->group(function () {
+        $routeController = CourseCategoryController::class;
+        $routeModel = 'CourseCategory';
         include 'rest_inc.php';
     });
 

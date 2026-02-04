@@ -62,23 +62,23 @@ class CourseAdminController extends Controller
 
         if ($request->has('langs')) {
             $langsPayload = $request->input('langs');
-        
+
             // إذا جاي JSON string من FormData
             if (is_string($langsPayload)) {
                 $langsPayload = json_decode($langsPayload, true);
             }
-        
+
             if (is_array($langsPayload)) {
                 $normalizedLangs = [];
-        
+
                 // mapping ثابت حسب نظامك
                 $langMap = Language::query()
                     ->select('id', 'shortname')
                     ->get()
                     ->pluck('shortname', 'id') // [id => shortname]
                     ->toArray();
-                
-        
+
+
                 foreach ($langMap as $langId => $langCode) {
                     // تجاهل اللغة الفارغة
                     if (
@@ -88,7 +88,7 @@ class CourseAdminController extends Controller
                     ) {
                         continue;
                     }
-        
+
                     $normalizedLangs[] = [
                         'lang' => $langCode,
                         'title' => $langsPayload['title'][$langId] ?? '',
@@ -98,16 +98,19 @@ class CourseAdminController extends Controller
                         'requirements_json' => $langsPayload['requirements_json'][$langId] ?? [],
                     ];
                 }
-        
+
                 $request->merge([
                     'langs' => $normalizedLangs,
                 ]);
             }
         }
-        
+
         $data = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'required|integer|exists:course_categories,id',
             'instructor_id' => 'nullable|integer|exists:users,id',
+            'course_image' => 'nullable|string|max:2048',
+            'course_duration_hours' => 'nullable|numeric|min:0',
+            'certificate_image' => 'nullable|string|max:2048',
             'promo_video_url' => 'nullable|string|max:2048',
             'promo_video_duration_seconds' => 'nullable|integer|min:0',
 
@@ -137,6 +140,10 @@ class CourseAdminController extends Controller
             $course = Course::create([
                 'category_id' => $data['category_id'],
                 'instructor_id' => $data['instructor_id'] ?? null,
+
+                'course_image' => $data['course_image'] ?? null,
+                'course_duration_hours' => $data['course_duration_hours'] ?? null,
+                'certificate_image' => $data['certificate_image'] ?? null,
 
                 'promo_video_url' => $data['promo_video_url'] ?? null,
                 'promo_video_duration_seconds' => $data['promo_video_duration_seconds'] ?? null,
@@ -212,7 +219,7 @@ class CourseAdminController extends Controller
             'activeDiscount'
         ])->find($id);
 
-        if(!$course) {
+        if (!$course) {
             return response()->json(['message' => 'Course not found.'], 404);
         }
 
@@ -225,23 +232,23 @@ class CourseAdminController extends Controller
         $this->mustBeAdmin($request);
         if ($request->has('langs')) {
             $langsPayload = $request->input('langs');
-        
+
             // إذا جاي JSON string من FormData
             if (is_string($langsPayload)) {
                 $langsPayload = json_decode($langsPayload, true);
             }
-        
+
             if (is_array($langsPayload)) {
                 $normalizedLangs = [];
-        
+
                 // mapping ثابت حسب نظامك
                 $langMap = Language::query()
-                ->select('id', 'shortname')
-                ->get()
-                ->pluck('shortname', 'id') // [id => shortname]
-                ->toArray();
-            
-        
+                    ->select('id', 'shortname')
+                    ->get()
+                    ->pluck('shortname', 'id') // [id => shortname]
+                    ->toArray();
+
+
                 foreach ($langMap as $langId => $langCode) {
                     // تجاهل اللغة الفارغة
                     if (
@@ -251,7 +258,7 @@ class CourseAdminController extends Controller
                     ) {
                         continue;
                     }
-        
+
                     $normalizedLangs[] = [
                         'lang' => $langCode,
                         'title' => $langsPayload['title'][$langId] ?? '',
@@ -261,16 +268,19 @@ class CourseAdminController extends Controller
                         'requirements_json' => $langsPayload['requirements_json'][$langId] ?? [],
                     ];
                 }
-        
+
                 $request->merge([
                     'langs' => $normalizedLangs,
                 ]);
             }
         }
-        
+
         $data = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'required|integer|exists:course_categories,id',
             'instructor_id' => 'nullable|integer|exists:users,id',
+            'course_image' => 'nullable|string|max:2048',
+            'course_duration_hours' => 'nullable|numeric|min:0',
+            'certificate_image' => 'nullable|string|max:2048',
             'promo_video_url' => 'nullable|string|max:2048',
             'promo_video_duration_seconds' => 'nullable|integer|min:0',
             'price' => 'nullable|numeric|min:0',
@@ -292,9 +302,9 @@ class CourseAdminController extends Controller
             'langs.*.outcomes_json' => 'nullable|array',
             'langs.*.requirements_json' => 'nullable|array',
         ]);
-        return DB::transaction(function () use ($data,$id) {
+        return DB::transaction(function () use ($data, $id) {
             $course = Course::findOrFail($id);
-            
+
             $course->update($data);
 
             // published_at handling
@@ -334,7 +344,7 @@ class CourseAdminController extends Controller
                 $course->discounts()
                     ->where('is_active', true)
                     ->update(['is_active' => false]);
-            
+
                 // أنشئ خصم جديد (هو الوحيد النشط)
                 $course->discounts()->create([
                     'type' => $data['discount_type'],
@@ -344,7 +354,7 @@ class CourseAdminController extends Controller
                     'is_active' => true,
                 ]);
             }
-            
+
             return response()->json([
                 'message' => 'Course updated.',
                 'course' => $course,

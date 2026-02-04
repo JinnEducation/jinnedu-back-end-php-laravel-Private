@@ -14,10 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->foreign('category_id')
-                ->references('id')
-                ->on('course_categories')
-                ->cascadeOnDelete();
+            $table->string('course_image')->nullable()->after('instructor_id');
+            $table->decimal('course_duration_hours', 10, 2)->default(0)->nullable()->after('course_image');
+            $table->string('certificate_image')->nullable()->after('course_duration_hours');
         });
     }
 
@@ -29,6 +28,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('courses', function (Blueprint $table) {
+            $table->dropColumn('course_image');
+            $table->dropColumn('course_duration_hours');
+            $table->dropColumn('certificate_image');
         });
     }
 };

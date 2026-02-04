@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Course extends Model
 {
@@ -19,6 +20,9 @@ class Course extends Model
     protected $fillable = [
         'category_id',
         'instructor_id',
+        'course_image',
+        'course_duration_hours',
+        'certificate_image',
         'promo_video_url',
         'promo_video_duration_seconds',
         'price',
@@ -33,11 +37,14 @@ class Course extends Model
         'has_certificate' => 'boolean',
         'price' => 'decimal:2',
         'promo_video_duration_seconds' => 'integer',
+        'course_duration_hours' => 'decimal:2',
         'published_at' => 'datetime',
     ];
 
     protected $append = [
         'final_price',
+        'course_image_full',
+        'certificate_image_full',
     ];
 
     /* =========================
@@ -45,7 +52,7 @@ class Course extends Model
      ========================= */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(CourseCategory::class);
     }
 
     public function instructor()
@@ -133,5 +140,29 @@ class Course extends Model
     public function getHasActiveDiscountAttribute(): bool
     {
         return $this->final_price < (float) $this->price;
+    }
+    // course_image
+    public function getCourseImageFullAttribute() // $this->course_image
+    {
+        if (Str::startsWith($this->course_image, ['http', 'https'])) {
+            return $this->course_image;
+        }
+        if ($this->course_image) {
+            return asset('storage/' . $this->course_image);
+        }
+
+        return asset('front/assets/imgs/blogs/2.jpg');
+    }
+    // certificate_image
+    public function getCertificateImageFullAttribute() // $this->certificate_image
+    {
+        if (Str::startsWith($this->certificate_image, ['http', 'https'])) {
+            return $this->certificate_image;
+        }
+        if ($this->certificate_image) {
+            return asset('storage/' . $this->certificate_image);
+        }
+
+        return asset('front/assets/imgs/cer1.jpg');
     }
 }

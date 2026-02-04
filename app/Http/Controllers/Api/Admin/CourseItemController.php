@@ -41,7 +41,7 @@ class CourseItemController extends Controller
             ])
             ->orderBy('sort_order')
             ->get();
-        
+
 
         return CourseItemResource::collection($items);
     }
@@ -108,8 +108,17 @@ class CourseItemController extends Controller
             }
 
             if ($data['type'] == CourseItem::TYPE_INTRO_ZOOM || $data['type'] == CourseItem::TYPE_WORKSHOP_ZOOM) {
-                $zoom_start_at = Carbon::parse($data['zoom_start_at'])->toDateTimeString();
-                $zoom_end_at = Carbon::parse($data['zoom_start_at'])->addMinutes(60)->toDateTimeString();
+                $zoom_start_at = Carbon::parse(
+                    $data['zoom_start_at'],
+                    'Asia/Gaza'
+                )->format('Y-m-d H:i:s');
+
+                $zoom_end_at = Carbon::parse(
+                    $data['zoom_start_at'],
+                    'Asia/Gaza'
+                )->addMinutes(60)
+                    ->format('Y-m-d H:i:s');
+
                 $date = Carbon::parse($data['zoom_start_at'])->format('Y-m-d');
                 $postValues = [
                     'title' => $data['langs'][0]['title'],
@@ -152,6 +161,9 @@ class CourseItemController extends Controller
     public function update(Request $request, $id)
     {
         $this->mustBeAdmin($request);
+        $item = CourseItem::findOrFail($id);
+        $type = $request->type;
+        $request->merge(['section_id' => $item->section_id]);
 
         $data = $request->validate([
             'section_id' => 'required|integer|exists:course_sections,id',
@@ -172,8 +184,7 @@ class CourseItemController extends Controller
             'content_source' => 'nullable|in:zoom,upload,url',
         ]);
 
-        return DB::transaction(function () use ($id, $data) {
-            $item = CourseItem::findOrFail($id);
+        return DB::transaction(function () use ($item, $data) {
 
             foreach ($data['langs'] as $lng) {
                 CourseItemLang::updateOrCreate(
@@ -190,8 +201,16 @@ class CourseItemController extends Controller
 
                     $item->liveSession()->delete();
 
-                    $zoom_start_at = Carbon::parse($data['zoom_start_at'])->toDateTimeString();
-                    $zoom_end_at = Carbon::parse($data['zoom_start_at'])->addMinutes(60)->toDateTimeString();
+                    $zoom_start_at = Carbon::parse(
+                        $data['zoom_start_at'],
+                        'Asia/Gaza'
+                    )->format('Y-m-d H:i:s');
+
+                    $zoom_end_at = Carbon::parse(
+                        $data['zoom_start_at'],
+                        'Asia/Gaza'
+                    )->addMinutes(60)
+                        ->format('Y-m-d H:i:s');
                     $date = Carbon::parse($data['zoom_start_at'])->format('Y-m-d');
                     $postValues = [
                         'title' => $data['langs'][0]['title'],
@@ -216,7 +235,6 @@ class CourseItemController extends Controller
                         'recording_item_id' => null,
                     ]);
                 }
-
             }
             if ($data['type'] == CourseItem::TYPE_INTRO_RECORDING || $data['type'] == CourseItem::TYPE_WORKSHOP_RECORDING || $data['type'] == CourseItem::TYPE_LESSON_VIDEO) {
                 CourseItemMedia::updateOrCreate([

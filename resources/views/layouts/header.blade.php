@@ -26,7 +26,16 @@
                     <div class="relative language-dropdown">
                         <button
                             class="flex gap-1 items-center px-2 py-1 rounded-md transition-colors duration-300 hover:bg-primary-700">
-                            <span class="text-sm font-medium">{{ $currentLangShort }}</span>
+                            <span class="text-sm font-medium">
+                                @php
+                                    $lang = $languages->where('shortname', app()->getLocale())?->first()?->name;
+                                @endphp
+                                @if ($lang)
+                                {{ label_text('languages', $lang, __('languages.' . $lang)) }}
+                                @else
+                                {{ $currentLangShort }}
+                                @endif
+                            </span>
                             <i class="text-xs transition-transform duration-300 transform fas fa-chevron-down"></i>
                         </button>
                         <div
@@ -44,7 +53,7 @@
                                     <a href="{{ $switchUrl }}" data-lang="{{ $short }}"
                                         @if (!empty($language->direction)) data-direction="{{ $language->direction }}" @endif
                                         class="block px-4 py-2 text-gray-700 transition-all duration-300 {{ $optionClasses }}">
-                                        {{ $language->name }}
+                                        {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
                                     </a>
                                 @empty
                                     <span class="block px-4 py-2 text-sm text-gray-500">

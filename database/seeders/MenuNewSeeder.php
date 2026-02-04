@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Blog;
 use App\Models\CateqBlog;
+use App\Models\Course;
 use App\Models\Slider;
 use Illuminate\Support\Facades\DB;
 //use App\Models\Report;
 use App\Models\Menu;
+use Bouncer;
 
 use Illuminate\Database\Seeder;
 
@@ -29,8 +31,10 @@ class MenuNewSeeder extends Seeder
         //================================================
         $this->id = Menu::query()->max('id') ?? 0;
 
+
+        /*
         $this->createMenuSubMenus([
-            'type' => '', 
+            'type' => Menu::class, 
             'name' => 'menu',
             'title' => 'menu-management',
             'svg' => 'Home/Globe.svg',
@@ -122,52 +126,141 @@ class MenuNewSeeder extends Seeder
                 
             ]
         ]);
+        */
         //================================================
+        $this->createMenuSubMenus([
+            'type' => Course::class,
+            'name' => 'courses',
+            'title' => 'courses-management',
+            'svg' => 'Home/Globe.svg',
+            'children' => [
+                [
+                    'type' => Course::class,
+                    'name' => 'courses.index',
+                    'title' => 'courses-index',
+                    'indexTitle' => ['courses-list', 1],
+                    'createTitle' => ['add-courses', 1],
+                    'editTitle' => ['update-courses', 1],
+                    'showTitle' => ['view-courses', 1],
+                    'destroyTitle' => ['delete-courses', 1],
+                    'svg' => '',
+                ],
+                [
+                    'type' => Course::class,
+                    'name' => 'courses.create',
+                    'title' => 'courses-create',
+                    'createTitle' => ['add-courses', 1],
+                    'editTitle' => ['update-courses', 1],
+                    'svg' => '',
+                ],
+
+            ]
+        ]);
+        $this->createMenuSubMenus([
+            'type' => Course::class,
+            'name' => 'my-courses',
+            'title' => 'my-courses-list',
+            'svg' => 'Communication/Group.svg',
+            'others' => [
+                ['name' => 'all', 'title' => 'my-courses-list', 'invisible' => 0],
+                ['name' => 'completed', 'title' => 'my-courses-completed', 'invisible' => 0],
+                ['name' => 'unfinished', 'title' => 'my-courses-unfinished', 'invisible' => 0],
+                ['name' => 'certificates', 'title' => 'my-courses-certificates', 'invisible' => 0],
+            ]
+        ]);
+
     }
 
-    public function createMenuSubMenus($data,$p_id=0){
+    public function createMenuSubMenus($data, $p_id = 0)
+    {
         $parentId = ++$this->id;
-        Menu::query()->updateOrCreate(['id' => $parentId], ['invisible' => 0, 'type' => $data['type'], 'title' => $data['title'], 'p_id' => $p_id, 
-            'route' => $data['name'], 'name' => $data['name'], 
-            'active_routes' => $data['name'].'.index|'.$data['name'].'.create|'.$data['name'].'.show|'.$data['name'].'.edit', 
+        $child = Menu::query()->updateOrCreate(['id' => $parentId], [
+            'invisible' => 0,
+            'type' => $data['type'],
+            'title' => $data['title'],
+            'p_id' => $p_id,
+            'route' => $data['name'],
+            'name' => $data['name'],
+            'active_routes' => $data['name'] . '.index|' . $data['name'] . '.create|' . $data['name'] . '.show|' . $data['name'] . '.edit',
             'svg' => $data['svg']
         ]);
+        if ($child && $data['title'] == "my-courses-list") {
+            Bouncer::allow('student')->to('all', Course::class);
+            Bouncer::allow('student')->to('completed', Course::class);
+            Bouncer::allow('student')->to('unfinished', Course::class);
+            Bouncer::allow('student')->to('certificates', Course::class);
+        }
         //===========================================    
-        if(isset($data['indexTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $data['indexTitle'][1], 'type' => $data['type'], 'title' => $data['indexTitle'][0], 'p_id' => $parentId, 'name' => 'index', 'route' => $data['name'].'.index', 
-            'active_routes' => $data['name'].'.index|'.$data['name'].'.show'
+        if (isset($data['indexTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
+            'invisible' => $data['indexTitle'][1],
+            'type' => $data['type'],
+            'title' => $data['indexTitle'][0],
+            'p_id' => $parentId,
+            'name' => 'index',
+            'route' => $data['name'] . '.index',
+            'active_routes' => $data['name'] . '.index|' . $data['name'] . '.show'
         ]);
 
         //===========================================    
-        if(isset($data['createTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $data['createTitle'][1], 'type' => $data['type'], 'title' => $data['createTitle'][0], 'p_id' => $parentId, 'name' => 'create', 'route' => $data['name'].'.create', 
-            'active_routes' => $data['name'].'.create|'.$data['name'].'.edit'        
-        ]);
-        
-        //===========================================    
-        if(isset($data['showTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $data['showTitle'][1], 'type' => $data['type'], 'title' => $data['showTitle'][0], 'p_id' => $parentId, 'name' => 'show', 'route' => $data['name'].'.show', 
-            'active_routes' => $data['name'].'.index|'.$data['name'].'.show'
-        ]);
-
-        //===========================================    
-        if(isset($data['editTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $data['editTitle'][1], 'type' => $data['type'], 'title' => $data['editTitle'][0], 'p_id' => $parentId, 'name' => 'edit', 'route' => $data['name'].'.edit', 
-            'active_routes' => $data['name'].'.create|'.$data['name'].'.edit'
+        if (isset($data['createTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
+            'invisible' => $data['createTitle'][1],
+            'type' => $data['type'],
+            'title' => $data['createTitle'][0],
+            'p_id' => $parentId,
+            'name' => 'create',
+            'route' => $data['name'] . '.create',
+            'active_routes' => $data['name'] . '.create|' . $data['name'] . '.edit'
         ]);
 
         //===========================================    
-        if(isset($data['destroyTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $data['destroyTitle'][1], 'type' => $data['type'], 'title' => $data['destroyTitle'][0], 'p_id' => $parentId, 'name' => 'destroy', 'route' => $data['name'].'.destroy', 
-            'active_routes' => $data['name'].'.destroy'        
+        if (isset($data['showTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
+            'invisible' => $data['showTitle'][1],
+            'type' => $data['type'],
+            'title' => $data['showTitle'][0],
+            'p_id' => $parentId,
+            'name' => 'show',
+            'route' => $data['name'] . '.show',
+            'active_routes' => $data['name'] . '.index|' . $data['name'] . '.show'
+        ]);
+
+        //===========================================    
+        if (isset($data['editTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
+            'invisible' => $data['editTitle'][1],
+            'type' => $data['type'],
+            'title' => $data['editTitle'][0],
+            'p_id' => $parentId,
+            'name' => 'edit',
+            'route' => $data['name'] . '.edit',
+            'active_routes' => $data['name'] . '.create|' . $data['name'] . '.edit'
+        ]);
+
+        //===========================================    
+        if (isset($data['destroyTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
+            'invisible' => $data['destroyTitle'][1],
+            'type' => $data['type'],
+            'title' => $data['destroyTitle'][0],
+            'p_id' => $parentId,
+            'name' => 'destroy',
+            'route' => $data['name'] . '.destroy',
+            'active_routes' => $data['name'] . '.destroy'
         ]);
 
         //===========================================
-        if(isset($data['others'])) 
-            foreach($data['others'] as $submenu) 
-                Menu::query()->updateOrCreate(['id' => ++$this->id], ['invisible' => $submenu['invisible'], 'type' => $data['type'], 'title' => $submenu['title'], 'p_id' => $parentId, 'name' => $submenu['name'], 'route' => $data['name'].'.'.$submenu['name'], 
-                    'active_routes' => $data['name'].'.'.$submenu['name']        
+        if (isset($data['others']))
+            foreach ($data['others'] as $submenu)
+                Menu::query()->updateOrCreate(['id' => ++$this->id], [
+                    'invisible' => $submenu['invisible'],
+                    'type' => $data['type'],
+                    'title' => $submenu['title'],
+                    'p_id' => $parentId,
+                    'name' => $submenu['name'],
+                    'route' => $data['name'] . '.' . $submenu['name'],
+                    'active_routes' => $data['name'] . '.' . $submenu['name']
                 ]);
         //===========================================
-        if(isset($data['children'])) 
-            foreach($data['children'] as $submenu) 
-                $this->createMenuSubMenus($submenu,$parentId);
-
+        if (isset($data['children']))
+            foreach ($data['children'] as $submenu)
+                $this->createMenuSubMenus($submenu, $parentId);
     }
 }
 //last id 29 new 30

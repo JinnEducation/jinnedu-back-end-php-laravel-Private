@@ -273,10 +273,10 @@
             </h2>
 
             <!-- Category Filter -->
-            <div class="relative mb-6 md:mb-12 mx-[-30px]" dir="ltr">
+            <div class="relative mb-6 md:mb-12 mx-[-30px]">
                 <!-- Left Arrow -->
                 <div id="left-arrow"
-                    class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none ps-2 text-primary bg-[#fffffff0]">
+                    class="flex absolute inset-y-0 left-0 rtl:left-auto rtl:right-0 rtl:rotate-180 items-center opacity-0 transition-opacity pointer-events-none ps-2 rtl:pe-2 rtl:ps-0 text-primary bg-[#fffffff0]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -295,20 +295,20 @@
                         {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
                     </button>
 
-                    @foreach ($categories as $cat)
+                    @foreach ($course_categories as $cat)
                         <button type="button"
                             class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
                             {{ (string) $categoryId === (string) $cat->id ? 'active text-primary font-bold' : 'text-black' }}
                             hover:text-primary hover:scale-105 hover:font-bold"
                             data-category-id="{{ $cat->id }}">
-                            {{ $cat->name }}
+                            {{ label_text('course_categories', $cat->name, __('course_categories.' . $cat->name)) }}
                         </button>
                     @endforeach
                 </div>
 
                 <!-- Right Arrow -->
                 <div id="right-arrow"
-                    class="flex absolute inset-y-0 right-0 items-center opacity-0 transition-opacity pointer-events-none pe-2 text-primary bg-[#fffffff0]">
+                    class="flex absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 rtl:rotate-180  items-center opacity-0 transition-opacity pointer-events-none pe-2 rtl:pe-2 rtl:ps-0 text-primary bg-[#fffffff0]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

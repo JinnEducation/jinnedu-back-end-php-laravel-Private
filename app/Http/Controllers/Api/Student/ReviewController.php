@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index(Request $request, Course $course)
+    public function index(Request $request,$id)
     {
+        $course = Course::findOrFail($id);
         abort_if($course->status !== 'published', 404);
 
         $reviews = CourseReview::where('course_id', $course->id)
@@ -20,8 +21,9 @@ class ReviewController extends Controller
         return response()->json($reviews);
     }
 
-    public function store(Request $request, Course $course)
+    public function store(Request $request, $id)
     {
+        $course = Course::findOrFail($id);
         abort_if($course->status !== 'published', 404);
 
         $user = $request->user();

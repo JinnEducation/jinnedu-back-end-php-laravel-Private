@@ -8,9 +8,9 @@ use App\Http\Controllers\WalletController;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\Order;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
