@@ -52,7 +52,7 @@ class Course extends Model
      ========================= */
     public function category()
     {
-        return $this->belongsTo(CourseCategory::class);
+        return $this->belongsTo(CourseCategory::class, 'category_id');
     }
 
     public function instructor()

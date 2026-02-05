@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Course, CourseReview, CourseEnrollment};
+use App\Models\{Course, CourseReview, CourseEnrollment, Language};
 use Illuminate\Http\Request;
 use App\Models\CourseCertificate;
 use Illuminate\Support\Facades\Auth;
@@ -14,21 +14,23 @@ use Illuminate\Support\Facades\Storage;
 
 class StudentCourseController extends Controller
 {
+
     public function myCourses(Request $request)
     {
         $user = $request->user();
-        $lang = $request->header('lang', 'en');
         $type = $request->get('type', 'all'); // all | completed | unfinished
 
+        // ✅ جلب كل اللغات مرة واحدة (keyed by shortname)
+        $languagesMap = Language::all()->keyBy('shortname');
+
+        // ✅ جلب الكورسات المسجّل بها المستخدم
         $courseIds = CourseEnrollment::where('user_id', $user->id)
             ->pluck('course_id');
 
         $courses = Course::query()
             ->whereIn('id', $courseIds)
             ->where('status', 'published')
-            ->with([
-                'langs' => fn($q) => $q->where('lang', $lang),
-            ])
+            ->with(['langs']) // eager loading
             ->withCount([
                 'items as total_items',
                 'items as completed_items' => function ($q) use ($user) {
@@ -40,7 +42,8 @@ class StudentCourseController extends Controller
             ])
             ->latest('id')
             ->get()
-            ->map(function ($course) {
+            ->map(function ($course) use ($languagesMap) {
+
                 $total = (int) $course->total_items;
                 $done  = (int) $course->completed_items;
 
@@ -48,10 +51,25 @@ class StudentCourseController extends Controller
                     ? (int) round(($done / $total) * 100)
                     : 0;
 
+                // ✅ نفس الناتج – بدون أي query إضافي
+                $languages = $course->langs->mapWithKeys(function ($language) use ($languagesMap) {
+                    $lang = $languagesMap->get($language->lang);
+
+                    return [
+                        $lang?->id ?? ($language->lang ?? '1') => [
+                            'id' => $language->id,
+                            'lang' => $language->lang,
+                            'language_id' => $lang?->id ?? '1',
+                            'title' => $language->title,
+                            'description' => $language->description,
+                        ]
+                    ];
+                });
+
                 return [
                     'id' => $course->id,
-                    'title' => $course->langs->first()->title ?? $course->title,
-                    'description' => $course->langs->first()->description ?? $course->description,
+                    'title' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['title']]) ?? $course->title,
+                    'description' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['description']]) ?? $course->description,
                     'total_items' => $total,
                     'completed_items' => $done,
                     'progress_percent' => $percent,
@@ -61,9 +79,9 @@ class StudentCourseController extends Controller
             });
 
         // ✅ فلترة حسب النوع
-        if ($type == 'completed') {
+        if ($type === 'completed') {
             $courses = $courses->where('progress_percent', 100)->values();
-        } elseif ($type == 'unfinished') {
+        } elseif ($type === 'unfinished') {
             $courses = $courses->where('progress_percent', '<', 100)->values();
         }
 

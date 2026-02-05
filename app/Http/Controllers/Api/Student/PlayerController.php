@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Course, CourseEnrollment, CourseReview};
+use App\Models\{Course, CourseEnrollment, CourseReview, Language};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,20 +11,26 @@ class PlayerController extends Controller
 {
     public function player(Request $request, $id)
     {
+        $user = $request->user();
+        $langHeader = $request->header('lang', 'en');
+
+        // ✅ تحميل الكورس
         $course = Course::findOrFail($id);
         abort_if($course->status !== 'published', 404);
 
-        $lang = $request->header('lang', 'en');
-        $user = $request->user();
+        // ✅ تحميل كل اللغات مرة واحدة
+        $languagesMap = Language::all()->keyBy('shortname');
 
+        // ✅ هل المستخدم مسجّل؟
         $enrolled = CourseEnrollment::where('course_id', $course->id)
             ->where('user_id', $user->id)
             ->exists();
 
+        // ✅ eager loading كامل
         $course->load([
-            'langs' => fn($q) => $q->where('lang', $lang),
-            'sections.langs' => fn($q) => $q->where('lang', $lang),
-            'items.langs' => fn($q) => $q->where('lang', $lang),
+            'langs',
+            'sections.langs',
+            'items.langs',
             'items.media',
             'items.liveSession',
             'items.progresses' => function ($q) use ($user) {
@@ -33,22 +39,85 @@ class PlayerController extends Controller
             }
         ]);
 
-        $courseTitle = $course->langs->first()->title ?? $course->title;
+        /* =========================
+     * Course title (same output)
+     * ========================= */
+        $languages = $course->langs->mapWithKeys(function ($language) use ($languagesMap) {
+            $lang = $languagesMap->get($language->lang);
+
+            return [
+                $lang?->id ?? ($language->lang ?? '1') => [
+                    'id' => $language->id,
+                    'lang' => $language->lang,
+                    'language_id' => $lang?->id ?? '1',
+                    'title' => $language->title,
+                ]
+            ];
+        });
+
+        $courseTitle = $languages->mapWithKeys(
+            fn($lang, $id) => [$id => $lang['title']]
+        ) ?? $course->title;
+
+        /* =========================
+     * Review
+     * ========================= */
         $review = CourseReview::where('course_id', $course->id)
             ->where('user_id', $user->id)
             ->first();
 
+        /* =========================
+     * Sections
+     * ========================= */
+        $sections = $course->sections->map(function ($section) use ($languagesMap) {
 
-        // Apply lock logic in response
-        $items = $course->items->map(function ($item) use ($enrolled, $course) {
+            $languagesSection = $section->langs->mapWithKeys(function ($language) use ($languagesMap) {
+                $lang = $languagesMap->get($language->lang);
+
+                return [
+                    $lang?->id ?? ($language->lang ?? '1') => [
+                        'id' => $language->id,
+                        'lang' => $language->lang,
+                        'language_id' => $lang?->id ?? '1',
+                        'title' => $language->title,
+                    ]
+                ];
+            });
+
+            return [
+                'id' => $section->id,
+                'title' => $languagesSection->mapWithKeys(
+                    fn($lang, $id) => [$id => $lang['title']]
+                ) ?? $section->title,
+            ];
+        });
+
+        /* =========================
+     * Items + lock logic
+     * ========================= */
+        $items = $course->items->map(function ($item) use ($enrolled, $course, $languagesMap) {
+
             $locked = false;
 
             if (!$item->is_free_preview) {
-                // لو الكورس مدفوع: لازم يكون enrolled
                 if (!$course->is_free && $course->final_price > 0 && !$enrolled) {
                     $locked = true;
                 }
             }
+
+            $languagesItem = $item->langs->mapWithKeys(function ($language) use ($languagesMap) {
+                $lang = $languagesMap->get($language->lang);
+
+                return [
+                    $lang?->id ?? ($language->lang ?? '1') => [
+                        'id' => $language->id,
+                        'lang' => $language->lang,
+                        'language_id' => $lang?->id ?? '1',
+                        'title' => $language->title,
+                        'description' => $language->description,
+                    ]
+                ];
+            });
 
             return [
                 'id' => $item->id,
@@ -58,14 +127,22 @@ class PlayerController extends Controller
                 'is_free_preview' => (bool) $item->is_free_preview,
                 'duration_seconds' => $item->duration_seconds,
                 'sort_order' => $item->sort_order,
-                'langs' => $item->langs,
-                'media' => $locked ? [] : $item->media,     // إخفاء رابط الفيديو لو locked
+                'title' => $languagesItem->mapWithKeys(
+                    fn($lang, $id) => [$id => $lang['title']]
+                ) ?? $item->title,
+                'description' => $languagesItem->mapWithKeys(
+                    fn($lang, $id) => [$id => $lang['description']]
+                ) ?? $item->description,
+                'media' => $locked ? [] : $item->media,
                 'live_session' => $locked ? null : $item->liveSession,
                 'locked' => $locked,
                 'completed' => $item->progresses->isNotEmpty(),
             ];
         });
 
+        /* =========================
+     * Response (unchanged)
+     * ========================= */
         return response()->json([
             'course' => [
                 'id' => $course->id,
@@ -77,7 +154,7 @@ class PlayerController extends Controller
                 ] : null,
             ],
             'enrolled' => $enrolled,
-            'sections' => $course->sections,
+            'sections' => $sections,
             'items' => $items,
         ]);
     }

@@ -17,7 +17,7 @@ class CourseCatalogController extends Controller
             ->with([
                 'category:id,name',
                 'instructor:id,name',
-                'langs' => fn($qq) => $qq->where('lang', $lang),
+                'langs',
             ]);
 
         if ($request->filled('category_id')) $q->where('category_id', $request->category_id);
@@ -34,9 +34,9 @@ class CourseCatalogController extends Controller
         $course->load([
             'category:id,name',
             'instructor:id,name',
-            'langs' => fn($q) => $q->where('lang', $lang),
-            'sections.langs' => fn($q) => $q->where('lang', $lang),
-            'items.langs' => fn($q) => $q->where('lang', $lang),
+            'langs',
+            'sections.langs',
+            'items.langs',
         ]);
 
         return response()->json([
