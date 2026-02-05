@@ -18,7 +18,10 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-image: url("{{ public_path('./Gemini_Generated_Image_meth6smeth6smeth.jpg') }}")
+            background-image: url("{{ public_path('cer.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .certificate-container {
@@ -68,7 +71,7 @@
         /* العنوان */
         .main-title {
             text-align: center;
-            margin-bottom: 50px;
+            margin-top: 100px;
         }
 
         .main-title h1 {
@@ -108,6 +111,7 @@
         /* اسم الطالب */
         .student-section {
             text-align: center;
+            margin-top: 200px;
             margin-bottom: 50px;
             padding: 30px 0;
         }
@@ -116,7 +120,6 @@
             font-size: 48px;
             font-weight: 700;
             color: #2d2d2d;
-            border-bottom: 2px solid #e0e0e0;
             padding-bottom: 15px;
             display: inline-block;
             min-width: 450px;
@@ -161,38 +164,27 @@
 <body>
     <div class="certificate-container">
         <div class="content">
-            {{-- Header --}}
-            <div class="header">
-
-                <div class="certificate-meta">
-                    <div>Certificate no: {{ $certificate->certificate_code }}</div>
-                    <div>Certificate url: {{ config('app.url') }}/certificates/{{ $certificate->certificate_code }}
-                    </div>
-                    <div>Reference Number: {{ str_pad($certificate->id, 4, '0', STR_PAD_LEFT) }}</div>
-                </div>
-            </div>
-
-            {{-- العنوان الرئيسي --}}
-            <div class="main-title">
-                <h1>CERTIFICATE OF COMPLETION</h1>
-                <h2>{{ $course->title }}</h2>
-            </div>
-
-            {{-- معلومات المدرب --}}
+            {{-- معلومات المدرب
             <div class="instructor">
                 <div class="instructor-label">Instructors</div>
                 <div class="instructor-name">{{ $course->instructor->full_name ?? 'Jinn Education' }}</div>
-            </div>
+            </div> --}}
 
             {{-- اسم الطالب --}}
             <div class="student-section">
                 <div class="student-name">{{ $user->name }}</div>
             </div>
 
+            {{-- العنوان الرئيسي --}}
+            <div class="main-title">
+                <h1>{{ $courseTitle }}</h1>
+            </div>
+
+
             {{-- Footer --}}
             {{-- Footer - في جدول واحد --}}
             {{-- Footer --}}
-            <table class="footer-table">
+            {{-- <table class="footer-table">
                 <tr>
                     <td class="footer-right">
                         <div class="footer-label">Length</div>
@@ -203,7 +195,7 @@
                         <div class="footer-value">{{ $certificate->issued_at->format('F d, Y') }}</div>
                     </td>
                 </tr>
-            </table>
+            </table> --}}
 
         </div>
     </div>

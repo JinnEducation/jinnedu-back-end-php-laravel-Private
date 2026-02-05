@@ -94,6 +94,21 @@ class StudentCourseController extends Controller
         abort_if($course->status !== 'published', 404);
 
         $user = $request->user() ?? Auth::user();
+        $languagesMap = Language::all()->keyBy('shortname');
+        $languages = $course->langs->mapWithKeys(function ($language) use ($languagesMap) {
+            $lang = $languagesMap->get($language->lang);
+
+            return [
+                $lang?->id ?? ($language->lang ?? '1') => [
+                    'id' => $language->id,
+                    'lang' => $language->lang,
+                    'language_id' => $lang?->id ?? '1',
+                    'title' => $language->title,
+                ]
+            ];
+        });
+
+        $courseTitle = $course->langs->where('lang', 'en')?->first()?->title;
 
         // 1) تحقق التسجيل
         $enrolled = CourseEnrollment::where('course_id', $course->id)
@@ -135,7 +150,7 @@ class StudentCourseController extends Controller
                 'certificates.course',
                 [
                     'user'        => $user,
-                    'course'      => $course,
+                    'courseTitle'      => $courseTitle,
                     'certificate' => $certificate,
                 ],
                 [],
