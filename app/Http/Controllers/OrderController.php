@@ -707,14 +707,13 @@ class OrderController extends Controller
 
         $order->save();
 
-        CourseEnrollment::firstOrCreate([
+        $CourseEnrollment = CourseEnrollment::updateOrCreate([
             'user_id'   => $user->id,
             'course_id' => $course->id,
         ], [
             'order_id'    => $order->id,
             'enrolled_at' => now(),
         ]);
-        
 
         $order->url = url('/').'/api/wallet/checkout/'.$order->id;
 

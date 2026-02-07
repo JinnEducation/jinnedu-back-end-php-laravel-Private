@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Certificate - {{ $user->name }}</title>
+    <title>Certificate - {{ $stName }}</title>
     <style>
         * {
             margin: 0;
@@ -111,7 +111,7 @@
         /* اسم الطالب */
         .student-section {
             text-align: center;
-            margin-top: 200px;
+            margin-top: 208px;
             margin-bottom: 50px;
             padding: 30px 0;
         }
@@ -172,7 +172,7 @@
 
             {{-- اسم الطالب --}}
             <div class="student-section">
-                <div class="student-name">{{ $user->name }}</div>
+                <div class="student-name">{{ $stName }}</div>
             </div>
 
             {{-- العنوان الرئيسي --}}

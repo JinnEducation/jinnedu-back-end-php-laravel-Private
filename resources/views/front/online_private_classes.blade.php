@@ -622,6 +622,9 @@
     </section>
 
     @push('scripts')
+        <script>
+            const lang = "{{ app()->getLocale() }}";
+        </script>
         <script src="{{ asset('front/assets/js/tutors_list.js') }}"></script>
         <script src="{{ asset('front/assets/js/find_tutor.js') }}"></script>
     @endpush

@@ -36,7 +36,8 @@
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                        <i
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
                         <a href="#" class="text-primary-600 hover:text-primary-700">
@@ -44,7 +45,8 @@
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">
-                        <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
+                        <i
+                            class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span class="text-black break-words">
                         {{ $courseLang->title ?? '-' }}
@@ -89,7 +91,8 @@
 
                     <!-- About the course -->
                     <div id="about-course">
-                        <h2 class="text-lg font-bold text-black mt-2 mb-3">{{ label_text('global', 'site.About the course', __('site.About the course')) }}</h2>
+                        <h2 class="text-lg font-bold text-black mt-2 mb-3">
+                            {{ label_text('global', 'site.About the course', __('site.About the course')) }}</h2>
                         @if (!empty($courseLang?->description))
                             <div class="text-[15px] text-black leading-7 space-y-4">
                                 {!! nl2br(e($courseLang->description)) !!}
@@ -120,7 +123,8 @@
                     <!-- Course content (Accordions) -->
                     <div id="course-content" class="mt-6 border border-gray-300 p-4">
                         <div class="flex items-center justify-between gap-2 mb-4">
-                            <h2 class="text-[20px] font-semibold text-black">{{ label_text('global', 'site.Course content', __('site.Course content')) }}</h2>
+                            <h2 class="text-[20px] font-semibold text-black">
+                                {{ label_text('global', 'site.Course content', __('site.Course content')) }}</h2>
                             <span class="text-[14px] text-gray-500">
                                 {{ $totalLabel((int) $totalSeconds) }} • {{ $course->category?->name ?? '—' }}
                             </span>
@@ -147,11 +151,9 @@
                                         class="accordion-body hidden px-2 py-3 text-lg text-black leading-6">
                                         <div class="space-y-2">
                                             @foreach ($sec['items'] as $itemIndex => $item)
-                                                <div
-                                                    class="flex justify-between items-center pb-4 border-b border-[#CAC6C6]">
+                                                <div class="flex justify-between items-center pb-4 border-b border-[#CAC6C6]">
                                                     <span class="flex items-center gap-2">
-                                                        <span
-                                                            class="w-1 h-1 rounded-full bg-black mt-1.5 flex-shrink-0"></span>
+                                                        <span class="w-1 h-1 rounded-full bg-black mt-1.5 flex-shrink-0"></span>
                                                         <span>{{ $item['title'] }}</span>
                                                     </span>
                                                     <span class="text-[13px] text-gray-500">
@@ -235,14 +237,14 @@
 
                             <div class="flex items-center gap-2">
                                 @if ($isFree)
-                                    <span class="text-[19px] font-bold text-primary">{{ label_text('global', 'site.Free', __('site.Free')) }}</span>
+                                    <span
+                                        class="text-[19px] font-bold text-primary">{{ label_text('global', 'site.Free', __('site.Free')) }}</span>
                                 @else
                                     @if ($hasDiscount)
                                         <span
                                             class="text-[17px] line-through text-gray-400">${{ number_format($price, 2) }}</span>
                                     @endif
-                                    <span
-                                        class="text-[19px] font-bold text-primary">${{ number_format($final, 2) }}</span>
+                                    <span class="text-[19px] font-bold text-primary">${{ number_format($final, 2) }}</span>
                                 @endif
                             </div>
 
@@ -295,19 +297,28 @@
                                 </div>
                             </div>
                             @guest
-                                <button
+                                <button type="button" data-open="#loginModal"
                                     class="mt-4 px-12 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/90 transition">
                                     {{ label_text('global', 'Login to Book', __('site.Login to Book')) }}
                                 </button>
                             @endguest
 
                             @auth
-                                <form action="{{ route('site.bookCourse', ['id' => $course->id]) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="mt-4 px-12 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/90 transition">
-                                        {{ label_text('global', 'Book Now', __('site.Book Now')) }}
+                                @if ($alreadyEnrolled)
+                                    <button
+                                        onclick="window.location.href='{{ route('redirect.dashboard', ['redirect_to' => '/my-courses/all']) }}'"
+                                        class="mt-4 px-12 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/90 transition">
+                                        {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
                                     </button>
-                                </form>                                
+                                @else
+                                    <form action="{{ route('site.bookCourse', ['id' => $course->id]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="mt-4 px-12 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/90 transition">
+                                            {{ label_text('global', 'Book Now', __('site.Book Now')) }}
+                                        </button>
+                                    </form>
+                                @endif
                             @endauth
                         </div>
                     </div>
@@ -315,7 +326,9 @@
                     @if ($course->has_certificate)
                         <!-- Certificate Card -->
                         <div class="border border-gray-200 rounded-xl p-3 bg-white shadow-lg">
-                            <p class="text-[13px] font-bold text-black mb-2">{{ label_text('global', 'site.The certificate is shareable', __('site.The certificate is shareable')) }}</p>
+                            <p class="text-[13px] font-bold text-black mb-2">
+                                {{ label_text('global', 'site.The certificate is shareable', __('site.The certificate is shareable')) }}
+                            </p>
                             <div class="flex items-center gap-2 mb-2">
                                 <span>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -332,12 +345,14 @@
                                             d="M19 21.5C20.3807 21.5 21.5 20.3807 21.5 19C21.5 17.6193 20.3807 16.5 19 16.5C17.6193 16.5 16.5 17.6193 16.5 19C16.5 20.3807 17.6193 21.5 19 21.5Z"
                                             stroke="#1B449C" stroke-width="1.7" stroke-linecap="round"
                                             stroke-linejoin="round" />
-                                        <path d="M7.29999 11L16.7 6M7.29999 13L16.7 18" stroke="#1B449C"
-                                            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M7.29999 11L16.7 6M7.29999 13L16.7 18" stroke="#1B449C" stroke-width="1.7"
+                                            stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
 
                                 </span>
-                                <p class="text-[13px] font-light text-black">{{ label_text('global', 'site.Share on your social media or LinkedIn', __('site.Share on your social media or LinkedIn')) }}</p>
+                                <p class="text-[13px] font-light text-black">
+                                    {{ label_text('global', 'site.Share on your social media or LinkedIn', __('site.Share on your social media or LinkedIn')) }}
+                                </p>
                             </div>
 
                             <img src="{{ $course->certificate_image_full }}" alt="Certificate"
@@ -353,7 +368,8 @@
         <div class="container mx-auto px-4">
             <!-- Reviews Section -->
             <h2 class="text-[15px] font-bold text-black mb-3">
-                {{ number_format($avgRating, 1) }} ({{ $reviewsCount }} {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }})
+                {{ number_format($avgRating, 1) }} ({{ $reviewsCount }}
+                {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }})
             </h2>
 
             <div id="course-reviews" class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -418,7 +434,8 @@
                                         <span class="font-bold text-black">{{ $review->rating }}</span>
 
                                         <p class="text-[#00000099]">
-                                            {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }} {{ $review->created_at->format('F d, Y') }}
+                                            {{ label_text('global', 'site.Reviewed on', __('site.Reviewed on')) }}
+                                            {{ $review->created_at->format('F d, Y') }}
                                         </p>
                                     </div>
                                 </div>
@@ -446,7 +463,9 @@
     <section class="py-16">
         <div class="container mx-auto">
             <!-- Reviews Section -->
-            <h2 class="text-lg font-bold text-black mb-3">{{ label_text('global', 'site.Courses You Might Be Interested In', __('site.Courses You Might Be Interested In')) }}</h2>
+            <h2 class="text-lg font-bold text-black mb-3">
+                {{ label_text('global', 'site.Courses You Might Be Interested In', __('site.Courses You Might Be Interested In')) }}
+            </h2>
             <!-- Courses Grid -->
             <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @forelse($related as $item)
@@ -495,7 +514,7 @@
 
                                     <span class="text-lg font-bold text-[#1B449C]">
                                         @if ($isFree)
-                                        {{ label_text('global', 'site.Free', __('site.Free')) }}
+                                            {{ label_text('global', 'site.Free', __('site.Free')) }}
                                         @else
                                             @if ($hasDiscount)
                                                 ${{ number_format($final, 2) }}
@@ -543,13 +562,14 @@
             <div class="bg-black w-full max-w-2xl relative" style="max-height: 70vh">
 
                 <!-- close -->
-                <button onclick="closePromoVideo()" class="absolute flex -top-4 -right-4 rtl:-left-4 rtl:right-auto bg-primary p-2 rounded-full text-white text-xl z-10">
+                <button onclick="closePromoVideo()"
+                    class="absolute flex -top-4 -right-4 rtl:-left-4 rtl:right-auto bg-primary p-2 rounded-full text-white text-xl z-10">
                     <i class="text-xl fas fa-x !w-5 !h-5"></i>
                 </button>
 
                 <!-- video -->
-                <video id="promoVideoPlayer" class="w-full h-auto max-h-[70vh] overflow-hidden rounded-lg" controls playsinline
-                    preload="metadata">
+                <video id="promoVideoPlayer" class="w-full h-auto max-h-[70vh] overflow-hidden rounded-lg" controls
+                    playsinline preload="metadata">
                     <source src="{{ asset($course->promo_video_url) }}" type="video/mp4">
                     {{ label_text('global', 'site.Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}
                 </video>

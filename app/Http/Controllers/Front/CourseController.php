@@ -28,18 +28,18 @@ class CourseController extends Controller
                     'activeDiscount',
 
                     // ✅ لغة واحدة فقط
-                    'langs' => fn ($q) => $q->where('lang', $locale),
+                    'langs' => fn($q) => $q->where('lang', $locale),
 
                     // الأقسام
-                    'sections' => fn ($q) => $q->orderBy('sort_order'),
-                    'sections.langs' => fn ($q) => $q->where('lang', $locale),
+                    'sections' => fn($q) => $q->orderBy('sort_order'),
+                    'sections.langs' => fn($q) => $q->where('lang', $locale),
 
                     // عناصر الأقسام
-                    'sections.items' => fn ($q) => $q->orderBy('sort_order'),
-                    'sections.items.langs' => fn ($q) => $q->where('lang', $locale),
+                    'sections.items' => fn($q) => $q->orderBy('sort_order'),
+                    'sections.items.langs' => fn($q) => $q->where('lang', $locale),
 
                     // Reviews (عرض فقط)
-                    'reviews' => fn ($q) => $q->latest('id')->limit(20),
+                    'reviews' => fn($q) => $q->latest('id')->limit(20),
                     'reviews.user:id,name',
                 ])
                 ->where('status', 'published')
@@ -90,7 +90,7 @@ class CourseController extends Controller
 
             $related = Course::query()
                 ->with([
-                    'langs' => fn ($q) => $q->where('lang', $locale),
+                    'langs' => fn($q) => $q->where('lang', $locale),
                     'activeDiscount',
                 ])
                 ->where('status', 'published')
@@ -100,9 +100,18 @@ class CourseController extends Controller
                 ->limit(4)
                 ->get();
 
+            $user = Auth::user();
+            $alreadyEnrolled = CourseEnrollment::where('course_enrollments.user_id', $user->id)
+                ->where('course_enrollments.course_id', $course->id)
+                ->whereHas('order', function ($q) {
+                    $q->where('status', 1); // مدفوع
+                })
+                ->exists();
+
             return [
                 'course' => $course,
                 'courseLang' => $courseLang,
+                'alreadyEnrolled' => $alreadyEnrolled,
                 'content' => $content,
                 'totalSeconds' => $totalSeconds,
                 'outcomes' => (array) ($courseLang->outcomes_json ?? []),
@@ -131,6 +140,9 @@ class CourseController extends Controller
                     $q->where('status', 1); // مدفوع
                 })
                 ->exists();
+
+            $cacheKey = "front:course:{$locale}:{$id}";
+            Cache::forget($cacheKey);
 
             if ($alreadyEnrolled) {
                 return redirect()
@@ -212,11 +224,12 @@ class CourseController extends Controller
                 return redirect()->route('checkout', [
                     'type' => 'pay',
                     'order_ids' => $orderId,
-                ])->with('info', $hasEnoughBalance
-                    ? 'You can pay from your wallet or choose another payment method'
-                    : 'Please complete payment to finish your order'
+                ])->with(
+                    'info',
+                    $hasEnoughBalance
+                        ? 'You can pay from your wallet or choose another payment method'
+                        : 'Please complete payment to finish your order'
                 );
-
             } else {
                 DB::rollBack();
 

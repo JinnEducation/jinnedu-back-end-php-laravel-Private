@@ -144,12 +144,15 @@ class StudentCourseController extends Controller
             ]
         );
 
+        $stName = $request->name ?? $user->full_name;
+
         // 5) توليد الملف إذا لم يكن موجود
         if (!$certificate->file_url || !Storage::disk('public')->exists($certificate->file_url)) {
             $pdf = PDF::loadView(
                 'certificates.course',
                 [
                     'user'        => $user,
+                    'stName'        => $stName,
                     'courseTitle'      => $courseTitle,
                     'certificate' => $certificate,
                 ],

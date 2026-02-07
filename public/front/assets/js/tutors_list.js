@@ -73,7 +73,7 @@ $(document).ready(function() {
         $('#scheduleTutorSubject').text(tutorSubject);
         $('#scheduleTutorAvatar').attr('src', tutorAvatar);
         $('#viewFullScheduleBtn').off('click').on('click', function() {
-            window.location.href = '/tutor/' + tutorSlug;
+            window.location.href = 'tutor_jinn/' + tutorSlug;
         });
 
         // Update schedule grid
