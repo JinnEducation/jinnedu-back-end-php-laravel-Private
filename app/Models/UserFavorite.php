@@ -9,17 +9,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UserFavorite extends Model
 {
     use HasFactory, SoftDeletes;
-    
+
     //protected $table = 'users_abouts';
 
 
     protected $guarded = [];
-    
+
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     // public function tutor()
     // {
     //     return $this->belongsTo(Tutor::class,'ref_id');
@@ -27,22 +27,22 @@ class UserFavorite extends Model
 
     public function course()
     {
-        return $this->belongsTo(Course::class,'ref_id');
+        return $this->belongsTo(Course::class, 'ref_id');
     }
-   
+
     // public function group_class()
     // {
     //     return $this->belongsTo(GroupClass::class,'ref_id');
     // }
 
     public function tutor()
-{
-    return $this->belongsTo(Tutor::class, 'ref_id')->where('type', 1);
-}
+    {
+        return $this->belongsTo(User::class, 'ref_id');
+    }
 
-public function group_class()
-{
-    return $this->belongsTo(GroupClass::class, 'ref_id')->where('type', 3);
-}
-
+    public function group_class()
+    {
+        return $this->belongsTo(GroupClass::class, 'ref_id');
+    }
+    
 }

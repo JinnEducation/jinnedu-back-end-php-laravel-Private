@@ -1002,37 +1002,7 @@
     </section>
 
     @push('scripts')
-        <script>
-            // ===== Category filter (reload with query) =====
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = this.getAttribute('data-category-id');
-                    const url = new URL(window.location.href);
-                    if (id) url.searchParams.set('category_id', id);
-                    else url.searchParams.delete('category_id');
-                    window.location.href = url.toString();
-                });
-            });
-
-            // ===== Load more (show next batch) =====
-            (function () {
-                const btn = document.getElementById('loadMoreBtn');
-                if (!btn) return;
-
-                const step = 4; // كل كبسة بتظهر 4 كورسات
-                btn.addEventListener('click', function () {
-                    const hidden = Array.from(document.querySelectorAll('.course-card'))
-                        .filter(el => el.style.display === 'none');
-
-                    hidden.slice(0, step).forEach(el => el.style.display = '');
-
-                    const stillHidden = Array.from(document.querySelectorAll('.course-card'))
-                        .some(el => el.style.display === 'none');
-
-            if (!stillHidden) btn.style.display = 'none';
-        });
-    })();
-</script>
-@endpush
+        <script src="{{ asset('front/assets/js/index.js') }}"></script>
+    @endpush
 
 </x-front-layout>

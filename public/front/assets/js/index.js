@@ -76,7 +76,7 @@ $(document).ready(function () {
     $(".dots-container").each(function () {
       updateDots(index, $(this));
     });
-    
+
     currentSlide = index;
   }
   function updateDots(index, $container) {
@@ -92,7 +92,7 @@ $(document).ready(function () {
       }
     });
   }
-  
+
 
   $(".hero-dot").on("click", function () {
     stopAutoplay();
@@ -143,11 +143,11 @@ $(document).ready(function () {
   });
 
   // إيقاف مؤقت للـ autoplay عند hover على السلايدر
-  $(".hero-text-container, .hero-image-container").on("mouseenter", function() {
+  $(".hero-text-container, .hero-image-container").on("mouseenter", function () {
     stopAutoplay();
   });
 
-  $(".hero-text-container, .hero-image-container").on("mouseleave", function() {
+  $(".hero-text-container, .hero-image-container").on("mouseleave", function () {
     startAutoplay();
   });
 
@@ -407,34 +407,66 @@ $(function () {
   let $container = $("#filter-container");
   let $left = $("#left-arrow");
   let $right = $("#right-arrow");
-  
+
   // دالة الأسهم (نفس الكود الأصلي)
   function toggleArrows() {
-      let scrollLeft = $container.scrollLeft();
-      let maxScroll = $container[0].scrollWidth - $container.outerWidth();
-      let isRTL = $container.closest("[dir='rtl']").length > 0;
-      
-      if (isRTL) {
-          $left.css("opacity", scrollLeft < maxScroll ? 1 : 0);
-          $right.css("opacity", scrollLeft > 0 ? 1 : 0);
-      } else {
-          $left.css("opacity", scrollLeft > 0 ? 1 : 0);
-          $right.css("opacity", scrollLeft < maxScroll ? 1 : 0);
-      }
+    let scrollLeft = $container.scrollLeft();
+    let maxScroll = $container[0].scrollWidth - $container.outerWidth();
+    let isRTL = $container.closest("[dir='rtl']").length > 0;
+
+    if (isRTL) {
+      $left.css("opacity", scrollLeft < maxScroll ? 1 : 0);
+      $right.css("opacity", scrollLeft > 0 ? 1 : 0);
+    } else {
+      $left.css("opacity", scrollLeft > 0 ? 1 : 0);
+      $right.css("opacity", scrollLeft < maxScroll ? 1 : 0);
+    }
   }
-  
+
   toggleArrows();
   $container.on("scroll", toggleArrows);
-  
+
   const container = $container[0];
-  
+
   // السكرول بالعجلة (كما هو)
-  container.addEventListener('wheel', function(e) {
-      e.preventDefault();
-      container.scrollLeft += e.deltaY;
+  container.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    container.scrollLeft += e.deltaY;
   });
-  
-  $(window).on('resize', function() {
-      setTimeout(toggleArrows, 100);
+
+  $(window).on('resize', function () {
+    setTimeout(toggleArrows, 100);
   });
+});
+
+// ===== Category filter (reload with query) =====
+$(function () {
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const id = this.getAttribute('data-category-id');
+      const url = new URL(window.location.href);
+      if (id) url.searchParams.set('category_id', id);
+      else url.searchParams.delete('category_id');
+      window.location.href = url.toString();
+    });
+  });
+});
+// ===== Load more (show next batch) =====
+$(function () {
+  const btn = document.getElementById('loadMoreBtn');
+  if (!btn) return;
+
+  const step = 4; // كل كبسة بتظهر 4 كورسات
+  btn.addEventListener('click', function () {
+    const hidden = Array.from(document.querySelectorAll('.course-card'))
+      .filter(el => el.style.display === 'none');
+
+    hidden.slice(0, step).forEach(el => el.style.display = '');
+
+    const stillHidden = Array.from(document.querySelectorAll('.course-card'))
+      .some(el => el.style.display === 'none');
+
+    if (!stillHidden) btn.style.display = 'none';
+  });
+
 });

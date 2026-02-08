@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Student\PlayerController;
 use App\Http\Controllers\Api\Student\ProgressController;
 use App\Http\Controllers\Api\Student\ReviewController;
 use App\Http\Controllers\Api\Student\StudentCourseController;
+use App\Http\Controllers\MailingListController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('blog', BlogController::class);
@@ -41,6 +42,9 @@ Route::delete('auth/access-tokens/{token?}', [AccessTokensController::class, 'de
     ->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/mailing-list', [MailingListController::class, 'index']);
+    Route::delete('/mailing-list/{id}', [MailingListController::class, 'destroy']);
 
     Route::get('instructors', [CourseAdminController::class, 'instructors']);
     // ================== ADMIN ==================

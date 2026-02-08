@@ -70,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    protected $append = [
+    protected $appends  = [
         'full_name',
         'avatar'
     ];

@@ -25,35 +25,7 @@ class UserFavoriteController extends Controller
         
         foreach($items as $item) {
                 if($item->type == 1){
-                            $tutor = Tutor::where('tutors.id', $item->ref_id)
-                                ->join('user_abouts', 'user_abouts.user_id', '=', 'tutors.id')
-                                ->leftJoin('user_hourly_prices', 'user_hourly_prices.user_id', '=', 'tutors.id')
-                                ->select(
-                                    'tutors.name', 
-                                    'tutors.id', 
-                                    \DB::raw("(select avg(stars) from tutor_reviews where tutor_reviews.tutor_id = tutors.id and deleted_at is NULL) as rating"), 
-                                    'tutors.type', 
-                                    'user_hourly_prices.price', 
-                                    'tutors.avatar', 
-                                    'tutors.online', 
-                                    \DB::raw("CONCAT(user_abouts.first_name,' ',user_abouts.last_name) full_name")
-                                )->first();
-                                
-                                $tutor->videos =  $tutor->videos()->get();
-                                $tutor->descriptions =  $tutor->descriptions()->get();
-                                $tutor->rating = $tutor->reviews()->avg('stars');
-                                //======================================================
-                                $tutor->abouts =  $tutor->abouts()->get();
-                                if($tutor->abouts) {
-                                        foreach($tutor->abouts as $about) {
-                                                $about->country;
-                                                $about->level;
-                                                $about->language;
-                                                $about->subject;
-                                                $about->experience;
-                                                $about->situation;
-                                        }
-                                }
+                        $tutor = User::with(['profile','tutorProfile'])->find($item->ref_id);
                         $item->tutor = $tutor;
                                         
                 }elseif($item->type == 2){
