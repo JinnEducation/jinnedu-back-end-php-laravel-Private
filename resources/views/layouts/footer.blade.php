@@ -192,11 +192,11 @@
                 </p>
                 <!-- نموذج الاشتراك -->
                 <div class="flex gap-3 mx-auto max-w-md md:mx-0">
-                    <input type="email"
+                    <input type="email" id="emailUser"
                         placeholder="{{ label_text('global', 'site.enter-your-email', __('site.Enter your email')) }}"
                         class="flex-1 px-4 py-3 min-w-0 placeholder-gray-400 text-black bg-white rounded-lg border border-gray-500 transition-all duration-300 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50" />
 
-                    <button
+                    <button id="btnMailingList"
                         class="px-6 py-3 font-medium text-white rounded-lg transition-all duration-300 transform bg-primary hover:bg-primary-700 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50">
                         {{ label_text('global', 'site.Subscribe', __('site.Subscribe')) }}
                     </button>
@@ -252,3 +252,39 @@
         </div>
     </div>
 </footer>
+
+@push('scripts')
+    <script>
+        $(function () {
+            const btn = $('#btnMailingList');
+            const input = $('#emailUser');
+            const originalText = btn.text();
+
+            btn.on('click', function () {
+                const email = input.val().trim();
+                if (!email) return;
+
+                btn.prop('disabled', true)
+                    .html('<span class="animate-spin mr-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span> Loading');
+
+                $.ajax({
+                    url: '/mailing-list',
+                    method: 'POST',
+                    data: { email },
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    success: function () {
+                        input.val('');
+                    },
+                    complete: function () {
+                        btn.prop('disabled', false).text(originalText);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseJSON?.message || 'Error');
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

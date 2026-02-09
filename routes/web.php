@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentResponseController;
 use App\Http\Controllers\WalletPaymentTransactionController;
 use App\Http\Controllers\Front\PageController as FrontPageController;
 use App\Http\Controllers\Front\UserFavoriteController;
+use App\Http\Controllers\MailingListController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -245,3 +246,5 @@ Route::post('/user-favorites/toggle', [UserFavoriteController::class, 'toggle'])
 
 Route::get('admin/student/courses/{course}/certificate', [StudentCourseController::class, 'certificate']);
 Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');
+
+Route::post('/mailing-list', [MailingListController::class, 'store'])->name('mailing-list.store');

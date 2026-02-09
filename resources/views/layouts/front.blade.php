@@ -46,7 +46,6 @@
 
 <script src="{{ asset('front/assets/js/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ asset('front/assets/js/main.js') }}"></script>
-<script src="{{ asset('front/assets/js/index.js') }}"></script>
 
 <x-show-message type="success" />
 <x-show-message type="warning" />
