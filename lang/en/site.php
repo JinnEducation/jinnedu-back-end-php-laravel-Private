@@ -587,4 +587,8 @@ return [
     'complete_checkout' => 'Complete Checkout',
     'checkout_success_status' => 'Checkout - Successfully',
 
+    'You have been successfully subscribed to the mailing list'    => 'You have been successfully subscribed to the mailing list',
+    'This mail is pre-registered on the mailing list'    => 'This mail is pre-registered on the mailing list',
+
+
 ];

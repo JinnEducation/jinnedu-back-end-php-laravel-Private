@@ -567,5 +567,8 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Total price' => 'السعر الإجمالي',
     'complete_checkout' => 'إتمام عملية الدفع',
     'checkout_success_status' => 'الدفع - تم بنجاح',
-
+    
+    'You have been successfully subscribed to the mailing list'    => 'لقد تم الاشتراك بنجاح في القائمة البريدية',
+    'This mail is pre-registered on the mailing list'    => 'هذا البريد مسجل مسبقاً في القائمة البريدية',
+    
 ];

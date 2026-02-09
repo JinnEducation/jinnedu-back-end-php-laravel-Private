@@ -201,7 +201,9 @@
                         {{ label_text('global', 'site.Subscribe', __('site.Subscribe')) }}
                     </button>
                 </div>
-
+                <div id="newsletterMessage" class="hidden mt-3 text-sm text-green-400">
+                    {{ __('site.You have been successfully subscribed to the mailing list') }}
+                </div>
             </div>
         </div>
     </div>
@@ -258,11 +260,15 @@
         $(function () {
             const btn = $('#btnMailingList');
             const input = $('#emailUser');
+            const msg = $('#newsletterMessage');
             const originalText = btn.text();
 
             btn.on('click', function () {
                 const email = input.val().trim();
                 if (!email) return;
+
+                // reset message
+                msg.addClass('hidden').removeClass('text-red-400').addClass('text-green-400');
 
                 btn.prop('disabled', true)
                     .html('<span class="animate-spin mr-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span> Loading');
@@ -276,12 +282,29 @@
                     },
                     success: function () {
                         input.val('');
+                        msg
+                            .text("{{ __('site.You have been successfully subscribed to the mailing list') }}")
+                            .removeClass('hidden')
+                            .hide()
+                            .fadeIn(200);
+                    },
+                    error: function (xhr) {
+                        let message = 'Something went wrong';
+                        if (xhr.responseJSON?.errors?.email) {
+                            message = "{{ __('site.This mail is pre-registered on the mailing list') }}";
+                        } else if (xhr.responseJSON?.message) {
+                            message = xhr.responseJSON.message;
+                        }
+
+                        msg
+                            .text(message)
+                            .removeClass('hidden text-green-400')
+                            .addClass('text-red-400')
+                            .hide()
+                            .fadeIn(200);
                     },
                     complete: function () {
                         btn.prop('disabled', false).text(originalText);
-                    },
-                    error: function (xhr) {
-                        alert(xhr.responseJSON?.message || 'Error');
                     }
                 });
             });
