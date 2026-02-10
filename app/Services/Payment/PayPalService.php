@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\WalletPaymentTransaction;
 use App\Models\WalletTransaction;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Http\Controllers\Front\WalletController;
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
@@ -20,15 +21,23 @@ class PayPalService implements PaymentInterface
     public function __construct()
     {
         // IMPORTANT: fallback to env if config missing (as requested)
-        $this->clientId = config('services.paypal.client_id', env(key: 'PAYPAL_CLIENT_ID'));
-        $this->clientSecret = config('services.paypal.client_secret', env(key: 'PAYPAL_CLIENT_SECRET'));
+       $this->clientId = Setting::valueOf(
+        'paypal_client_id',
+        config('services.paypal.client_id', env('PAYPAL_CLIENT_ID'))
+    );
 
-        $mode = config('services.paypal.mode', env(key: 'PAYPAL_MODE'));
-        $mode = $mode ?: 'sandbox';
+    $this->clientSecret = Setting::valueOf(
+        'paypal_secret',
+        config('services.paypal.client_secret', env('PAYPAL_CLIENT_SECRET'))
+    );
 
-        $this->baseUrl = $mode === 'live'
-            ? 'https://api-m.paypal.com'
-            : 'https://api-m.sandbox.paypal.com';
+    $mode = config('services.paypal.mode', env('PAYPAL_MODE'));
+    $mode = $mode ?: 'sandbox';
+
+    $this->baseUrl = $mode === 'live'
+        ? 'https://api-m.paypal.com'
+        : 'https://api-m.sandbox.paypal.com';
+
     }
 
     /**

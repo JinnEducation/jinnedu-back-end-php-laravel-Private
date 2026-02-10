@@ -6,6 +6,7 @@ use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
 use App\Http\Controllers\WalletController;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\WalletPaymentTransaction;
 use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
@@ -20,8 +21,15 @@ class StripeService implements PaymentInterface
      */
     public function createPayment(array $data)
     {
-        Stripe::setApiKey(apiKey: config('services.stripe.secret', env('STRIPE_SECRET')));
-        $referenceId = $data['reference_id'] ?? null;
+        // Stripe::setApiKey(apiKey: config('services.stripe.secret', env('STRIPE_SECRET')));
+         $referenceId = $data['reference_id'] ?? null;
+
+        Stripe::setApiKey(
+    Setting::valueOf(
+        'stripe_secret',
+        config('services.stripe.secret', env('STRIPE_SECRET'))
+    )
+);
 
         if (! $referenceId) {
             throw new \Exception('reference_id is required for Stripe payment');
@@ -87,7 +95,15 @@ class StripeService implements PaymentInterface
      */
     public function success(Request $request)
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        // Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        Stripe::setApiKey(
+    Setting::valueOf(
+        'stripe_secret',
+        config('services.stripe.secret', env('STRIPE_SECRET'))
+    )
+);
+
 
         $sessionId = $request->get('session_id');
         $reference_id = $request->get('reference_id') ;
