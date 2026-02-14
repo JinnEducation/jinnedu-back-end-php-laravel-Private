@@ -190,7 +190,6 @@ class WalletController extends Controller
 
     public function addTutorFinance($order, $tutor_id, $type)
     {
-
         if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id])->exists()) {
             return false;
         }
@@ -201,12 +200,19 @@ class WalletController extends Controller
             $groupclass = GroupClass::where('id', $order->ref_id)->first();
             $group_class_date = $groupclass->dates()->orderBy('id', 'desc')->first();
             $class_date = date('Y-m-d H:i:s', strtotime($group_class_date->class_date));
-        } elseif ($type == 2) {
-            $percentage = getSettingVal('our_course_fees');
 
+            $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id, 'tutor_id' => $tutor_id])->first();
+            if ($tutorFinanceCheck) {
+                return false;
+            }
+        } 
+        if ($type == 2) {
+            return false;
+            // $percentage = getSettingVal('our_course_fees');
+        }
             
-        } else {
-            $percentage = getSettingVal('private_lesson_fees');
+        if ($type == 4) {
+            $percentage = getSettingVal('private_lesson_fees') ?? 70;
 
             // Check if dates is JSON and contains array with start_date_time
             $dates = $order->dates;
@@ -232,8 +238,7 @@ class WalletController extends Controller
             'class_date' => $class_date ?? null,
         ];
 
-        TutorFinance::create($data);
-
+        $s = TutorFinance::create($data);
     }
 
     // ========================================================

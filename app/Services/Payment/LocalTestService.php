@@ -43,8 +43,8 @@ class LocalTestService implements PaymentInterface
      */
     public function success(Request $request)
     {
-        // DB::beginTransaction();
-        // try{
+        DB::beginTransaction();
+        try{
             $referenceId = $request->get('reference_id');
             if(!$referenceId) {
                 return response()->json([
@@ -54,7 +54,7 @@ class LocalTestService implements PaymentInterface
             }
 
             $transaction = WalletPaymentTransaction::where('reference_id', $referenceId)->first();
-            
+
             if(!$transaction) {
                 return response()->json([
                     'success' => false,
@@ -68,6 +68,7 @@ class LocalTestService implements PaymentInterface
             $transaction->transaction_id = 'local-test-' . $referenceId;
             $transaction->response = json_encode([
                 'test_mode' => true,
+                'order_ids' => json_decode($transaction->response, true)['order_ids'],
                 'completed_at' => now()->toDateTimeString(),
                 'type' => json_decode($transaction->response, true)['type']
             ]);
@@ -81,20 +82,20 @@ class LocalTestService implements PaymentInterface
                 }
             }
 
-            // DB::commit();
+            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Payment completed successfully (Test Mode)',
                 'transaction' => $transaction,
             ]);
-        // } catch (Exception $e) {
-        //     DB::rollBack();
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => $e->getMessage(),
-        //     ]);
-        // }
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -133,10 +134,8 @@ class LocalTestService implements PaymentInterface
             $order->payment = 'local-test';
             $order->save();
 
-            if($order->ref_type == 4) {
-                $walletController = new WalletController();
-                $walletController->addTutorFinance($order,$order->ref_id, 4);
-            }
+            $walletController = new WalletController();
+            $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
 
             // Create wallet transaction record
             WalletTransaction::create([

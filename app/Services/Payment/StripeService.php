@@ -216,10 +216,9 @@ class StripeService implements PaymentInterface
             $order->payment = 'stripe';
             $order->save();
 
-            if ($order->ref_type == 4) {
-                $walletController = new WalletController;
-                $walletController->addTutorFinance($order, $order->ref_id, 4);
-            }
+            $walletController = new WalletController();
+            $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
+
 
             WalletTransaction::create([
                 'user_id' => $transaction->user_id,

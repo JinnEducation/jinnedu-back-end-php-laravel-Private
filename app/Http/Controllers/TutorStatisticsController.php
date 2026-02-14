@@ -24,7 +24,7 @@ class TutorStatisticsController extends Controller
 
         $limit = setDataTablePerPageLimit($request->limit);
 
-        $tutors = Tutor::select('tutors.id', 'tutors.name', 'tutors.avatar', 'tutors.email');
+        $tutors = User::where('type',2);
 
         $tutors = paginate($tutors, $limit);
 

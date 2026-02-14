@@ -537,9 +537,11 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
     });
 
     Route::prefix('tutor-finance')->name('tutor-finance.')->group(function () {
+        Route::get('/', [TutorFinanceController::class, 'index']);
         Route::get('/my-index', [TutorFinanceController::class, 'myIndex'])->name('my-index');
+        Route::post('/update/{id}', [TutorFinanceController::class,'update']);
+        Route::post('/{id}/transfer', [TutorFinanceController::class,'transfer']);
     });
-
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/students-conference-report', [ReportController::class, 'studentsConferenceReport'])->name('studentsConferenceReport');
         Route::get('/revenue-Report', [ReportController::class, 'revenueReport'])->name('revenue');

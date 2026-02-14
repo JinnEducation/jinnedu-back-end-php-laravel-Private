@@ -12,4 +12,9 @@ class TutorFinance extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function tutor()
+    {
+        return $this->belongsTo(User::class,'tutor_id');
+    }
 }

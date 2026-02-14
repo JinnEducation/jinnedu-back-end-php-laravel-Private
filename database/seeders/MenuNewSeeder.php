@@ -9,6 +9,8 @@ use App\Models\Slider;
 use Illuminate\Support\Facades\DB;
 //use App\Models\Report;
 use App\Models\Menu;
+use App\Models\Payout;
+use App\Models\TutorFinance;
 use Bouncer;
 
 use Illuminate\Database\Seeder;
@@ -128,47 +130,76 @@ class MenuNewSeeder extends Seeder
         ]);
         */
         //================================================
+        // $this->createMenuSubMenus([
+        //     'type' => Course::class,
+        //     'name' => 'courses',
+        //     'title' => 'courses-management',
+        //     'svg' => 'Home/Globe.svg',
+        //     'children' => [
+        //         [
+        //             'type' => Course::class,
+        //             'name' => 'courses.index',
+        //             'title' => 'courses-index',
+        //             'indexTitle' => ['courses-list', 1],
+        //             'createTitle' => ['add-courses', 1],
+        //             'editTitle' => ['update-courses', 1],
+        //             'showTitle' => ['view-courses', 1],
+        //             'destroyTitle' => ['delete-courses', 1],
+        //             'svg' => '',
+        //         ],
+        //         [
+        //             'type' => Course::class,
+        //             'name' => 'courses.create',
+        //             'title' => 'courses-create',
+        //             'createTitle' => ['add-courses', 1],
+        //             'editTitle' => ['update-courses', 1],
+        //             'svg' => '',
+        //         ],
+
+        //     ]
+        // ]);
         $this->createMenuSubMenus([
-            'type' => Course::class,
-            'name' => 'courses',
-            'title' => 'courses-management',
-            'svg' => 'Home/Globe.svg',
+            'type' => TutorFinance::class,
+            'name' => 'tutor-finances',
+            'title' => 'tutor-finances-list',
+            'svg' => 'Communication/Group.svg',
             'children' => [
                 [
-                    'type' => Course::class,
-                    'name' => 'courses.index',
-                    'title' => 'courses-index',
-                    'indexTitle' => ['courses-list', 1],
-                    'createTitle' => ['add-courses', 1],
-                    'editTitle' => ['update-courses', 1],
-                    'showTitle' => ['view-courses', 1],
-                    'destroyTitle' => ['delete-courses', 1],
+                    'type' => TutorFinance::class,
+                    'name' => 'tutor-finances.index',
+                    'title' => 'tutor-finances-index',
+                    'indexTitle' => ['tutor-finances-list', 1],
+                    'showTitle' => ['view-tutor-finances', 1],
+                    'destroyTitle' => ['delete-tutor-finances', 1],
                     'svg' => '',
                 ],
                 [
-                    'type' => Course::class,
-                    'name' => 'courses.create',
-                    'title' => 'courses-create',
-                    'createTitle' => ['add-courses', 1],
-                    'editTitle' => ['update-courses', 1],
+                    'type' => TutorFinance::class,
+                    'name' => 'tutor-finances.accounting',
+                    'title' => 'tutor-finances-accounting',
+                    'createTitle' => ['tutor-finances-accounting', 1],
                     'svg' => '',
                 ],
-
+                [
+                    'type' => Payout::class,
+                    'name' => 'payout.list',
+                    'title' => 'payout-list',
+                    'indexTitle' => ['payout-list', 1],
+                    'createTitle' => ['create-payout', 1],
+                    'editTitle' => ['update-payout', 1],
+                    'showTitle' => ['view-payout', 1],
+                    'destroyTitle' => ['delete-payout', 1],
+                    'svg' => '',
+                ],
+                [
+                    'type' => Payout::class,
+                    'name' => 'payout.create',
+                    'title' => 'payout-create',
+                    'createTitle' => ['create-payout', 1],
+                    'svg' => '',
+                ],
             ]
         ]);
-        $this->createMenuSubMenus([
-            'type' => Course::class,
-            'name' => 'my-courses',
-            'title' => 'my-courses-list',
-            'svg' => 'Communication/Group.svg',
-            'others' => [
-                ['name' => 'all', 'title' => 'my-courses-list', 'invisible' => 0],
-                ['name' => 'completed', 'title' => 'my-courses-completed', 'invisible' => 0],
-                ['name' => 'unfinished', 'title' => 'my-courses-unfinished', 'invisible' => 0],
-                ['name' => 'certificates', 'title' => 'my-courses-certificates', 'invisible' => 0],
-            ]
-        ]);
-
     }
 
     public function createMenuSubMenus($data, $p_id = 0)
@@ -184,12 +215,12 @@ class MenuNewSeeder extends Seeder
             'active_routes' => $data['name'] . '.index|' . $data['name'] . '.create|' . $data['name'] . '.show|' . $data['name'] . '.edit',
             'svg' => $data['svg']
         ]);
-        if ($child && $data['title'] == "my-courses-list") {
-            Bouncer::allow('student')->to('all', Course::class);
-            Bouncer::allow('student')->to('completed', Course::class);
-            Bouncer::allow('student')->to('unfinished', Course::class);
-            Bouncer::allow('student')->to('certificates', Course::class);
-        }
+        // if ($child && $data['title'] == "my-courses-list") {
+        //     Bouncer::allow('student')->to('all', Course::class);
+        //     Bouncer::allow('student')->to('completed', Course::class);
+        //     Bouncer::allow('student')->to('unfinished', Course::class);
+        //     Bouncer::allow('student')->to('certificates', Course::class);
+        // }
         //===========================================    
         if (isset($data['indexTitle'])) Menu::query()->updateOrCreate(['id' => ++$this->id], [
             'invisible' => $data['indexTitle'][1],

@@ -714,6 +714,8 @@ class HomeController extends Controller
             ->get();
         $reviews = TutorReview::where('tutor_id', $tutor->id)->get();
         $reviewsCount = $reviews->count();
+        $orderTrialExists = true;
+        $orderTrialFinash = true;
 
         return view('front.tutor_jinn', compact('tutor', 'availabilities', 'tutorsSuggestions', 'reviewsCount', 'reviews', 'checkAllowOrder', 'orderTrialExists', 'orderTrialFinash'));
     }
@@ -778,7 +780,8 @@ class HomeController extends Controller
                     $originalCheckout = $responseCheckout->getOriginalContent();
 
                     if ($originalCheckout['success']) {
-                        $walletController->addTutorFinance($order, $order->ref_id, 4);
+                        $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
+                        
                         DB::commit();
 
                         return redirect()->route('redirect.dashboard')
@@ -800,11 +803,12 @@ class HomeController extends Controller
                 return redirect()->route('checkout', [
                     'type' => 'pay',
                     'order_ids' => $orderId,
-                ])->with('info', $hasEnoughBalance
-                    ? 'You can pay from your wallet or choose another payment method'
-                    : 'Please complete payment to finish your order'
+                ])->with(
+                    'info',
+                    $hasEnoughBalance
+                        ? 'You can pay from your wallet or choose another payment method'
+                        : 'Please complete payment to finish your order'
                 );
-
             } else {
                 DB::rollBack();
 
@@ -854,7 +858,7 @@ class HomeController extends Controller
 
                 DB::commit();
 
-                return redirect()->route('redirect.dashboard',['redirect_to'=> '/conferences/student-index'])
+                return redirect()->route('redirect.dashboard', ['redirect_to' => '/conferences/student-index'])
                     ->with('success', 'Trial lesson booked successfully');
             } else {
                 DB::rollBack();

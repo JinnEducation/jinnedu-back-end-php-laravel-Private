@@ -8,7 +8,7 @@ use App\Models\WalletPaymentTransaction;
 use App\Models\WalletTransaction;
 use App\Models\Order;
 use App\Models\Setting;
-use App\Http\Controllers\Front\WalletController;
+use App\Http\Controllers\WalletController;
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
 
@@ -257,11 +257,9 @@ class PayPalService implements PaymentInterface
             $order->payment = 'paypal';
             $order->save();
 
-            if ($order->ref_type == 4) {
-                $walletController = new WalletController();
-                $walletController->addTutorFinance($order, $order->ref_id, 4);
-            }
-
+            $walletController = new WalletController();
+            $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
+            
             // Create wallet transaction record
             WalletTransaction::create([
                 'user_id' => $transaction->user_id,
