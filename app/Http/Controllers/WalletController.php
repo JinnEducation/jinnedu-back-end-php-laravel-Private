@@ -236,6 +236,7 @@ class WalletController extends Controller
             'percentage' => $percentage,
             'fee' => $percentage * $order->price / 100,
             'class_date' => $class_date ?? null,
+            'status' => 'transferred'
         ];
 
         $s = TutorFinance::create($data);

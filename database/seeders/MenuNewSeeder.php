@@ -158,48 +158,50 @@ class MenuNewSeeder extends Seeder
 
         //     ]
         // ]);
-        $this->createMenuSubMenus([
-            'type' => TutorFinance::class,
-            'name' => 'tutor-finances',
-            'title' => 'tutor-finances-list',
-            'svg' => 'Communication/Group.svg',
-            'children' => [
-                [
-                    'type' => TutorFinance::class,
-                    'name' => 'tutor-finances.index',
-                    'title' => 'tutor-finances-index',
-                    'indexTitle' => ['tutor-finances-list', 1],
-                    'showTitle' => ['view-tutor-finances', 1],
-                    'destroyTitle' => ['delete-tutor-finances', 1],
-                    'svg' => '',
-                ],
-                [
-                    'type' => TutorFinance::class,
-                    'name' => 'tutor-finances.accounting',
-                    'title' => 'tutor-finances-accounting',
-                    'createTitle' => ['tutor-finances-accounting', 1],
-                    'svg' => '',
-                ],
-                [
-                    'type' => Payout::class,
-                    'name' => 'payout.list',
-                    'title' => 'payout-list',
-                    'indexTitle' => ['payout-list', 1],
-                    'createTitle' => ['create-payout', 1],
-                    'editTitle' => ['update-payout', 1],
-                    'showTitle' => ['view-payout', 1],
-                    'destroyTitle' => ['delete-payout', 1],
-                    'svg' => '',
-                ],
-                [
-                    'type' => Payout::class,
-                    'name' => 'payout.create',
-                    'title' => 'payout-create',
-                    'createTitle' => ['create-payout', 1],
-                    'svg' => '',
-                ],
-            ]
-        ]);
+        // $this->createMenuSubMenus([
+        //     'type' => TutorFinance::class,
+        //     'name' => 'tutor-finances',
+        //     'title' => 'tutor-finances-list',
+        //     'svg' => 'Communication/Group.svg',
+        //     'children' => [
+        //         [
+        //             'type' => TutorFinance::class,
+        //             'name' => 'tutor-finances.index',
+        //             'title' => 'tutor-finances-index',
+        //             'indexTitle' => ['tutor-finances-list', 1],
+        //             'showTitle' => ['view-tutor-finances', 1],
+        //             'destroyTitle' => ['delete-tutor-finances', 1],
+        //             'svg' => '',
+        //         ],
+        //         [
+        //             'type' => TutorFinance::class,
+        //             'name' => 'tutor-finances.accounting',
+        //             'title' => 'tutor-finances-accounting',
+        //             'createTitle' => ['tutor-finances-accounting', 1],
+        //             'svg' => '',
+        //         ],
+        //         [
+        //             'type' => Payout::class,
+        //             'name' => 'payout.list',
+        //             'title' => 'payout-list',
+        //             'indexTitle' => ['payout-list', 1],
+        //             'createTitle' => ['create-payout', 1],
+        //             'editTitle' => ['update-payout', 1],
+        //             'showTitle' => ['view-payout', 1],
+        //             'destroyTitle' => ['delete-payout', 1],
+        //             'svg' => '',
+        //         ],
+        //         [
+        //             'type' => Payout::class,
+        //             'name' => 'payout.create',
+        //             'title' => 'payout-create',
+        //             'createTitle' => ['create-payout', 1],
+        //             'svg' => '',
+        //         ],
+        //     ]
+        // ]);
+        Bouncer::allow('tutor')->to('payout.list', Payout::class);
+        Bouncer::allow('tutor')->to('payout.create', Payout::class);
     }
 
     public function createMenuSubMenus($data, $p_id = 0)
@@ -215,6 +217,10 @@ class MenuNewSeeder extends Seeder
             'active_routes' => $data['name'] . '.index|' . $data['name'] . '.create|' . $data['name'] . '.show|' . $data['name'] . '.edit',
             'svg' => $data['svg']
         ]);
+        if ($child && ($data['title'] == 'payout-create' || $data['title'] == 'payout-list')) {
+            Bouncer::allow('tutor')->to('payout.list', Payout::class);
+            Bouncer::allow('tutor')->to('payout.create', Payout::class);
+        }
         // if ($child && $data['title'] == "my-courses-list") {
         //     Bouncer::allow('student')->to('all', Course::class);
         //     Bouncer::allow('student')->to('completed', Course::class);

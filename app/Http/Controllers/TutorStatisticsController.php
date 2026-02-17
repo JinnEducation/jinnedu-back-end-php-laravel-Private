@@ -51,7 +51,7 @@ class TutorStatisticsController extends Controller
 
     public function tutorInfo(Request $request) {
         
-        $tutor = User::where('id', $request->user_id)->first();
+        $tutor = User::with('wallets')->where('id', $request->user_id)->first();
         if(!$tutor){
              return response([
                 'success' => false,

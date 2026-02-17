@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Tutor;
 use App\Models\TutorFinance;
 use App\Models\GroupClass;
+use App\Models\Order;
 use App\Models\UserWallet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,8 +54,15 @@ class TutorFinanceController extends Controller
             if ($tutor_id) {
                 $item->tutor = User::where('id', $tutor_id)->first();
             }
+            if($item->ref_type == 4){
+                $order = Order::where('id', $item->order_id)->first();
+                $item->student = User::where('id', $order->user_id)->first();
+                $item->date = json_decode($order->dates,true);
+            }
+            if($item->ref_type == 1){
+                $item->group_class = GroupClass::where('id', $item->ref_id)->first();
+            }
         }
-
 
         return response([
             'success' => true,
@@ -102,14 +110,6 @@ class TutorFinanceController extends Controller
         try {
 
             DB::beginTransaction();
-        // case "pending":
-        //   return t("global.review")
-        // case "transferred":
-        //   return t("global.paid")
-        // case "rejected":
-        //   return t("global.rejected")
-        // default:
-        //   return t("global.need-to-review")
             if ($request->status == 'transferred') {
                 $tutor = User::with('wallets')->find($tutor_finance->tutor_id);
                 $wallet = $tutor->wallets()->first();
