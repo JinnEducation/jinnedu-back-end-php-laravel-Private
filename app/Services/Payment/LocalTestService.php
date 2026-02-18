@@ -135,7 +135,7 @@ class LocalTestService implements PaymentInterface
             $order->save();
 
             $walletController = new WalletController();
-            $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
+            // $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
 
             // Create wallet transaction record
             WalletTransaction::create([

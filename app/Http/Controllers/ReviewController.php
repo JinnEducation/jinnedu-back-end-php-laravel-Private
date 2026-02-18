@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +88,9 @@ class ReviewController extends Controller
             $review = Review::create($data);
             
             // هنا الحجز
+            $walletController = new WalletController();
+            $order = Order::where('id', $conference->order_id)->first();
+            $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type);
         }
         
         return response([

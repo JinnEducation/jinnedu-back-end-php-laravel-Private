@@ -271,8 +271,8 @@ class CheckoutController extends Controller
             $order->payment = 'wallet';
             $order->save();
 
-            $walletController = new WalletController();
-            $walletController->addTutorFinance($order,$order->ref_id, $order->ref_type);
+            // $walletController = new WalletController();
+            // $walletController->addTutorFinance($order,$order->ref_id, $order->ref_type);
 
             // Create wallet transaction record
             \App\Models\WalletTransaction::create([

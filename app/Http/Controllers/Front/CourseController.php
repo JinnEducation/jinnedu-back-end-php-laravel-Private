@@ -202,7 +202,7 @@ class CourseController extends Controller
                     $originalCheckout = $responseCheckout->getOriginalContent();
 
                     if ($originalCheckout['success']) {
-                        $walletController->addTutorFinance($order, $order->ref_id, 2);
+                        // $walletController->addTutorFinance($order, $order->ref_id, 2);
                         DB::commit();
 
                         return redirect()->route('redirect.dashboard')

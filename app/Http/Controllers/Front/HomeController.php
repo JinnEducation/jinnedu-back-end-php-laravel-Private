@@ -780,7 +780,7 @@ class HomeController extends Controller
                     $originalCheckout = $responseCheckout->getOriginalContent();
 
                     if ($originalCheckout['success']) {
-                        $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
+                        // $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
                         
                         DB::commit();
 
