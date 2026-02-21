@@ -101,7 +101,7 @@ class CourseController extends Controller
                 ->get();
 
             $user = Auth::user();
-            $alreadyEnrolled = CourseEnrollment::where('course_enrollments.user_id', $user->id)
+            $alreadyEnrolled = CourseEnrollment::where('course_enrollments.user_id', $user?->id)
                 ->where('course_enrollments.course_id', $course->id)
                 ->whereHas('order', function ($q) {
                     $q->where('status', 1); // مدفوع
