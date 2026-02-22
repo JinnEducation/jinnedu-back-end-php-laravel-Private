@@ -6,14 +6,72 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WalletController;
 use App\Models\Course;
+use App\Models\CourseCategory;
 use App\Models\CourseEnrollment;
+use App\Models\Language;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
+    public function courses(Request $request, $locale)
+    {
+        $categoryId = $request->query('category_id');
+
+        $category = CourseCategory::find($categoryId) ?? null;
+        $courses = Course::query()
+            ->with([
+                'category:id,name',
+                'instructor:id,name',
+                'activeDiscount',
+
+                // ✅ لغة واحدة فقط
+                'langs' => fn ($q) => $q->where('lang', $locale),
+
+                // الأقسام
+                'sections' => fn ($q) => $q->orderBy('sort_order'),
+                'sections.langs' => fn ($q) => $q->where('lang', $locale),
+
+                // عناصر الأقسام
+                'sections.items' => fn ($q) => $q->orderBy('sort_order'),
+                'sections.items.langs' => fn ($q) => $q->where('lang', $locale),
+
+                // Reviews (عرض فقط)
+                'reviews' => fn ($q) => $q->latest('id')->limit(20),
+                'reviews.user:id,name',
+            ])
+            ->where('status', 'published')
+            ->when($categoryId, function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
+            })
+            ->get();
+
+        $categories = CourseCategory::get();
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+        if (! $language) {
+            $language = Language::where('main', 1)->first();
+        }
+        if (! $language) {
+            $language = Language::first();
+        }
+        $languageId = $language ? $language->id : null;
+        $langShorts = $language->shortname;
+
+        return view('front.courses', compact('categories', 'courses', 'languageId', 'langShorts', 'category'));
+    }
+
+    public function categories()
+    {
+        $categories = CourseCategory::get();
+        $courses = Course::where('status', 'published')->get();
+
+        return view('front.categories', compact('categories', 'courses'));
+    }
+
     public function singlecourse($locale, $id)
     {
 
@@ -28,18 +86,18 @@ class CourseController extends Controller
                     'activeDiscount',
 
                     // ✅ لغة واحدة فقط
-                    'langs' => fn($q) => $q->where('lang', $locale),
+                    'langs' => fn ($q) => $q->where('lang', $locale),
 
                     // الأقسام
-                    'sections' => fn($q) => $q->orderBy('sort_order'),
-                    'sections.langs' => fn($q) => $q->where('lang', $locale),
+                    'sections' => fn ($q) => $q->orderBy('sort_order'),
+                    'sections.langs' => fn ($q) => $q->where('lang', $locale),
 
                     // عناصر الأقسام
-                    'sections.items' => fn($q) => $q->orderBy('sort_order'),
-                    'sections.items.langs' => fn($q) => $q->where('lang', $locale),
+                    'sections.items' => fn ($q) => $q->orderBy('sort_order'),
+                    'sections.items.langs' => fn ($q) => $q->where('lang', $locale),
 
                     // Reviews (عرض فقط)
-                    'reviews' => fn($q) => $q->latest('id')->limit(20),
+                    'reviews' => fn ($q) => $q->latest('id')->limit(20),
                     'reviews.user:id,name',
                 ])
                 ->where('status', 'published')
@@ -90,7 +148,7 @@ class CourseController extends Controller
 
             $related = Course::query()
                 ->with([
-                    'langs' => fn($q) => $q->where('lang', $locale),
+                    'langs' => fn ($q) => $q->where('lang', $locale),
                     'activeDiscount',
                 ])
                 ->where('status', 'published')

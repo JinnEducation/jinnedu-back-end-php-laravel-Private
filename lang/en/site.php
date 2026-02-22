@@ -88,6 +88,7 @@ return [
     'Recent courses' => 'Recent courses',
     'All categories' => 'All categories',
     'Free' => 'Free',
+    'Paid' => 'Paid',
     'Preview this courses' => 'Preview this courses',
     'Load More' => 'Load More',
 
@@ -590,5 +591,11 @@ return [
     'You have been successfully subscribed to the mailing list'    => 'You have been successfully subscribed to the mailing list',
     'This mail is pre-registered on the mailing list'    => 'This mail is pre-registered on the mailing list',
 
+    'All Courses' => 'All Courses',
+    'Browse the full list of available courses' => 'Browse the full list of available courses',
+    'this-courses' => 'courses',
+    'Explore courses in this category' => 'Explore courses in this category',
+
+    'Explore Our Courses' => 'Explore Our Courses',
 
 ];

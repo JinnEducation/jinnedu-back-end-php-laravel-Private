@@ -92,6 +92,8 @@ Route::group([
     Route::get('take-exam-successful/{id}', [ExamController::class, 'success'])->name('site.take_exam_successful');
 
     //course
+    Route::get('courses', [CourseController::class, 'courses'])->name('site.courses');
+    Route::get('categories', [CourseController::class, 'categories'])->name('site.categories');
     Route::get('single-course/{id}', [CourseController::class, 'singlecourse'])->name('site.singlecourse');
 
     Route::middleware(['auth:web', 'check_student'])->group(function () {

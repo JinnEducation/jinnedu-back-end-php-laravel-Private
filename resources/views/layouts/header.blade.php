@@ -145,72 +145,19 @@
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-64 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                             <div>
-
-                                <!-- Programming with Subcategory -->
-                                <div class="relative border-b border-gray-100 subcategory-item group/sub">
-                                    <a href="#"
-                                        class="flex justify-between items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:font-bold hover:ps-6 group hover:rounded-xl">
-                                        <div class="flex gap-3 items-center">
-                                            <span>{{ label_text('global', 'site.Programming', __('site.Programming')) }}</span>
-                                        </div>
-                                        <i
-                                            class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }} group-hover:text-white"></i>
-                                    </a>
-                                    <!-- Subcategory -->
-                                    <div
-                                        class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
-                                        <div class="py-2">
-                                            <a href="#"
-                                                class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'site.Web Development', __('site.Web Development')) }}
-                                            </a>
-                                            <a href="#"
-                                                class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'site.Mobile Apps', __('site.Mobile Apps')) }}
-                                            </a>
-                                            <a href="#"
-                                                class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                {{ label_text('global', 'site.Data Science', __('site.Data Science')) }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- 
-                                <!-- Design with Subcategory -->
-                                <div class="relative border-b border-gray-100 subcategory-item group/sub">
-                                    <a href="#"
-                                        class="flex justify-between items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 group hover:rounded-xl">
-                                        <div class="flex gap-3 items-center">
-                                            <span>Design</span>
-                                        </div>
-                                        <i class="text-xs fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} group-hover:text-white"></i>
-                                    </a>
-                                    <div
-                                        class="absolute top-0 invisible w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-x-2 start-full ms-2">
-                                        <div class="py-2">
-                                            <a href="#"
-                                                class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                UI/UX Design
-                                            </a>
-                                            <a href="#"
-                                                class="block px-4 py-2 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6">
-                                                Graphic Design
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div> --}}
-
-                                <!-- Business -->
-                                <a href="#"
+                                <a href="{{ route('site.categories',['category_id' => null]) }}"
                                     class="flex gap-3 items-center px-4 py-3 text-black border-b border-gray-100 transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
-                                    <span>{{ label_text('global', 'site.Business', __('site.Business')) }}</span>
+                                    <span>{{ label_text('global', 'All Categories', __('auth.All Categories')) }}</span>
                                 </a>
-
-                                <!-- Languages -->
-                                <a href="#"
-                                    class="flex gap-3 items-center px-4 py-3 text-black transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
-                                    <span>{{ label_text('global', 'site.Languages', __('site.Languages')) }}</span>
-                                </a>
+                                @php
+                                    $categories = App\Models\CourseCategory::get();
+                                @endphp
+                                @foreach ($categories as $category)
+                                    <a href="{{ route('site.courses',['category_id' => $category->id]) }}"
+                                        class="flex gap-3 items-center px-4 py-3 text-black border-b border-gray-100 transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
+                                        <span>{{ label_text('course_categories', $category->name, __('course_categories.' . $category->name)) }}</span>
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
                     </div>

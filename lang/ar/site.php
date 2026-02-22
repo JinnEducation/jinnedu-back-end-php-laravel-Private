@@ -87,6 +87,7 @@ return [
     'Recent courses' => 'أحدث الدورات',
     'All categories' => 'كل التصنيفات',
     'Free' => 'مجاني',
+    'Paid' => 'مدفوع',
     'Preview this courses' => 'معاينة هذه الدورة',
     'Load More' => 'عرض المزيد',
 
@@ -571,4 +572,9 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'You have been successfully subscribed to the mailing list'    => 'لقد تم الاشتراك بنجاح في القائمة البريدية',
     'This mail is pre-registered on the mailing list'    => 'هذا البريد مسجل مسبقاً في القائمة البريدية',
     
+    'All Courses' => 'جميع الدورات',
+    'Browse the full list of available courses' => 'استكشف قائمة كاملة من الدورات المتاحة',
+    'this-courses' => 'دورات',
+    'Explore courses in this category' => 'استكشف دورات هذا التصنيف',
+    'Explore Our Courses' => 'استكشف الدورات الخاصة بنا',
 ];
