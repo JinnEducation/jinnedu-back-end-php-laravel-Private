@@ -40,8 +40,8 @@
                             class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
                     </span>
                     <span>
-                        <a href="#" class="text-primary-600 hover:text-primary-700">
-                            {{ label_text('global', 'site.Course', __('site.Course')) }}
+                        <a href="{{ route('site.courses') }}" class="text-primary-600 hover:text-primary-700">
+                            {{ label_text('global', 'site.this-courses', __('site.this-courses')) }}
                         </a>
                     </span>
                     <span class="mx-1 text-gray-400">

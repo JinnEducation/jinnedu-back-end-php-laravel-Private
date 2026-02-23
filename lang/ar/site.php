@@ -408,7 +408,6 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
 
     'Content will be available soon.' => 'سيتم توفير المحتوى قريباً.',
     'Return to Homepage' => 'العودة إلى الصفحة الرئيسية',
-    'Blog' => 'المدونة',
     'Category' => 'التصنيف',
     'Posted-By' => 'نشر بواسطة',
 
@@ -574,7 +573,10 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     
     'All Courses' => 'جميع الدورات',
     'Browse the full list of available courses' => 'استكشف قائمة كاملة من الدورات المتاحة',
-    'this-courses' => 'دورات',
+    'this-courses' => 'الدورات',
     'Explore courses in this category' => 'استكشف دورات هذا التصنيف',
     'Explore Our Courses' => 'استكشف الدورات الخاصة بنا',
+
+    'All Categories' => 'جميع التصنيفات',
+    'Courses' => 'الدورات',
 ];

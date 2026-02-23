@@ -147,7 +147,7 @@
                             <div>
                                 <a href="{{ route('site.categories',['category_id' => null]) }}"
                                     class="flex gap-3 items-center px-4 py-3 text-black border-b border-gray-100 transition-all duration-300 hover:bg-primary hover:text-white hover:ps-6 hover:rounded-md">
-                                    <span>{{ label_text('global', 'All Categories', __('auth.All Categories')) }}</span>
+                                    <span>{{ label_text('global', 'All Categories', __('site.All Categories')) }}</span>
                                 </a>
                                 @php
                                     $categories = App\Models\CourseCategory::get();

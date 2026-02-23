@@ -24,7 +24,7 @@
                     </li>
                     <!-- Current Page -->
                     <li>
-                        <span class="text-gray-900">{{ label_text('global', 'Course', __('site.Categories')) }}</span>
+                        <span class="text-gray-900">{{ label_text('global', 'Categories', __('site.Categories')) }}</span>
                     </li>
                 </ul>
             </nav>

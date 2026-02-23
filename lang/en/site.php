@@ -592,10 +592,13 @@ return [
     'This mail is pre-registered on the mailing list'    => 'This mail is pre-registered on the mailing list',
 
     'All Courses' => 'All Courses',
+    'Courses' => 'Courses',
     'Browse the full list of available courses' => 'Browse the full list of available courses',
     'this-courses' => 'courses',
     'Explore courses in this category' => 'Explore courses in this category',
 
     'Explore Our Courses' => 'Explore Our Courses',
+
+    'All Categories' => 'All Categories',
 
 ];
