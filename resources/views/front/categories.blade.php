@@ -13,7 +13,7 @@
                 <ul class="flex items-center space-x-1 text-sm font-light">
                     <!-- Home -->
                     <li>
-                        <a href="index.html"
+                        <a href="{{ route('home') }}"
                             class="transition-colors text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('auth.Home')) }}</a>
                     </li>
                     <li>

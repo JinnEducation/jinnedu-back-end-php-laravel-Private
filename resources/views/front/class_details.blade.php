@@ -11,7 +11,7 @@
             <nav aria-label="Breadcrumb" class="mb-14">
                 <div class="text-sm font-light text-gray-600 leading-relaxed">
                     <span>
-                        <a href="index.html" class="text-primary-600 hover:text-primary-700">
+                        <a href="{{ route('home') }}" class="text-primary-600 hover:text-primary-700">
                             {{ label_text('global', 'Home', __('site.Home')) }}
                         </a>
                     </span>

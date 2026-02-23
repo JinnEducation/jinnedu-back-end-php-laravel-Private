@@ -14,7 +14,7 @@
             <nav aria-label="Breadcrumb" class="mb-14">
                 <div class="text-sm font-light text-gray-600 leading-relaxed">
                     <span>
-                        <a href="index.html" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('site.Home')) }}</a>
+                        <a href="{{ route('home') }}" class="text-primary-600 hover:text-primary-700">{{ label_text('global', 'Home', __('site.Home')) }}</a>
                     </span>
                     <span class="mx-1 text-gray-400">
                         <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}} text-[10px]"></i>
