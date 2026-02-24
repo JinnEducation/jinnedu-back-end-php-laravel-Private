@@ -144,7 +144,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                 <p>
                     {{ label_text('global', 'site.register-footer-copy', __('site.© 2024 - 2025 JINNEDU. All rights reserved.')) }}
                 </p>
-                <a href="#" class="underline hover:text-white">
+                <a href="{{ route('site.pages.show', ['slug' => 'Policy']) }}" class="underline hover:text-white">
                     {{ label_text('global', 'site.register-privacy-policies', __('site.Privacy Policies')) }}
                 </a>
             </div>
