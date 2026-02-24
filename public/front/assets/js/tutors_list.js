@@ -49,7 +49,7 @@ $(document).ready(function() {
     }
 
     // Tutor Card Click - Add Active State & Update Schedule
-    $('.tutor-card').on('click', function(e) {
+    $('.tutor-card').on('click  mouseenter', function(e) {
         // Don't trigger if clicking buttons
         if ($(e.target).closest('button, a').length) {
             return;
