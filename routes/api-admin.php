@@ -1,73 +1,63 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ConferenceRecordingController;
+use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\Constants\ContactUsController;
 use App\Http\Controllers\Constants\CountryController;
-use App\Http\Controllers\Constants\LevelController;
+use App\Http\Controllers\Constants\CourseCategoryController;
 use App\Http\Controllers\Constants\CurrencyController;
+use App\Http\Controllers\Constants\DegreeTypeController;
+use App\Http\Controllers\Constants\ExperienceController;
+use App\Http\Controllers\Constants\ForbiddenWordsController;
+use App\Http\Controllers\Constants\FrequencyController;
+use App\Http\Controllers\Constants\LevelController;
+use App\Http\Controllers\Constants\OutlineController;
+use App\Http\Controllers\Constants\PriceController;
+use App\Http\Controllers\Constants\SituationController;
+use App\Http\Controllers\Constants\SortByTutorController;
 use App\Http\Controllers\Constants\SpecializationController;
 use App\Http\Controllers\Constants\SubjectController;
-use App\Http\Controllers\Constants\ExperienceController;
-use App\Http\Controllers\Constants\SituationController;
-use App\Http\Controllers\Constants\DegreeTypeController;
-use App\Http\Controllers\Constants\WorldTimezoneController;
 use App\Http\Controllers\Constants\WeekDayController;
-use App\Http\Controllers\Constants\OutlineController;
-use App\Http\Controllers\Constants\FrequencyController;
-use App\Http\Controllers\Constants\PriceController;
-use App\Http\Controllers\Constants\SortByTutorController;
-
-use App\Http\Controllers\Constants\ContactUsController;
-
-use App\Http\Controllers\Localizations\LanguageController;
-use App\Http\Controllers\Localizations\LabelController;
-use App\Http\Controllers\Localizations\TranslationController;
-
-use App\Http\Controllers\Contents\PackageController;
-use App\Http\Controllers\Contents\PostController;
-use App\Http\Controllers\Contents\PageController;
-use App\Http\Controllers\Contents\VideoController;
-use App\Http\Controllers\Contents\LinkController;
+use App\Http\Controllers\Constants\WorldTimezoneController;
+use App\Http\Controllers\Contents\AdvertisementController;
+use App\Http\Controllers\Contents\DocumentController;
 use App\Http\Controllers\Contents\EventController;
 use App\Http\Controllers\Contents\HelpController;
 use App\Http\Controllers\Contents\ImageController;
-use App\Http\Controllers\Contents\DocumentController;
-use App\Http\Controllers\Contents\AdvertisementController;
-
-use App\Http\Controllers\Sections\DepartmentController;
+use App\Http\Controllers\Contents\LinkController;
+use App\Http\Controllers\Contents\PackageController;
+use App\Http\Controllers\Contents\PageController;
+use App\Http\Controllers\Contents\PostController;
+use App\Http\Controllers\Contents\VideoController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\GroupClassController;
+use App\Http\Controllers\Localizations\LabelController;
+use App\Http\Controllers\Localizations\LanguageController;
+use App\Http\Controllers\Localizations\TranslationController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OurCourseController;
+use App\Http\Controllers\ParentInvitationController;
+use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Sections\CategoryController;
 use App\Http\Controllers\Sections\CourseController;
+use App\Http\Controllers\Sections\DepartmentController;
 use App\Http\Controllers\Sections\NavigationController;
-
-use App\Http\Controllers\MediaController;
-use App\Http\Controllers\RoleController;
-
-use App\Http\Controllers\SupportController;
-use App\Http\Controllers\ComplaintController;
-use App\Http\Controllers\ConferenceController;
-use App\Http\Controllers\Constants\CourseCategoryController;
-use App\Http\Controllers\Constants\ForbiddenWordsController;
-use App\Http\Controllers\OrderController;
-
-use App\Http\Controllers\GroupClassController;
-use App\Http\Controllers\OurCourseController;
-
-use App\Http\Controllers\UserInterestController;
-use App\Http\Controllers\UserFavoriteController;
-
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ParentInvitationController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\WalletController;
-
 use App\Http\Controllers\SettingController;
-
-use App\Http\Controllers\ExamController;
-use App\Http\Controllers\PayoutController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TutorStatisticsController;
 use App\Http\Controllers\StudentStatisticsController;
-use App\Http\Controllers\WalletPaymentTransactionController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TutorFinanceController;
+use App\Http\Controllers\TutorStatisticsController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserFavoriteController;
+use App\Http\Controllers\UserInterestController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WalletPaymentTransactionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/tests', [UserController::class,'test']);
 
@@ -547,4 +537,13 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         Route::get('/revenue-Report', [ReportController::class, 'revenueReport'])->name('revenue');
     });
 
+
+     Route::get('/conference-recordings/by-conference/{conference_id}', [ConferenceRecordingController::class, 'indexByConference']);
+
+    Route::post('/conference-recordings/create', [ConferenceRecordingController::class, 'store']);
+
+    Route::post('/conference-recordings/upload/video', [ConferenceRecordingController::class, 'uploadVideo']);
+
+    Route::delete('/conference-recordings/delete/{id}', [ConferenceRecordingController::class, 'destroy']);
+    
 });

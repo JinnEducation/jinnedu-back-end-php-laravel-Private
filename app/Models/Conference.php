@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ConferenceRecording;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,5 +65,10 @@ class Conference extends Model
     {
         return $this->hasMany(ConferenceAttendance::class, 'conference_id');
     }
+
+    public function recordings()
+{
+    return $this->hasMany(ConferenceRecording::class, 'conference_id');
+}
    
 }
