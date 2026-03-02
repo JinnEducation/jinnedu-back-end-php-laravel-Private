@@ -59,52 +59,47 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WalletPaymentTransactionController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/tests', [UserController::class,'test']);
+Route::get('/tests', [UserController::class, 'test']);
 
+Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(function () {
 
-Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(function () {
-
-        
     Route::prefix('contact-us')->name('contact-us.')->group(function () {
         Route::get('/', [ContactUsController::class, 'index'])->name('index');
         Route::get('/show/{id}', [ContactUsController::class, 'show'])->name('show');
     });
 
-    
-    Route::get('/get-users', [UserController::class,'index']);
+    Route::get('/get-users', [UserController::class, 'index']);
 
-    Route::get('/get-levels', [LevelController::class,'index']);
+    Route::get('/get-levels', [LevelController::class, 'index']);
 
-    Route::get('/get-categories', [CategoryController::class,'index']);
+    Route::get('/get-categories', [CategoryController::class, 'index']);
 
-
-    Route::get('/forbidden-words', [ForbiddenWordsController::class,'index'])->name('words.index');
-    Route::post('/forbidden-words', [ForbiddenWordsController::class,'store'])->name('words.store');
-    Route::get('/forbidden-words/{id}', [ForbiddenWordsController::class,'show'])->name('words.show');
-    Route::put('/forbidden-words/{id}', [ForbiddenWordsController::class,'update'])->name('words.update');
-    Route::delete('/forbidden-words/{id}', [ForbiddenWordsController::class,'delete'])->name('words.delete');
+    Route::get('/forbidden-words', [ForbiddenWordsController::class, 'index'])->name('words.index');
+    Route::post('/forbidden-words', [ForbiddenWordsController::class, 'store'])->name('words.store');
+    Route::get('/forbidden-words/{id}', [ForbiddenWordsController::class, 'show'])->name('words.show');
+    Route::put('/forbidden-words/{id}', [ForbiddenWordsController::class, 'update'])->name('words.update');
+    Route::delete('/forbidden-words/{id}', [ForbiddenWordsController::class, 'delete'])->name('words.delete');
 
     Route::prefix('exams')->name('exams.')->group(function () {
         Route::get('/', [ExamController::class, 'index'])->name('index');
         Route::post('/create', [ExamController::class, 'store'])->name('store');
         Route::get('/show/{id}', [ExamController::class, 'show'])->name('show');
         Route::post('/update/{id}', [ExamController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [ExamController::class,'destroy'])->name('destroy');
+        Route::delete('/delete/{id}', [ExamController::class, 'destroy'])->name('destroy');
 
         Route::get('/group-class', [ExamController::class, 'groupClassHasExams'])->name('groupClassHasExams');
     });
-
 
     Route::prefix('users')->name('users.')->group(function () {
 
         $routeController = UserController::class;
         $routeModel = 'User';
         include 'rest_inc.php';
-        
+
         Route::get('/all', [UserController::class, 'getUsers']);
     });
 
-    //=================================================================================
+    // =================================================================================
 
     Route::prefix('countries')->name('countries.')->group(function () {
         $routeController = CountryController::class;
@@ -195,14 +190,14 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('languages')->name('languages.')->group(function () {
         $routeController = LanguageController::class;
         $routeModel = 'Language';
         include 'rest_inc.php';
 
-        Route::get('/main/{id}', [LanguageController::class, 'setMain'])->name('setmain')->middleware('can:edit,App\\Models\\' . $routeModel);
+        Route::get('/main/{id}', [LanguageController::class, 'setMain'])->name('setmain')->middleware('can:edit,App\\Models\\'.$routeModel);
     });
 
     Route::prefix('labels')->name('labels.')->group(function () {
@@ -210,7 +205,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         $routeModel = 'Label';
         include 'rest_inc.php';
 
-        Route::get('/options', [LabelController::class, 'getOptions'])->name('getoptions')->middleware('can:index,App\\Models\\' . $routeModel);
+        Route::get('/options', [LabelController::class, 'getOptions'])->name('getoptions')->middleware('can:index,App\\Models\\'.$routeModel);
     });
 
     Route::prefix('translations')->name('translations.')->group(function () {
@@ -219,7 +214,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('medias')->name('medias.')->group(function () {
         $routeController = MediaController::class;
@@ -227,7 +222,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc_without_permissions.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('posts')->name('posts.')->group(function () {
         $routeController = PostController::class;
@@ -289,7 +284,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('departments')->name('departments.')->group(function () {
         $routeController = DepartmentController::class;
@@ -315,37 +310,37 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('roles')->name('roles.')->group(function () {
         $routeController = RoleController::class;
         $routeModel = 'Role';
         include 'rest_inc.php';
 
-        Route::get('/menus/{role?}', [RoleController::class, 'menus'])->name('menus')->middleware('can:index,App\\Models\\' . $routeModel);
+        Route::get('/menus/{role?}', [RoleController::class, 'menus'])->name('menus')->middleware('can:index,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('complaints')->name('complaints.')->group(function () {
         $routeController = ComplaintController::class;
         $routeModel = 'ConferenceComplaint';
         include 'rest_inc.php';
 
-        Route::post('/reply', [ComplaintController::class, 'reply'])->name('reply')->middleware('can:reply,App\\Models\\' . $routeModel);
+        Route::post('/reply', [ComplaintController::class, 'reply'])->name('reply')->middleware('can:reply,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('supports')->name('supports.')->group(function () {
         $routeController = SupportController::class;
         $routeModel = 'Support';
         include 'rest_inc.php';
 
-        Route::post('/reply', [SupportController::class, 'reply'])->name('reply')->middleware('can:reply,App\\Models\\' . $routeModel);
+        Route::post('/reply', [SupportController::class, 'reply'])->name('reply')->middleware('can:reply,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('favorites')->name('favorites.')->group(function () {
         $routeController = UserFavoriteController::class;
@@ -354,7 +349,7 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         Route::delete('/remove', [$routeController, 'remove'])->name('remove');
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('interests')->name('interests.')->group(function () {
         $routeController = UserInterestController::class;
@@ -362,65 +357,65 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('conferences')->name('conferences.')->group(function () {
         $routeController = ConferenceController::class;
         $routeModel = 'Conference';
-        //include 'rest_inc.php';
+        // include 'rest_inc.php';
 
-        Route::get('/admin-index', [ConferenceController::class, 'adminIndex'])->name('admin-index')->middleware('can:admin-index,App\\Models\\' . $routeModel);
-        Route::get('/tutor-index', [ConferenceController::class, 'tutorIndex'])->name('tutor-index')->middleware('can:tutor-index,App\\Models\\' . $routeModel);
-        Route::get('/student-index', [ConferenceController::class, 'studentIndex'])->name('student-index')->middleware('can:student-index,App\\Models\\' . $routeModel);
+        Route::get('/admin-index', [ConferenceController::class, 'adminIndex'])->name('admin-index')->middleware('can:admin-index,App\\Models\\'.$routeModel);
+        Route::get('/tutor-index', [ConferenceController::class, 'tutorIndex'])->name('tutor-index')->middleware('can:tutor-index,App\\Models\\'.$routeModel);
+        Route::get('/student-index', [ConferenceController::class, 'studentIndex'])->name('student-index')->middleware('can:student-index,App\\Models\\'.$routeModel);
 
-        Route::get('/create-tutor-link/{id}', [ConferenceController::class, 'createTutorLink'])->name('create-tutor-link')->middleware('can:create-tutor-link,App\\Models\\' . $routeModel);
-        Route::get('/create-student-link/{id}', [ConferenceController::class, 'createStudentLink'])->name('create-student-link')->middleware('can:create-student-link,App\\Models\\' . $routeModel);
-        Route::get('/my-links/{id}', [ConferenceController::class, 'myLinks'])->name('create-link')->middleware('can:create-link,App\\Models\\' . $routeModel);
+        Route::get('/create-tutor-link/{id}', [ConferenceController::class, 'createTutorLink'])->name('create-tutor-link')->middleware('can:create-tutor-link,App\\Models\\'.$routeModel);
+        Route::get('/create-student-link/{id}', [ConferenceController::class, 'createStudentLink'])->name('create-student-link')->middleware('can:create-student-link,App\\Models\\'.$routeModel);
+        Route::get('/my-links/{id}', [ConferenceController::class, 'myLinks'])->name('create-link')->middleware('can:create-link,App\\Models\\'.$routeModel);
 
-        Route::post('/student-change-date/{id}', [ConferenceController::class, 'studentChangeDate'])->name('student-change-date')->middleware('can:student-change-date,App\\Models\\' . $routeModel);
-        Route::post('/tutor-change-date/{id}', [ConferenceController::class, 'tutorChangeDate'])->name('tutor-change-date')->middleware('can:tutor-change-date,App\\Models\\' . $routeModel);
-        Route::post('/cancel-conference/{id}', [ConferenceController::class, 'cancelConference'])->name('cancel-conference')->middleware('can:student-change-date,App\\Models\\' . $routeModel);
+        Route::post('/student-change-date/{id}', [ConferenceController::class, 'studentChangeDate'])->name('student-change-date')->middleware('can:student-change-date,App\\Models\\'.$routeModel);
+        Route::post('/tutor-change-date/{id}', [ConferenceController::class, 'tutorChangeDate'])->name('tutor-change-date')->middleware('can:tutor-change-date,App\\Models\\'.$routeModel);
+        Route::post('/cancel-conference/{id}', [ConferenceController::class, 'cancelConference'])->name('cancel-conference')->middleware('can:student-change-date,App\\Models\\'.$routeModel);
 
-        Route::get('/admin-card/{id}', [ConferenceController::class, 'adminCard'])->name('admin-card')->middleware('can:admin-index,App\\Models\\' . $routeModel);
-        Route::get('/tutor-card/{id}', [ConferenceController::class, 'tutorCard'])->name('tutor-card')->middleware('can:tutor-index,App\\Models\\' . $routeModel);
-        Route::get('/student-card/{id}', [ConferenceController::class, 'studentCard'])->name('student-card')->middleware('can:student-index,App\\Models\\' . $routeModel);
+        Route::get('/admin-card/{id}', [ConferenceController::class, 'adminCard'])->name('admin-card')->middleware('can:admin-index,App\\Models\\'.$routeModel);
+        Route::get('/tutor-card/{id}', [ConferenceController::class, 'tutorCard'])->name('tutor-card')->middleware('can:tutor-index,App\\Models\\'.$routeModel);
+        Route::get('/student-card/{id}', [ConferenceController::class, 'studentCard'])->name('student-card')->middleware('can:student-index,App\\Models\\'.$routeModel);
 
-        Route::get('/tutor-overview/{id}', [ConferenceController::class, 'tutorOverview'])->name('tutor-overview')->middleware('can:tutor-index,App\\Models\\' . $routeModel);
-        Route::get('/student-overview/{id}', [ConferenceController::class, 'studentOverview'])->name('student-overview')->middleware('can:student-index,App\\Models\\' . $routeModel);
+        Route::get('/tutor-overview/{id}', [ConferenceController::class, 'tutorOverview'])->name('tutor-overview')->middleware('can:tutor-index,App\\Models\\'.$routeModel);
+        Route::get('/student-overview/{id}', [ConferenceController::class, 'studentOverview'])->name('student-overview')->middleware('can:student-index,App\\Models\\'.$routeModel);
 
-        Route::post('/upload-file/{id}', [ConferenceController::class, 'uploadFile'])->name('upload-link')->middleware('can:upload-file,App\\Models\\' . $routeModel);
-        Route::get('/my-files/{id}', [ConferenceController::class, 'myFiles'])->name('my-files')->middleware('can:upload-file,App\\Models\\' . $routeModel);
+        Route::post('/upload-file/{id}', [ConferenceController::class, 'uploadFile'])->name('upload-link')->middleware('can:upload-file,App\\Models\\'.$routeModel);
+        Route::get('/my-files/{id}', [ConferenceController::class, 'myFiles'])->name('my-files')->middleware('can:upload-file,App\\Models\\'.$routeModel);
 
-        Route::post('/add-note/{id}', [ConferenceController::class, 'addNote'])->name('add-note')->middleware('can:add-note,App\\Models\\' . $routeModel);
-        Route::get('/my-notes/{id}', [ConferenceController::class, 'myNotes'])->name('my-notes')->middleware('can:add-note,App\\Models\\' . $routeModel);
+        Route::post('/add-note/{id}', [ConferenceController::class, 'addNote'])->name('add-note')->middleware('can:add-note,App\\Models\\'.$routeModel);
+        Route::get('/my-notes/{id}', [ConferenceController::class, 'myNotes'])->name('my-notes')->middleware('can:add-note,App\\Models\\'.$routeModel);
 
-        Route::post('/add-complaint/{id}', [ConferenceController::class, 'addComplaint'])->name('add-complaint')->middleware('can:add-complaint,App\\Models\\' . $routeModel);
-        Route::post('/reply-complaint/{confid}/{compid}', [ConferenceController::class, 'replyComplaint'])->name('reply-complaint')->middleware('can:add-complaint,App\\Models\\' . $routeModel);
-        Route::get('/view-complaint/{confid}/{compid}', [ConferenceController::class, 'viewComplaint'])->name('view-complaint')->middleware('can:add-complaint,App\\Models\\' . $routeModel);
-        Route::get('/my-complaints/{id}', [ConferenceController::class, 'myComplaints'])->name('my-complaints')->middleware('can:add-complaint,App\\Models\\' . $routeModel);
+        Route::post('/add-complaint/{id}', [ConferenceController::class, 'addComplaint'])->name('add-complaint')->middleware('can:add-complaint,App\\Models\\'.$routeModel);
+        Route::post('/reply-complaint/{confid}/{compid}', [ConferenceController::class, 'replyComplaint'])->name('reply-complaint')->middleware('can:add-complaint,App\\Models\\'.$routeModel);
+        Route::get('/view-complaint/{confid}/{compid}', [ConferenceController::class, 'viewComplaint'])->name('view-complaint')->middleware('can:add-complaint,App\\Models\\'.$routeModel);
+        Route::get('/my-complaints/{id}', [ConferenceController::class, 'myComplaints'])->name('my-complaints')->middleware('can:add-complaint,App\\Models\\'.$routeModel);
 
         Route::post('/register-attendance/{id}', [ConferenceController::class, 'registerAttendance'])->name('register-attendance');
-                
+
         Route::post('/toggle-conference-attendance', [ConferenceController::class, 'toggleConferenceAttendance'])->name('toggle-conference-attendance');
 
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('invitations')->name('invitations.')->group(function () {
         $routeController = ParentInvitationController::class;
         $routeModel = 'ParentInvitation';
-        //include 'rest_inc.php';
-        Route::get('/admin-invitations', [ParentInvitationController::class, 'adminInvitations'])->name('admin-invitations')->middleware('can:admin-invitations,App\\Models\\' . $routeModel);
-        Route::get('/parent-invitations', [ParentInvitationController::class, 'parentInvitations'])->name('parent-invitations')->middleware('can:parent-invitations,App\\Models\\' . $routeModel);
-        Route::get('/child-invitations', [ParentInvitationController::class, 'childInvitations'])->name('child-invitations')->middleware('can:child-invitations,App\\Models\\' . $routeModel);
-        Route::get('/send-invitation/{id}', [ParentInvitationController::class, 'sendInvitation'])->name('send-invitation')->middleware('can:send-invitation,App\\Models\\' . $routeModel);
-        Route::get('/accept-invitation/{id}', [ParentInvitationController::class, 'acceptInvitation'])->name('accept-invitation')->middleware('can:accept-invitation,App\\Models\\' . $routeModel);
-        Route::get('/reject-invitation/{id}', [ParentInvitationController::class, 'rejectInvitation'])->name('reject-invitation')->middleware('can:reject-invitation,App\\Models\\' . $routeModel);
-        Route::get('/remove-invitation/{id}', [ParentInvitationController::class, 'removeInvitation'])->name('remove-invitation')->middleware('can:remove-invitation,App\\Models\\' . $routeModel);
+        // include 'rest_inc.php';
+        Route::get('/admin-invitations', [ParentInvitationController::class, 'adminInvitations'])->name('admin-invitations')->middleware('can:admin-invitations,App\\Models\\'.$routeModel);
+        Route::get('/parent-invitations', [ParentInvitationController::class, 'parentInvitations'])->name('parent-invitations')->middleware('can:parent-invitations,App\\Models\\'.$routeModel);
+        Route::get('/child-invitations', [ParentInvitationController::class, 'childInvitations'])->name('child-invitations')->middleware('can:child-invitations,App\\Models\\'.$routeModel);
+        Route::get('/send-invitation/{id}', [ParentInvitationController::class, 'sendInvitation'])->name('send-invitation')->middleware('can:send-invitation,App\\Models\\'.$routeModel);
+        Route::get('/accept-invitation/{id}', [ParentInvitationController::class, 'acceptInvitation'])->name('accept-invitation')->middleware('can:accept-invitation,App\\Models\\'.$routeModel);
+        Route::get('/reject-invitation/{id}', [ParentInvitationController::class, 'rejectInvitation'])->name('reject-invitation')->middleware('can:reject-invitation,App\\Models\\'.$routeModel);
+        Route::get('/remove-invitation/{id}', [ParentInvitationController::class, 'removeInvitation'])->name('remove-invitation')->middleware('can:remove-invitation,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('wallet')->name('wallet.')->group(function () {
         $routeController = WalletController::class;
@@ -434,13 +429,12 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         Route::get('/get-transactions', [WalletController::class, 'getWalletTransactions'])->name('getWalletTransactions');
         Route::post('/add-transaction', [WalletController::class, 'addWalletTransaction'])->name('addWalletTransaction');
 
-
         Route::prefix('payment')->name('payment.')->group(function () {
             Route::get('/transactions', [WalletPaymentTransactionController::class, 'index'])->name('transactions');
         });
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index']);
@@ -448,18 +442,18 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         Route::get('/read-all', [NotificationController::class, 'readAll']);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('orders')->name('orders.')->group(function () {
         $routeController = OrderController::class;
         $routeModel = 'Order';
-        //include 'rest_inc.php';
-        Route::get('/admin-index', [OrderController::class, 'adminIndex'])->name('admin-index')->middleware('can:admin-index,App\\Models\\' . $routeModel);
-        Route::get('/my-index', [OrderController::class, 'myIndex'])->name('my-index')->middleware('can:my-index,App\\Models\\' . $routeModel);
-        Route::post('/refund/{orderid}', [OrderController::class, 'refund'])->name('refund')->middleware('can:refund,App\\Models\\' . $routeModel);
+        // include 'rest_inc.php';
+        Route::get('/admin-index', [OrderController::class, 'adminIndex'])->name('admin-index')->middleware('can:admin-index,App\\Models\\'.$routeModel);
+        Route::get('/my-index', [OrderController::class, 'myIndex'])->name('my-index')->middleware('can:my-index,App\\Models\\'.$routeModel);
+        Route::post('/refund/{orderid}', [OrderController::class, 'refund'])->name('refund')->middleware('can:refund,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('settings')->name('settings.')->group(function () {
         $routeController = SettingController::class;
@@ -467,14 +461,14 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
         include 'rest_inc_without_permissions.php';
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('group-classes')->name('group-classes.')->group(function () {
         $routeController = GroupClassController::class;
         $routeModel = 'GroupClass';
         include 'rest_inc.php';
-        Route::post('/register-as-tutor/{group_class_id}', [GroupClassController::class, 'registerAsTutor'])->name('register-as-tutor')->middleware('can:register-as-tutor,App\\Models\\' . $routeModel);
-        Route::post('/un-register-as-tutor/{group_class_id}', [GroupClassController::class, 'unRegisterAsTutor'])->name('un-register-as-tutor')->middleware('can:un-register-as-tutor,App\\Models\\' . $routeModel);
+        Route::post('/register-as-tutor/{group_class_id}', [GroupClassController::class, 'registerAsTutor'])->name('register-as-tutor')->middleware('can:register-as-tutor,App\\Models\\'.$routeModel);
+        Route::post('/un-register-as-tutor/{group_class_id}', [GroupClassController::class, 'unRegisterAsTutor'])->name('un-register-as-tutor')->middleware('can:un-register-as-tutor,App\\Models\\'.$routeModel);
         Route::get('/tutors/{group_class_id}', [GroupClassController::class, 'groupClassTutors'])->name('tutors');
         Route::post('/assign-tutor', [GroupClassController::class, 'assignTutorToGroupClass'])->name('assign-tutor');
         Route::post('/un-assign-tutor', [GroupClassController::class, 'unAssignTutorToGroupClass'])->name('un-assign-tutor');
@@ -484,35 +478,35 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
 
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('our-courses')->name('our-courses.')->group(function () {
         $routeController = OurCourseController::class;
         $routeModel = 'OurCourse';
         include 'rest_inc.php';
-        Route::get('/tutor-index', [OurCourseController::class, 'tutorIndex'])->name('tutor-index')->middleware('can:tutor-index,App\\Models\\' . $routeModel);
+        Route::get('/tutor-index', [OurCourseController::class, 'tutorIndex'])->name('tutor-index')->middleware('can:tutor-index,App\\Models\\'.$routeModel);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('payouts')->name('payouts.')->group(function () {
         Route::get('/', [PayoutController::class, 'index']);
-        Route::post('/store', [PayoutController::class,'store']);
-        Route::post('/update/{id}', [PayoutController::class,'update']);
-        Route::post('/{id}/transfer', [PayoutController::class,'transfer']);
+        Route::post('/store', [PayoutController::class, 'store']);
+        Route::post('/update/{id}', [PayoutController::class, 'update']);
+        Route::post('/{id}/transfer', [PayoutController::class, 'transfer']);
     });
 
-    //========================================================================
+    // ========================================================================
 
     Route::prefix('tutor-statistics')->name('tutor-statistics.')->group(function () {
         Route::get('/group-class-orders', [TutorStatisticsController::class, 'getTutorGroupClassOrders']);
         Route::get('/private-lesson-orders', [TutorStatisticsController::class, 'getTutorPrivateLessonOrders']);
-        Route::get('/tutor-info', [TutorStatisticsController::class,'tutorInfo']);
-        Route::get('/get-tutors', [TutorStatisticsController::class,'getTutors']);
-        Route::get('/get-tutor-finance', [TutorStatisticsController::class,'getTutorFinance']);
-        Route::post('/update-tutor-finance/{id}', [TutorStatisticsController::class,'updateTutorFinanceStatus']);
-                
-        Route::post('/tutor-transfer-fees/{conference_id}', [TutorStatisticsController::class,'tutorTransferFeesToHisWallet']);
+        Route::get('/tutor-info', [TutorStatisticsController::class, 'tutorInfo']);
+        Route::get('/get-tutors', [TutorStatisticsController::class, 'getTutors']);
+        Route::get('/get-tutor-finance', [TutorStatisticsController::class, 'getTutorFinance']);
+        Route::post('/update-tutor-finance/{id}', [TutorStatisticsController::class, 'updateTutorFinanceStatus']);
+
+        Route::post('/tutor-transfer-fees/{conference_id}', [TutorStatisticsController::class, 'tutorTransferFeesToHisWallet']);
 
         Route::get('/get-completed-conference', [TutorStatisticsController::class, 'getTutorCompletedConference'])->name('completed-conference');
         Route::get('/get-complaints-conference', [TutorStatisticsController::class, 'getTutorConferenceWithComplaints'])->name('complaints-conference');
@@ -523,27 +517,27 @@ Route::middleware(['auth:sanctum','single_login_session', 'verified'])->group(fu
     Route::prefix('student-statistics')->name('student-statistics.')->group(function () {
         Route::get('/group-class-orders', [StudentStatisticsController::class, 'getStudentGroupClassOrders']);
         Route::get('/private-lesson-orders', [StudentStatisticsController::class, 'getStudentPrivateLessonOrders']);
-        Route::get('/student-info', [StudentStatisticsController::class,'studentInfo']);
+        Route::get('/student-info', [StudentStatisticsController::class, 'studentInfo']);
     });
 
     Route::prefix('tutor-finance')->name('tutor-finance.')->group(function () {
         Route::get('/', [TutorFinanceController::class, 'index']);
         Route::get('/my-index', [TutorFinanceController::class, 'myIndex'])->name('my-index');
-        Route::post('/update/{id}', [TutorFinanceController::class,'update']);
-        Route::post('/{id}/transfer', [TutorFinanceController::class,'transfer']);
+        Route::post('/update/{id}', [TutorFinanceController::class, 'update']);
+        Route::post('/{id}/transfer', [TutorFinanceController::class, 'transfer']);
     });
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/students-conference-report', [ReportController::class, 'studentsConferenceReport'])->name('studentsConferenceReport');
         Route::get('/revenue-Report', [ReportController::class, 'revenueReport'])->name('revenue');
     });
 
-
-     Route::get('/conference-recordings/by-conference/{conference_id}', [ConferenceRecordingController::class, 'indexByConference']);
+    Route::get('/conference-recordings/conferences-with-recording', [ConferenceRecordingController::class, 'indexConferences']);
+    Route::get('/conference-recordings/by-conference/{conference_id}', [ConferenceRecordingController::class, 'indexByConference']);
 
     Route::post('/conference-recordings/create', [ConferenceRecordingController::class, 'store']);
 
     Route::post('/conference-recordings/upload/video', [ConferenceRecordingController::class, 'uploadVideo']);
 
     Route::delete('/conference-recordings/delete/{id}', [ConferenceRecordingController::class, 'destroy']);
-    
+
 });

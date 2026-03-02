@@ -18,12 +18,12 @@ class Conference extends Model
     
     public function tutor()
     {
-        return $this->belongsTo(Tutor::class,'tutor_id');
+        return $this->belongsTo(User::class,'tutor_id');
     }
     
     public function student()
     {
-        return $this->belongsTo(Student::class,'student_id');
+        return $this->belongsTo(User::class,'student_id');
     }
     
     public function order()

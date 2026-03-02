@@ -457,15 +457,16 @@ class ConferenceController extends Controller
 
             if ($item->ref_type == 1) {
                 $students_ids = GroupClassStudent::where('class_id', $item->ref_id)->pluck('student_id')->toArray();
-                $item->students = Student::whereIn('id', $students_ids)->get();
+                $item->students = User::whereIn('id', $students_ids)->get();
             } else {
-                $students = array();
-                $students[] = $item->student;
-                $item->students = $students;
-                unset($item->student);
+                // $students = array();
+                // $students[] = $item->student;
+                // $item->students = $students;
+                // unset($item->student);
             }
 
             $item->rating =  $item->reviews()->avg('stars');
+            $item->recordings = $item->recordings()->first();
         }
 
         return response([
@@ -501,6 +502,7 @@ class ConferenceController extends Controller
             $item->is_available = strtotime($item->date . ' ' . $item->start_time) >= time();
             // $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id, 'status'=>1])->exists();
             $item->attendance_status = ConferenceAttendance::where(['conference_id' => $item->id, 'user_id' => $user->id])->exists();
+            $item->recordings = $item->recordings()->first();
 
             if ($item->ref_type == 1) {
                 $item->group_class = GroupClass::select('id', 'name', 'slug')->where('id', $item->ref_id)->first();
@@ -522,6 +524,8 @@ class ConferenceController extends Controller
         $limit = setDataTablePerPageLimit($request->limit);
 
         $items = Conference::query();
+        $items->orderBy('date', 'desc');
+        $items->orderBy('start_time', 'desc');
         $items->where('tutor_id', $user->id);
         if (!empty($request->q)) {
             $items->whereRaw(filterTextDB('title') . ' like ?', ['%' . filterText($request->q) . '%']);

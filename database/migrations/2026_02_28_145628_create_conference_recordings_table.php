@@ -20,7 +20,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('source_type'); // upload | url
             $table->string('media_url');   // uploaded path OR external URL
-            $table->timestamps();       
             $table->index('conference_id');
             $table->timestamps();
         });
