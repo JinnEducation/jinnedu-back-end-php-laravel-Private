@@ -1,5 +1,5 @@
 <x-front-layout>
-    <div class="container mx-auto px-4 py-16">
+    <div class="container mx-auto px-4 py-16 mt-[120px] ">
         <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
             <div class="mb-6">
                 <svg class="mx-auto w-24 h-24 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

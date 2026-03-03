@@ -58,6 +58,8 @@ class BlogController extends Controller
                 'title.*' => 'required|string',
                 'slug.*' => 'required|string|unique:blog_langs,slug',
                 'description.*' => 'required|string',
+            ],[
+                'slug.*.unique' => __('admin.The slug has already been taken'),
             ]);
 
             if ($request->hasFile('image')) {

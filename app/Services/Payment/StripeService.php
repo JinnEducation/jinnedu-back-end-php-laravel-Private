@@ -166,7 +166,7 @@ class StripeService implements PaymentInterface
         // Complete orders exactly like LocalTest
         if (! empty($metadata['order_ids'])) {
             $this->completeOrders(
-                json_decode($metadata['order_ids'], true),
+                json_decode($metadata['order_ids'] ?? '[]', true),
                 $transaction
             );
         }

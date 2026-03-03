@@ -68,7 +68,7 @@ class LocalTestService implements PaymentInterface
             $transaction->transaction_id = 'local-test-' . $referenceId;
             $transaction->response = json_encode([
                 'test_mode' => true,
-                'order_ids' => json_decode($transaction->response, true)['order_ids'],
+                'order_ids' => json_decode($transaction->response, true)['order_ids'] ?? [],
                 'completed_at' => now()->toDateTimeString(),
                 'type' => json_decode($transaction->response, true)['type']
             ]);

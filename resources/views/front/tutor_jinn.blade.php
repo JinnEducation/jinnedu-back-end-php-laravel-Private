@@ -60,7 +60,6 @@
                                         <span>
                                             {{ label_text('global', 'Speaks', __('site.Speaks')) }}
                                             {{ label_text('languages', $nativeLanguage, __('languages.' . $nativeLanguage)) }}
-                                            {{ label_text('global', 'Language', __('site.Language')) }}
                                         </span>
                                     </div>
 
@@ -72,7 +71,6 @@
 
                                             {{-- {{ $teachingSubject }} --}}
                                             {{ label_text('subjects', $teachingSubject, __('subjects.' . $teachingSubject)) }}
-                                            {{ label_text('global', 'Subject', __('site.Subject')) }}
                                         </span>
                                     </div>
 
