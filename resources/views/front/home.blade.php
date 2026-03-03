@@ -291,7 +291,7 @@
                         class="px-2 py-3 font-bold transition-all duration-300 lg:px-5 text-md category-btn
                         {{ empty($categoryId) ? 'active text-primary' : 'text-black' }}
                         hover:text-primary hover:scale-105 hover:font-bold"
-                        data-category-id="">
+                        data-category-id="" data-type="all">
                         {{ label_text('global', 'site.All-categories', __('site.All categories')) }}
                     </button>
 
@@ -300,7 +300,7 @@
                             class="px-2 py-3 font-medium transition-all duration-300 lg:px-5 text-md category-btn
                             {{ (string) $categoryId === (string) $cat->id ? 'active text-primary font-bold' : 'text-black' }}
                             hover:text-primary hover:scale-105 hover:font-bold"
-                            data-category-id="{{ $cat->id }}">
+                            data-category-id="{{ $cat->id }}" data-type="{{ $cat->name }}">
                             {{ label_text('course_categories', $cat->name, __('course_categories.' . $cat->name)) }}
                         </button>
                     @endforeach
@@ -358,7 +358,8 @@
 
                     <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
                         style="{{ $hiddenStyle }}"
-                        data-course-index="{{ $index }}">
+                        data-course-index="{{ $index }}"
+                        data-type="{{ $course->category->name }}">
 
                         <div class="overflow-hidden relative h-48 rounded-sm">
                             <img src="{{ $course->course_image_full }}" alt="{{ $title }}" class="object-cover w-full h-full">

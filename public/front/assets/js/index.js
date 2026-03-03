@@ -440,17 +440,17 @@ $(function () {
 });
 
 // ===== Category filter (reload with query) =====
-$(function () {
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const id = this.getAttribute('data-category-id');
-      const url = new URL(window.location.href);
-      if (id) url.searchParams.set('category_id', id);
-      else url.searchParams.delete('category_id');
-      window.location.href = url.toString();
-    });
-  });
-});
+// $(function () {
+//   document.querySelectorAll('.category-btn').forEach(btn => {
+//     btn.addEventListener('click', function () {
+//       const id = this.getAttribute('data-category-id');
+//       const url = new URL(window.location.href);
+//       if (id) url.searchParams.set('category_id', id);
+//       else url.searchParams.delete('category_id');
+//       window.location.href = url.toString();
+//     });
+//   });
+// });
 // ===== Load more (show next batch) =====
 $(function () {
   const btn = document.getElementById('loadMoreBtn');
