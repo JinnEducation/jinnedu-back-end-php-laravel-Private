@@ -90,7 +90,7 @@ class ReviewController extends Controller
             // هنا الحجز
             $walletController = new WalletController();
             $order = Order::where('id', $conference->order_id)->first();
-            $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type);
+            $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference->id);
         }
         
         return response([

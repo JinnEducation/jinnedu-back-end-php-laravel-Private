@@ -188,7 +188,7 @@ class WalletController extends Controller
 
     }
 
-    public function addTutorFinance($order, $tutor_id, $type)
+    public function addTutorFinance($order, $tutor_id, $type, $conference_id = null)
     {
         if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id])->exists()) {
             return false;
@@ -239,7 +239,34 @@ class WalletController extends Controller
             'status' => 'transferred'
         ];
 
+        if ($conference_id !== null) {
+            $data['conference_id'] = $conference_id;
+        }
+
         $s = TutorFinance::create($data);
+
+        $this->addTutorTransferToHisWallet($order, $tutor_id, $type);
+    }
+
+    /**
+     * فحص إذا كان للأوردر المرتبط باللقاء حركة مالية سابقة
+     * يرجع true إذا موجود، false إذا غير موجود
+     */
+    public function hasOrderFinance($order_id)
+    {
+        return TutorFinance::where('order_id', $order_id)->exists();
+    }
+
+    /**
+     * API: فحص إذا كان للأوردر حركة مالية سابقة - يرجع has_finance: true/false
+     */
+    public function checkOrderHasFinance($order_id)
+    {
+        $hasFinance = $this->hasOrderFinance($order_id);
+        return response([
+            'success' => true,
+            'has_finance' => $hasFinance,
+        ], 200);
     }
 
     // ========================================================

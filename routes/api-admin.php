@@ -540,4 +540,10 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
 
     Route::delete('/conference-recordings/delete/{id}', [ConferenceRecordingController::class, 'destroy']);
 
+    // إضافة حركة مالية للمدرّس بناءً على id اللقاء
+    Route::post('/conferences/{id}/add-tutor-finance', [ConferenceController::class, 'addTutorFinanceByConference'])->name('conferences.add-tutor-finance');
+
+    // فحص إذا كان للأوردر حركة مالية سابقة (has_finance: true/false)
+    Route::get('/wallet/order-has-finance/{order_id}', [WalletController::class, 'checkOrderHasFinance'])->name('wallet.order-has-finance');
+
 });

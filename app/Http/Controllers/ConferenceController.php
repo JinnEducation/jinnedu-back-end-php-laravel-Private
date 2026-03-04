@@ -37,6 +37,7 @@ use App\Models\OurCourseLevel;
 use App\Models\OurCourseLang;
 use App\Models\OurCourseTutor;
 use App\Models\TutorFinance;
+use App\Models\Order;
 use App\Models\ConferenceAttendance;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -467,6 +468,11 @@ class ConferenceController extends Controller
 
             $item->rating =  $item->reviews()->avg('stars');
             $item->recordings = $item->recordings()->first();
+
+            // فحص هل انحسب له حركة مالية وحالتها موافقة (transferred)
+            $item->has_approved_finance = $item->order_id
+                ? TutorFinance::where('order_id', $item->order_id)->where('status', 'transferred')->exists()
+                : false;
         }
 
         return response([
@@ -1148,6 +1154,47 @@ class ConferenceController extends Controller
         return response([
             'success' => true,
             'message' => 'Conference cancelled successfully and amount refunded.',
+        ], 200);
+    }
+
+    /**
+     * إضافة حركة مالية للمدرّس بناءً على id اللقاء
+     * يأخذ conference_id ويجلب الـ order المرتبط وينفذ addTutorFinance مع conference_id
+     */
+    public function addTutorFinanceByConference($conference_id)
+    {
+        $conference = Conference::find($conference_id);
+        if (!$conference) {
+            return response([
+                'success' => false,
+                'message' => 'conference-dose-not-exist',
+                'msg-code' => '111',
+            ], 200);
+        }
+
+        $order = Order::find($conference->order_id);
+        if (!$order) {
+            return response([
+                'success' => false,
+                'message' => 'order-dose-not-exist',
+                'msg-code' => '222',
+            ], 200);
+        }
+
+        $walletController = new WalletController();
+        $result = $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference_id);
+
+        if ($result === false) {
+            return response([
+                'success' => false,
+                'message' => 'finance-already-exists',
+                'msg-code' => '333',
+            ], 200);
+        }
+
+        return response([
+            'success' => true,
+            'message' => 'tutor-finance-added-successfully',
         ], 200);
     }
 }

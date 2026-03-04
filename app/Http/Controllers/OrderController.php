@@ -154,6 +154,15 @@ class OrderController extends Controller
 
         $order->save();
 
+        foreach ($conferences as $conference) {
+            $checkAllowBooking = $this->checkAllowBooking($user, null, $conference->start_date_time, 40);
+            if (! $checkAllowBooking['success']) {
+                return response($checkAllowBooking, 200);
+            }
+            $conference->order_id = $order->id;
+            $conference->save();
+        }
+
         $order->url = url('/').'/api/wallet/checkout/'.$order->id;
         return response([
             'order_id' => $order->id,
