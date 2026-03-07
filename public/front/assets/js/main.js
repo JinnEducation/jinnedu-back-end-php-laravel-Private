@@ -509,6 +509,11 @@ $(function () {
       $m.find('.modal-panel')
         .removeClass('scale-95 opacity-0')
         .addClass('scale-100 opacity-100');
+      // Focus on email field when login modal opens
+      const $emailInput = $m.find('input[name="email"], input#email').first();
+      if ($emailInput.length) {
+        setTimeout(() => $emailInput[0].focus(), 50);
+      }
     }, 10);
   }
 
