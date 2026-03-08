@@ -51,6 +51,7 @@ class LanguageController extends LocalizationController
     public function store(LanguageRequest $request)
     {
         $data = $request->only(['name','shortname','direction','dirword','icon','status','main']);
+        $data['icon'] = $data['icon'] ?? 'https://www.svgrepo.com/show/348388/language.svg';
         $item = Language::create($data);
         return response([
                 'success' => true,
@@ -69,6 +70,7 @@ class LanguageController extends LocalizationController
         ] , 200);
         
         $data = $request->only(['name','shortname','direction','dirword','icon','status','main']);
+        $data['icon'] = $data['icon'] ?? 'https://www.svgrepo.com/show/348388/language.svg';
         $item->update($data);
         return response([
                 'success' => true,

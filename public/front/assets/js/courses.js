@@ -4,6 +4,13 @@ $(document).ready(function () {
   let perPage = parseInt($("#perPageSelect").val(), 10) || 12;
   let selectedType = "paid"; // paid | free
 
+  // قراءة filter من URL (مثلاً من زر "استكشف الكورسات المجانية" في الهوم)
+  const urlParams = new URLSearchParams(window.location.search);
+  const filterParam = urlParams.get("filter");
+  if (filterParam === "free") {
+    selectedType = "free";
+  }
+
   function getFilteredCards() {
     return $(".course-card").filter(function () {
       var val = $(this).attr("data-is-free");
@@ -69,7 +76,8 @@ $(document).ready(function () {
     showPage();
   });
 
-  // تشغيل أول مرة حسب التاب الافتراضي (مدفوع)
+  // تشغيل أول مرة حسب التاب الافتراضي (أو من query ?filter=free)
+  setActiveTab();
   showPage();
 });
 

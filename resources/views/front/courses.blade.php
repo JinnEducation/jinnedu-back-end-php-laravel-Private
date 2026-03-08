@@ -103,8 +103,7 @@
 
                     <div class="overflow-hidden p-3 bg-white rounded-md shadow-sm transition-all duration-300 group course-card hover:shadow-lg hover:scale-105"
                         style="{{ $hiddenStyle }}"
-                        data-is-free="0">
-                        {{-- data-is-free="{{ $isFree ? '1' : '0' }}"> --}}
+                        data-is-free="{{ $isFree ? '1' : '0' }}">
 
                         <div class="overflow-hidden relative h-48 rounded-sm">
                             <img src="{{ $course->course_image_full }}" alt="{{ $title }}" class="object-cover w-full h-full">

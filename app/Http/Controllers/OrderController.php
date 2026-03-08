@@ -119,7 +119,7 @@ class OrderController extends Controller
         }
 
         $dates = $groupClass->dates()->get();
-        $conferences = Conference::where('ref_id', $groupClass->id)->where('ref_type', 0)->where('order_id', 0)->get();
+        $conferences = Conference::where('ref_id', $groupClass->id)->where('ref_type', 1)->where('order_id', 0)->get();
 
         foreach ($conferences as $conference) {
             $checkAllowBooking = $this->checkAllowBooking($user, null, $conference->start_date_time, 40);
@@ -154,14 +154,14 @@ class OrderController extends Controller
 
         $order->save();
 
-        foreach ($conferences as $conference) {
-            $checkAllowBooking = $this->checkAllowBooking($user, null, $conference->start_date_time, 40);
-            if (! $checkAllowBooking['success']) {
-                return response($checkAllowBooking, 200);
-            }
-            $conference->order_id = $order->id;
-            $conference->save();
-        }
+        // foreach ($conferences as $conference) {
+        //     $checkAllowBooking = $this->checkAllowBooking($user, null, $conference->start_date_time, 40);
+        //     if (! $checkAllowBooking['success']) {
+        //         return response($checkAllowBooking, 200);
+        //     }
+        //     $conference->order_id = $order->id;
+        //     $conference->save();
+        // }
 
         $order->url = url('/').'/api/wallet/checkout/'.$order->id;
         return response([

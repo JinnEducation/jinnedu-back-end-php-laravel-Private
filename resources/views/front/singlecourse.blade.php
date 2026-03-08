@@ -308,7 +308,7 @@
                                     <button
                                         onclick="window.location.href='{{ route('redirect.dashboard', ['redirect_to' => '/my-courses/all']) }}'"
                                         class="mt-4 px-12 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/90 transition">
-                                        {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
+                                        {{ label_text('global', 'Go to Course', __('site.Go to Course')) }}
                                     </button>
                                 @else
                                     <form action="{{ route('site.bookCourse', ['id' => $course->id]) }}" method="POST">

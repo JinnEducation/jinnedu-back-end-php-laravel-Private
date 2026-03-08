@@ -24,11 +24,11 @@ class LanguageRequest extends FormRequest
     public function messages()
     {
         return [   
-            'name.required' => "name-required",
-            'name.unique' => "name-unique",
+            'name.required' => __("admin.name-required"),
+            'name.unique' => __("admin.name-unique"),
 
-            'shortname.required' => "shortname-required",
-            'shortname.unique' => "shortname-unique",
+            'shortname.required' => __("admin.shortname-required"),
+            'shortname.unique' => __("admin.shortname-unique"),
         ];
     }
 }

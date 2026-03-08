@@ -579,4 +579,6 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
 
     'All Categories' => 'جميع التصنيفات',
     'Courses' => 'الدورات',
+
+    'Go to Course' => 'الانتقال إلى الدورة',
 ];

@@ -239,6 +239,8 @@ class CourseController extends Controller
                         'order_id' => $order->id,
                         'enrolled_at' => now(),
                     ]);
+                    $order->status = 1;
+                    $order->save();
 
                     DB::commit();
 

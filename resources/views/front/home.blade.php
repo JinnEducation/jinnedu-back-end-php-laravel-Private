@@ -350,7 +350,7 @@
                             }
                         }
 
-                        $isFree = ($finalPrice <= 0);
+                        $isFree = $course->is_free;
 
                         // Load-more visibility (أول $initialVisibleCount ظاهر، والباقي مخفي)
                         $hiddenStyle = ($index >= $initialVisibleCount) ? 'display:none;' : '';
@@ -468,7 +468,7 @@
                                 {{ label_text('global', 'site.upgrade-skills-text', __('site.Learn anytime, anywhere with expert-led courses designed for you.')) }}
                             </p>
 
-                            <button onclick="window.location.href='{{ route('site.coming_soon') }}'"
+                            <button onclick="window.location.href='{{ route('site.courses',['filter'=>'free']) }}'"
                                 class="overflow-hidden relative px-8 py-4 text-lg text-white rounded-lg transition-all duration-300 transform bg-primary group hover:bg-primary-700 hover:ml-2 hover:rtl:mr-2 hover:shadow-xl">
                                 <span class="relative z-10">
                                     {{ label_text('global', 'site.upgrade-skills-cta', __('site.Explore 400+ Free Courses')) }}

@@ -657,12 +657,6 @@ class UserController extends Controller
             }
         }
 
-        $item->email =  $item->id . '>>' . $item->email;
-        $item->save();
-        $courses = $item->courses()->get();
-        if (count($courses) > 0) {
-            $item->courses()->delete();
-        } //foreach($courses as $course) $course->delete();
         $item->delete();
 
         return response([
