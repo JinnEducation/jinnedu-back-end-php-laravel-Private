@@ -102,7 +102,7 @@
 
                     <!-- What you will learn -->
                     @if (!empty($outcomes) && count($outcomes))
-                        <div class="mt-6">
+                        <div class="mt-6" id="course-outputs">
                             <h2 class="text-lg font-bold text-black mb-3">
                                 {{ label_text('global', 'site.What you will learn', __('site.What you will learn')) }}
                             </h2>

@@ -35,8 +35,14 @@ $(document).ready(function () {
     for (let i = 1; i <= totalPages; i++) {
       container.append(
         '<button class="min-w-8 h-8 px-2 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-200 cursor-pointer ' +
-          (i === currentPage ? "bg-primary text-white shadow-sm" : "text-black hover:text-white hover:bg-primary") +
-          '" data-page="' + i + '">' + i + "</button>"
+          (i === currentPage
+            ? "bg-primary text-white shadow-sm"
+            : "text-black hover:text-white hover:bg-primary") +
+          '" data-page="' +
+          i +
+          '">' +
+          i +
+          "</button>",
       );
     }
   }
@@ -113,11 +119,20 @@ $(document).ready(function () {
       .then(function () {
         $btn.find(".copy-icon").addClass("hidden");
         $btn.find(".check-icon").removeClass("hidden").addClass("copy-success");
-        $btn.closest(".flex").removeClass("border-gray-200").addClass("border-green-400");
+        $btn
+          .closest(".flex")
+          .removeClass("border-gray-200")
+          .addClass("border-green-400");
         setTimeout(function () {
           $btn.find(".copy-icon").removeClass("hidden");
-          $btn.find(".check-icon").addClass("hidden").removeClass("copy-success");
-          $btn.closest(".flex").removeClass("border-green-400").addClass("border-gray-200");
+          $btn
+            .find(".check-icon")
+            .addClass("hidden")
+            .removeClass("copy-success");
+          $btn
+            .closest(".flex")
+            .removeClass("border-green-400")
+            .addClass("border-gray-200");
         }, 2000);
       })
       .catch(function (err) {
@@ -126,12 +141,30 @@ $(document).ready(function () {
       });
   });
 
+  $(".tutor-card").on("click mouseenter", function (e) {
+    if ($(e.target).closest("button, a").length) {
+      return;
+    }
+
+    $(".tutor-card").removeClass("ring-2 ring-primary");
+    $(this).addClass("ring-2 ring-primary");
+  });
+
   function updateSocialLinks(url) {
     var encodedUrl = encodeURIComponent(url);
     $(".whatsapp-share").attr("href", "https://wa.me/?text=" + encodedUrl);
-    $(".facebook-share").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl);
-    $(".twitter-share").attr("href", "https://twitter.com/intent/tweet?url=" + encodedUrl);
-    $(".telegram-share").attr("href", "https://t.me/share/url?url=" + encodedUrl);
+    $(".facebook-share").attr(
+      "href",
+      "https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl,
+    );
+    $(".twitter-share").attr(
+      "href",
+      "https://twitter.com/intent/tweet?url=" + encodedUrl,
+    );
+    $(".telegram-share").attr(
+      "href",
+      "https://t.me/share/url?url=" + encodedUrl,
+    );
   }
 
   $(document).on("keydown", function (e) {
