@@ -151,13 +151,30 @@
                                         class="accordion-body hidden px-2 py-3 text-lg text-black leading-6">
                                         <div class="space-y-2">
                                             @foreach ($sec['items'] as $itemIndex => $item)
+                                                @php
+                                                    $hasVideo = !empty($item['media_url']);
+                                                    $canView = $item['can_view'] ?? false;
+                                                    $isClickable = $hasVideo && $canView;
+                                                @endphp
                                                 <div class="flex justify-between items-center pb-4 border-b border-[#CAC6C6]">
                                                     <span class="flex items-center gap-2">
                                                         <span class="w-1 h-1 rounded-full bg-black mt-1.5 flex-shrink-0"></span>
-                                                        <span>{{ $item['title'] }}</span>
+                                                        @if ($isClickable)
+                                                            @auth
+                                                                <span class="lesson-video-link hover:underline cursor-pointer text-primary"
+                                                                    data-media-url="{{ $item['media_url'] }}">{{ $item['title'] }}</span>
+                                                            @else
+                                                                <span class="hover:underline cursor-pointer text-primary" data-open="#loginModal">{{ $item['title'] }}</span>
+                                                            @endauth
+                                                        @else
+                                                            <span>{{ $item['title'] }}</span>
+                                                        @endif
                                                     </span>
-                                                    <span class="text-[13px] text-gray-500">
+                                                    <span class="text-[13px] text-gray-500 flex items-center gap-1">
                                                         {{ $fmt((int) $item['duration_seconds']) }}
+                                                        @if ($hasVideo && !$canView)
+                                                            <img src="{{ asset('front/assets/imgs/lock-alt.svg') }}" alt="" class="w-3.5 h-3.5 opacity-70 inline-block" />
+                                                        @endif
                                                     </span>
                                                 </div>
                                             @endforeach
@@ -578,6 +595,21 @@
         </div>
     @endif
 
+    <!-- Lesson Video Modal -->
+    <div id="lessonVideoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+        <div class="bg-black w-full max-w-2xl relative" style="max-height: 70vh">
+            <button onclick="closeLessonVideo()"
+                class="absolute flex -top-4 -right-4 rtl:-left-4 rtl:right-auto bg-primary p-2 rounded-full text-white text-xl z-10">
+                <i class="text-xl fas fa-x !w-5 !h-5"></i>
+            </button>
+            <video id="lessonVideoPlayer" class="w-full h-auto max-h-[70vh] overflow-hidden rounded-lg" controls
+                playsinline preload="metadata">
+                <source id="lessonVideoSource" src="" type="video/mp4">
+                {{ label_text('global', 'site.Your browser does not support the video tag.', __('site.Your browser does not support the video tag.')) }}
+            </video>
+        </div>
+    </div>
+
 
 
     @push('scripts')
@@ -600,6 +632,32 @@
 
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+            }
+
+            // Lesson Video Popup
+            $(document).on('click', '.lesson-video-link', function(e) {
+                e.preventDefault();
+                const url = $(this).data('media-url');
+                if (url) openLessonVideo(url);
+            });
+
+            function openLessonVideo(url) {
+                $('#lessonVideoSource').attr('src', url);
+                $('#lessonVideoModal').removeClass('hidden').addClass('flex');
+                const player = document.getElementById('lessonVideoPlayer');
+                if (player) {
+                    player.load();
+                    player.play();
+                }
+            }
+
+            function closeLessonVideo() {
+                const player = document.getElementById('lessonVideoPlayer');
+                if (player) {
+                    player.pause();
+                    player.currentTime = 0;
+                }
+                $('#lessonVideoModal').addClass('hidden').removeClass('flex');
             }
         </script>
     @endpush

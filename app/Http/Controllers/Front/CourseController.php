@@ -12,7 +12,6 @@ use App\Models\Language;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
@@ -74,112 +73,121 @@ class CourseController extends Controller
 
     public function singlecourse($locale, $id)
     {
+        $course = Course::query()
+            ->with([
+                'category:id,name',
+                'instructor:id,name',
+                'activeDiscount',
 
-        $cacheKey = "front:course:{$locale}:{$id}";
+                // ✅ لغة واحدة فقط
+                'langs' => fn ($q) => $q->where('lang', $locale),
 
-        $data = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($locale, $id) {
+                // الأقسام
+                'sections' => fn ($q) => $q->orderBy('sort_order'),
+                'sections.langs' => fn ($q) => $q->where('lang', $locale),
 
-            $course = Course::query()
-                ->with([
-                    'category:id,name',
-                    'instructor:id,name',
-                    'activeDiscount',
+                // عناصر الأقسام
+                'sections.items' => fn ($q) => $q->orderBy('sort_order'),
+                'sections.items.langs' => fn ($q) => $q->where('lang', $locale),
+                'sections.items.media',
 
-                    // ✅ لغة واحدة فقط
-                    'langs' => fn ($q) => $q->where('lang', $locale),
+                // Reviews (عرض فقط)
+                'reviews' => fn ($q) => $q->latest('id')->limit(20),
+                'reviews.user:id,name',
+            ])
+            ->where('status', 'published')
+            ->findOrFail($id);
 
-                    // الأقسام
-                    'sections' => fn ($q) => $q->orderBy('sort_order'),
-                    'sections.langs' => fn ($q) => $q->where('lang', $locale),
+        /*
+        |--------------------------------------------------------------------------
+        | بيانات مشتقة (Derived Data)
+        |--------------------------------------------------------------------------
+        */
 
-                    // عناصر الأقسام
-                    'sections.items' => fn ($q) => $q->orderBy('sort_order'),
-                    'sections.items.langs' => fn ($q) => $q->where('lang', $locale),
+        $courseLang = $course->langs->first(); // لغة واحدة → safe
 
-                    // Reviews (عرض فقط)
-                    'reviews' => fn ($q) => $q->latest('id')->limit(20),
-                    'reviews.user:id,name',
-                ])
-                ->where('status', 'published')
-                ->findOrFail($id);
-
-            /*
-            |--------------------------------------------------------------------------
-            | بيانات مشتقة (Derived Data)
-            |--------------------------------------------------------------------------
-            */
-
-            $courseLang = $course->langs->first(); // لغة واحدة → safe
-
-            // إجمالي مدة الكورس
-            $totalSeconds = 0;
-            foreach ($course->sections as $section) {
-                foreach ($section->items as $item) {
-                    $totalSeconds += (int) ($item->duration_seconds ?? 0);
-                }
+        // إجمالي مدة الكورس
+        $totalSeconds = 0;
+        foreach ($course->sections as $section) {
+            foreach ($section->items as $item) {
+                $totalSeconds += (int) ($item->duration_seconds ?? 0);
             }
+        }
 
-            // Course Content (sections + items)
-            $content = $course->sections->map(function ($section) {
-                return [
-                    'title' => optional($section->langs->first())->title ?? '-',
-                    'items' => $section->items->map(function ($item) {
-                        return [
-                            'title' => optional($item->langs->first())->title ?? '-',
-                            'duration_seconds' => (int) ($item->duration_seconds ?? 0),
-                        ];
-                    }),
-                ];
-            });
-
-            // Reviews summary
-            $avgRating = (float) $course->reviews()->avg('rating');
-            $reviewsCount = (int) $course->reviews()->count();
-
-            $ratingsDist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
-            $dist = $course->reviews()
-                ->selectRaw('rating, COUNT(*) as c')
-                ->groupBy('rating')
-                ->pluck('c', 'rating');
-
-            foreach ($dist as $rating => $count) {
-                $ratingsDist[(int) $rating] = (int) $count;
-            }
-
-            $related = Course::query()
-                ->with([
-                    'langs' => fn ($q) => $q->where('lang', $locale),
-                    'activeDiscount',
-                ])
-                ->where('status', 'published')
-                ->where('id', '!=', $course->id)
-                ->where('category_id', $course->category_id)
-                ->latest('id')
-                ->limit(4)
-                ->get();
-
-            $user = Auth::user();
-            $alreadyEnrolled = CourseEnrollment::where('course_enrollments.user_id', $user?->id)
-                ->where('course_enrollments.course_id', $course->id)
-                ->whereHas('order', function ($q) {
-                    $q->where('status', 1); // مدفوع
-                })
-                ->exists();
-
+        // Course Content (sections + items)
+        $videoTypes = ['lesson_video', 'intro_recording', 'workshop_recording'];
+        $content = $course->sections->map(function ($section) use ($course, $videoTypes) {
             return [
-                'course' => $course,
-                'courseLang' => $courseLang,
-                'alreadyEnrolled' => $alreadyEnrolled,
-                'content' => $content,
-                'totalSeconds' => $totalSeconds,
-                'outcomes' => (array) ($courseLang->outcomes_json ?? []),
-                'requirements' => (array) ($courseLang->requirements_json ?? []),
-                'avgRating' => $avgRating,
-                'reviewsCount' => $reviewsCount,
-                'ratingsDist' => $ratingsDist,
-                'related' => $related,
+                'title' => optional($section->langs->first())->title ?? '-',
+                'items' => $section->items->map(function ($item) use ($course, $videoTypes) {
+                    $mediaUrl = null;
+                    if (in_array($item->type, $videoTypes)) {
+                        $media = $item->media->first();
+                        if ($media && ! empty($media->media_url)) {
+                            $raw = $media->media_url;
+                            $mediaUrl = (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://'))
+                                ? $raw
+                                : asset($raw);
+                        }
+                    }
+                    return [
+                        'title' => optional($item->langs->first())->title ?? '-',
+                        'duration_seconds' => (int) ($item->duration_seconds ?? 0),
+                        'type' => $item->type,
+                        'media_url' => $mediaUrl,
+                        'can_view' => $course->is_free || (bool) $item->is_free_preview,
+                    ];
+                }),
             ];
         });
+
+        // Reviews summary
+        $avgRating = (float) $course->reviews()->avg('rating');
+        $reviewsCount = (int) $course->reviews()->count();
+
+        $ratingsDist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+        $dist = $course->reviews()
+            ->selectRaw('rating, COUNT(*) as c')
+            ->groupBy('rating')
+            ->pluck('c', 'rating');
+
+        foreach ($dist as $rating => $count) {
+            $ratingsDist[(int) $rating] = (int) $count;
+        }
+
+        $related = Course::query()
+            ->with([
+                'langs' => fn ($q) => $q->where('lang', $locale),
+                'activeDiscount',
+            ])
+            ->where('status', 'published')
+            ->where('id', '!=', $course->id)
+            ->where('category_id', $course->category_id)
+            ->latest('id')
+            ->limit(4)
+            ->get();
+
+        $user = Auth::user();
+        $alreadyEnrolled = CourseEnrollment::where('course_enrollments.user_id', $user?->id)
+            ->where('course_enrollments.course_id', $course->id)
+            ->whereHas('order', function ($q) {
+                $q->where('status', 1); // مدفوع
+            })
+            ->exists();
+
+        $data = [
+            'course' => $course,
+            'courseLang' => $courseLang,
+            'alreadyEnrolled' => $alreadyEnrolled,
+            'content' => $content,
+            'totalSeconds' => $totalSeconds,
+            'outcomes' => (array) ($courseLang->outcomes_json ?? []),
+            'requirements' => (array) ($courseLang->requirements_json ?? []),
+            'avgRating' => $avgRating,
+            'reviewsCount' => $reviewsCount,
+            'ratingsDist' => $ratingsDist,
+            'related' => $related,
+        ];
 
         return view('front.singlecourse', $data);
     }
@@ -198,9 +206,6 @@ class CourseController extends Controller
                     $q->where('status', 1); // مدفوع
                 })
                 ->exists();
-
-            $cacheKey = "front:course:{$locale}:{$id}";
-            Cache::forget($cacheKey);
 
             if ($alreadyEnrolled) {
                 return redirect()
