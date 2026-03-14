@@ -188,3 +188,64 @@ $(document).ready(function () {
     }
   });
 });
+
+// ==================== Share Popup ====================
+$(document).ready(function () {
+  let currentUrl = '';
+
+  $(document).on('click', '.share-btn', function (e) {
+    e.preventDefault();
+    currentUrl = $(this).data('url');
+
+    if (!currentUrl) return;
+
+    $('#shareUrl').val(currentUrl);
+    $('.copy-icon').removeClass('hidden');
+    $('.check-icon').addClass('hidden');
+    updateSocialLinks(currentUrl);
+    $('#sharePopup').removeClass('hidden').css('display', 'flex');
+  });
+
+  $(document).on('click', '.close-popup', function (e) {
+    $('#sharePopup').addClass('hidden').css('display', 'none');
+  });
+
+  $(document).on('click', '.popup-content', function (e) {
+    e.stopPropagation();
+  });
+
+  $(document).on('click', '#copyBtn', function (e) {
+    e.preventDefault();
+    const $btn = $(this);
+    const url = $('#shareUrl').val();
+
+    navigator.clipboard.writeText(url).then(() => {
+      $btn.find('.copy-icon').addClass('hidden');
+      $btn.find('.check-icon').removeClass('hidden').addClass('copy-success');
+      $btn.closest('.flex').removeClass('border-gray-200').addClass('border-green-400');
+
+      setTimeout(() => {
+        $btn.find('.copy-icon').removeClass('hidden');
+        $btn.find('.check-icon').addClass('hidden').removeClass('copy-success');
+        $btn.closest('.flex').removeClass('border-green-400').addClass('border-gray-200');
+      }, 2000);
+    }).catch(err => {
+      console.error('فشل النسخ:', err);
+      alert('فشل نسخ الرابط');
+    });
+  });
+
+  function updateSocialLinks(url) {
+    const encodedUrl = encodeURIComponent(url);
+    $('.whatsapp-share').attr('href', `https://wa.me/?text=${encodedUrl}`);
+    $('.facebook-share').attr('href', `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
+    $('.twitter-share').attr('href', `https://twitter.com/intent/tweet?url=${encodedUrl}`);
+    $('.telegram-share').attr('href', `https://t.me/share/url?url=${encodedUrl}`);
+  }
+
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape') {
+      $('#sharePopup').addClass('hidden');
+    }
+  });
+});
