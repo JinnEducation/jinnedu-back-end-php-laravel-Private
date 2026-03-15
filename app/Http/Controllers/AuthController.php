@@ -511,7 +511,7 @@ class AuthController extends Controller
 
         // ===== Avatar (Vue يستخدم user.avatar)
         $avatarPath = $profile?->avatar_path;
-        $userAvatar = $avatarPath ? (str_starts_with($avatarPath, 'http') ? $avatarPath : Storage::url($avatarPath)) : null;
+        $userAvatar = $avatarPath ? (str_starts_with($avatarPath, 'http') ? $avatarPath : url('/storage/' . ltrim($avatarPath, '/'))) : null;
 
         // ===== Country object (Vue يتوقع country.name)
         $countryValue = $profile?->country; // ممكن تكون id أو نص
@@ -661,7 +661,7 @@ class AuthController extends Controller
                     'year_from' => $cert['year_from'] ?? null,
                     'year_to' => $cert['year_to'] ?? null,
                     'file_path' => ! empty($cert['file_path'])
-                        ? Storage::url($cert['file_path'])
+                        ? (str_starts_with($cert['file_path'], 'http') ? $cert['file_path'] : url('/storage/' . ltrim($cert['file_path'], '/')))
                         : null,
                 ];
             }
@@ -674,7 +674,7 @@ class AuthController extends Controller
 
         if ($tutor && $tutor->video_path) {
             $videos[] = [
-                'file' => Storage::url($tutor->video_path),
+                'file' => str_starts_with($tutor->video_path, 'http') ? $tutor->video_path : url('/storage/' . ltrim($tutor->video_path, '/')),
                 'approved' => (bool) $tutor->video_terms_agreed,
             ];
         }
