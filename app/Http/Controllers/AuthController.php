@@ -50,7 +50,7 @@ class AuthController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email,' . $request->user_id ?? null,
+            'email' => 'required|email|unique:users,email,'.$request->user_id ?? null,
         ]);
 
         // // If validation fails, throw an exception
@@ -114,7 +114,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'type' => $request->type,
             'fcm' => $request->fcm,
-            'phone' => $country ? $country->phonecode . $request->phone : $request->phone,
+            'phone' => $country ? $country->phonecode.$request->phone : $request->phone,
         ]);
 
         // Assign roles based on user type
@@ -339,7 +339,7 @@ class AuthController extends Controller
         if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid token'
+                'message' => 'Invalid token',
             ], 401);
         }
 
@@ -348,6 +348,7 @@ class AuthController extends Controller
             'user' => $user,
         ]);
     }
+
     public function logout()
     {
 
@@ -373,7 +374,7 @@ class AuthController extends Controller
 
         // نوع المستخدم يحدد المسار في Vue
         $redirectPathReq = $request->redirect_to ?? '';
-        $redirectPath = 'dashboard' . $redirectPathReq;
+        $redirectPath = 'dashboard'.$redirectPathReq;
 
         // ✳️ أنشئ التوكن بالطريقة المضمونة
         $tokenResult = $user->createToken('main');
@@ -386,7 +387,7 @@ class AuthController extends Controller
         $user->save();
 
         // 🔹 عنوان مشروع Vue المحلي
-        $vueApp = in_array(env('APP_ENV'), ['local', 'development']) ? 'http://localhost:5173/me' : env('APP_URL') . 'me'; // محلي
+        $vueApp = in_array(env('APP_ENV'), ['local', 'development']) ? 'http://localhost:5173/me' : env('APP_URL').'me'; // محلي
 
         // 🔹 نحول المستخدم إلى صفحة التحقق داخل Vue
         $redirectUrl = "{$vueApp}/sign-in-check?token={$plainTextToken}&email={$user->email}&to={$redirectPath}";
@@ -437,7 +438,7 @@ class AuthController extends Controller
     {
         // Validation
         $request->validate([
-            'email' => 'required | email | unique:users,email,' . auth()->user()->id,
+            'email' => 'required | email | unique:users,email,'.auth()->user()->id,
         ]);
         $user = Auth::user();
 
@@ -489,7 +490,7 @@ class AuthController extends Controller
         Notification::send($user, $notifyData);
 
         return response([
-            'url' => url('/') . $user->avatar,
+            'url' => url('/').$user->avatar,
         ]);
     }
 
@@ -511,7 +512,7 @@ class AuthController extends Controller
 
         // ===== Avatar (Vue يستخدم user.avatar)
         $avatarPath = $profile?->avatar_path;
-        $userAvatar = $avatarPath ? (str_starts_with($avatarPath, 'http') ? $avatarPath : url('/storage/' . ltrim($avatarPath, '/'))) : null;
+        $userAvatar = $avatarPath ? (str_starts_with($avatarPath, 'http') ? $avatarPath : url('/storage/'.ltrim($avatarPath, '/'))) : null;
 
         // ===== Country object (Vue يتوقع country.name)
         $countryValue = $profile?->country; // ممكن تكون id أو نص
@@ -661,8 +662,10 @@ class AuthController extends Controller
                     'year_from' => $cert['year_from'] ?? null,
                     'year_to' => $cert['year_to'] ?? null,
                     'file_path' => ! empty($cert['file_path'])
-                        ? (str_starts_with($cert['file_path'], 'http') ? $cert['file_path'] : url('/storage/' . ltrim($cert['file_path'], '/')))
-                        : null,
+                    ? (str_starts_with($cert['file_path'], 'http')
+                        ? $cert['file_path']
+                        : url('/public/storage/'.ltrim($cert['file_path'], '/')))
+                    : null,
                 ];
             }
         }
@@ -674,7 +677,7 @@ class AuthController extends Controller
 
         if ($tutor && $tutor->video_path) {
             $videos[] = [
-                'file' => str_starts_with($tutor->video_path, 'http') ? $tutor->video_path : url('/storage/' . ltrim($tutor->video_path, '/')),
+                'file' => str_starts_with($tutor->video_path, 'http') ? $tutor->video_path : url('/storage/'.ltrim($tutor->video_path, '/')),
                 'approved' => (bool) $tutor->video_terms_agreed,
             ];
         }
@@ -839,7 +842,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:200',
-            'email' => 'required|email|unique:users,email,' . auth()->id(),
+            'email' => 'required|email|unique:users,email,'.auth()->id(),
             'phone' => 'nullable|string|max:50',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
@@ -1075,22 +1078,22 @@ class AuthController extends Controller
                 $directory = 'users/';
 
                 // Save the avatar image to the specified directory
-                $tempPath = $directory . $filename;
+                $tempPath = $directory.$filename;
 
                 file_put_contents(public_path($tempPath), $avatarContents);
 
-                $datePath = date('Y') . '/' . date('m') . '/' . date('d');
+                $datePath = date('Y').'/'.date('m').'/'.date('d');
 
                 $path = storage_path('app/public/');
-                $destinationDirectory = $path . $directory . $datePath;
+                $destinationDirectory = $path.$directory.$datePath;
 
-                $moved = move_uploaded_file($tempPath, $destinationDirectory . '/' . $filename);
+                $moved = move_uploaded_file($tempPath, $destinationDirectory.'/'.$filename);
 
                 if ($moved) {
                     unlink(public_path($tempPath));
                 }
 
-                $user->avatar = $directory . $filename;
+                $user->avatar = $directory.$filename;
                 $user->save();
             }
 
@@ -1389,6 +1392,7 @@ class AuthController extends Controller
     public function redirectToGoogle(Request $request)
     {
         session(['account_type_login_google' => $request->type]);
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -1417,16 +1421,16 @@ class AuthController extends Controller
             Auth::login($user, true);
         }
 
-        if (!$user && $account_type_login_google == 1) {
+        if (! $user && $account_type_login_google == 1) {
             $user = User::create([
                 'type' => 1,
                 'email' => $googleUser->email,
                 'password' => null,
                 'phone' => null,
-                'google_id' => $googleUser->id ?? null
+                'google_id' => $googleUser->id ?? null,
             ]);
 
-            //إنشاء الملف العام (User Profile)
+            // إنشاء الملف العام (User Profile)
             $user->profile()->create([
                 'first_name' => $data['first_name'] ?? null,
                 'last_name' => $data['last_name'] ?? null,

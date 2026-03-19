@@ -602,5 +602,6 @@ return [
     'All Categories' => 'All Categories',
 
     'Go to Course' => 'Go to Course',
+    'Choose From List' => 'Choose From List',
 
 ];

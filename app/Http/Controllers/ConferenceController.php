@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use DateTime;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 use App\Http\Controllers\BraincertController;
@@ -60,11 +61,11 @@ class ConferenceController extends Controller
         $order->dates = json_decode($order->dates);
 
         $conference->start_date_time = $order->dates?->start_date_time;
-        $conference->end_date_time   = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
+        $conference->end_date_time = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
 
         $conference->date = $order->dates?->date;
         $conference->start_time = $order->dates?->start_date_time;
-        $conference->end_time   = $conference->end_date_time;
+        $conference->end_time = $conference->end_date_time;
         $conference->record = 3;
         $conference->timezone = 35;
 
@@ -129,16 +130,16 @@ class ConferenceController extends Controller
             $conference->title = $ourCourse->name;
 
             $conference->start_date_time = $dates[$i]->date;
-            $conference->end_date_time   = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
+            $conference->end_date_time = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
 
             $start_date_time = explode(' ', $conference->start_date_time);
-            $end_date_time   = explode(' ', $conference->end_date_time);
+            $end_date_time = explode(' ', $conference->end_date_time);
             //echo $end_date_time;exit;
             //echo date("H:iA", strtotime($date_time[1]));exit;
 
             $conference->date = $start_date_time[0];
             $conference->start_time = date("h:iA", strtotime($start_date_time[1]));
-            $conference->end_time   = date("h:iA", strtotime($end_date_time[1]));
+            $conference->end_time = date("h:iA", strtotime($end_date_time[1]));
             $conference->record = 3;
             $conference->timezone = 35;
 
@@ -170,23 +171,26 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->whereRaw('(student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1)', [$user->id, $user->id])->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
-        if (empty($request->subject)) return response([
-            'success' => false,
-            'message' => 'subject-is-empty',
-            'msg-code' => '333'
-        ], 200);
+        if (empty($request->subject))
+            return response([
+                'success' => false,
+                'message' => 'subject-is-empty',
+                'msg-code' => '333'
+            ], 200);
 
-        if (empty($request->note)) return response([
-            'success' => false,
-            'message' => 'note-is-empty',
-            'msg-code' => '333'
-        ], 200);
+        if (empty($request->note))
+            return response([
+                'success' => false,
+                'message' => 'note-is-empty',
+                'msg-code' => '333'
+            ], 200);
 
         $data = [];
 
@@ -218,23 +222,26 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = ConferenceComplaint::where('id', $compid)->where('user_id', $user->id)->where('conference_id', $confid)->first(); #
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'item-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'item-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
-        if (empty($request->status)) return response([
-            'success' => false,
-            'message' => 'status-is-empty',
-            'msg-code' => '222'
-        ], 200);
+        if (empty($request->status))
+            return response([
+                'success' => false,
+                'message' => 'status-is-empty',
+                'msg-code' => '222'
+            ], 200);
 
-        if (empty($request->note)) return response([
-            'success' => false,
-            'message' => 'note-is-empty',
-            'msg-code' => '333'
-        ], 200);
+        if (empty($request->note))
+            return response([
+                'success' => false,
+                'message' => 'note-is-empty',
+                'msg-code' => '333'
+            ], 200);
 
         $data = [];
 
@@ -266,18 +273,20 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->whereRaw('(student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1)', [$user->id, $user->id])->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         $data = [];
-        if (empty($request->file)) return response([
-            'success' => false,
-            'message' => 'file-not-exist',
-            'msg-code' => '333'
-        ], 200);
+        if (empty($request->file))
+            return response([
+                'success' => false,
+                'message' => 'file-not-exist',
+                'msg-code' => '333'
+            ], 200);
 
         $data = uploadMedia($request->file, ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'exl', 'exlx', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'mp3', 'mp4'], 'conferences-files');
         $data['user_id'] = $user->id;
@@ -297,18 +306,20 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->whereRaw('(student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1)', [$user->id, $user->id])->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         $data = [];
-        if (empty($request->note)) return response([
-            'success' => false,
-            'message' => 'note-is-empty',
-            'msg-code' => '333'
-        ], 200);
+        if (empty($request->note))
+            return response([
+                'success' => false,
+                'message' => 'note-is-empty',
+                'msg-code' => '333'
+            ], 200);
 
         $data['note'] = $request->note;
         $data['user_id'] = $user->id;
@@ -329,18 +340,20 @@ class ConferenceController extends Controller
 
         $item = ConferenceComplaint::where('id', $compid)->where('user_id', $user->id)->where('conference_id', $confid)->first();
 
-        if (!$item) return response([
-            'success' => false,
-            'message' => 'item-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$item)
+            return response([
+                'success' => false,
+                'message' => 'item-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         $item->user;
         $item->replies = $item->replies()->get();
 
         foreach ($item->replies as $reply) {
             $reply->user;
-            if ($reply->user) $reply->user->email = null;
+            if ($reply->user)
+                $reply->user->email = null;
         }
 
 
@@ -466,13 +479,19 @@ class ConferenceController extends Controller
                 // unset($item->student);
             }
 
-            $item->rating =  $item->reviews()->avg('stars');
+            $item->rating = $item->reviews()->avg('stars');
             $item->recordings = $item->recordings()->first();
 
-            // فحص هل انحسب له حركة مالية وحالتها موافقة (transferred)
-            $item->has_approved_finance = $item->order_id
-                ? TutorFinance::where('order_id', $item->order_id)->where('status', 'transferred')->exists()
-                : false;
+            if ($item->ref_type == 1) {
+                $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $item->ref_id, 'tutor_id' => $item->tutor_id, 'conference_id' => $item->id])->first();
+                $item->has_approved_finance = $tutorFinanceCheck ? true : false;
+            } else {
+                // فحص هل انحسب له حركة مالية وحالتها موافقة (transferred)
+                $item->has_approved_finance = $item->order_id
+                    ? TutorFinance::where('order_id', $item->order_id)->where('status', 'transferred')->exists()
+                    : false;
+            }
+
         }
 
         return response([
@@ -504,7 +523,7 @@ class ConferenceController extends Controller
         $items = $items->paginate($limit);
         foreach ($items as $item) {
             $item->tutor;
-            $item->rating =  $item->reviews()->avg('stars');
+            $item->rating = $item->reviews()->avg('stars');
             $item->is_available = strtotime($item->date . ' ' . $item->start_time) >= time();
             // $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id, 'status'=>1])->exists();
             $item->attendance_status = ConferenceAttendance::where(['conference_id' => $item->id, 'user_id' => $user->id])->exists();
@@ -540,7 +559,7 @@ class ConferenceController extends Controller
         foreach ($items as $item) {
             $item->tutor_name = $item->tutor->name;
             $item->student;
-            $item->rating =  $item->reviews()->avg('stars');
+            $item->rating = $item->reviews()->avg('stars');
             unset($item->tutor);
         }
 
@@ -556,20 +575,22 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>60 and student_change_date=0 and student_id=? and student_id<>0 and order_id<>0 and ref_type<>1', [$user->id])->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'change-date-dose-not-allow',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'change-date-dose-not-allow',
+                'msg-code' => '111'
+            ], 200);
 
         $period = 15;
-        if ($conference->ref_type == 4 or $conference->ref_type == 2) $period = 40;
+        if ($conference->ref_type == 4 or $conference->ref_type == 2)
+            $period = 40;
 
         $now = new DateTime("now");
         $start_date = $request->date;
         $end_date = date('Y-m-d H:i:s', strtotime($start_date . ' +' . $period . ' minutes'));
         $book_start = new DateTime($start_date);
-        $book_end   = new DateTime($end_date);
+        $book_end = new DateTime($end_date);
         if ($book_start <= $now)
             return response([
                 'success' => false,
@@ -606,13 +627,13 @@ class ConferenceController extends Controller
         $conference->end_date_time = $end_date;
 
         $start_date_time = explode(' ', $conference->start_date_time);
-        $end_date_time   = explode(' ', $conference->end_date_time);
+        $end_date_time = explode(' ', $conference->end_date_time);
         //echo $end_date_time;exit;
         //echo date("H:iA", strtotime($date_time[1]));exit;
 
         $conference->date = $start_date_time[0];
         $conference->start_time = date("h:iA", strtotime($start_date_time[1]));
-        $conference->end_time   = date("h:iA", strtotime($end_date_time[1]));
+        $conference->end_time = date("h:iA", strtotime($end_date_time[1]));
         $conference->save();
 
         $tutor_finance = TutorFinance::where('order_id', $conference->order_id)->first();
@@ -669,21 +690,23 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->where('tutor_id', $user->id)->whereRaw('TIMESTAMPDIFF(MINUTE,NOW(),`start_date_time`)>60 and tutor_change_date=0 and student_id>0 and student_id<>0 and order_id<>0 and ref_type<>1', [])->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'change-date-dose-not-allow',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'change-date-dose-not-allow',
+                'msg-code' => '111'
+            ], 200);
 
 
         $period = 15;
-        if ($conference->ref_type == 4 or $conference->ref_type == 2) $period = 40;
+        if ($conference->ref_type == 4 or $conference->ref_type == 2)
+            $period = 40;
 
         $now = new DateTime("now");
         $start_date = $request->date;
         $end_date = date('Y-m-d H:i:s', strtotime($start_date . ' +' . $period . ' minutes'));
         $book_start = new DateTime($start_date);
-        $book_end   = new DateTime($end_date);
+        $book_end = new DateTime($end_date);
         if ($book_start <= $now)
             return response([
                 'success' => false,
@@ -720,13 +743,13 @@ class ConferenceController extends Controller
         $conference->end_date_time = $end_date;
 
         $start_date_time = explode(' ', $conference->start_date_time);
-        $end_date_time   = explode(' ', $conference->end_date_time);
+        $end_date_time = explode(' ', $conference->end_date_time);
         //echo $end_date_time;exit;
         //echo date("H:iA", strtotime($date_time[1]));exit;
 
         $conference->date = $start_date_time[0];
         $conference->start_time = date("h:iA", strtotime($start_date_time[1]));
-        $conference->end_time   = date("h:iA", strtotime($end_date_time[1]));
+        $conference->end_time = date("h:iA", strtotime($end_date_time[1]));
         $conference->save();
 
         $tutor_finance = TutorFinance::where('order_id', $conference->order_id)->first();
@@ -760,13 +783,13 @@ class ConferenceController extends Controller
                     'new_date' => $conference->date,
                     'new_time' => $conference->start_time . ' - ' . $conference->end_time
                 ];
-               sendFCMNotification(
-    'Schedule Changed',
-    'Your tutor has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time,
-    $student->fcm,
-    $info,
-    $student->id
-);
+                sendFCMNotification(
+                    'Schedule Changed',
+                    'Your tutor has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time,
+                    $student->fcm,
+                    $info,
+                    $student->id
+                );
             }
         }
 
@@ -783,18 +806,20 @@ class ConferenceController extends Controller
 
         $conference = Conference::whereRaw('(id=? and student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and id=? and student_id=0 and order_id=0 and ref_type=1)', [$id, $user->id, $user->id, $id])->first();
 
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-dose-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-dose-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         $response = json_decode($conference->response);
-        if (!$response) return response([
-            'success' => false,
-            'message' => 'response-dose-not-exist',
-            'msg-code' => '222'
-        ], 200);
+        if (!$response)
+            return response([
+                'success' => false,
+                'message' => 'response-dose-not-exist',
+                'msg-code' => '222'
+            ], 200);
 
         // if($response->status!='ok') return response([
         //         'success' => false,
@@ -851,20 +876,22 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->where('tutor_id', $user->id)->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-dose-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-dose-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
 
         $response = json_decode($conference->response);
         $response = $response->data;
-        if (!$response) return response([
-            'success' => false,
-            'message' => 'response-dose-not-exist',
-            'msg-code' => '222'
-        ], 200);
+        if (!$response)
+            return response([
+                'success' => false,
+                'message' => 'response-dose-not-exist',
+                'msg-code' => '222'
+            ], 200);
 
         // if($response->status!='ok') return response([
         //         'success' => false,
@@ -920,11 +947,12 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->where('tutor_id', $user->id)->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         return $this->card($conference, $user, 'tutor');
     }
@@ -934,11 +962,12 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         return $this->card($conference, $user, 'admin');
     }
@@ -949,11 +978,12 @@ class ConferenceController extends Controller
 
         $conference = Conference::where('id', $id)->whereRaw('((student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1))', [$user->id, $user->id])->first();
 
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-dose-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-dose-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         return $this->card($conference, $user, 'student');
     }
@@ -971,12 +1001,14 @@ class ConferenceController extends Controller
             $conference->links = $conference->links()->count();
         }
 
-        $conference->reviews =  $conference->reviews()->get();
-        if ($conference->reviews) foreach ($conference->reviews as $review) {
-            $review->user;
-            if ($review->user) $review->user->email = null;
-        }
-        $conference->rating =  $conference->reviews()->avg('stars');
+        $conference->reviews = $conference->reviews()->get();
+        if ($conference->reviews)
+            foreach ($conference->reviews as $review) {
+                $review->user;
+                if ($review->user)
+                    $review->user->email = null;
+            }
+        $conference->rating = $conference->reviews()->avg('stars');
 
         $conference->tutor;
         if ($conference->tutor) {
@@ -1031,11 +1063,12 @@ class ConferenceController extends Controller
         $user = Auth::user();
 
         $conference = Conference::where('id', $id)->first();
-        if (!$conference) return response([
-            'success' => false,
-            'message' => 'conference-not-exist',
-            'msg-code' => '111'
-        ], 200);
+        if (!$conference)
+            return response([
+                'success' => false,
+                'message' => 'conference-not-exist',
+                'msg-code' => '111'
+            ], 200);
 
         ConferenceAttendance::create([
             'ref_type' => $conference->ref_type,
@@ -1071,7 +1104,7 @@ class ConferenceController extends Controller
         $conference_attendance = ConferenceAttendance::where(['conference_id' => $request->conference_id, 'user_id' => $request->student_id])->first();
 
         if ($conference_attendance) {
-            $conference_attendance->status = ! $conference_attendance->status;
+            $conference_attendance->status = !$conference_attendance->status;
             $conference_attendance->save();
         } else {
             ConferenceAttendance::create([
@@ -1140,13 +1173,13 @@ class ConferenceController extends Controller
                     'type' => 'lesson_cancelled',
                     'conference_id' => $conference->id
                 ];
-               sendFCMNotification(
-    'Lesson Cancelled',
-    'Student has cancelled the lesson scheduled for ' . $conference->date . ' at ' . $conference->start_time,
-    $tutor->fcm,
-    $info,
-    $tutor->id
-);
+                sendFCMNotification(
+                    'Lesson Cancelled',
+                    'Student has cancelled the lesson scheduled for ' . $conference->date . ' at ' . $conference->start_time,
+                    $tutor->fcm,
+                    $info,
+                    $tutor->id
+                );
 
             }
         }
@@ -1163,38 +1196,85 @@ class ConferenceController extends Controller
      */
     public function addTutorFinanceByConference($conference_id)
     {
-        $conference = Conference::find($conference_id);
-        if (!$conference) {
+        DB::beginTransaction();
+        try {
+            $walletController = new WalletController();
+            $conference = Conference::find($conference_id);
+            if (!$conference) {
+                return response([
+                    'success' => false,
+                    'message' => 'conference-dose-not-exist',
+                    'msg-code' => '111',
+                ], 200);
+            }
+
+            $result = false;
+            if ($conference->ref_type == 1) {
+                $group_class = GroupClass::find($conference->ref_id);
+                if (!$group_class) {
+                    return response([
+                        'success' => false,
+                        'message' => 'group-class-dose-not-exist',
+                        'msg-code' => '222',
+                    ], 200);
+                }
+                // للقروب كلاس: order_id غير مخزن في الـ conference، نجلب order من group_class_students
+                $gcStudent = GroupClassStudent::where('class_id', $conference->ref_id)->whereNotNull('order_id')->first();
+                $order = $gcStudent ? Order::find($gcStudent->order_id) : null;
+                if (!$order) {
+                    while (!$order) {
+                        $gcStudent = GroupClassStudent::where('class_id', $conference->ref_id)->whereNotNull('order_id')->get();
+                        foreach ($gcStudent as $student) {
+                            $order = Order::find($student->order_id);
+                            if ($order) {
+                                break;
+                            }
+                        }
+                        if (!$order) {
+                            return response([
+                                'success' => false,
+                                'message' => 'order-dose-not-exist',
+                                'msg-code' => '222',
+                            ], 200);
+                        }
+                    }
+                }
+                $result = $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference_id);
+            } else {
+                $order = Order::find($conference->order_id);
+                if (!$order) {
+                    return response([
+                        'success' => false,
+                        'message' => 'order-dose-not-exist',
+                        'msg-code' => '222',
+                    ], 200);
+                }
+
+                $result = $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference_id);
+            }
+
+
+            if ($result === false) {
+                return response([
+                    'success' => false,
+                    'message' => 'finance-already-exists',
+                    'msg-code' => '333',
+                ], 200);
+            }
+
+            DB::commit();
+            return response([
+                'success' => true,
+                'message' => 'tutor-finance-added-successfully',
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
             return response([
                 'success' => false,
-                'message' => 'conference-dose-not-exist',
-                'msg-code' => '111',
+                'message' => $th->getMessage(),
+                'msg-code' => '444',
             ], 200);
         }
 
-        $order = Order::find($conference->order_id);
-        if (!$order) {
-            return response([
-                'success' => false,
-                'message' => 'order-dose-not-exist',
-                'msg-code' => '222',
-            ], 200);
-        }
-
-        $walletController = new WalletController();
-        $result = $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference_id);
-
-        if ($result === false) {
-            return response([
-                'success' => false,
-                'message' => 'finance-already-exists',
-                'msg-code' => '333',
-            ], 200);
-        }
-
-        return response([
-            'success' => true,
-            'message' => 'tutor-finance-added-successfully',
-        ], 200);
     }
 }

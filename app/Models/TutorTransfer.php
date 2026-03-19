@@ -10,6 +10,8 @@ class TutorTransfer extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'tutor_tranfers';
+
     protected $guarded = [];
     
     public function tutor()

@@ -266,6 +266,7 @@ return [
     'Certification Year To' => 'سنة انتهاء الشهادة',
     'Certification File' => 'ملف الشهادة',
     'Choose the file' => 'اختر الملف',
+    'Choose From List' => 'اختر من القائمة',
 
     // Register - step 8
     'Tutor Video' => 'فيديو المدرس',

@@ -353,6 +353,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
 
                                     <select name="country" required id="country_inp"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                         @foreach ($countries as $country)
                                         <option value="{{ $country->name }}">
                                             {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
@@ -591,6 +592,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                     </label>
                                     <select name="countty_tutor" required id="countty_tutor"
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                         @foreach ($countries as $country)
                                         <option value=" {{$country->name}} "> {{ label_text('countries', $country->name, __('countries.' . $country->name)) }}
                                         </option>
@@ -603,6 +605,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                     </label>
                                     <select name="language" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                         @foreach ($languages as $language)
                                         <option value="{{ $language->name }}">
                                             {{ label_text('languages', $language->name, __('languages.' . $language->name)) }}
@@ -617,6 +620,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                     </label>
                                     <select name="teaching_subject" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                         @foreach ($subjects as $subject)
                                         <option value=" {{$subject->name}} ">
                                             {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}
@@ -633,6 +637,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                     </label>
                                     <select name="teaching_experience" required
                                         class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                         @foreach ($experiences as $experience)
                                         <option value="{{ $experience->name }}">
                                             {{ label_text('experiences', $experience->name, __('experiences.' . $experience->name)) }}
@@ -652,6 +657,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                 </label>
                                 <select name="situation" required
                                     class="text-[#AAAAAA] w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                                    <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                     @foreach ($situations as $situation)
                                     <option value="{{ $situation->name }}">
                                         {{ label_text('situations', $situation->name, __('situations.' . $situation->name)) }}
@@ -718,6 +724,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                 </label>
                                 <select name="specializations" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-[#F3F5FA] transition-all">
+                                    <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                     @foreach ($specializations as $specialization)
                                     <option value="{{ $specialization->name }}">
                                         {{ label_text('specializations', $specialization->name, __('specializations.' . $specialization->name)) }}
@@ -1370,6 +1377,7 @@ $htmlDirection = App\Models\Language::where('shortname', app()->getLocale())->fi
                                 </label>
                                 <select required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'40\' viewBox=\'0 0 20 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M15.8327 27.0835L9.99935 32.9168L4.16602 27.0835\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/><path d=\'M15.8327 12.9165L9.99935 7.08317L4.16602 12.9165\' stroke=\'%23AAAAAA\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg>')] bg-[right_1rem_center] bg-no-repeat">
+                                    <option value="" selected disabled>{{ label_text('global', 'Choose', __('site.Choose From List')) }}</option>
                                     @foreach ($subjects as $subject)
 
                                     <option value="{{$subject->name}}"> {{ label_text('subjects', $subject->name, __('subjects.' . $subject->name)) }}</option>

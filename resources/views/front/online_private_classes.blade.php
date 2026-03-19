@@ -363,7 +363,7 @@
                             // أسماء لطيفة للعرض
                             $subjectName = $tp?->teaching_subject ?? '-';
                             $nativeLangName = $tp?->native_language ?? '-';
-                            $countryName = $profile?->country;
+                            $countryName = $tp?->tutor_country ?? $profile?->country;
 
                             $hourlyRate = $tp->hourly_rate ?? null;
 

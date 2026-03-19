@@ -163,13 +163,16 @@ class WalletController extends Controller
 
     public function addTutorTransferToHisWallet($order, $tutor_id, $type = 1)
     {
-        $percentage = getSettingVal('feez');
+        $percentage = $type == 1 ? getSettingVal('group_class_fees') : 0;
+        $percentage = $type == 2 ? getSettingVal('our_course_fees') : $percentage;
+        $percentage = $type == 4 ? getSettingVal('private_lesson_fees') : $percentage;
+        
         $data = [
             'order_id' => $order->id,
             'tutor_id' => $tutor_id,
             'type' => $type,
             'percentage' => $percentage,
-            'fee' => $percentage * $order->price / 100,
+            'amount' => $percentage * $order->price / 100,
         ];
 
         $fee = TutorTransfer::create($data);
@@ -190,9 +193,18 @@ class WalletController extends Controller
 
     public function addTutorFinance($order, $tutor_id, $type, $conference_id = null)
     {
-        if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id])->exists()) {
-            return false;
+        if($conference_id){
+            $conference = Conference::find($conference_id);
+            $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $conference->ref_id, 'tutor_id' => $conference->tutor_id, 'conference_id' => $conference_id])->first();
+            if ($tutorFinanceCheck) {
+                return false;
+            }
+        }else{
+            if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id,'conference_id' => $conference_id])->exists()) {
+                return false;
+            }    
         }
+        $data = [];
 
         if ($type == 1) {
             $percentage = getSettingVal('group_class_fees');
@@ -201,10 +213,28 @@ class WalletController extends Controller
             $group_class_date = $groupclass->dates()->orderBy('id', 'desc')->first();
             $class_date = date('Y-m-d H:i:s', strtotime($group_class_date->class_date));
 
-            $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id, 'tutor_id' => $tutor_id])->first();
+            $conference = Conference::find($conference_id);
+            $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $conference->ref_id, 'tutor_id' => $conference->tutor_id, 'conference_id' => $conference_id])->first();
             if ($tutorFinanceCheck) {
                 return false;
             }
+
+            $group_class = GroupClass::find($conference->ref_id);
+            $total_classes_length = ($group_class->total_classes_length ?? 0) / 60;
+            $tutor = User::find($conference->tutor_id);
+            $hourly_rate = $tutor->tutorProfile->hourly_rate;
+            $session_fees = $hourly_rate * ($total_classes_length / ($group_class->classes ?? 1));
+            $data = [
+                'order_id' => $conference->id,
+                'tutor_id' => $conference->tutor_id,
+                'ref_type' => $type,
+                'ref_id' => $conference->ref_id,
+                'total' => $session_fees,
+                'percentage' => $percentage,
+                'fee' => $percentage * $session_fees / 100,
+                'class_date' => $conference->date ?? null,
+                'status' => 'transferred'
+            ];
         } 
         if ($type == 2) {
             return false;
@@ -225,19 +255,20 @@ class WalletController extends Controller
                 // If it's direct date string, use it as is
                 $class_date = date('Y-m-d H:i:s', strtotime($dates));
             }
+            $data = [
+                'order_id' => $order->id,
+                'tutor_id' => $tutor_id,
+                'ref_type' => $type,
+                'ref_id' => $order->ref_id,
+                'total' => $order->price,
+                'percentage' => $percentage,
+                'fee' => $percentage * $order->price / 100,
+                'class_date' => $class_date ?? null,
+                'status' => 'transferred'
+            ];
         }
 
-        $data = [
-            'order_id' => $order->id,
-            'tutor_id' => $tutor_id,
-            'ref_type' => $type,
-            'ref_id' => $order->ref_id,
-            'total' => $order->price,
-            'percentage' => $percentage,
-            'fee' => $percentage * $order->price / 100,
-            'class_date' => $class_date ?? null,
-            'status' => 'transferred'
-        ];
+        
 
         if ($conference_id !== null) {
             $data['conference_id'] = $conference_id;
@@ -246,6 +277,7 @@ class WalletController extends Controller
         $s = TutorFinance::create($data);
 
         $this->addTutorTransferToHisWallet($order, $tutor_id, $type);
+        return true;
     }
 
     /**
