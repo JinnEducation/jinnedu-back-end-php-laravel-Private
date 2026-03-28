@@ -15,8 +15,11 @@ use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
+use App\Models\Faq;
 use App\Models\GroupClass;
 use App\Models\GroupClassTutor;
+use App\Models\HelpArticle;
+use App\Models\HelpArticleRating;
 use App\Models\Language;
 use App\Models\Order;
 use App\Models\Slider;
@@ -87,12 +90,11 @@ class HomeController extends Controller
             ->with([
                 'profile',
                 'tutorProfile',
-                'reviews'
+                'reviews',
             ])
             ->latest('id')
             ->limit(12)
             ->get();
-
 
         return view('front.home', compact('tutors', 'stats', 'course_categories', 'courses', 'categoryId', 'sliders', 'languageId', 'langShorts', 'subjects', 'languages', 'countries', 'specializations'));
     }
@@ -252,6 +254,220 @@ class HomeController extends Controller
         });
 
         return view('front.singlebloge', compact('blog', 'blogs'));
+    }
+
+    public function faq()
+    {
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+
+        if (! $language) {
+            $language = Language::where('main', 1)->first();
+        }
+
+        if (! $language) {
+            $language = Language::first();
+        }
+
+        $languageId = $language ? $language->id : null;
+
+        $faqs = Faq::published()
+            ->with('langsAll')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        $faqs->each(function ($faq) use ($languageId) {
+            $translation = $faq->langsAll->where('language_id', $languageId)->first();
+
+            if (! $translation) {
+                $translation = $faq->langsAll->first();
+            }
+
+            $faq->setRelation('langsAll', collect([$translation]));
+        });
+
+        return view('front.faq', compact('faqs'));
+    }
+
+    public function helpForStudent(Request $request)
+    {
+        return $this->helpIndex($request, 'student', 'front.help_for_student');
+    }
+
+    public function helpForTutor(Request $request)
+    {
+        return $this->helpIndex($request, 'tutor', 'front.help_for_tutor');
+    }
+
+    public function showHelp(Request $request,$locale, string $audience, string $slug)
+    {
+        if (! in_array($audience, ['student', 'tutor'], true)) {
+            abort(404);
+        }
+
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+
+        if (! $language) {
+            $language = Language::where('main', 1)->first();
+        }
+
+        if (! $language) {
+            $language = Language::first();
+        }
+
+        $languageId = $language ? $language->id : null;
+        $slug = (string) $request->route('slug', $slug);
+
+        $article = HelpArticle::where('audience', $audience)
+            ->where('slug', $slug)
+            ->with(['langsAll.language', 'rating'])
+            ->first();
+
+        if (! $article) {
+            $articleBySlug = HelpArticle::where('slug', $slug)->first();
+            if ($articleBySlug) {
+                return redirect()->route('site.show_help', [
+                    'audience' => $articleBySlug->audience,
+                    'slug' => $articleBySlug->slug,
+                ]);
+            }
+            abort(404);
+        }
+
+        $article->load(['langsAll' => function ($query) use ($languageId) {
+            if ($languageId) {
+                $query->where('language_id', $languageId);
+            }
+        }]);
+
+        if ($article->langsAll->isEmpty()) {
+            $article->load(['langsAll' => function ($query) {
+                $query->orderBy('id')->limit(1);
+            }]);
+        }
+
+        $related = HelpArticle::query()
+            ->where('audience', $audience)
+            ->where('id', '!=', $article->id)
+            ->published()
+            ->with(['langsAll' => function ($query) use ($languageId) {
+                if ($languageId) {
+                    $query->where('language_id', $languageId);
+                }
+            }, 'langsAll.language', 'rating'])
+            ->orderByDesc('id')
+            ->take(5)
+            ->get()
+            ->map(function ($item) use ($languageId) {
+                if ($item->langsAll->isEmpty() || ! $item->langsAll->where('language_id', $languageId)->first()) {
+                    $item->load(['langsAll' => function ($query) {
+                        $query->orderBy('id')->limit(1);
+                    }]);
+                }
+
+                return $item;
+            });
+
+        return view('front.single_help', compact('article', 'related', 'audience'));
+    }
+
+    public function rateHelp(Request $request,$locale, string $audience, string $slug)
+    {
+        if (! in_array($audience, ['student', 'tutor'], true)) {
+            return response()->json(['message' => 'Invalid audience'], 422);
+        }
+
+        $article = HelpArticle::query()
+            ->where('audience', $audience)
+            ->where('slug', $slug)
+            ->first();
+
+        if (! $article) {
+            return response()->json(['message' => 'Help article not found'], 404);
+        }
+
+        $validated = $request->validate([
+            'stars' => ['required', 'integer', 'min:1', 'max:5'],
+        ]);
+
+        $ratingRow = HelpArticleRating::firstOrCreate([
+            'help_article_id' => $article->id,
+        ], [
+            'ratings_json' => [],
+            'average_rating' => 0,
+            'ratings_count' => 0,
+        ]);
+
+        $ratings = $ratingRow->ratings_json ?? [];
+        $userKey = Auth::check()
+            ? 'user_'.Auth::id()
+            : 'guest_'.md5($request->ip().'|'.$request->userAgent());
+
+        $ratings[$userKey] = [
+            'stars' => (int) $validated['stars'],
+            'at' => now()->toDateTimeString(),
+        ];
+
+        $stars = collect($ratings)
+            ->pluck('stars')
+            ->map(fn ($value) => (int) $value)
+            ->filter(fn ($value) => $value >= 1 && $value <= 5)
+            ->values();
+
+        $count = $stars->count();
+        $average = $count > 0 ? round($stars->avg(), 2) : 0;
+
+        $ratingRow->update([
+            'ratings_json' => $ratings,
+            'ratings_count' => $count,
+            'average_rating' => $average,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'average_rating' => $average,
+            'ratings_count' => $count,
+            'my_rating' => (int) $validated['stars'],
+        ]);
+    }
+
+    private function helpIndex(Request $request, string $audience, string $viewName)
+    {
+        $locale = app()->getLocale();
+        $language = Language::where('shortname', $locale)->first();
+
+        if (! $language) {
+            $language = Language::where('main', 1)->first();
+        }
+
+        if (! $language) {
+            $language = Language::first();
+        }
+
+        $languageId = $language ? $language->id : null;
+
+        $articles = HelpArticle::query()
+            ->where('audience', $audience)
+            ->published()
+            ->with(['langsAll', 'rating'])
+            ->orderByDesc('id')
+            ->get();
+
+        $articles = $articles->transform(function ($article) use ($languageId) {
+            $translation = $article->langsAll->where('language_id', $languageId)->first();
+
+            if (! $translation) {
+                $translation = $article->langsAll->first();
+            }
+
+            $article->setRelation('langsAll', collect([$translation]));
+
+            return $article;
+        });
+
+        return view($viewName, compact('articles', 'audience'));
     }
 
     public function contact_us()
@@ -781,7 +997,7 @@ class HomeController extends Controller
 
                     if ($originalCheckout['success']) {
                         // $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
-                        
+
                         DB::commit();
 
                         return redirect()->route('redirect.dashboard')

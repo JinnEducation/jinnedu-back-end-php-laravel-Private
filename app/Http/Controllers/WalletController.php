@@ -12,6 +12,7 @@ use App\Models\TutorTransfer;
 use App\Models\User;
 use App\Models\UserWallet;
 use App\Models\WalletTransaction;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,7 @@ class WalletController extends Controller
         $group_class_count = 0;
         $our_course_count = 0;
         $private_lesson_count = 0;
-        if (! $wallet) {
+        if (!$wallet) {
             $balance = 0;
         } else {
             $balance = $wallet->balance;
@@ -61,7 +62,7 @@ class WalletController extends Controller
         $admin = Auth::user();
 
         $order = Order::where('id', $orderid)->where('user_id', $admin->id)->where('ref_type', 6)->whereIn('status', [0, 2])->first();
-        if (! $order) {
+        if (!$order) {
             return response([
                 'success' => false,
                 'message' => 'order-dose-not-exist',
@@ -70,7 +71,7 @@ class WalletController extends Controller
         }
 
         $refOrder = Order::where('id', $order->ref_id)->where('status', 1)->first();
-        if (! $refOrder) {
+        if (!$refOrder) {
             return response([
                 'success' => false,
                 'message' => 'reund-order-dose-not-exist',
@@ -105,9 +106,12 @@ class WalletController extends Controller
 
             if ($refOrder->payment == 'wallet-package') {
                 switch ($refOrder->ref_type) {
-                    case 1: $wallet->group_class_count += 1;
-                    case 2: $wallet->our_course_count += 1;
-                    case 4: $wallet->private_lesson_count += 1;
+                    case 1:
+                        $wallet->group_class_count += 1;
+                    case 2:
+                        $wallet->our_course_count += 1;
+                    case 4:
+                        $wallet->private_lesson_count += 1;
 
                 }
 
@@ -136,7 +140,7 @@ class WalletController extends Controller
     public function transfer($conference_id)
     {
         $conferences = Conference::find($conference_id);
-        if (! $conferences) {
+        if (!$conferences) {
             return response([
                 'success' => false,
                 'message' => 'conference-dose-not-exist',
@@ -146,7 +150,7 @@ class WalletController extends Controller
 
         if ($conferences->ref_type == 1) {
             $groupClass = GroupClass::find($conferences->ref_id);
-            if (! $conferences) {
+            if (!$conferences) {
                 return response([
                     'success' => false,
                     'message' => 'groupClass-dose-not-exist',
@@ -166,7 +170,7 @@ class WalletController extends Controller
         $percentage = $type == 1 ? getSettingVal('group_class_fees') : 0;
         $percentage = $type == 2 ? getSettingVal('our_course_fees') : $percentage;
         $percentage = $type == 4 ? getSettingVal('private_lesson_fees') : $percentage;
-        
+
         $data = [
             'order_id' => $order->id,
             'tutor_id' => $tutor_id,
@@ -179,34 +183,34 @@ class WalletController extends Controller
 
         $user = User::find($tutor_id);
         $wallet = $user->wallets()->first();
-        if (! $wallet) {
+        if (!$wallet) {
             $wallet = new UserWallet;
             $wallet->user_id = $tutor_id;
-            $wallet->balance = $fee->fee * $type;
+            $wallet->balance = $fee->amount;
             $wallet->save();
         } else {
-            $wallet->balance += $fee->fee * $type;
+            $wallet->balance += $fee->amount;
             $wallet->save();
         }
-
     }
 
     public function addTutorFinance($order, $tutor_id, $type, $conference_id = null)
     {
-        if($conference_id){
+        if ($conference_id) {
             $conference = Conference::find($conference_id);
             $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $conference->ref_id, 'tutor_id' => $conference->tutor_id, 'conference_id' => $conference_id])->first();
             if ($tutorFinanceCheck) {
                 return false;
             }
-        }else{
-            if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id,'conference_id' => $conference_id])->exists()) {
+        } else {
+            if ($type == 1 && TutorFinance::where(['ref_type' => 1, 'ref_id' => $order->ref_id, 'conference_id' => $conference_id])->exists()) {
                 return false;
-            }    
+            }
         }
         $data = [];
 
         if ($type == 1) {
+            $tutor_id = $conference->tutor_id;
             $percentage = getSettingVal('group_class_fees');
 
             $groupclass = GroupClass::where('id', $order->ref_id)->first();
@@ -222,7 +226,7 @@ class WalletController extends Controller
             $group_class = GroupClass::find($conference->ref_id);
             $total_classes_length = ($group_class->total_classes_length ?? 0) / 60;
             $tutor = User::find($conference->tutor_id);
-            $hourly_rate = $tutor->tutorProfile->hourly_rate;
+            $hourly_rate = $tutor->tutorProfile?->hourly_rate ?? 10;
             $session_fees = $hourly_rate * ($total_classes_length / ($group_class->classes ?? 1));
             $data = [
                 'order_id' => $conference->id,
@@ -235,12 +239,12 @@ class WalletController extends Controller
                 'class_date' => $conference->date ?? null,
                 'status' => 'transferred'
             ];
-        } 
+        }
         if ($type == 2) {
             return false;
             // $percentage = getSettingVal('our_course_fees');
         }
-            
+
         if ($type == 4) {
             $percentage = getSettingVal('private_lesson_fees') ?? 70;
 
@@ -268,7 +272,7 @@ class WalletController extends Controller
             ];
         }
 
-        
+
 
         if ($conference_id !== null) {
             $data['conference_id'] = $conference_id;
@@ -315,7 +319,7 @@ class WalletController extends Controller
         // ] , 200);
 
         $order = Order::where('id', $orderid)->where('user_id', $user->id)->whereIn('status', [0, 2])->first();
-        if (! $order) {
+        if (!$order) {
             return response([
                 'success' => false,
                 'message' => 'item-dose-not-exist',
@@ -410,7 +414,7 @@ class WalletController extends Controller
 
                 sendFCMNotification(
                     'Jinnedu',
-                    'You have a new student to '.$groupClass->name.' group class',
+                    'You have a new student to ' . $groupClass->name . ' group class',
                     $user->fcm,
                     $info,
                     $user->id
@@ -596,7 +600,7 @@ class WalletController extends Controller
 
             $user = User::find($request->user_id);
             $wallet = $user->wallets()->first();
-            if (! $wallet) {
+            if (!$wallet) {
                 $wallet = new UserWallet;
                 $wallet->user_id = $request->user_id;
                 $wallet->balance = $request->type == 'credit' ? $request->amount : -$request->amount;

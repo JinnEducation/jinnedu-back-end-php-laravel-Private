@@ -210,11 +210,15 @@
                         <div
                             class="absolute top-full invisible z-50 mt-2 w-48 bg-white rounded-xl border border-gray-100 shadow-lg opacity-0 transition-all duration-300 transform translate-y-2 start-0">
                             <div class="py-3">
-                                <a href="#"
+                                <a href="{{ route('site.help_for_student') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
-                                    {{ label_text('global', 'site.help-center', __('site.help-center')) }}
+                                    {{ label_text('global', 'site.Help-For-Student', __('site.Help For Student')) }}
                                 </a>
-                                <a href="#"
+                                <a href="{{ route('site.help_for_tutor') }}"
+                                    class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">
+                                    {{ label_text('global', 'site.Help-For-Tutor', __('site.Help For Tutor')) }}
+                                </a>
+                                <a href="{{ route('site.faq') }}"
                                     class="block px-4 py-3 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:text-primary-600 hover:ps-6">{{ label_text('global', 'site.faq', __('site.faq')) }}</a>
                             </div>
                         </div>
@@ -498,17 +502,22 @@
                     <i class="text-xs transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="hidden mt-2 space-y-1 mobile-dropdown-content ps-6">
-                    <a href="#"
+                    <a href="{{ route('site.help_for_student') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
-                        <i class="w-5 text-center fas fa-life-ring text-primary-600 me-2"></i>
-                        <span>{{ label_text('global', 'site.help-center', __('site.help-center')) }}</span>
+                        <i class="w-5 text-center fas fa-graduation-cap text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'site.Help-For-Student', __('site.Help For Student')) }}</span>
+                    </a>
+                    <a href="{{ route('site.help_for_tutor') }}"
+                        class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
+                        <i class="w-5 text-center fas fa-chalkboard-teacher text-primary-600 me-2"></i>
+                        <span>{{ label_text('global', 'site.Help-For-Tutor', __('site.Help For Tutor')) }}</span>
                     </a>
                     <a href="#"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-envelope text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.contact-us', __('site.contact-us')) }}</span>
                     </a>
-                    <a href="#"
+                    <a href="{{ route('site.faq') }}"
                         class="flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                         <i class="w-5 text-center fas fa-question text-primary-600 me-2"></i>
                         <span>{{ label_text('global', 'site.faq', __('site.faq')) }}</span>

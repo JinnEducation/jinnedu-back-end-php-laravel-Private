@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\CateqBlogController;
 use App\Http\Controllers\Api\ChatBlockedWordController;
 use App\Http\Controllers\Api\DiscountCodeController;
+use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\HelpArticleController;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\SliderController;
 use App\Http\Controllers\Api\Student\CourseCatalogController;
@@ -22,6 +24,8 @@ use App\Http\Controllers\MailingListController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('blog', BlogController::class);
+Route::apiResource('faq', FaqController::class);
+Route::apiResource('help-articles', HelpArticleController::class);
 Route::apiResource('chat-blocked-words', ChatBlockedWordController::class);
 Route::post('chat-blocked-words/check-word', [ChatBlockedWordController::class, 'checkWord'])->name('chat-blocked-words.check_word');
 Route::post('discount_codes/check-code', [DiscountCodeController::class, 'checkCode'])->name('discount_codes.check_code');
@@ -80,7 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('upload/video', [UploadController::class, 'video']);
         Route::delete('upload/video', [UploadController::class, 'delete']);
 
-
         // ================== STUDENT ==================
         Route::prefix('student')->group(function () {
 
@@ -88,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('courses', [CourseCatalogController::class, 'index']);
             Route::get('courses/my-courses', [StudentCourseController::class, 'myCourses']);
             Route::get('courses/{course}', [CourseCatalogController::class, 'show']);
-
 
             // Enrollment
             Route::post('courses/{course}/enroll', [EnrollmentController::class, 'enroll']); // free or paid(order_id)
