@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Menu;
 use App\Models\Payout;
 use App\Models\TutorFinance;
+use App\Models\UserFavorite;
 use Bouncer;
 
 use Illuminate\Database\Seeder;
@@ -200,8 +201,10 @@ class MenuNewSeeder extends Seeder
         //         ],
         //     ]
         // ]);
-        Bouncer::allow('tutor')->to('payout.list', Payout::class);
-        Bouncer::allow('tutor')->to('payout.create', Payout::class);
+        // Bouncer::allow('tutor')->to('payout.list', Payout::class);
+        // Bouncer::allow('tutor')->to('payout.create', Payout::class);
+        Bouncer::allow('tutor')->to('favourite.list', UserFavorite::class);
+        Bouncer::allow('student')->to('favourite.list', UserFavorite::class);
     }
 
     public function createMenuSubMenus($data, $p_id = 0)

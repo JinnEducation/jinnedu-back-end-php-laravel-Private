@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         //     LanguageSeeder::class,
         //     LabelSeeder::class,
         //     TranslationSeeder::class,
-            
+
         //     LevelSeeder::class,
         //    CountrySeeder::class,
         //     ExperienceSeeder::class,
@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             MenuNewSeeder::class,
+            AdminChatMonitorPermissionSeeder::class,
         ]);
     }
 }

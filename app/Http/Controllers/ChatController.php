@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
-use App\Models\ChatBlockedWord;
 use App\Models\ChatContact;
 use App\Models\ForbiddenWords;
 use App\Models\User;
+use Bouncer;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -24,11 +24,35 @@ class ChatController extends Controller
 
     public function contacts(Request $request, $id = 0)
     {
-        $user = Auth::user();
+        $authUser = Auth::user();
+        $user = $authUser;
+        $isMonitoringMode = false;
+
+        if (! $request->filled('user_id') && $this->canMonitorChats($authUser) && intval($id) === 0) {
+            $contacts = $this->listGlobalConversations($request);
+
+            return response([
+                'success' => true,
+                'message' => 'contacts-listed-successfully',
+                'result' => $contacts,
+                'monitored_user' => null,
+            ], 200);
+        }
 
         // get contacts for specific user
         if ($request->user_id) {
-            $user = User::find($request->user_id);
+            if ((int) $request->user_id !== (int) $authUser->id) {
+                if (! $this->canMonitorChats($authUser)) {
+                    return response([
+                        'success' => false,
+                        'message' => 'not-allowed-to-monitor-chats',
+                    ], 403);
+                }
+
+                $isMonitoringMode = true;
+            }
+
+            $user = User::find((int) $request->user_id);
             if (! $user) {
                 return response([
                     'success' => false,
@@ -37,11 +61,26 @@ class ChatController extends Controller
             }
         }
 
-        $contacts = User::select('users.name', 'users.id', 'users.type', 'users.avatar', 'users.online', 'users.last_online_date', 'contacts.user_id', 'contacts.contact_id', 'contacts.last_msg', 'contacts.status', 'contacts.updated_at')->leftJoin(\DB::raw('(select * from chat_contacts where user_id='.$user->id.') contacts'), 'contacts.contact_id', 'users.id');
+        $monitoredUser = $this->buildMonitoredUserPayload($request, $user);
+
+        $contacts = User::select(
+            'users.name',
+            'users.id',
+            'users.type',
+            'users.avatar',
+            'users.online',
+            'users.last_online_date',
+            'contacts.user_id',
+            'contacts.contact_id',
+            'contacts.last_msg',
+            'contacts.last_msg_date',
+            'contacts.status',
+            'contacts.updated_at'
+        )->leftJoin(\DB::raw('(select * from chat_contacts where user_id='.$user->id.') contacts'), 'contacts.contact_id', 'users.id');
 
         if (intval($id) > 0) {
             $contacts = $contacts->where('users.id', $id)->first();
-            $this->processContact($contacts, $user);
+            $this->processContact($contacts, $user, $isMonitoringMode);
         } else {
             $contacts->where('contacts.user_id', $user->id);
 
@@ -49,11 +88,11 @@ class ChatController extends Controller
                 $contacts->whereRaw(filterTextDB('users.name').' like ?', ['%'.filterText($request->q).'%']);
                 $contacts->distinct();
             }
-            // $items->orderBy('updated_at','DESC');
+            $contacts->orderByDesc('contacts.last_msg_date')->orderByDesc('contacts.updated_at');
             $contacts = paginate($contacts, setDataTablePerPageLimit($request->limit));
 
             foreach ($contacts as $contact) {
-                $this->processContact($contact, $user);
+                $this->processContact($contact, $user, $isMonitoringMode);
             }
         }
 
@@ -61,24 +100,160 @@ class ChatController extends Controller
             'success' => true,
             'message' => 'contacts-listed-successfully',
             'result' => $contacts,
+            'monitored_user' => $monitoredUser,
         ], 200);
     }
 
-    private function processContact($contact, $user)
+    private function listGlobalConversations(Request $request)
+    {
+        $contacts = ChatContact::query()
+            ->leftJoin('users as first_user', 'first_user.id', '=', 'chat_contacts.user_id')
+            ->leftJoin('users as second_user', 'second_user.id', '=', 'chat_contacts.contact_id')
+            ->whereColumn('chat_contacts.user_id', '<', 'chat_contacts.contact_id')
+            ->select(
+                'chat_contacts.user_id',
+                'chat_contacts.contact_id',
+                'chat_contacts.last_msg',
+                'chat_contacts.last_msg_date',
+                'chat_contacts.status',
+                'chat_contacts.updated_at',
+                'first_user.id as first_user_id',
+                'first_user.name as first_user_name',
+                'first_user.avatar as first_user_avatar',
+                'first_user.online as first_user_online',
+                'first_user.type as first_user_type',
+                'second_user.id as second_user_id',
+                'second_user.name as second_user_name',
+                'second_user.avatar as second_user_avatar',
+                'second_user.online as second_user_online',
+                'second_user.type as second_user_type'
+            )
+            ->when(! empty($request->q), function ($query) use ($request) {
+                $search = '%'.filterText($request->q).'%';
+                $query->where(function ($searchQuery) use ($search) {
+                    $searchQuery->whereRaw(filterTextDB('first_user.name').' like ?', [$search])
+                        ->orWhereRaw(filterTextDB('second_user.name').' like ?', [$search]);
+                });
+            })
+            ->orderByDesc('chat_contacts.last_msg_date')
+            ->orderByDesc('chat_contacts.updated_at');
+
+        $items = paginate($contacts, setDataTablePerPageLimit($request->limit));
+
+        foreach ($items as $item) {
+            $firstUser = $this->buildUserPayloadFromValues(
+                $item->first_user_id,
+                $item->first_user_name,
+                $item->first_user_avatar,
+                $item->first_user_online,
+                $item->first_user_type
+            );
+            $secondUser = $this->buildUserPayloadFromValues(
+                $item->second_user_id,
+                $item->second_user_name,
+                $item->second_user_avatar,
+                $item->second_user_online,
+                $item->second_user_type
+            );
+
+            $item->first_user = $firstUser;
+            $item->second_user = $secondUser;
+            $item->name = ($firstUser['name'] ?? '').' - '.($secondUser['name'] ?? '');
+            $item->avatar = $firstUser['avatar'] ?? null;
+            $item->online = (int) ($firstUser['online'] ?? 0);
+            $item->type = (int) ($firstUser['type'] ?? 0);
+            $item->since_start = $this->formatSinceStart($item->last_msg_date ?? $item->updated_at);
+            $item->unseen = Chat::query()
+                ->where('from_user', $item->contact_id)
+                ->where('to_user', $item->user_id)
+                ->where('seen', 0)
+                ->count();
+        }
+
+        return $items;
+    }
+
+    private function processContact($contact, $user, bool $isMonitoringMode = false)
     {
         if ($contact) {
+            if (empty($contact->contact_id)) {
+                $contact->contact_id = $contact->id;
+            }
 
-            $lastOnlineDate = new Carbon($contact->last_online_date);
-            // $contact->since_start = $lastOnlineDate->diffForHumans();
-            // $contact->since_start = $lastOnlineDate->diff(new DateTime());
+            $contactDate = $contact->last_msg_date ?? $contact->updated_at ?? $contact->last_online_date;
+            $contact->since_start = $this->formatSinceStart($contactDate);
 
-            $interval = $lastOnlineDate->diff(new DateTime);
-            $intervalArray = (array) $interval;
-            unset($intervalArray['from_string']);
+            $contact->unseen = Chat::query()
+                ->where('from_user', $contact->id)
+                ->where('to_user', $user->id)
+                ->where('seen', 0)
+                ->count();
 
-            $contact->since_start = (object) $intervalArray;
-            $contact->unseen = $contact->chats->where('to_user', $user->id)->where('seen', 0)->count();
+            if ($isMonitoringMode) {
+                $contact->status = 0;
+            }
         }
+    }
+
+    private function canMonitorChats(User $authUser): bool
+    {
+        if ((int) $authUser->type !== 0) {
+            return false;
+        }
+
+        return Bouncer::can('admin-chat-monitor', Chat::class);
+    }
+
+    private function formatSinceStart($date): object
+    {
+        if (empty($date)) {
+            return (object) [
+                'y' => 0,
+                'm' => 0,
+                'd' => 0,
+                'h' => 0,
+                'i' => 0,
+                's' => 0,
+            ];
+        }
+
+        $dateTime = $date instanceof Carbon ? $date : new Carbon($date);
+        $interval = $dateTime->diff(new DateTime);
+
+        return (object) [
+            'y' => (int) $interval->y,
+            'm' => (int) $interval->m,
+            'd' => (int) $interval->d,
+            'h' => (int) $interval->h,
+            'i' => (int) $interval->i,
+            's' => (int) $interval->s,
+        ];
+    }
+
+    private function buildMonitoredUserPayload(Request $request, User $user): ?array
+    {
+        if (! $request->filled('user_id')) {
+            return null;
+        }
+
+        return $this->buildUserPayloadFromValues(
+            $user->id,
+            $user->name,
+            $user->avatar,
+            $user->online,
+            $user->type
+        );
+    }
+
+    private function buildUserPayloadFromValues($id, $name, $avatar, $online, $type): array
+    {
+        return [
+            'id' => (int) ($id ?? 0),
+            'name' => $name,
+            'avatar' => $avatar,
+            'online' => (int) ($online ?? 0),
+            'type' => (int) ($type ?? 0),
+        ];
     }
 
     // public function contacts(Request $request, $id = 0)
@@ -184,11 +359,24 @@ class ChatController extends Controller
 
     public function messagesList(Request $request, $id)
     {
-        $user = Auth::user();
+        $authUser = Auth::user();
+        $user = $authUser;
+        $isMonitoringMode = false;
 
         // get messagesList for specific user
         if ($request->user_id) {
-            $user = User::find($request->user_id);
+            if ((int) $request->user_id !== (int) $authUser->id) {
+                if (! $this->canMonitorChats($authUser)) {
+                    return response([
+                        'success' => false,
+                        'message' => 'not-allowed-to-monitor-chats',
+                    ], 403);
+                }
+
+                $isMonitoringMode = true;
+            }
+
+            $user = User::find((int) $request->user_id);
             if (! $user) {
                 return response([
                     'success' => false,
@@ -197,17 +385,34 @@ class ChatController extends Controller
             }
         }
 
+        $monitoredUser = $this->buildMonitoredUserPayload($request, $user);
+
         // Retrieve contact using relationships
-        $contact = User::with('chatContacts')
+        $contact = User::select('id', 'name', 'avatar', 'online', 'type')
             ->where('id', $id)
             ->first();
+        $firstUser = $this->buildUserPayloadFromValues(
+            $user->id,
+            $user->name,
+            $user->avatar,
+            $user->online,
+            $user->type
+        );
+        $secondUser = $contact
+            ? $this->buildUserPayloadFromValues($contact->id, $contact->name, $contact->avatar, $contact->online, $contact->type ?? 0)
+            : null;
 
         $limit = setDataTablePerPageLimit($request->limit);
+        if (! empty($request->first_id)) {
+            $limit = 1000;
+        }
 
-        // Mark messages as seen
-        Chat::where('from_user', $id)
-            ->where('to_user', $user->id)
-            ->update(['seen' => 1, 'seen_date' => now()]);
+        // Mark messages as seen only for normal chat mode, not monitoring mode
+        if (! $isMonitoringMode) {
+            Chat::where('from_user', $id)
+                ->where('to_user', $user->id)
+                ->update(['seen' => 1, 'seen_date' => now()]);
+        }
 
         // Retrieve messages using relationships
         $items = Chat::with(['fromUser', 'toUser'])
@@ -229,18 +434,31 @@ class ChatController extends Controller
             ->paginate($limit);
 
         // Process additional data for each message
-        foreach ($items as $item) {
-            $start_date = $item->created_at;
-            $since_start = $start_date->diffForHumans();
-            $item->since_start = $since_start;
-            $item->direction = ($item->from_user == $user->id) ? 'end' : 'start';
-        }
+        $items->getCollection()->transform(function ($item) use ($user) {
+            $item->direction = ((int) $item->from_user === (int) $user->id) ? 'start' : 'end';
+            $item->since_start = $this->formatSinceStart($item->created_at);
+
+            $fromUser = $item->fromUser;
+            $item->from_user = [
+                'id' => $fromUser?->id,
+                'name' => $fromUser?->name,
+                'avatar' => $fromUser?->avatar,
+            ];
+
+            $item->setRelation('fromUser', null);
+            $item->setRelation('toUser', null);
+
+            return $item;
+        });
 
         return response([
             'success' => true,
             'message' => 'items listed successfully',
             'result' => $items,
             'contact' => $contact,
+            'monitored_user' => $monitoredUser,
+            'first_user' => $firstUser,
+            'second_user' => $secondUser,
         ], 200);
     }
 
