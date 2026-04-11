@@ -15,9 +15,12 @@ use App\Http\Controllers\PaypalCheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\WalletPaymentTransactionController;
 use App\Http\Controllers\ZoomController;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -246,3 +249,52 @@ Route::get('admin/student/courses/{course}/certificate', [StudentCourseControlle
 Route::get('/go-dashboard', [AuthController::class, 'redirectToDashboard'])->name('redirect.dashboard');
 
 Route::post('/mailing-list', [MailingListController::class, 'store'])->name('mailing-list.store');
+
+Route::fallback(function (Request $request) {
+    $path = trim($request->path(), '/');
+
+    if ($path === '' || str_contains($path, '.')) {
+        abort(404);
+    }
+
+    $firstSegment = strtolower((string) $request->segment(1));
+    if ($firstSegment !== '' && preg_match('/^[a-z]{2}(?:-[a-z0-9]{2,4})?$/', $firstSegment)) {
+        abort(404);
+    }
+
+    $availableLocales = [];
+
+    if (function_exists('locales')) {
+        $availableLocales = array_map('strtolower', locales());
+    }
+
+    if (Schema::hasTable('languages')) {
+        $dbLocales = Language::query()
+            ->where('status', 1)
+            ->pluck('shortname')
+            ->filter()
+            ->map(static fn ($locale) => strtolower($locale))
+            ->all();
+        $availableLocales = array_values(array_unique(array_merge($availableLocales, $dbLocales)));
+    }
+
+    $locale = strtolower((string) Session::get('app_locale'));
+    if ($locale === '' || ($availableLocales !== [] && ! in_array($locale, $availableLocales, true))) {
+        $locale = strtolower((string) config('app.locale'));
+    }
+
+    if ($locale === '' || ($availableLocales !== [] && ! in_array($locale, $availableLocales, true))) {
+        $locale = $availableLocales[0] ?? '';
+    }
+
+    if ($locale === '') {
+        abort(404);
+    }
+
+    $target = '/'.$locale.'/'.$path;
+    if ($request->getQueryString()) {
+        $target .= '?'.$request->getQueryString();
+    }
+
+    return redirect()->to($target);
+});
