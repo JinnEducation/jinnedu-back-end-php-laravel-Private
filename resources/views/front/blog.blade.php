@@ -2,6 +2,7 @@
 
     @php
         $currentLocale = app()->getLocale();
+        $isRtlLocale = in_array($currentLocale, ['ar', 'he', 'fa', 'ur'], true);
     @endphp
 
     <!-- Hero Section -->
@@ -34,7 +35,7 @@
                 {{ label_text('global', 'Explore-Our-Blogs', __('site.Explore Our Blogs')) }}</h2>
 
             <!-- Category Filter -->
-            <div class="relative mx-[-30px]" dir="ltr">
+            <div class="relative mx-[-30px]" dir="ltr" data-is-rtl="{{ $isRtlLocale ? '1' : '0' }}">
                 <!-- سهم يسار -->
                 <div id="left-arrow"
                     class="flex absolute inset-y-0 left-0 items-center opacity-0 transition-opacity pointer-events-none md:-left-10 ps-2 text-primary">
@@ -46,7 +47,7 @@
                 </div>
 
                 <div id="filter-container"
-                    class="flex overflow-x-auto overflow-y-hidden relative flex-nowrap gap-2 px-8 whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing">
+                    class="flex overflow-x-auto overflow-y-hidden relative flex-nowrap gap-2 px-8 whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing {{ $isRtlLocale ? 'flex-row-reverse' : '' }}">
                     <button
                         class="w-[165px] rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-white bg-primary border border-primary transition-all duration-300 text-md category-blogs-btn active hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer"
                         data-type="all" id="all-blogs-btn">

@@ -152,11 +152,21 @@ $(function () {
   let $container = $("#filter-container");
   let $left = $("#left-arrow");
   let $right = $("#right-arrow");
+  let isRTL = $container.closest("[data-is-rtl='1']").length > 0;
+
+  function getMaxScroll() {
+    return Math.max(0, $container[0].scrollWidth - $container.outerWidth());
+  }
+
+  function setInitialScroll() {
+    if (!isRTL) return;
+
+    $container.scrollLeft(getMaxScroll());
+  }
 
   function toggleArrows() {
     let scrollLeft = $container.scrollLeft();
-    let maxScroll = $container[0].scrollWidth - $container.outerWidth();
-    let isRTL = $container.closest("[dir='rtl']").length > 0;
+    let maxScroll = getMaxScroll();
 
     if (isRTL) {
       $left.css("opacity", scrollLeft < maxScroll ? 1 : 0);
@@ -167,7 +177,12 @@ $(function () {
     }
   }
 
+  setInitialScroll();
   toggleArrows();
+  $(window).on("load resize", function () {
+    setInitialScroll();
+    toggleArrows();
+  });
   $container.on("scroll", toggleArrows);
 
   // ✅ drag بالماوس فقط لغير الجوال
