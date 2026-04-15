@@ -930,8 +930,6 @@ class HomeController extends Controller
             ->get();
         $reviews = TutorReview::where('tutor_id', $tutor->id)->get();
         $reviewsCount = $reviews->count();
-        $orderTrialExists = true;
-        $orderTrialFinash = true;
 
         return view('front.tutor_jinn', compact('tutor', 'availabilities', 'tutorsSuggestions', 'reviewsCount', 'reviews', 'checkAllowOrder', 'orderTrialExists', 'orderTrialFinash'));
     }

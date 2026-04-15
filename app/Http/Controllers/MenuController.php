@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 class MenuController extends Controller
 {
     private array $menuUserTypeOverrides = [
+        'complaints.index' => [0,1, 2],
+        'orders.my-index' => [0,1, 2],
+        'chats.private-chat' => [0,1, 2],
         'favorites' => [0,1, 2],
         'favorites.index' => [0,1, 2],
         'payout.create' => [2],
@@ -18,6 +21,7 @@ class MenuController extends Controller
         'my-courses.completed' => [1],
         'my-courses.unfinished' => [1],
         'my-courses.certificates' => [1],
+        'conferences.student-index' => [1],
     ];
 
     public function index(Request $request)

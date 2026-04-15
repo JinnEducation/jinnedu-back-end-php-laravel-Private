@@ -366,7 +366,7 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
 
         Route::get('/admin-index', [ConferenceController::class, 'adminIndex'])->name('admin-index')->middleware('can:admin-index,App\\Models\\'.$routeModel);
         Route::get('/tutor-index', [ConferenceController::class, 'tutorIndex'])->name('tutor-index')->middleware('can:tutor-index,App\\Models\\'.$routeModel);
-        Route::get('/student-index', [ConferenceController::class, 'studentIndex'])->name('student-index')->middleware('can:student-index,App\\Models\\'.$routeModel);
+        Route::get('/student-index', [ConferenceController::class, 'studentIndex'])->name('student-index');
 
         Route::get('/create-tutor-link/{id}', [ConferenceController::class, 'createTutorLink'])->name('create-tutor-link')->middleware('can:create-tutor-link,App\\Models\\'.$routeModel);
         Route::get('/create-student-link/{id}', [ConferenceController::class, 'createStudentLink'])->name('create-student-link')->middleware('can:create-student-link,App\\Models\\'.$routeModel);
@@ -493,6 +493,7 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
         Route::get('/', [PayoutController::class, 'index']);
         Route::post('/store', [PayoutController::class, 'store']);
         Route::post('/update/{id}', [PayoutController::class, 'update']);
+        Route::post('/{id}/approve', [PayoutController::class, 'approve']);
         Route::post('/{id}/transfer', [PayoutController::class, 'transfer']);
     });
 

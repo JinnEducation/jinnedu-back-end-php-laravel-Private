@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Payout;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
-
 
 class UpdatePayoutRequest extends FormRequest
 {
@@ -16,8 +14,9 @@ class UpdatePayoutRequest extends FormRequest
     public function rules()
     {
         return [
-            'status'   => ['required', 'in:R,P'],
-            'note'   => ['nullable'] 
+            'status' => ['required', 'in:R,P'],
+            'note' => ['nullable'],
+            'notes' => ['nullable'],
         ];
     }
 
@@ -25,7 +24,7 @@ class UpdatePayoutRequest extends FormRequest
     {
         return [
             'status.required' => 'The status field is required.',
-            'status.in' => 'The selected status is invalid.'
+            'status.in' => 'The selected status is invalid.',
         ];
     }
 }

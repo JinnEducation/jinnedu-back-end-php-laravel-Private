@@ -504,6 +504,7 @@ class ConferenceController extends Controller
     public function studentIndex(Request $request)
     {
         $user = Auth::user();
+        $user->assign('student');
 
 
         $limit = setDataTablePerPageLimit($request->limit);
@@ -814,12 +815,18 @@ class ConferenceController extends Controller
             ], 200);
 
         $response = json_decode($conference->response);
+
+        if($user->type == 1){
+            $response->data->start_url = $response->data->join_url;
+        }
         if (!$response)
             return response([
                 'success' => false,
                 'message' => 'response-dose-not-exist',
                 'msg-code' => '222'
             ], 200);
+            
+        
 
         // if($response->status!='ok') return response([
         //         'success' => false,
@@ -859,7 +866,7 @@ class ConferenceController extends Controller
 
         // $braincert = new BraincertController;
         // $conferenceLink->response = $braincert->conferenceLink($postValues);
-        $conferenceLink->response = $conference->response;
+        $conferenceLink->response = json_encode($response);
 
         //$conferenceLink->notes = json_encode($postValues);
         $conferenceLink->save();
