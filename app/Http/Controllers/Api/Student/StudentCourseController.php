@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Course, CourseReview, CourseEnrollment, Language};
-use Illuminate\Http\Request;
+use App\Models\Course;
 use App\Models\CourseCertificate;
+use App\Models\CourseEnrollment;
+use App\Models\Language;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
-use Illuminate\Support\Facades\Storage;
-
 
 class StudentCourseController extends Controller
 {
-
     public function myCourses(Request $request)
     {
         $user = $request->user();
@@ -24,7 +24,9 @@ class StudentCourseController extends Controller
         $languagesMap = Language::all()->keyBy('shortname');
 
         // ✅ جلب الكورسات المسجّل بها المستخدم
-        $courseIds = CourseEnrollment::where('user_id', $user->id)
+        $courseIds = CourseEnrollment::query()
+            ->where('course_enrollments.user_id', $user->id)
+            ->accessible()
             ->pluck('course_id');
 
         $courses = Course::query()
@@ -45,7 +47,7 @@ class StudentCourseController extends Controller
             ->map(function ($course) use ($languagesMap) {
 
                 $total = (int) $course->total_items;
-                $done  = (int) $course->completed_items;
+                $done = (int) $course->completed_items;
 
                 $percent = $total > 0
                     ? (int) round(($done / $total) * 100)
@@ -62,14 +64,14 @@ class StudentCourseController extends Controller
                             'language_id' => $lang?->id ?? '1',
                             'title' => $language->title,
                             'description' => $language->description,
-                        ]
+                        ],
                     ];
                 });
 
                 return [
                     'id' => $course->id,
-                    'title' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['title']]) ?? $course->title,
-                    'description' => $languages->mapWithKeys(fn($lang, $id) => [$id => $lang['description']]) ?? $course->description,
+                    'title' => $languages->mapWithKeys(fn ($lang, $id) => [$id => $lang['title']]) ?? $course->title,
+                    'description' => $languages->mapWithKeys(fn ($lang, $id) => [$id => $lang['description']]) ?? $course->description,
                     'total_items' => $total,
                     'completed_items' => $done,
                     'progress_percent' => $percent,
@@ -88,7 +90,6 @@ class StudentCourseController extends Controller
         return response()->json($courses);
     }
 
-
     public function certificate(Request $request, Course $course)
     {
         abort_if($course->status !== 'published', 404);
@@ -104,21 +105,22 @@ class StudentCourseController extends Controller
                     'lang' => $language->lang,
                     'language_id' => $lang?->id ?? '1',
                     'title' => $language->title,
-                ]
+                ],
             ];
         });
 
         $courseTitle = $course->langs->where('lang', 'en')?->first()?->title;
 
         // 1) تحقق التسجيل
-        $enrolled = CourseEnrollment::where('course_id', $course->id)
-            ->where('user_id', $user->id)
+        $enrolled = CourseEnrollment::query()
+            ->forUserCourse($user->id, $course->id)
+            ->accessible()
             ->exists();
 
-        abort_if(!$enrolled, 403, 'Not enrolled');
+        abort_if(! $enrolled, 403, 'Not enrolled');
 
         // 2) تحقق أن الكورس يدعم شهادة
-        abort_if(!$course->has_certificate, 404);
+        abort_if(! $course->has_certificate, 404);
 
         // 3) تحقق اكتمال الكورس
         $totalItems = $course->items()->count();
@@ -136,24 +138,24 @@ class StudentCourseController extends Controller
         $certificate = CourseCertificate::firstOrCreate(
             [
                 'course_id' => $course->id,
-                'user_id'   => $user->id,
+                'user_id' => $user->id,
             ],
             [
                 'certificate_code' => strtoupper(Str::random(10)),
-                'issued_at'        => now(),
+                'issued_at' => now(),
             ]
         );
 
         $stName = $request->name ?? $user->full_name;
 
         // 5) توليد الملف إذا لم يكن موجود
-        if (!$certificate->file_url || !Storage::disk('public')->exists($certificate->file_url)) {
+        if (! $certificate->file_url || ! Storage::disk('public')->exists($certificate->file_url)) {
             $pdf = PDF::loadView(
                 'certificates.course',
                 [
-                    'user'        => $user,
-                    'stName'        => $stName,
-                    'courseTitle'      => $courseTitle,
+                    'user' => $user,
+                    'stName' => $stName,
+                    'courseTitle' => $courseTitle,
                     'certificate' => $certificate,
                 ],
                 [],
@@ -164,9 +166,10 @@ class StudentCourseController extends Controller
                     'default_font' => 'Arial',
                 ]
             );
+
             return $pdf->stream();
 
-            $path = 'certificates/course_' . $course->id . '_' . $user->id . '.pdf';
+            $path = 'certificates/course_'.$course->id.'_'.$user->id.'.pdf';
 
             Storage::disk('public')->put($path, $pdf->output());
 
@@ -179,7 +182,7 @@ class StudentCourseController extends Controller
         // 6) تحميل الشهادة
         return Storage::disk('public')->download(
             $certificate->file_url,
-            'certificate-' . $course->id . '.pdf'
+            'certificate-'.$course->id.'.pdf'
         );
     }
 }

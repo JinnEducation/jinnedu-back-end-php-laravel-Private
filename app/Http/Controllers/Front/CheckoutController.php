@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Front;
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\WalletController;
 use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\UserWallet;
+use App\Models\WalletPaymentTransaction;
 use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
@@ -37,6 +38,9 @@ class CheckoutController extends Controller
 
         // Initialize variables
         $orders = collect();
+        $payableOrderIds = [];
+        $nonPayableOrderIds = [];
+        $hasPayableOrders = false;
         $totalAmount = 0;
 
         // If checkout type is 'pay', get orders
@@ -50,7 +54,11 @@ class CheckoutController extends Controller
                     ->where('user_id', $user->id)
                     ->get();
 
-                $totalAmount = $orders->sum('price');
+                $payableOrders = $orders->whereIn('status', [0, 2]);
+                $payableOrderIds = $payableOrders->pluck('id')->all();
+                $nonPayableOrderIds = $orders->whereNotIn('status', [0, 2])->pluck('id')->all();
+                $hasPayableOrders = ! empty($payableOrderIds);
+                $totalAmount = $payableOrders->sum('price');
             }
         }
 
@@ -84,6 +92,9 @@ class CheckoutController extends Controller
             'paymentGateways',
             'checkoutType',
             'orders',
+            'payableOrderIds',
+            'nonPayableOrderIds',
+            'hasPayableOrders',
             'totalAmount',
             'walletBalance'
         ));
@@ -112,13 +123,21 @@ class CheckoutController extends Controller
         $checkoutType = $request->type;
         $paymentGateway = $request->payment_gateway;
 
+        $availableGateways = array_keys($this->getPaymentGateways($checkoutType));
+        if (! in_array($paymentGateway, $availableGateways, true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'unsupported-payment-gateway',
+            ], 422);
+        }
+
         // Handle discount code if provided
         $discountAmount = 0;
         if ($request->has('discount_code') && ! empty($request->discount_code)) {
             $discountResult = $this->calculateDiscount($request->discount_code, $request->amount);
-            if($discountResult['valid']){
+            if ($discountResult['valid']) {
                 $discountAmount = $discountResult['discount'];
-            }else{
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => $discountResult['message'],
@@ -188,36 +207,31 @@ class CheckoutController extends Controller
 
         $orders = Order::whereIn('id', $orderIds)
             ->where('user_id', $user->id)
+            ->whereIn('status', [0, 2])
             ->get();
 
         if ($orders->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'no-orders-found',
-            ], 404);
+                'message' => 'no-valid-orders-found',
+                'details' => 'No payable orders found. Orders may already be paid.',
+            ], 422);
         }
 
-        // // Filter only pending (0) or failed (2) orders for payment
-        // $validOrders = $orders->filter(function($order) {
-        //     return in_array($order->status, [0, 2]);
-        // });
-
-        // if($validOrders->isEmpty()) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'no-valid-orders-found',
-        //         'details' => 'Orders are already paid or have invalid status'
-        //     ], 422);
-        // }
-
-        // Use only valid orders
-        // $orders = $orders;
+        $payableOrderIds = $orders->pluck('id')->all();
         $totalAmount = $orders->sum('price');
         $finalAmount = max(0, $totalAmount - $discountAmount);
 
+        if ($finalAmount <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'invalid-amount',
+            ], 422);
+        }
+
         // If paying from wallet
         if ($request->payment_gateway === 'my-wallet') {
-            return $this->payFromWallet($user, $orders, $finalAmount);
+            return $this->payFromWallet($user, $orders, $finalAmount, $discountAmount);
         }
 
         // Create payment transaction
@@ -227,7 +241,13 @@ class CheckoutController extends Controller
             'payment_channel' => $request->payment_gateway,
             'current_wallet' => $user->wallets()->first()?->balance ?? 0,
             'reference_id' => (string) \Illuminate\Support\Str::uuid(),
-            'response' => json_encode(['order_ids' => $orderIds, 'type' => 'pay', 'payment_gateway' => $request->payment_gateway]), // Store order IDs in response field
+            'response' => json_encode([
+                'order_ids' => $payableOrderIds,
+                'type' => 'pay',
+                'payment_gateway' => $request->payment_gateway,
+                'discount_amount' => $discountAmount,
+                'original_total' => $totalAmount,
+            ]),
         ]);
 
         // Process payment gateway
@@ -237,7 +257,7 @@ class CheckoutController extends Controller
     /**
      * Pay directly from wallet
      */
-    private function payFromWallet($user, $orders, $amount)
+    private function payFromWallet($user, $orders, $amount, $discountAmount = 0)
     {
         $wallet = $user->wallets()->first();
         if (! $wallet) {
@@ -261,28 +281,16 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Deduct from wallet
         $wallet->balance -= $amount;
         $wallet->save();
 
-        // Update orders status
         foreach ($orders as $order) {
-            $order->status = 1; // completed
+            $order->status = 1;
             $order->payment = 'wallet';
             $order->save();
-
-            // $walletController = new WalletController();
-            // $walletController->addTutorFinance($order,$order->ref_id, $order->ref_type);
-
-            // Create wallet transaction record
-            \App\Models\WalletTransaction::create([
-                'user_id' => $user->id,
-                'order_id' => $order->id,
-                'type' => 'debit',
-                'amount' => $order->price,
-                'description' => 'Payment for order #'.$order->id,
-            ]);
         }
+
+        $this->createOrderDebitTransactions($orders, $amount, $user->id, 'wallet', $discountAmount);
 
         return response()->json([
             'success' => true,
@@ -422,67 +430,143 @@ class CheckoutController extends Controller
      */
     private function completeTransaction($transaction, $type)
     {
-        // Update transaction status
-        $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
-        $transaction->status = TransactionStatus::ACTIVE;
-        $transaction->save();
+        DB::transaction(function () use ($transaction, $type) {
+            $transaction = WalletPaymentTransaction::query()
+                ->lockForUpdate()
+                ->findOrFail($transaction->id);
 
-        // Add amount to wallet
-        $wallet = $transaction->user->wallets()->first();
-        if (! $wallet) {
-            $wallet = UserWallet::create([
-                'user_id' => $transaction->user_id,
-                'balance' => 0,
-            ]);
-        }
+            $metadata = json_decode($transaction->response, true) ?: [];
 
-        if ($type == 'topup') {
-            $wallet->update([
-                'balance' => $wallet->balance + $transaction->amount,
-            ]);
-        }
-
-        // Create wallet transaction record
-        WalletTransaction::create([
-            'user_id' => $transaction->user_id,
-            'type' => 'credit',
-            'amount' => $transaction->amount,
-            'description' => 'Wallet top-up via '.$transaction->payment_channel,
-        ]);
-
-        // If this was a payment transaction (not topup), complete orders
-        if ($transaction->response) {
-            $metadata = json_decode($transaction->response, true);
-            if (isset($metadata['order_ids'])) {
-                $this->completeOrders($metadata['order_ids'], $transaction);
+            if (! empty($metadata['checkout_finalized_at'])) {
+                return;
             }
-        }
+
+            $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
+            $transaction->status = TransactionStatus::ACTIVE;
+
+            $wallet = $transaction->user->wallets()->first();
+            if (! $wallet) {
+                $wallet = UserWallet::create([
+                    'user_id' => $transaction->user_id,
+                    'balance' => 0,
+                ]);
+            }
+
+            if ($type === 'topup') {
+                $wallet->update([
+                    'balance' => $wallet->balance + $transaction->amount,
+                ]);
+
+                WalletTransaction::create([
+                    'user_id' => $transaction->user_id,
+                    'type' => 'credit',
+                    'amount' => $transaction->amount,
+                    'description' => 'Wallet top-up via '.$transaction->payment_channel,
+                ]);
+            }
+
+            if ($type === 'pay' && ! empty($metadata['order_ids'])) {
+                $discountAmount = (float) ($metadata['discount_amount'] ?? 0);
+                $this->completeOrders($metadata['order_ids'], $transaction, $discountAmount);
+            }
+
+            $metadata['checkout_finalized_at'] = now()->toDateTimeString();
+            $metadata['checkout_finalized_version'] = 'v1';
+            $transaction->response = json_encode($metadata);
+            $transaction->save();
+        });
     }
 
     /**
      * Complete orders after successful payment
      */
-    private function completeOrders($orderIds, $transaction)
+    private function completeOrders($orderIds, $transaction, float $discountAmount = 0): void
     {
         $orders = Order::whereIn('id', $orderIds)
             ->where('user_id', $transaction->user_id)
             ->whereIn('status', [0, 2])
             ->get();
 
+        if ($orders->isEmpty()) {
+            return;
+        }
+
+        $finalPaidAmount = max(0, (float) $orders->sum('price') - $discountAmount);
+
         foreach ($orders as $order) {
             $order->status = 1; // completed
             $order->payment = $transaction->payment_channel;
             $order->save();
+        }
 
-            // Create wallet transaction record
-            \App\Models\WalletTransaction::create([
-                'user_id' => $transaction->user_id,
+        $this->createOrderDebitTransactions($orders, $finalPaidAmount, $transaction->user_id, $transaction->payment_channel, $discountAmount);
+    }
+
+    private function createOrderDebitTransactions($orders, float $finalAmount, int $userId, string $channel, float $discountAmount = 0): void
+    {
+        $distributedAmounts = $this->distributeFinalAmountAcrossOrders($orders, $finalAmount);
+
+        foreach ($orders as $order) {
+            $debitAmount = (float) ($distributedAmounts[$order->id] ?? 0);
+
+            if ($debitAmount <= 0) {
+                continue;
+            }
+
+            WalletTransaction::create([
+                'user_id' => $userId,
                 'order_id' => $order->id,
                 'type' => 'debit',
-                'amount' => $order->price,
-                'description' => 'Payment for order #'.$order->id,
+                'amount' => $debitAmount,
+                'description' => 'Payment for order #'.$order->id.' via '.$channel.($discountAmount > 0 ? ' (discount applied)' : ''),
             ]);
         }
+    }
+
+    private function distributeFinalAmountAcrossOrders($orders, float $finalAmount): array
+    {
+        $result = [];
+        $count = $orders->count();
+
+        if ($count === 0 || $finalAmount <= 0) {
+            foreach ($orders as $order) {
+                $result[$order->id] = 0.00;
+            }
+
+            return $result;
+        }
+
+        $totalOriginal = (float) $orders->sum('price');
+        if ($totalOriginal <= 0) {
+            $share = round($finalAmount / $count, 2);
+            $allocated = 0;
+
+            foreach ($orders->values() as $index => $order) {
+                if ($index === $count - 1) {
+                    $result[$order->id] = round($finalAmount - $allocated, 2);
+                } else {
+                    $result[$order->id] = $share;
+                    $allocated += $share;
+                }
+            }
+
+            return $result;
+        }
+
+        $allocated = 0;
+        foreach ($orders->values() as $index => $order) {
+            if ($index === $count - 1) {
+                $amount = round($finalAmount - $allocated, 2);
+            } else {
+                $ratio = ((float) $order->price) / $totalOriginal;
+                $amount = round($finalAmount * $ratio, 2);
+                $allocated += $amount;
+            }
+
+            $result[$order->id] = max(0, $amount);
+        }
+
+        return $result;
     }
 
     /**
@@ -570,17 +654,7 @@ class CheckoutController extends Controller
             'countries' => ['all'],
         ];
 
-        $gateways['jawal-pay'] = [
-            'name' => 'Jawal Pay',
-            'image_path' => asset('front/assets/imgs/payment/jawal-pay.jpg'),
-            'countries' => ['palestine', 'jordan'],
-        ];
-
-        $gateways['palpay'] = [
-            'name' => 'PalPay',
-            'image_path' => asset('front/assets/imgs/payment/palpay.jpg'),
-            'countries' => ['palestine'],
-        ];
+        // Hidden until backend drivers are implemented in PaymentManager.
 
         // إضافة Local Test فقط في بيئة التطوير
         if (config('app.env') === 'local' || config('app.env') === 'development' || config('app.debug')) {

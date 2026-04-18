@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,5 +39,23 @@ class CourseEnrollment extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function scopeForUserCourse(Builder $query, int $userId, int $courseId): Builder
+    {
+        return $query->where('course_enrollments.user_id', $userId)
+            ->where('course_enrollments.course_id', $courseId);
+    }
+
+    public function scopeAccessible(Builder $query): Builder
+    {
+        return $query->where(function (Builder $q) {
+            $q->whereHas('course', function (Builder $courseQuery) {
+                $courseQuery->where('is_free', true)
+                    ->orWhere('final_price', '<=', 0);
+            })->orWhereHas('order', function (Builder $orderQuery) {
+                $orderQuery->where('status', 1);
+            });
+        });
     }
 }

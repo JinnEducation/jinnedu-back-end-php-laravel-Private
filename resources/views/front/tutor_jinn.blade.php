@@ -353,7 +353,7 @@
 
                                             <!-- Buttons -->
                                             <div class="flex gap-3 w-2/3">
-                                                <a href="{{ route('site.tutor_jinn', $suggestion->id) }}"
+                                                <a href="{{ route('site.tutor_jinn', ['id' => $suggestion->id]) }}"
                                                     class="cursor-pointer px-4 py-2.5 text-sm font-semibold text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
                                                     {{ label_text('global', 'View Details', __('site.View Details')) }}
                                                 </a>

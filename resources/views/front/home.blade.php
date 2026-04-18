@@ -327,7 +327,7 @@
 
                         // ===== URL (عدّلي حسب routes عندك) =====
                         // $courseUrl = url('/course/' . $course->id);
-                        $courseUrl = route('site.singlecourse', $course->id);
+                        $courseUrl = route('site.singlecourse', ['id' => $course->id]);
 
                         // ===== Duration =====
                         $hours = $course->course_duration_hours ?? $course->duration_hours ?? 0;
@@ -819,7 +819,7 @@
                                             </div>
 
                                             <div class="flex gap-2 justify-between my-3">
-                                                <a href="{{ route('site.tutor_jinn', $tutor->id) }}"
+                                                <a href="{{ route('site.tutor_jinn', ['id' => $tutor->id]) }}"
                                                     class="text-[12px] px-3 py-3 w-full font-medium text-center text-white rounded-lg transition-colors duration-300 bg-[#1B449C] hover:bg-[#1B449C]/90">
                                                     {{ label_text('global', 'site.trial-lesson', __('site.Trial Lesson')) }}
                                                 </a>

@@ -148,7 +148,7 @@
                         </div>
 
                         <div class="flex gap-3 mt-4">
-                            <a href="{{ route('site.tutor_jinn', $group_class->tutor?->id) }}"
+                            <a href="{{ route('site.tutor_jinn', ['id' => $group_class->tutor?->id]) }}"
                                 class="cursor-pointer px-6 py-2 text-sm text-black bg-white rounded-md border border-gray-400 hover:bg-primary hover:text-white transition-all duration-300">
                                 {{ label_text('global', 'View profile', __('site.View profile')) }}
                             </a>

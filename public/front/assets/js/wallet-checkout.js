@@ -231,7 +231,7 @@ $(document).ready(function() {
         
         // Validation
         if (checkoutType === 'pay' && !orderIds) {
-            showMessage('No orders found', 'error');
+            showMessage('No payable orders found', 'error');
             return;
         }
         
@@ -315,6 +315,11 @@ $(document).ready(function() {
         // In payment mode, calculate sum of items
         if(checkoutType === 'pay') {
             $('.element-item').each(function() {
+                const isPayable = String($(this).data('payable')) === '1';
+                if (!isPayable) {
+                    return;
+                }
+
                 const price = parseFloat($(this).data('price')) || 0;
                 elementsTotal += price;
             });
@@ -394,6 +399,11 @@ $(document).ready(function() {
     if(checkoutType === 'pay') {
         let itemsTotal = 0;
         $('.element-item').each(function() {
+            const isPayable = String($(this).data('payable')) === '1';
+            if (!isPayable) {
+                return;
+            }
+
             const price = parseFloat($(this).data('price')) || 0;
             itemsTotal += price;
         });

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{CourseItem, CourseItemProgress, CourseEnrollment};
+use App\Models\CourseEnrollment;
+use App\Models\CourseItem;
+use App\Models\CourseItemProgress;
 use Illuminate\Http\Request;
 
 class ProgressController extends Controller
@@ -19,12 +21,13 @@ class ProgressController extends Controller
             'last_position_seconds' => 'nullable|integer|min:0',
         ]);
 
-        $enrolled = CourseEnrollment::where('course_id', $course->id)
-            ->where('user_id', $user->id)
+        $enrolled = CourseEnrollment::query()
+            ->forUserCourse($user->id, $course->id)
+            ->accessible()
             ->exists();
 
         // لو المحتوى مش preview والكورس مدفوع والطالب مش enrolled: ممنوع
-        if (!$item->is_free_preview && !$course->is_free && $course->final_price > 0 && !$enrolled) {
+        if (! $item->is_free_preview && ! $course->is_free && $course->final_price > 0 && ! $enrolled) {
             return response()->json(['message' => 'Not enrolled.'], 403);
         }
 

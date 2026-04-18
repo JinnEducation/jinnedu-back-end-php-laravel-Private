@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Course, CourseEnrollment, CourseReview, Language};
+use App\Models\Course;
+use App\Models\CourseEnrollment;
+use App\Models\CourseReview;
+use App\Models\Language;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PlayerController extends Controller
 {
@@ -22,8 +24,9 @@ class PlayerController extends Controller
         $languagesMap = Language::all()->keyBy('shortname');
 
         // ✅ هل المستخدم مسجّل؟
-        $enrolled = CourseEnrollment::where('course_id', $course->id)
-            ->where('user_id', $user->id)
+        $enrolled = CourseEnrollment::query()
+            ->forUserCourse($user->id, $course->id)
+            ->accessible()
             ->exists();
 
         // ✅ eager loading كامل
@@ -36,7 +39,7 @@ class PlayerController extends Controller
             'items.progresses' => function ($q) use ($user) {
                 $q->where('user_id', $user->id)
                     ->where('status', 'completed');
-            }
+            },
         ]);
 
         /* =========================
@@ -51,12 +54,12 @@ class PlayerController extends Controller
                     'lang' => $language->lang,
                     'language_id' => $lang?->id ?? '1',
                     'title' => $language->title,
-                ]
+                ],
             ];
         });
 
         $courseTitle = $languages->mapWithKeys(
-            fn($lang, $id) => [$id => $lang['title']]
+            fn ($lang, $id) => [$id => $lang['title']]
         ) ?? $course->title;
 
         /* =========================
@@ -80,14 +83,14 @@ class PlayerController extends Controller
                         'lang' => $language->lang,
                         'language_id' => $lang?->id ?? '1',
                         'title' => $language->title,
-                    ]
+                    ],
                 ];
             });
 
             return [
                 'id' => $section->id,
                 'title' => $languagesSection->mapWithKeys(
-                    fn($lang, $id) => [$id => $lang['title']]
+                    fn ($lang, $id) => [$id => $lang['title']]
                 ) ?? $section->title,
             ];
         });
@@ -99,8 +102,8 @@ class PlayerController extends Controller
 
             $locked = false;
 
-            if (!$item->is_free_preview) {
-                if (!$course->is_free && $course->final_price > 0 && !$enrolled) {
+            if (! $item->is_free_preview) {
+                if (! $course->is_free && $course->final_price > 0 && ! $enrolled) {
                     $locked = true;
                 }
             }
@@ -115,7 +118,7 @@ class PlayerController extends Controller
                         'language_id' => $lang?->id ?? '1',
                         'title' => $language->title,
                         'description' => $language->description,
-                    ]
+                    ],
                 ];
             });
 
@@ -128,10 +131,10 @@ class PlayerController extends Controller
                 'duration_seconds' => $item->duration_seconds,
                 'sort_order' => $item->sort_order,
                 'title' => $languagesItem->mapWithKeys(
-                    fn($lang, $id) => [$id => $lang['title']]
+                    fn ($lang, $id) => [$id => $lang['title']]
                 ) ?? $item->title,
                 'description' => $languagesItem->mapWithKeys(
-                    fn($lang, $id) => [$id => $lang['description']]
+                    fn ($lang, $id) => [$id => $lang['description']]
                 ) ?? $item->description,
                 'media' => $locked ? [] : $item->media,
                 'live_session' => $locked ? null : $item->liveSession,

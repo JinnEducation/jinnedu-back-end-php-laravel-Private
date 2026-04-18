@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Course, CourseReview, CourseEnrollment};
+use App\Models\Course;
+use App\Models\CourseEnrollment;
+use App\Models\CourseReview;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index(Request $request,$id)
+    public function index(Request $request, $id)
     {
         $course = Course::findOrFail($id);
         abort_if($course->status !== 'published', 404);
@@ -28,11 +30,12 @@ class ReviewController extends Controller
 
         $user = $request->user();
 
-        $enrolled = CourseEnrollment::where('course_id', $course->id)
-            ->where('user_id', $user->id)
+        $enrolled = CourseEnrollment::query()
+            ->forUserCourse($user->id, $course->id)
+            ->accessible()
             ->exists();
 
-        if (!$enrolled) {
+        if (! $enrolled) {
             return response()->json(['message' => 'You must be enrolled to review.'], 403);
         }
 

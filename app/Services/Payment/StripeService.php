@@ -4,11 +4,8 @@ namespace App\Services\Payment;
 
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
-use App\Http\Controllers\WalletController;
-use App\Models\Order;
 use App\Models\Setting;
 use App\Models\WalletPaymentTransaction;
-use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
@@ -22,14 +19,14 @@ class StripeService implements PaymentInterface
     public function createPayment(array $data)
     {
         // Stripe::setApiKey(apiKey: config('services.stripe.secret', env('STRIPE_SECRET')));
-         $referenceId = $data['reference_id'] ?? null;
+        $referenceId = $data['reference_id'] ?? null;
 
         Stripe::setApiKey(
-    Setting::valueOf(
-        'stripe_secret',
-        config('services.stripe.secret', env('STRIPE_SECRET'))
-    )
-);
+            Setting::valueOf(
+                'stripe_secret',
+                config('services.stripe.secret', env('STRIPE_SECRET'))
+            )
+        );
 
         if (! $referenceId) {
             throw new \Exception('reference_id is required for Stripe payment');
@@ -98,15 +95,14 @@ class StripeService implements PaymentInterface
         // Stripe::setApiKey(env('STRIPE_SECRET'));
 
         Stripe::setApiKey(
-    Setting::valueOf(
-        'stripe_secret',
-        config('services.stripe.secret', env('STRIPE_SECRET'))
-    )
-);
-
+            Setting::valueOf(
+                'stripe_secret',
+                config('services.stripe.secret', env('STRIPE_SECRET'))
+            )
+        );
 
         $sessionId = $request->get('session_id');
-        $reference_id = $request->get('reference_id') ;
+        $reference_id = $request->get('reference_id');
         if (! $sessionId) {
             return response()->json([
                 'success' => false,
@@ -163,14 +159,6 @@ class StripeService implements PaymentInterface
         ]);
         $transaction->save();
 
-        // Complete orders exactly like LocalTest
-        if (! empty($metadata['order_ids'])) {
-            $this->completeOrders(
-                json_decode($metadata['order_ids'] ?? '[]', true),
-                $transaction
-            );
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'Payment completed successfully (Stripe)',
@@ -198,35 +186,5 @@ class StripeService implements PaymentInterface
             'success' => false,
             'message' => 'Payment canceled (Stripe)',
         ]);
-    }
-
-    /**
-     * Complete orders after successful payment
-     * SAME implementation as LocalTestService
-     */
-    private function completeOrders($orderIds, $transaction)
-    {
-        $orders = Order::whereIn('id', $orderIds)
-            ->where('user_id', $transaction->user_id)
-            ->whereIn('status', [0, 2])
-            ->get();
-
-        foreach ($orders as $order) {
-            $order->status = 1; // completed
-            $order->payment = 'stripe';
-            $order->save();
-
-            // $walletController = new WalletController();
-            // $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
-
-
-            WalletTransaction::create([
-                'user_id' => $transaction->user_id,
-                'order_id' => $order->id,
-                'type' => 'debit',
-                'amount' => $order->price,
-                'description' => 'Payment for order #'.$order->id.' (Stripe)',
-            ]);
-        }
     }
 }

@@ -2,41 +2,40 @@
 
 namespace App\Services\Payment;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use App\Models\WalletPaymentTransaction;
-use App\Models\WalletTransaction;
-use App\Models\Order;
-use App\Models\Setting;
-use App\Http\Controllers\WalletController;
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
+use App\Models\Setting;
+use App\Models\WalletPaymentTransaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class PayPalService implements PaymentInterface
 {
     private string $clientId;
+
     private string $clientSecret;
+
     private string $baseUrl;
 
     public function __construct()
     {
         // IMPORTANT: fallback to env if config missing (as requested)
-       $this->clientId = Setting::valueOf(
-        'paypal_client_id',
-        config('services.paypal.client_id', env('PAYPAL_CLIENT_ID'))
-    );
+        $this->clientId = Setting::valueOf(
+            'paypal_client_id',
+            config('services.paypal.client_id', env('PAYPAL_CLIENT_ID'))
+        );
 
-    $this->clientSecret = Setting::valueOf(
-        'paypal_secret',
-        config('services.paypal.client_secret', env('PAYPAL_CLIENT_SECRET'))
-    );
+        $this->clientSecret = Setting::valueOf(
+            'paypal_secret',
+            config('services.paypal.client_secret', env('PAYPAL_CLIENT_SECRET'))
+        );
 
-    $mode = config('services.paypal.mode', env('PAYPAL_MODE'));
-    $mode = $mode ?: 'sandbox';
+        $mode = config('services.paypal.mode', env('PAYPAL_MODE'));
+        $mode = $mode ?: 'sandbox';
 
-    $this->baseUrl = $mode === 'live'
-        ? 'https://api-m.paypal.com'
-        : 'https://api-m.sandbox.paypal.com';
+        $this->baseUrl = $mode === 'live'
+            ? 'https://api-m.paypal.com'
+            : 'https://api-m.sandbox.paypal.com';
 
     }
 
@@ -50,7 +49,7 @@ class PayPalService implements PaymentInterface
     {
         // LocalTest-style contract: reference_id is the primary key
         $referenceId = $data['reference_id'] ?? null;
-        if (!$referenceId) {
+        if (! $referenceId) {
             throw new \InvalidArgumentException('reference_id is required');
         }
 
@@ -68,7 +67,7 @@ class PayPalService implements PaymentInterface
             'purchase_units' => [
                 [
                     'reference_id' => $referenceId,
-                    'description'  => $data['description'] ?? 'Checkout Payment',
+                    'description' => $data['description'] ?? 'Checkout Payment',
                     'amount' => [
                         'currency_code' => $data['currency'] ?? ($transaction->currency ?? 'USD'),
                         'value' => number_format((float) $data['amount'], 2, '.', ''),
@@ -89,9 +88,9 @@ class PayPalService implements PaymentInterface
 
         $res = Http::withToken($token)
             ->acceptJson()
-            ->post($this->baseUrl . '/v2/checkout/orders', $payload);
+            ->post($this->baseUrl.'/v2/checkout/orders', $payload);
 
-        if (!$res->successful()) {
+        if (! $res->successful()) {
             return [
                 'success' => false,
                 'message' => 'paypal-create-order-failed',
@@ -122,7 +121,7 @@ class PayPalService implements PaymentInterface
     public function success(Request $request)
     {
         $referenceId = $request->get('reference_id');
-        if (!$referenceId) {
+        if (! $referenceId) {
             return response()->json([
                 'success' => false,
                 'message' => 'reference-id-required',
@@ -130,7 +129,7 @@ class PayPalService implements PaymentInterface
         }
 
         $transaction = WalletPaymentTransaction::where('reference_id', $referenceId)->first();
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
                 'message' => 'transaction-not-found',
@@ -148,7 +147,7 @@ class PayPalService implements PaymentInterface
 
         // PayPal returns "token" query param (order id)
         $paypalOrderId = $request->get('token');
-        if (!$paypalOrderId) {
+        if (! $paypalOrderId) {
             return response()->json([
                 'success' => false,
                 'message' => 'paypal-token-required',
@@ -159,9 +158,9 @@ class PayPalService implements PaymentInterface
 
         $captureRes = Http::withToken($token)
             ->acceptJson()
-            ->post($this->baseUrl . '/v2/checkout/orders/' . $paypalOrderId . '/capture');
+            ->post($this->baseUrl.'/v2/checkout/orders/'.$paypalOrderId.'/capture');
 
-        if (!$captureRes->successful()) {
+        if (! $captureRes->successful()) {
             return response()->json([
                 'success' => false,
                 'message' => 'paypal-capture-failed',
@@ -181,15 +180,13 @@ class PayPalService implements PaymentInterface
         }
 
         $prev = json_decode($transaction->response, true) ?: [];
-        $orderIds = $prev['order_ids'] ?? [];
-
         // === SAME LOGIC AS LocalTest (transaction updates) ===
         $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
         $transaction->status = TransactionStatus::ACTIVE;
-        $transaction->transaction_id = 'paypal-' . $paypalOrderId;
+        $transaction->transaction_id = 'paypal-'.$paypalOrderId;
         $transaction->response = json_encode(array_merge($prev, [
             'paypal_order_id' => $paypalOrderId,
-            'paypal_capture'  => [
+            'paypal_capture' => [
                 'id' => $capture['id'] ?? null,
                 'status' => $status,
             ],
@@ -197,11 +194,6 @@ class PayPalService implements PaymentInterface
             'type' => $prev['type'] ?? 'paypal',
         ]));
         $transaction->save();
-
-        // === SAME LOGIC AS LocalTest (complete orders) ===
-        if (!empty($orderIds)) {
-            $this->completeOrders($orderIds, $transaction);
-        }
 
         return response()->json([
             'success' => true,
@@ -242,56 +234,27 @@ class PayPalService implements PaymentInterface
     }
 
     /**
-     * Complete orders after successful payment
-     * SAME implementation as LocalTestService / StripeService
-     */
-    private function completeOrders($orderIds, $transaction)
-    {
-        $orders = Order::whereIn('id', $orderIds)
-            ->where('user_id', $transaction->user_id)
-            ->whereIn('status', [0, 2])
-            ->get();
-
-        foreach ($orders as $order) {
-            $order->status = 1; // completed
-            $order->payment = 'paypal';
-            $order->save();
-
-            $walletController = new WalletController();
-            // $walletController->addTutorFinance($order, $order->ref_id, $order->ref_type);
-            
-            // Create wallet transaction record
-            WalletTransaction::create([
-                'user_id' => $transaction->user_id,
-                'order_id' => $order->id,
-                'type' => 'debit',
-                'amount' => $order->price,
-                'description' => 'Payment for order #' . $order->id . ' (PayPal)',
-            ]);
-        }
-    }
-
-    /**
      * PayPal OAuth token
      */
     private function getAccessToken(): string
     {
-        if (!$this->clientId || !$this->clientSecret) {
+        if (! $this->clientId || ! $this->clientSecret) {
             throw new \RuntimeException('PayPal credentials are missing (client_id/client_secret)');
         }
 
         $res = Http::asForm()
             ->withBasicAuth($this->clientId, $this->clientSecret)
             ->acceptJson()
-            ->post($this->baseUrl . '/v1/oauth2/token', [
+            ->post($this->baseUrl.'/v1/oauth2/token', [
                 'grant_type' => 'client_credentials',
             ]);
 
-        if (!$res->successful()) {
-            throw new \RuntimeException('PayPal token request failed: ' . $res->body());
+        if (! $res->successful()) {
+            throw new \RuntimeException('PayPal token request failed: '.$res->body());
         }
 
         $json = $res->json();
+
         return $json['access_token'] ?? '';
     }
 

@@ -347,7 +347,7 @@
                                 {{ label_text('global', 'site.The certificate is shareable', __('site.The certificate is shareable')) }}
                             </p>
                             <div class="flex items-center gap-2 mb-2">
-                                <a href="#" data-url="{{ url(route('site.singlecourse', $course->id)) }}"
+                                <a href="#" data-url="{{ url(route('site.singlecourse', ['id' => $course->id])) }}"
                                     class="share-btn p-1.5 rounded-full transition-all duration-300 hover:scale-105 hover:ml-1 rtl:hover:mr-1">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">

@@ -71,7 +71,7 @@
 
                         // ===== URL (عدّلي حسب routes عندك) =====
                         // $courseUrl = url('/course/' . $course->id);
-                        $courseUrl = route('site.singlecourse', $course->id);
+                        $courseUrl = route('site.singlecourse', ['id' => $course->id]);
 
                         // ===== Duration =====
                         $hours = $course->course_duration_hours ?? $course->duration_hours ?? 0;

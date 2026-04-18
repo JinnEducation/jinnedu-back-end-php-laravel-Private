@@ -33,7 +33,8 @@
                 <!-- Hidden Fields -->
                 <input type="hidden" name="checkout_type" id="checkout-type" value="{{ $checkoutType }}"
                     data-checkout-url="{{ route('checkout.checkout') }}">
-                <input type="hidden" name="order_ids" id="order-ids" value="{{ $orders->pluck('id')->implode(',') }}">
+                <input type="hidden" name="order_ids" id="order-ids"
+                    value="{{ implode(',', $payableOrderIds ?? []) }}">
 
                 <!-- Items Section (for payment mode) -->
                 @if ($checkoutType === 'pay')
@@ -49,7 +50,8 @@
                             <div class="space-y-4 px-4 pb-4" id="element">
                                 @foreach ($orders as $order)
                                     <div class="flex justify-between items-center element-item"
-                                        data-price="{{ $order->price }}">
+                                        data-price="{{ $order->price }}"
+                                        data-payable="{{ in_array($order->status, [0, 2]) ? '1' : '0' }}">
                                         <div class="flex flex-col">
                                             <span
                                                 class="text-base text-black font-medium">{{ label_text('global', 'Order', __('site.Order')) }}
@@ -66,11 +68,31 @@
                                             @endif
                                         </div>
                                         <span
-                                            class="text-base text-black font-semibold">{{ number_format($order->price, 2) }}$</span>
+                                            class="text-base font-semibold {{ in_array($order->status, [0, 2]) ? 'text-black' : 'text-gray-400' }}">{{ number_format($order->price, 2) }}$</span>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
+
+                        @if (!empty($nonPayableOrderIds))
+                            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
+                                <p class="text-sm text-yellow-800 mb-1">
+                                    {{ label_text('global', 'paid_orders_excluded', 'Already paid orders are excluded from this payment.') }}
+                                </p>
+                                <p class="text-xs text-yellow-700">
+                                    {{ label_text('global', 'excluded_order_ids', 'Excluded order IDs') }}:
+                                    {{ implode(',', $nonPayableOrderIds) }}
+                                </p>
+                            </div>
+                        @endif
+
+                        @if (!$hasPayableOrders)
+                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p class="text-sm text-red-800">
+                                    {{ label_text('global', 'no_payable_orders_found', 'No payable orders found.') }}
+                                </p>
+                            </div>
+                        @endif
                     @else
                         {{-- Show message if no orders found --}}
                         <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -253,7 +275,8 @@
                         </span>
                     </div>
                     <button id="purchase-btn"
-                        class="px-4 py-3 text-xs text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm">
+                        class="px-4 py-3 text-xs text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        {{ $checkoutType === 'pay' && !$hasPayableOrders ? 'disabled' : '' }}>
                         {{ label_text('global', 'purchase_confirmation', __('site.purchase_confirmation')) }}
                     </button>
                 </div>
