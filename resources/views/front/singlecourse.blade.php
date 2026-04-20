@@ -546,7 +546,11 @@
                                         <i class="text-sm fas fa-clock text-[#1B449C]"></i>
                                         <span class="text-sm text-black">
                                             {{-- مدة تقريبية مؤقتة --}}
-                                            {{ label_text('global', 'site.Course duration', __('site.Course duration')) }}
+                                            @if($hours)
+                                                {{ $hours }} {{ __('site.total hours') }}
+                                            @else
+                                                {{ __('site.Flexible Schedule') }}
+                                            @endif
                                         </span>
                                     </div>
 
