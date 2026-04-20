@@ -63,7 +63,7 @@
         <div class="container mx-auto">
             <div class="grid grid-cols-1 gap-12 md:mb-12 md:gap-20 md:grid-cols-3" id="coursesGridBlogs">
                 <div class="flex flex-col gap-4 items-start text-justify md:col-span-2 md:text-start">
-                    <p>
+                    <p class="prose prose-lg max-w-none {{ app()->getLocale() == 'ar' ? 'prose-rtl' : '' }}">
                         {!! $article->langsAll?->first()?->description !!}
                     </p>
                 </div>

@@ -3,7 +3,6 @@ module.exports = {
     content: [
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
-        "./resources/**/*.vue",
         "./public/front/**/*.html",
     ],
     theme: {
@@ -107,6 +106,7 @@ module.exports = {
         },
     },
     plugins: [
+        require('@tailwindcss/typography'),
         // Plugin للـ RTL Support
         function ({ addUtilities, addComponents, theme, addVariant }) {
             addVariant("rtl", '[dir="rtl"] &');

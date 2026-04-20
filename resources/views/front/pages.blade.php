@@ -61,7 +61,7 @@
     <section class="pt-8 pb-32">
         <div class="container px-4 mx-auto lg:px-20">
             @if ($pageDescription)
-                <article class="space-y-6 leading-7 text-gray-700 rtl:text-right">
+                <article class="space-y-6 leading-7 text-gray-700 rtl:text-right prose prose-lg max-w-none {{ app()->getLocale() == 'ar' ? 'prose-rtl' : '' }}">
                     {!! $pageDescription !!}
                 </article>
             @else

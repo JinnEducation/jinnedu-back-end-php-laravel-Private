@@ -94,7 +94,7 @@
                         <h2 class="text-lg font-bold text-black mt-2 mb-3">
                             {{ label_text('global', 'site.About the course', __('site.About the course')) }}</h2>
                         @if (!empty($courseLang?->description))
-                            <div class="text-[15px] text-black leading-7 space-y-4">
+                            <div class="text-[15px] text-black leading-7 space-y-4 prose prose-lg max-w-none {{ app()->getLocale() == 'ar' ? 'prose-rtl' : '' }}">
                                 {!! nl2br(e($courseLang->description)) !!}
                             </div>
                         @endif

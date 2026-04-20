@@ -3,7 +3,8 @@
     @php
         $currentLocale = app()->getLocale();
         $blogTranslation = $blog->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->langsAll?->first();
-        $categoryTranslation = $blog->category?->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->category?->langsAll?->first();
+        $categoryTranslation =
+            $blog->category?->langsAll?->firstWhere('lang', $currentLocale) ?? $blog->category?->langsAll?->first();
     @endphp
 
     <!-- Hero Section -->
@@ -20,7 +21,8 @@
                     </li>
                     <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
+                            <i
+                                class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }}"></i>
                         </span>
                     </li>
                     <li>
@@ -29,7 +31,8 @@
                     </li>
                     <li>
                         <span class="text-gray-400">
-                            <i class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
+                            <i
+                                class="font-light fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }}"></i>
                         </span>
                     </li>
                     <!-- Current Page -->
@@ -55,7 +58,8 @@
                 </div>
                 <div class="flex gap-1 items-center">
                     <i class="text-lg fas fa-user text-primary"></i>
-                    <span class="text-sm text-gray-400">{{ label_text('global', 'Posted-By', __('site.Posted-By')) }} : {{ $blog->users?->name ?? '' }}</span>
+                    <span class="text-sm text-gray-400">{{ label_text('global', 'Posted-By', __('site.Posted-By')) }} :
+                        {{ $blog->users?->name ?? '' }}</span>
                 </div>
             </div>
         </div>
@@ -66,16 +70,19 @@
         <div class="container mx-auto">
             <div class="grid grid-cols-1 gap-12 md:mb-12 md:gap-20 md:grid-cols-3" id="coursesGridBlogs">
                 <div class="flex flex-col gap-4 items-start text-justify md:col-span-2 md:text-start">
-                    <p>
+                    <div class="prose prose-lg max-w-none {{ app()->getLocale() == 'ar' ? 'prose-rtl' : '' }}">
                         {!! $blog->langsAll?->first()?->description !!}
-                    </p>
+                    </div>
                 </div>
                 <div class="md:px-6 md:col-span-1">
-                    <h3 class="mb-4 text-2xl font-bold">{{ label_text('global', 'Explore-Related-Courses', __('site.Explore-Related-Courses')) }}</h3>
+                    <h3 class="mb-4 text-2xl font-bold">
+                        {{ label_text('global', 'Explore-Related-Courses', __('site.Explore-Related-Courses')) }}</h3>
                     <div class="grid grid-cols-1 gap-7 mb-12 md:gap-5" id="coursesGridBlog">
                         @foreach ($blogs as $relatedBlog)
                             @php
-                                $relatedTranslation = $relatedBlog->langsAll?->firstWhere('lang', $currentLocale) ?? $relatedBlog->langsAll?->first();
+                                $relatedTranslation =
+                                    $relatedBlog->langsAll?->firstWhere('lang', $currentLocale) ??
+                                    $relatedBlog->langsAll?->first();
                                 $relatedSlug = $relatedTranslation?->slug;
                             @endphp
 
@@ -87,7 +94,8 @@
                                     <img src="{{ $relatedBlog->image_url }}" alt="{{ $relatedTranslation->title }}"
                                         class="object-cover w-full h-full">
                                     <div class="absolute right-2 top-4">
-                                        <span class="px-4 py-2 text-base text-white rounded-xl bg-primary">{{ label_text('global', 'Free-Learn', __('site.Free-Learn')) }}</span>
+                                        <span
+                                            class="px-4 py-2 text-base text-white rounded-xl bg-primary">{{ label_text('global', 'Free-Learn', __('site.Free-Learn')) }}</span>
                                     </div>
                                     <div
                                         class="absolute top-0 left-0 w-full h-full opacity-0 transition-all duration-300 bg-black/50 group-hover:opacity-100">
@@ -114,7 +122,9 @@
                                                             fill="#1B449C" />
                                                     </svg>
                                                 </i>
-                                                <span class="text-sm text-gray-400">{{ label_text('global', 'Level', __('site.Level')) }} :
+                                                <span
+                                                    class="text-sm text-gray-400">{{ label_text('global', 'Level', __('site.Level')) }}
+                                                    :
                                                     {{ $relatedBlog->lessons }}</span>
                                             </div>
 
@@ -134,7 +144,8 @@
                             <button
                                 class="flex justify-center items-center w-8 h-8 rounded-full transition-all duration-200 cursor-pointer text-primary hover:text-white hover:bg-primary"
                                 data-page="prev">
-                                <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left'}}"></i>
+                                <i
+                                    class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-right' : 'fa-chevron-left' }}"></i>
                             </button>
 
                             <div id="pagesNumbers" class="flex gap-1"></div>
@@ -142,7 +153,8 @@
                             <button
                                 class="flex justify-center items-center w-8 h-8 rounded-full transition-all duration-200 cursor-pointer text-primary hover:text-white hover:bg-primary"
                                 data-page="next">
-                                <i class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right'}}"></i>
+                                <i
+                                    class="fas {{ app()->getLocale() == 'ar' ? 'fa-chevron-left' : 'fa-chevron-right' }}"></i>
                             </button>
                         </div>
                     </div>
