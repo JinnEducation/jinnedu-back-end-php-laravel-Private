@@ -465,7 +465,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Recent courses' => 'الدورات الحديثة',
     'All categories' => 'جميع التصنيفات',
     'total hours' => 'إجمالي الساعات',
-    'Self paced' => 'ذاتي الوتيرة',
+    'Flexible Schedule' => 'جدول مرن',
     'Free' => 'مجاني',
     'Preview this course' => 'معاينة الدورة',
     'Load More' => 'تحميل المزيد',
@@ -591,4 +591,21 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Courses' => 'الدورات',
 
     'Go to Course' => 'الانتقال إلى الدورة',
+
+    // Error pages
+    'Page Not Found' => 'الصفحة غير موجودة',
+    'page_not_found_msg' => 'عذراً، لم نتمكن من إيجاد الصفحة التي تبحث عنها.',
+    'Access Denied' => 'غير مصرح لك',
+    'access_denied_msg' => 'ليس لديك صلاحية للوصول إلى هذه الصفحة.',
+    'Page Expired' => 'انتهت صلاحية الصفحة',
+    'page_expired_msg' => 'انتهت الجلسة، يرجى تحديث الصفحة والمحاولة مجدداً.',
+    'Server Error' => 'خطأ في الخادم',
+    'server_error_msg' => 'حدث خطأ غير متوقع من جانبنا، نعمل على إصلاحه.',
+    'Service Unavailable' => 'الخدمة غير متاحة',
+    'service_unavailable_msg' => 'الموقع في وضع الصيانة حالياً، سنعود قريباً.',
+    'Connection Error' => 'خطأ في الاتصال',
+    'connection_error_msg' => 'حدث خطأ في الاتصال، يرجى المحاولة لاحقاً.',
+    'Return to Homepage' => 'العودة إلى الرئيسية',
+    'Refresh Page' => 'تحديث الصفحة',
+
 ];

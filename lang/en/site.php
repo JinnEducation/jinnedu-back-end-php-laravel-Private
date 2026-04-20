@@ -478,7 +478,7 @@ return [
     'Recent courses' => 'Recent courses',
     'All categories' => 'All categories',
     'total hours' => 'total hours',
-    'Self paced' => 'Self paced',
+    'Flexible Schedule' => 'Flexible Schedule',
     'Free' => 'Free',
     'Preview this course' => 'Preview this course',
     'Load More' => 'Load More',
@@ -607,5 +607,21 @@ return [
 
     'Go to Course' => 'Go to Course',
     'Choose From List' => 'Choose From List',
+
+    // Error pages
+    'Page Not Found' => 'Page Not Found',
+    'page_not_found_msg' => 'Sorry, we could not find the page you are looking for.',
+    'Access Denied' => 'Access Denied',
+    'access_denied_msg' => 'You do not have permission to access this page.',
+    'Page Expired' => 'Page Expired',
+    'page_expired_msg' => 'Your session has expired. Please refresh the page and try again.',
+    'Server Error' => 'Server Error',
+    'server_error_msg' => 'Something went wrong on our end. We are working to fix it.',
+    'Service Unavailable' => 'Service Unavailable',
+    'service_unavailable_msg' => 'We are currently down for maintenance. Please check back soon.',
+    'Connection Error' => 'Connection Error',
+    'connection_error_msg' => 'A connection error occurred. Please try again later.',
+    'Return to Homepage' => 'Return to Homepage',
+    'Refresh Page' => 'Refresh Page',
 
 ];

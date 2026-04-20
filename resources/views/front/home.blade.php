@@ -389,7 +389,7 @@
                                             @if($hours)
                                                 {{ $hours }} {{ __('site.total hours') }}
                                             @else
-                                                {{ __('site.Self paced') }}
+                                                {{ __('site.Flexible Schedule') }}
                                             @endif
                                         </span>
                                     </div>

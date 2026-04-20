@@ -566,7 +566,7 @@
                                 <!-- Hover view -->
                                 <div
                                     class="hidden opacity-0 transition-all duration-300 group-hover:flex group-hover:opacity-100">
-                                    <a href="{{ route('front.course.single', [app()->getLocale(), $item->id]) }}"
+                                    <a href="{{ route('site.singlecourse', ['id' => $item->id]) }}"
                                         class="px-4 py-2 w-full text-sm font-medium text-center text-white rounded-lg transition-all duration-300 hover:opacity-90 bg-[#1B449C]">
                                         {{ label_text('global', 'site.Preview this course', __('site.Preview this course')) }}
                                     </a>
