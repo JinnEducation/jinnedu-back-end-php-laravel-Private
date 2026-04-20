@@ -7,6 +7,7 @@ use App\Http\Requests\Setting\SettingRequest;
 
 use App\Models\User;
 use App\Models\Setting;
+use App\Models\Label;
 
 use Bouncer;
 use Mail;
@@ -14,6 +15,32 @@ use Mail;
 
 class SettingController extends Controller
 {
+    private function normalizeLabelName($name)
+    {
+        return str_replace(' ', '-', strtolower($name));
+    }
+
+    private function getSettingTranslations($name)
+    {
+        $label = Label::where('name', $this->normalizeLabelName($name))
+            ->where('file', 'settings')
+            ->first();
+
+        return $label ? $label->translations()->get() : null;
+    }
+
+    private function syncSettingLabelTranslations($name, $trans)
+    {
+        $labelRequest = (object) [
+            'name' => $name,
+            'file' => 'settings',
+            'title' => $name,
+            'trans' => $trans,
+        ];
+
+        $this->addLabelAndTranslations($labelRequest);
+    }
+
     public function index(Request $request)
     {
         $limit = setDataTablePerPageLimit($request->limit);
@@ -25,6 +52,10 @@ class SettingController extends Controller
         }
          
          $items = $items->paginate($limit);
+
+         foreach($items as $item){
+            $item->trans = $this->getSettingTranslations($item->name);
+         }
         
          return response([
                 'success' => true,
@@ -45,7 +76,7 @@ class SettingController extends Controller
 
     public function storeUpdateRequest($request, $id=0)
     {
-        $data = ['name'=>$request->name,'type'=>$request->type,'value'=>$request->value,'options'=>$request->options,'icon'=>$request->icon,'class'=>$request->class_name,'color'=>$request->color];
+        $data = ['name'=>$request->name,'type'=>$request->type,'value'=>$request->value,'options'=>$request->options,'icon'=>$request->icon,'class'=>$request->class,'color'=>$request->color];
         
         if(!empty($request->type) && $request->type=='file'){
             if(!empty($request->value)){
@@ -65,6 +96,9 @@ class SettingController extends Controller
         }else {
             $item = Setting::create($data);
         }
+
+        $this->syncSettingLabelTranslations($data['name'], $request->trans);
+        $item->trans = $this->getSettingTranslations($item->name);
         
         
         return response([
@@ -85,6 +119,8 @@ class SettingController extends Controller
                             'msg-code' => '111'
                         ] , 200);
         }
+
+        $item->trans = $this->getSettingTranslations($item->name);
         
         return response([
                 'success' => true,

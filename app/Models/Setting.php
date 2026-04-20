@@ -11,7 +11,7 @@ class Setting extends Model
 {
     use HasFactory, SoftDeletes;
 
-   protected $fillable = ['name', 'value'];
+   protected $fillable = ['name', 'type', 'value', 'options', 'icon', 'class', 'color', 'user_id'];
     
    public static function valueOf(string $name, $default = null): mixed
     {
