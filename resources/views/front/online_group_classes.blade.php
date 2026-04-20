@@ -152,17 +152,44 @@
     <section class="pb-8 md:pb-16 pt-6">
         <div class="container mx-auto">
             @if ($classes->count() > 0)
+            @php
+                $favoriteClassIds = [];
+
+                if (auth()->check() && $classes->count()) {
+                    $favoriteClassIds = \App\Models\UserFavorite::query()
+                        ->where('user_id', auth()->id())
+                        ->where('type', 3)
+                        ->whereIn('ref_id', $classes->pluck('id'))
+                        ->pluck('ref_id')
+                        ->map(fn ($id) => (int) $id)
+                        ->all();
+                }
+            @endphp
             <div>
                 <!-- Courses Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 mb-12 md:gap-10"
                     id="coursesGridGroupClasses">
 
                     @foreach ($classes as $class)
+                        @php
+                            $isFavorite = in_array((int) $class->id, $favoriteClassIds, true);
+                        @endphp
                         <div
                             class="block overflow-hidden bg-white rounded-lg shadow-md transition-all duration-300 course-card hover:shadow-xl">
                             <div class="overflow-hidden relative h-54">
                                 <img src="{{ asset('storage/'.$class->imageInfo?->path) }}" alt="Course"
                                     class="object-cover w-full h-full">
+                                <div class="absolute top-3 right-3 rtl:left-3 rtl:right-auto group">
+                                    <button type="button" data-ref="{{ $class->id }}" data-type="3"
+                                        class="fav-card-btn cursor-pointer transition-all duration-300 flex items-center justify-center w-9 h-9 rounded-full bg-white/95 hover:text-red-600 {{ $isFavorite ? 'text-red-600' : 'text-gray-300' }}">
+                                        <i class="fa-regular fa-heart not-faved {{ $isFavorite ? '!hidden' : '' }}"></i>
+                                        <i class="fa-solid fa-heart text-red-600 faved {{ $isFavorite ? '' : '!hidden' }}"></i>
+                                    </button>
+                                    <div
+                                        class="absolute left-1/2 -translate-x-1/2 mt-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none whitespace-nowrap">
+                                        {{ label_text('global', 'Add to favorites', __('site.Add to favorites')) }}
+                                    </div>
+                                </div>
                             </div>
                             <div class="p-5">
                                 <h3 class="mb-3 text-lg font-bold text-primary">{{ $class->langsAll?->first()->title }}</h3>

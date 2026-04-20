@@ -12,7 +12,7 @@ class UserFavoriteController extends Controller
     {
         $data = $request->validate([
             'ref_id' => ['required', 'integer'],
-            'type'   => ['required', 'in:1,3'],
+            'type'   => ['required', 'in:1,2,3'],
         ]);
 
         $userId = auth()->id();

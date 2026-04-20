@@ -246,7 +246,28 @@
                                 $hasDiscount = $course->has_active_discount;
                                 $price = (float) $course->price;
                                 $final = (float) $course->final_price;
+                                $isCourseFavorite = auth()->check()
+                                    ? \App\Models\UserFavorite::query()
+                                        ->where('user_id', auth()->id())
+                                        ->where('type', 2)
+                                        ->where('ref_id', $course->id)
+                                        ->exists()
+                                    : false;
                             @endphp
+
+                            <div class="flex justify-end mb-3">
+                                <div class="relative group">
+                                    <button type="button" data-ref="{{ $course->id }}" data-type="2"
+                                        class="fav-course-btn cursor-pointer transition-all duration-300 flex items-center justify-center w-9 h-9 rounded-full bg-[#1B449C0D] hover:bg-[#1B449C26] hover:text-red-600 {{ $isCourseFavorite ? 'text-red-600' : 'text-gray-400' }}">
+                                        <i class="fa-regular fa-heart not-faved {{ $isCourseFavorite ? '!hidden' : '' }}"></i>
+                                        <i class="fa-solid fa-heart text-red-600 faved {{ $isCourseFavorite ? '' : '!hidden' }}"></i>
+                                    </button>
+                                    <div
+                                        class="absolute left-1/2 -translate-x-1/2 mt-2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none whitespace-nowrap">
+                                        {{ label_text('global', 'Add to favorites', __('site.Add to favorites')) }}
+                                    </div>
+                                </div>
+                            </div>
 
                             <p class="text-[13px] text-black font-bold mb-1">
                                 {{ $isFree ? label_text('global', 'site.This course is free', __('site.This course is free')) : label_text('global', 'site.This paid course is included in the plans', __('site.This paid course is included in the plans')) }}
@@ -721,6 +742,10 @@
     @push('scripts')
         <script src="{{ asset('front/assets/js/course_detail.js') }}"></script>
         <script>
+            const toggleFavoriteUrl = "{{ route('site.user_favorites.toggle') }}";
+            const loginUrl = "{{ route('login') }}";
+            const csrfToken = "{{ csrf_token() }}";
+
             function openPromoVideo() {
                 const modal = document.getElementById('promoVideoModal');
                 modal.classList.remove('hidden');
@@ -765,6 +790,60 @@
                 }
                 $('#lessonVideoModal').addClass('hidden').removeClass('flex');
             }
+
+            const setFavoriteUI = function($btn, isFavorite) {
+                const $iconNotFaved = $btn.find('.not-faved');
+                const $iconFaved = $btn.find('.faved');
+
+                if (isFavorite) {
+                    $iconNotFaved.addClass('!hidden');
+                    $iconFaved.removeClass('!hidden');
+                    $btn.removeClass('text-gray-400').addClass('text-red-600');
+                    return;
+                }
+
+                $iconFaved.addClass('!hidden');
+                $iconNotFaved.removeClass('!hidden');
+                $btn.removeClass('text-red-600').addClass('text-gray-400');
+            };
+
+            $(document).on('click', '.fav-course-btn', function(e) {
+                e.preventDefault();
+
+                const $btn = $(this);
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: toggleFavoriteUrl,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        ref_id: parseInt($btn.data('ref')),
+                        type: parseInt($btn.data('type'))
+                    }),
+                    success: function(data) {
+                        if (data.status === 'added') {
+                            setFavoriteUI($btn, true);
+                        }
+
+                        if (data.status === 'removed') {
+                            setFavoriteUI($btn, false);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 401) {
+                            window.location.href = loginUrl;
+                        }
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
         </script>
     @endpush
 

@@ -163,7 +163,7 @@
                     </div>
 
                     <!-- K-12 Link -->
-                    <a href="#" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
+                    <a href="{{ route('site.coming_soon') }}" class="nav-link {{ request()->is('k-12') ? 'active' : '' }}">
                         {{ label_text('global', 'site.K-12', __('site.K-12')) }}
                     </a>
 
@@ -286,7 +286,7 @@
                         @php
                             $user = Auth::user() ?? null;
                         @endphp
-                        @if ($user->type == 1)
+                        @if (in_array($user->type, [1, 2]))
                             <div>
                                 <div
                                     class="flex items-center gap-2 p-2 text-gray-700 rounded-lg transition-all duration-300
@@ -319,12 +319,14 @@
                                     </span>
                                 </div>
                             </div>
-                            <div>
-                                <button onclick="window.location.href='{{ route('checkout') }}'"
-                                    class="rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer">
-                                    {{ label_text('global', 'site.buy_credit', __('site.buy_credit')) }}
-                                </button>
-                            </div>
+                            @if ($user->type == 1)
+                                <div>
+                                    <button onclick="window.location.href='{{ route('checkout') }}'"
+                                        class="rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer">
+                                        {{ label_text('global', 'site.buy_credit', __('site.buy_credit')) }}
+                                    </button>
+                                </div>
+                            @endif
                         @endif
 
                         <!-- Logged In User (Hidden by default) -->
@@ -447,7 +449,7 @@
             </div>
 
             <!-- K-12 Link -->
-            <a href="#"
+            <a href="{{ route('site.coming_soon') }}"
                 class="block px-3 py-2 text-gray-700 rounded-lg transition-colors duration-200 nav-mobile-link hover:text-primary-600 hover:bg-gray-50">
                 <i class="w-5 text-center fas fa-graduation-cap text-primary-600 me-2"></i>
                 <span>{{ label_text('global', 'site.K-12', __('site.K-12')) }}</span>
@@ -621,7 +623,7 @@
                     </div>
                 </div>
                 <div class="flex justify-around items-center">
-                    @if ($user->type == 1)
+                    @if (in_array($user->type, [1, 2]))
                         <div>
                             <div
                                 class="flex items-center gap-2 p-2 text-gray-700 rounded-lg transition-all duration-300
@@ -654,12 +656,14 @@
                                 </span>
                             </div>
                         </div>
-                        <div>
-                            <button onclick="window.location.href='{{ route('checkout') }}'"
-                                class="rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer">
-                                {{ label_text('global', 'site.buy_credit', __('site.buy_credit')) }}
-                            </button>
-                        </div>
+                        @if ($user->type == 1)
+                            <div>
+                                <button onclick="window.location.href='{{ route('checkout') }}'"
+                                    class="rounded-sm px-2 lg:px-5 flex-shrink-0 py-2 text-gray-600 border border-gray-200 transition-all duration-300 text-md category-blogs-btn hover:text-white hover:bg-primary hover:scale-105 hover:cursor-pointer">
+                                    {{ label_text('global', 'site.buy_credit', __('site.buy_credit')) }}
+                                </button>
+                            </div>
+                        @endif
                     @endif
                 </div>
             @endauth
