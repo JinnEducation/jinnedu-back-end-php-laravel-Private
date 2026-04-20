@@ -513,6 +513,8 @@
                         $hasDiscount = $item->has_active_discount;
                         $price = (float) $item->price;
                         $final = (float) $item->final_price;
+                        // ===== Duration =====
+                        $hours = $item->course_duration_hours ?? $item->duration_hours ?? 0;
                     @endphp
 
                     <div
