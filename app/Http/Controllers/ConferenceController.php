@@ -559,7 +559,16 @@ class ConferenceController extends Controller
         $items = $items->paginate($limit);
         foreach ($items as $item) {
             $item->tutor_name = $item->tutor->name;
-            $item->student;
+
+            if ((int) $item->ref_type === 1) {
+                $studentsIds = GroupClassStudent::where('class_id', $item->ref_id)->pluck('student_id')->toArray();
+                $item->students = User::whereIn('id', $studentsIds)->get();
+                $item->student = null;
+            } else {
+                $item->student;
+                $item->students = collect();
+            }
+
             $item->rating = $item->reviews()->avg('stars');
             unset($item->tutor);
         }

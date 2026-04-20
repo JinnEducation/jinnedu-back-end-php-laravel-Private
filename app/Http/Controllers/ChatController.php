@@ -68,6 +68,9 @@ class ChatController extends Controller
             'users.id',
             'users.type',
             'users.avatar',
+            'profiles.first_name as profile_first_name',
+            'profiles.last_name as profile_last_name',
+            'profiles.avatar_path as profile_avatar_path',
             'users.online',
             'users.last_online_date',
             'contacts.user_id',
@@ -76,7 +79,9 @@ class ChatController extends Controller
             'contacts.last_msg_date',
             'contacts.status',
             'contacts.updated_at'
-        )->leftJoin(\DB::raw('(select * from chat_contacts where user_id='.$user->id.') contacts'), 'contacts.contact_id', 'users.id');
+        )
+            ->leftJoin('user_profiles as profiles', 'profiles.user_id', '=', 'users.id')
+            ->leftJoin(\DB::raw('(select * from chat_contacts where user_id='.$user->id.') contacts'), 'contacts.contact_id', 'users.id');
 
         if (intval($id) > 0) {
             $contacts = $contacts->where('users.id', $id)->first();
@@ -109,6 +114,8 @@ class ChatController extends Controller
         $contacts = ChatContact::query()
             ->leftJoin('users as first_user', 'first_user.id', '=', 'chat_contacts.user_id')
             ->leftJoin('users as second_user', 'second_user.id', '=', 'chat_contacts.contact_id')
+            ->leftJoin('user_profiles as first_profile', 'first_profile.user_id', '=', 'chat_contacts.user_id')
+            ->leftJoin('user_profiles as second_profile', 'second_profile.user_id', '=', 'chat_contacts.contact_id')
             ->whereColumn('chat_contacts.user_id', '<', 'chat_contacts.contact_id')
             ->select(
                 'chat_contacts.user_id',
@@ -120,11 +127,17 @@ class ChatController extends Controller
                 'first_user.id as first_user_id',
                 'first_user.name as first_user_name',
                 'first_user.avatar as first_user_avatar',
+                'first_profile.first_name as first_user_first_name',
+                'first_profile.last_name as first_user_last_name',
+                'first_profile.avatar_path as first_user_avatar_path',
                 'first_user.online as first_user_online',
                 'first_user.type as first_user_type',
                 'second_user.id as second_user_id',
                 'second_user.name as second_user_name',
                 'second_user.avatar as second_user_avatar',
+                'second_profile.first_name as second_user_first_name',
+                'second_profile.last_name as second_user_last_name',
+                'second_profile.avatar_path as second_user_avatar_path',
                 'second_user.online as second_user_online',
                 'second_user.type as second_user_type'
             )
@@ -146,14 +159,20 @@ class ChatController extends Controller
                 $item->first_user_name,
                 $item->first_user_avatar,
                 $item->first_user_online,
-                $item->first_user_type
+                $item->first_user_type,
+                $item->first_user_first_name,
+                $item->first_user_last_name,
+                $item->first_user_avatar_path
             );
             $secondUser = $this->buildUserPayloadFromValues(
                 $item->second_user_id,
                 $item->second_user_name,
                 $item->second_user_avatar,
                 $item->second_user_online,
-                $item->second_user_type
+                $item->second_user_type,
+                $item->second_user_first_name,
+                $item->second_user_last_name,
+                $item->second_user_avatar_path
             );
 
             $item->first_user = $firstUser;
@@ -188,6 +207,13 @@ class ChatController extends Controller
                 ->where('to_user', $user->id)
                 ->where('seen', 0)
                 ->count();
+
+            $contact->name = $this->resolveDisplayName(
+                $contact->name,
+                $contact->profile_first_name ?? null,
+                $contact->profile_last_name ?? null
+            );
+            $contact->avatar = $this->resolveAvatar($contact->avatar ?? null, $contact->profile_avatar_path ?? null);
 
             if ($isMonitoringMode) {
                 $contact->status = 0;
@@ -238,22 +264,60 @@ class ChatController extends Controller
 
         return $this->buildUserPayloadFromValues(
             $user->id,
-            $user->name,
+            $user->full_name,
             $user->avatar,
             $user->online,
             $user->type
         );
     }
 
-    private function buildUserPayloadFromValues($id, $name, $avatar, $online, $type): array
+    private function buildUserPayloadFromValues(
+        $id,
+        $name,
+        $avatar,
+        $online,
+        $type,
+        $firstName = null,
+        $lastName = null,
+        $avatarPath = null
+    ): array
     {
         return [
             'id' => (int) ($id ?? 0),
-            'name' => $name,
-            'avatar' => $avatar,
+            'name' => $this->resolveDisplayName($name, $firstName, $lastName),
+            'avatar' => $this->resolveAvatar($avatar, $avatarPath),
             'online' => (int) ($online ?? 0),
             'type' => (int) ($type ?? 0),
         ];
+    }
+
+    private function resolveDisplayName($name, $firstName = null, $lastName = null): string
+    {
+        $profileName = trim(($firstName ?? '').' '.($lastName ?? ''));
+        if ($profileName !== '') {
+            return $profileName;
+        }
+
+        return $name ?: 'User';
+    }
+
+    private function resolveAvatar($avatar = null, $avatarPath = null): string
+    {
+        $candidate = $avatarPath ?: $avatar;
+        if (! $candidate) {
+            return asset('front/assets/imgs/tutors/1.jpg');
+        }
+
+        if (preg_match('/^https?:\/\//i', $candidate)) {
+            return $candidate;
+        }
+
+        $clean = ltrim($candidate, '/');
+        if (str_starts_with($clean, 'storage/')) {
+            return asset($clean);
+        }
+
+        return asset('storage/'.$clean);
     }
 
     // public function contacts(Request $request, $id = 0)
@@ -388,19 +452,41 @@ class ChatController extends Controller
         $monitoredUser = $this->buildMonitoredUserPayload($request, $user);
 
         // Retrieve contact using relationships
-        $contact = User::select('id', 'name', 'avatar', 'online', 'type')
-            ->where('id', $id)
+        $contact = User::query()
+            ->leftJoin('user_profiles as profiles', 'profiles.user_id', '=', 'users.id')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.avatar',
+                'users.online',
+                'users.type',
+                'profiles.first_name as profile_first_name',
+                'profiles.last_name as profile_last_name',
+                'profiles.avatar_path as profile_avatar_path'
+            )
+            ->where('users.id', $id)
             ->first();
         $firstUser = $this->buildUserPayloadFromValues(
             $user->id,
-            $user->name,
+            $user->full_name,
             $user->avatar,
             $user->online,
             $user->type
         );
         $secondUser = $contact
-            ? $this->buildUserPayloadFromValues($contact->id, $contact->name, $contact->avatar, $contact->online, $contact->type ?? 0)
+            ? $this->buildUserPayloadFromValues(
+                $contact->id,
+                $contact->name,
+                $contact->avatar,
+                $contact->online,
+                $contact->type ?? 0,
+                $contact->profile_first_name ?? null,
+                $contact->profile_last_name ?? null,
+                $contact->profile_avatar_path ?? null
+            )
             : null;
+
+        $contact = $secondUser ? (object) $secondUser : null;
 
         $limit = setDataTablePerPageLimit($request->limit);
         if (! empty($request->first_id)) {
@@ -415,7 +501,7 @@ class ChatController extends Controller
         }
 
         // Retrieve messages using relationships
-        $items = Chat::with(['fromUser', 'toUser'])
+        $items = Chat::with(['fromUser.profile', 'toUser.profile'])
             ->where(function ($query) use ($user, $id) {
                 $query->where('from_user', $user->id)
                     ->where('to_user', $id);
@@ -441,8 +527,8 @@ class ChatController extends Controller
             $fromUser = $item->fromUser;
             $item->from_user = [
                 'id' => $fromUser?->id,
-                'name' => $fromUser?->name,
-                'avatar' => $fromUser?->avatar,
+                'name' => $fromUser?->full_name ?: $fromUser?->name,
+                'avatar' => $fromUser?->avatar ?: asset('front/assets/imgs/tutors/1.jpg'),
             ];
 
             $item->setRelation('fromUser', null);
