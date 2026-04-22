@@ -15,6 +15,7 @@ use App\Models\ConferenceComplaint;
 use App\Models\Payout;
 use App\Models\TutorFinance;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -67,15 +68,118 @@ class TutorStatisticsController extends Controller
         $trialLessonCount = Order::where('ref_type', 3)->where('ref_id', $tutor->id)->count();
         $privateLessonCount = Order::where('ref_type', 4)->where('ref_id', $tutor->id)->count();
         $withdraw_amount = Payout::where(['tutor_id'=>$request->user_id, 'status'=>'P'])->sum('amount');
+        $requested_balance = Payout::where(['tutor_id' => $request->user_id, 'status' => 'R'])->sum('amount');
+
+        $pending_balance = $this->getUncalculatedConferencesBalance((int) $request->user_id);
 
         return response([
             'balance' => $balance,
             'withdraw_amount' => $withdraw_amount,
+            'pending_balance' => $pending_balance,
+            'requested_balance' => $requested_balance,
             'group_class_count'=>$groupclassCount,
             'trial_lesson_count'=>$trialLessonCount,
             'private_lesson_count'=>$privateLessonCount
         ]);
 
+    }
+
+    private function getUncalculatedConferencesBalance(int $tutorId): float
+    {
+        $groupClassPercentage = (float) (getSettingVal('group_class_fees') ?? 0);
+        $privateLessonPercentage = (float) (getSettingVal('private_lesson_fees') ?? 0);
+
+        $conferencesQuery = Conference::query()
+            ->where('tutor_id', $tutorId)
+            ->whereIn('ref_type', [1, 4]);
+
+        if (Schema::hasColumn('conferences', 'cancelled')) {
+            $conferencesQuery->where(function ($query) {
+                $query->whereNull('cancelled')->orWhere('cancelled', 0);
+            });
+        }
+
+        $conferences = $conferencesQuery->get();
+
+        $total = 0.0;
+
+        foreach ($conferences as $conference) {
+            if ($conference->ref_type == 1) {
+                $isCalculated = TutorFinance::where([
+                    'ref_type' => 1,
+                    'ref_id' => $conference->ref_id,
+                    'tutor_id' => $conference->tutor_id,
+                    'conference_id' => $conference->id,
+                ])->exists();
+
+                if ($isCalculated) {
+                    continue;
+                }
+
+                $groupClass = GroupClass::find($conference->ref_id);
+                $tutor = User::find($conference->tutor_id);
+                $sessionFees = 0.0;
+
+                if ($groupClass && $tutor) {
+                    $totalClassesLengthHours = ((float) ($groupClass->total_classes_length ?? 0)) / 60;
+                    $classesCount = max((int) ($groupClass->classes ?? 1), 1);
+                    $hourlyRate = (float) ($tutor->tutorProfile?->hourly_rate ?? 10);
+                    $sessionFees = $hourlyRate * ($totalClassesLengthHours / $classesCount);
+
+                    if ($sessionFees <= 0) {
+                        $sessionFees = ((float) ($groupClass->price ?? 0)) / $classesCount;
+                    }
+                }
+
+                if ($sessionFees <= 0) {
+                    $groupClassOrderId = GroupClassStudent::where('class_id', $conference->ref_id)
+                        ->whereNotNull('order_id')
+                        ->value('order_id');
+
+                    if ($groupClassOrderId) {
+                        $order = Order::find($groupClassOrderId);
+                        if ($order) {
+                            $conferencesCount = max(
+                                Conference::where('ref_type', 1)
+                                    ->where('ref_id', $conference->ref_id)
+                                    ->whereNull('deleted_at')
+                                    ->count(),
+                                1
+                            );
+                            $sessionFees = ((float) $order->price) / $conferencesCount;
+                        }
+                    }
+                }
+
+                if ($sessionFees <= 0) {
+                    continue;
+                }
+
+                $total += ($groupClassPercentage * $sessionFees) / 100;
+                continue;
+            }
+
+            if ($conference->ref_type == 4) {
+                if (! $conference->order_id) {
+                    continue;
+                }
+
+                $isCalculated = TutorFinance::where('order_id', $conference->order_id)->exists();
+                if ($isCalculated) {
+                    continue;
+                }
+
+                $order = Order::find($conference->order_id);
+                if (! $order) {
+                    continue;
+                }
+
+                $total += ($privateLessonPercentage * (float) $order->price) / 100;
+            }
+        }
+
+
+        return round($total, 2);
     }
 
     public function getTutorGroupClassOrders(Request $request){

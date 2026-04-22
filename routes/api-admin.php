@@ -494,6 +494,7 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
         Route::post('/store', [PayoutController::class, 'store']);
         Route::post('/update/{id}', [PayoutController::class, 'update']);
         Route::post('/{id}/approve', [PayoutController::class, 'approve']);
+        Route::post('/{id}/payout-status', [PayoutController::class, 'updatePayoutStatus']);
         Route::post('/{id}/transfer', [PayoutController::class, 'transfer']);
     });
 

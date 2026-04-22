@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.coming_soon') }}"
+                            <a href="{{ route('site.categories',['category_id' => null]) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -76,7 +76,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.coming_soon') }}"
+                            <a href="{{ route('site.contact', ['']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -112,7 +112,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.pages.show', ['slug' => 'help-for-student']) }}"
+                            <a href="{{ route('site.show_help', ['audience' => 'student','slug' => 'Student guide']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -120,7 +120,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.pages.show', ['slug' => 'help-for-tutor']) }}"
+                            <a href="{{ route('site.show_help', ['audience' => 'tutor','slug' => 'دليل معلم']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -128,7 +128,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.coming_soon') }}"
+                            <a href="{{ route('site.pages.show', ['slug' => 'Technical Support']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -165,7 +165,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.coming_soon') }}"
+                            <a href="{{ route('site.pages.show', ['slug' => 'Intellectual property rights and copyright']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>
@@ -173,7 +173,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('site.coming_soon') }}"
+                            <a href="{{ route('site.pages.show', ['slug' => 'Refund Policy']) }}"
                                 class="flex items-center text-sm text-gray-300 transition-all duration-300 hover:text-primary-400 hover:pr-2 rtl:hover:pl-2 rtl:hover:pr-0 md:text-[12px] group">
                                 <span
                                     class="mr-2 w-1 h-1 bg-gray-400 rounded-full transition-colors duration-300 rtl:ml-2 rtl:mr-0 group-hover:bg-primary-400"></span>

@@ -71,6 +71,9 @@ class PayoutController extends Controller
             if ($response) {
                 $item->paypal_status = $response->batch_status;
             }
+            if (! $item->payout_status) {
+                $item->payout_status = 'pending';
+            }
             unset($item->response);
         }
 
@@ -117,10 +120,10 @@ class PayoutController extends Controller
         $payout->tutor_id = $user->id;
         $payout->amount = $request->amount;
         $payout->method = $request->method;
+        $payout->status = 'R';
         if ($request->method == 'bank') {
             $payout->bank_name = $request->bank_name;
             $payout->bank_account_name = $request->bank_account_name;
-            $payout->account_no = $request->account_no;
             $payout->iban = $request->iban;
             $payout->swift_code = $request->swift_code;
             $payout->country = $request->country;
@@ -128,6 +131,7 @@ class PayoutController extends Controller
         if ($request->method == 'paypal') {
             $payout->paypal_account = $request->paypal_account;
         }
+        $payout->payout_status = 'pending';
         $payout->save();
 
         return response([
@@ -226,6 +230,32 @@ class PayoutController extends Controller
         return response([
             'success' => true,
             'message' => 'Payout approved successfully',
+        ], 200);
+    }
+
+    public function updatePayoutStatus(Request $request, $id)
+    {
+        $request->validate([
+            'payout_status' => ['required', 'in:pending,transferred'],
+        ]);
+
+        $payout = Payout::where('id', $id)->first();
+
+        if (! $payout) {
+            return response([
+                'success' => false,
+                'message' => 'payout-dose-not-exist',
+                'msg-code' => '222',
+            ], 200);
+        }
+
+        $payout->payout_status = $request->payout_status;
+        $payout->save();
+
+        return response([
+            'success' => true,
+            'message' => 'payout-status-updated-successfully',
+            'result' => $payout,
         ], 200);
     }
 
