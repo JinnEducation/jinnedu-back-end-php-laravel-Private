@@ -142,6 +142,24 @@ class ZoomController extends Controller
     // }
     public function createMeeting($data)
     {
+        $timezone = config('zoom.timezone', 'Asia/Gaza');
+        $startTime = $this->parseZoomDateTime($data['start_time'] ?? null, $data['date'] ?? null, $timezone);
+        $endTime = $this->parseZoomDateTime($data['end_time'] ?? null, $data['date'] ?? null, $timezone);
+        $duration = $startTime && $endTime && $endTime->greaterThan($startTime)
+            ? $startTime->diffInMinutes($endTime)
+            : 60;
+
+        if (! $startTime) {
+            return [
+                'success' => false,
+                'message' => 'Invalid Zoom meeting start time',
+                'error' => [
+                    'start_time' => $data['start_time'] ?? null,
+                    'date' => $data['date'] ?? null,
+                ],
+            ];
+        }
+
         // 1) توليد Access Token الجديد من Zoom
         $clientId = env('ZOOM_CLIENT_ID');
         $clientSecret = env('ZOOM_CLIENT_SECRET');
@@ -172,9 +190,9 @@ class ZoomController extends Controller
         $response = Http::withToken($accessToken)->post('https://api.zoom.us/v2/users/me/meetings', [
             'topic' => $data['title'],
             'type' => 2, // Scheduled meeting
-            'start_time' => $data['start_time'], // yyyy-mm-ddTHH:MM:SSZ
-            'duration' => 60,
-            'timezone' => 'UTC',
+            'start_time' => $startTime->format('Y-m-d\TH:i:s'),
+            'duration' => $duration,
+            'timezone' => $timezone,
         ]);
 
         if (! $response->successful()) {
@@ -189,5 +207,26 @@ class ZoomController extends Controller
             'success' => true,
             'data' => $response->json(),
         ];
+    }
+
+    private function parseZoomDateTime(?string $time, ?string $date, string $timezone): ?Carbon
+    {
+        if (! $time) {
+            return null;
+        }
+
+        try {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}/', $time)) {
+                return Carbon::parse($time, $timezone);
+            }
+
+            if ($date) {
+                return Carbon::parse(trim($date.' '.$time), $timezone);
+            }
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        return null;
     }
 }
