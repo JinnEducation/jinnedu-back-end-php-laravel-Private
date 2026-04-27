@@ -463,11 +463,16 @@ return [
     'Book trial lesson' => 'Book trial lesson',
     'Go to dashboard Trial Lesson' => 'Go to dashboard Trial Lesson',
     'Book Lesson' => 'Book Lesson',
+    'Trial lesson completed' => 'Trial lesson completed',
+    'Your trial lesson has ended. Would you like to book a real lesson with your tutor?' => 'Your trial lesson has ended. Would you like to book a real lesson with your tutor?',
+    'Book a real lesson' => 'Book a real lesson',
     'Go to dashboard' => 'Go to dashboard',
     'Message' => 'Message',
     'Save to my list' => 'Save to my list',
     'Saved to your list' => 'Saved to your list',
     'Full Schedule' => 'Full Schedule',
+    'View Schedule' => 'View Schedule',
+    'Please select a time to continue booking.' => 'Please select a time to continue booking.',
 
     'Profile Picture' => 'Profile Picture',
     'Google' => 'Google',
@@ -571,6 +576,8 @@ return [
     'October' => 'October',
     'November' => 'November',
     'December' => 'December',
+    
+    'Items' => 'Items',
 
     'Top-up-your-wallet' => 'Top up your wallet in two steps: 1) Enter amount 2) Choose a payment gateway.',
     'Complete-your-payment' => 'Complete your payment: 1) Review items 2) Choose a payment method.',

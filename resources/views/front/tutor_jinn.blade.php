@@ -361,15 +361,14 @@
                                                     {{ label_text('global', 'View Details', __('site.View Details')) }}
                                                 </a>
 
-                                                <form
-                                                    action="{{ route('site.private_lesson_order', ['id' => $suggestion->id]) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn w-full">
-                                                        {{ label_text('global', 'Join Now', __('site.Join Now')) }}
-                                                    </button>
-                                                </form>
+                                                @auth
+                                                    @if (Auth::user()->type == 1)
+                                                        <a href="{{ route('site.tutor_jinn', ['id' => $suggestion->id]) }}"
+                                                            class="cursor-pointer flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-700 transition-all duration-300 join-now-btn text-center">
+                                                            {{ label_text('global', 'View Schedule', __('site.View Schedule')) }}
+                                                        </a>
+                                                    @endif
+                                                @endauth
                                             </div>
                                         </div>
                                     </div>
@@ -469,10 +468,10 @@
 
                             @auth
                                 <div class="space-y-3">
-                                    @if(!$orderTrialExists)
+                                    @if(Auth::user()->type == 1 && !$orderTrialExists)
 
                                         <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}"
-                                            method="POST" class="w-full">
+                                            method="POST" class="w-full booking-form">
                                             @csrf
                                             <input type="hidden" name="selected_date" class="booking-selected-date">
                                             <button type="submit"
@@ -481,15 +480,15 @@
                                             </button>
                                         </form>
                                     @endif
-                                    @if($orderTrialExists && $orderTrialSameTutor && !$orderTrialFinash)
+                                    @if(Auth::user()->type == 1 && $orderTrialExists && $orderTrialSameTutor && !$orderTrialFinash)
                                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '/conferences/student-index']) }}"
                                             class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                             {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
                                         </a>
                                     @endif
-                                    @if($orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && $checkAllowOrder)
+                                    @if(Auth::user()->type == 1 && $orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && $checkAllowOrder)
                                         <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
-                                            method="POST" class="w-full">
+                                            method="POST" class="w-full booking-form">
                                             @csrf
                                             <input type="hidden" name="selected_date" class="booking-selected-date">
                                             <button type="submit"
@@ -498,7 +497,7 @@
                                             </button>
                                         </form>
                                     @endif
-                                    @if($orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && !$checkAllowOrder)
+                                    @if(Auth::user()->type == 1 && $orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && !$checkAllowOrder)
                                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '/conferences/student-index']) }}"
                                             class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                             {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}
@@ -527,8 +526,8 @@
 
     <!-- Full Schedule Modal -->
     <div id="fullScheduleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
-        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
+        <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-6 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-2xl font-bold text-primary">
                         {{ label_text('global', 'Full Schedule', __('site.Full Schedule')) }} - {{ $fullName }}
@@ -558,12 +557,26 @@
                 </div>
 
                 <!-- Schedule Table -->
-                <div class="overflow-x-auto mb-8">
+                <div class="overflow-x-auto">
                     <div id="scheduleGridModal" class="flex gap-3 min-w-max">
                         <!-- Days will be generated dynamically by JavaScript -->
                     </div>
                 </div>
             </div>
+
+            @auth
+                @if (Auth::user()->type == 1)
+                    <div id="modalBookingActions" class="hidden shrink-0 border-t border-gray-200 bg-white px-6 py-4 shadow-[0_-8px_20px_rgba(15,23,42,0.08)]">
+                        <p id="modalBookingHint" class="text-sm text-gray-600 mb-3">
+                            {{ label_text('global', 'Please select a time to continue booking.', __('site.Please select a time to continue booking.')) }}
+                        </p>
+                        <button id="modalBookingSubmit" type="button"
+                            class="w-full md:w-auto px-8 py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
+                            {{ label_text('global', 'Book Lesson', __('site.Book Lesson')) }}
+                        </button>
+                    </div>
+                @endif
+            @endauth
         </div>
     </div>
 

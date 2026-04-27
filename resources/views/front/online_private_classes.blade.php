@@ -372,8 +372,9 @@
                             $studentsCount = $tp->students_count ?? 0;
                         @endphp
 
-                        <div class="tutor-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
+                        <div class="tutor-card cursor-pointer bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl"
                             data-tutor-id="{{ $tutor->id }}" data-tutor-name="{{ $fullName }}"
+                            data-profile-url="{{ route('site.tutor_jinn', ['id' => $tutor->id]) }}"
                             data-tutor-subject="{{ $subjectName }}"
                             data-tutor-avatar="{{ $tutor->profile?->avatar_path ? asset('storage/' . $tutor->profile?->avatar_path) : ($tutor->avatar ? asset('storage/' . $tutor->avatar) : asset('front/assets/imgs/tutors/1.jpg')) }}"
                             data-tutor-slug="{{ $tutor->slug ?? $tutor->id }}"

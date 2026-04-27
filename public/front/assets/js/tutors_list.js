@@ -48,17 +48,12 @@ $(document).ready(function() {
         return periods;
     }
 
-    // Tutor Card Click - Add Active State & Update Schedule
-    $('.tutor-card').on('click  mouseenter', function(e) {
-        // Don't trigger if clicking buttons
-        if ($(e.target).closest('button, a').length) {
-            return;
-        }
-        
+    // Tutor Card Hover - Add Active State & Update Schedule
+    $('.tutor-card').on('mouseenter', function() {
         // Remove active class from all cards
         $('.tutor-card').removeClass('ring-2 ring-primary');
         
-        // Add active class to clicked card
+        // Add active class to focused card
         $(this).addClass('ring-2 ring-primary');
 
         // Get tutor data
@@ -78,6 +73,17 @@ $(document).ready(function() {
 
         // Update schedule grid
         updateScheduleGrid(availability);
+    });
+
+    $('.tutor-card').on('click', function(e) {
+        if ($(e.target).closest('button, a').length) {
+            return;
+        }
+
+        const profileUrl = $(this).data('profile-url');
+        if (profileUrl) {
+            window.location.href = profileUrl;
+        }
     });
 
     function updateScheduleGrid(availability) {
@@ -125,6 +131,6 @@ $(document).ready(function() {
         }
     );
 
-    $('#tutorsListContainer .tutor-card').first().trigger('click');
+    $('#tutorsListContainer .tutor-card').first().trigger('mouseenter');
 });
 

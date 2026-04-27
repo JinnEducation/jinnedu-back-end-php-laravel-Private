@@ -449,11 +449,16 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Book trial lesson' => 'احجز درساً تجريبياً',
     'Go to dashboard Trial Lesson' => 'الانتقال إلى لوحة التحكم للدرس التجريبي',
     'Book Lesson' => 'احجز درس',
+    'Trial lesson completed' => 'انتهت الحصة التجريبية',
+    'Your trial lesson has ended. Would you like to book a real lesson with your tutor?' => 'انتهت حصتك التجريبية. هل ترغب بحجز حصة حقيقية مع نفس المعلم؟',
+    'Book a real lesson' => 'احجز حصة حقيقية',
     'Go to dashboard' => 'الانتقال إلى لوحة التحكم',
     'Message' => 'رسالة',
     'Save to my list' => 'حفظ في قائمتي',
     'Saved to your list' => 'تم الحفظ في قائمتك',
     'Full Schedule' => 'الجدول الكامل',
+    'View Schedule' => 'عرض الجدول',
+    'Please select a time to continue booking.' => 'يرجى اختيار موعد لمتابعة الحجز.',
 
     'Profile Picture' => 'صورة الملف الشخصي',
     'Google' => 'Google',
@@ -608,4 +613,5 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Return to Homepage' => 'العودة إلى الرئيسية',
     'Refresh Page' => 'تحديث الصفحة',
 
+    'Items' => 'العناصر'
 ];

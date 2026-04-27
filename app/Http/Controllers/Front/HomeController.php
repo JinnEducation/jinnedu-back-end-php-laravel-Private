@@ -1181,6 +1181,9 @@ class HomeController extends Controller
             }
         }
 
-        return $orderController->getLastAvailableBookingTime($tutor, $period);
+        return [
+            'success' => false,
+            'message' => __('site.Please select a time to continue booking.'),
+        ];
     }
 }

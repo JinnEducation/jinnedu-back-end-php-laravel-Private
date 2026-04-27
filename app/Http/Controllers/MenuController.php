@@ -22,6 +22,7 @@ class MenuController extends Controller
         'my-courses.unfinished' => [1],
         'my-courses.certificates' => [1],
         'conferences.student-index' => [1],
+        'complaints.index' => [0,1],
     ];
 
     public function index(Request $request)

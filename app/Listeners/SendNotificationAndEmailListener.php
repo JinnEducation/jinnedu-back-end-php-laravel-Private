@@ -6,6 +6,7 @@ use App\Events\NotifyBookedClassEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Mail\NotifyBookedClassMail;
 use App\Models\GroupClassStudent;
 use App\Models\User;
@@ -56,11 +57,18 @@ class SendNotificationAndEmailListener
             );
 
             if ($user->email) {
-                Mail::to($user->email)->send(new NotifyBookedClassMail([
-                    'user_name' => $user->name,
-                    'message' => $message,
-                    'subject' => 'Upcoming Class Reminder',
-                ]));
+                try {
+                    Mail::to($user->email)->send(new NotifyBookedClassMail([
+                        'user_name' => $user->name,
+                        'message' => $message,
+                        'subject' => 'Upcoming Class Reminder',
+                    ]));
+                } catch (\Throwable $e) {
+                    Log::error('Failed to send upcoming class reminder email: '.$e->getMessage(), [
+                        'user_id' => $user->id,
+                        'conference_id' => $conference->id,
+                    ]);
+                }
             }
         }
     }

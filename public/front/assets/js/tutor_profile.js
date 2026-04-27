@@ -65,6 +65,7 @@ $(document).ready(function () {
   // Day names in order (Sunday to Saturday)
   const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   let selectedDateTime = '';
+  let activeBookingForm = null;
 
   function padNumber(value) {
     return String(value).padStart(2, '0');
@@ -205,6 +206,43 @@ $(document).ready(function () {
     renderScheduleGrid("#scheduleGridModal", "#weekDateModal");
   }
 
+  function showBookingMessage(message) {
+    if (window.Swal && typeof window.Swal.fire === "function") {
+      window.Swal.fire({
+        icon: "warning",
+        text: message
+      });
+      return;
+    }
+
+    alert(message);
+  }
+
+  function openScheduleModal(showBookingActions = false, submitText = "") {
+    renderScheduleModal();
+
+    if (showBookingActions && activeBookingForm) {
+      const buttonText =
+        submitText || $(activeBookingForm).find('button[type="submit"]').first().text().trim();
+      $("#modalBookingSubmit").text(buttonText);
+      $("#modalBookingActions").removeClass("hidden");
+    } else {
+      $("#modalBookingActions").addClass("hidden");
+    }
+
+    $("#fullScheduleModal").removeClass("hidden").addClass("flex");
+    $("#fullScheduleModal").hide().fadeIn(300);
+    $("body").css("overflow", "hidden");
+  }
+
+  function closeScheduleModal() {
+    $("#fullScheduleModal").fadeOut(300, function () {
+      $(this).removeClass("flex").addClass("hidden");
+      $("#modalBookingActions").addClass("hidden");
+    });
+    $("body").css("overflow", "auto");
+  }
+
   // Navigation buttons - disabled (just for display)
   $("#prevWeek").on("click", function (e) {
     e.preventDefault();
@@ -240,43 +278,51 @@ $(document).ready(function () {
     $(".booking-selected-date").val(selectedDateTime);
   });
 
+  $(".booking-form").on("submit", function (e) {
+    if ($(this).find(".booking-selected-date").val()) {
+      return;
+    }
+
+    e.preventDefault();
+    activeBookingForm = this;
+    openScheduleModal(true, $(this).find('button[type="submit"]').first().text().trim());
+  });
+
+  $("#modalBookingSubmit").on("click", function () {
+    if (!activeBookingForm) return;
+
+    if (!selectedDateTime) {
+      showBookingMessage($("#modalBookingHint").text().trim() || "Please select a booking time.");
+      return;
+    }
+
+    $(activeBookingForm).find(".booking-selected-date").val(selectedDateTime);
+    activeBookingForm.submit();
+  });
+
   // ==========================================
   // FULL SCHEDULE MODAL
   // ==========================================
   $("#viewFullScheduleBtn").on("click", function () {
-    // Render schedule in modal
-    renderScheduleModal();
-    
-    // Show modal
-    $("#fullScheduleModal").removeClass("hidden").addClass("flex");
-    $("#fullScheduleModal").hide().fadeIn(300);
-    $("body").css("overflow", "hidden"); // Prevent background scrolling
+    activeBookingForm = null;
+    openScheduleModal(false);
   });
 
   $("#closeModalBtn").on("click", function () {
-    $("#fullScheduleModal").fadeOut(300, function () {
-      $(this).removeClass("flex").addClass("hidden");
-    });
-    $("body").css("overflow", "auto"); // Restore scrolling
+    closeScheduleModal();
   });
 
   // Close modal when clicking outside
   $("#fullScheduleModal").on("click", function (e) {
     if ($(e.target).is("#fullScheduleModal")) {
-      $(this).fadeOut(300, function () {
-        $(this).removeClass("flex").addClass("hidden");
-      });
-      $("body").css("overflow", "auto");
+      closeScheduleModal();
     }
   });
 
   // Close modal with Escape key
   $(document).on("keydown", function (e) {
     if (e.key === "Escape" && $("#fullScheduleModal").hasClass("flex")) {
-      $("#fullScheduleModal").fadeOut(300, function () {
-        $(this).removeClass("flex").addClass("hidden");
-      });
-      $("body").css("overflow", "auto");
+      closeScheduleModal();
     }
   });
 
@@ -301,8 +347,6 @@ $(document).ready(function () {
   // ==========================================
   // Handle action button clicks
   $(".action-btn").on("click", function () {
-    const buttonText = $(this).text().trim();
-    console.log(`Action button clicked: ${buttonText}`);
     // Add your specific action handling here
   });
 
@@ -342,8 +386,4 @@ $(document).ready(function () {
     handleResponsive();
   });
 
-  // ==========================================
-  // INITIALIZATION MESSAGE
-  // ==========================================
-  console.log("Tutor Profile page initialized successfully!");
 });

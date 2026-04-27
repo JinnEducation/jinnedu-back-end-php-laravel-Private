@@ -20,8 +20,20 @@
             <h2 class="text-2xl font-bold text-center mb-6">
                 {{ label_text('global', 'site.login-title', __('site.Log in')) }}
             </h2>
+            @php
+                $hasLoginError = old('login_modal') === '1' && ($errors->has('email') || $errors->has('password'));
+            @endphp
+
             <form action="{{ route('login') }}" method="POST">
                 @csrf
+                <input type="hidden" name="login_modal" value="1">
+
+                @if ($hasLoginError)
+                    <div class="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">!</span>
+                        <span class="leading-6">يوجد خطا في اسم المستخدم او كلمة السر</span>
+                    </div>
+                @endif
 
                 <!-- Email -->
                 <div class="mb-4">
@@ -37,7 +49,7 @@
                                     fill="#AAAAAA" />
                             </svg>
                         </span>
-                        <input type="email" name="email" id="email"
+                        <input type="email" name="email" id="email" value="{{ old('login_modal') === '1' ? old('email') : '' }}"
                             placeholder="{{ label_text('global', 'site.email-placeholder', __('site.name@email.com')) }}"
                             class="w-full h-11 pl-10 pr-3 rounded-lg border border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
                     </div>
@@ -227,7 +239,7 @@
 </div>
 
 @push('scripts')
-@if(request('login') == 1)
+@if(request('login') == 1 || (old('login_modal') === '1' && ($errors->has('email') || $errors->has('password'))))
 <script>
     $(document).ready(function() {
         setTimeout(() => {
