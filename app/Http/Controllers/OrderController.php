@@ -310,7 +310,7 @@ class OrderController extends Controller
             ], 200);
         }
 
-        $checkAllowOrder = Order::where('user_id', $user->id)->where('ref_type', 3)->where('ref_id',$tutor->id)->first(); // ->where('ref_id',$tutor->id)
+        $checkAllowOrder = Order::where('user_id', $user->id)->where('ref_type', 3)->first();
         if ($checkAllowOrder) {
             return response([
                 'success' => false,
@@ -454,11 +454,16 @@ class OrderController extends Controller
             }
             // ======================================================
 
-            $checkConflictTutorDate = Conference::where('tutor_id', $tutor->id)->whereRaw('(start_date_time=? or end_date_time=? or (? > start_date_time and ? < end_date_time) or (? > start_date_time and ? < end_date_time))', [$start_date, $end_date, $start_date, $start_date, $end_date, $end_date])->first();
+            $checkConflictTutorDate = Conference::where('tutor_id', $tutor->id)
+                ->whereNotNull('start_date_time')
+                ->whereNotNull('end_date_time')
+                ->where('start_date_time', '<', $end_date)
+                ->where('end_date_time', '>', $start_date)
+                ->first();
             if ($checkConflictTutorDate) {
                 return [
                     'success' => false,
-                    'message' => 'tutor-date-conflict',
+                    'message' => 'This time was just booked. Please choose another time.',
                     'msg-code' => '666',
                     'start_date' => $start_date,
                     'end_date' => $end_date,

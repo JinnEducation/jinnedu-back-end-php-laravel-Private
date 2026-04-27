@@ -95,8 +95,11 @@
                                     return [
                                         'day_id' => $av->day->id ?? 0,
                                         'day_name' => $av->day->name ?? '',
+                                        'date' => $av->date ?? '',
                                         'hour_from' => $av->hour_from ?? '',
                                         'hour_to' => $av->hour_to ?? '',
+                                        'start_date_time' => $av->start_date_time ?? '',
+                                        'end_date_time' => $av->end_date_time ?? '',
                                     ];
                                 })
                                 ->toArray(),
@@ -471,29 +474,31 @@
                                         <form action="{{ route('site.trial_lesson_order', ['id' => $tutor->id]) }}"
                                             method="POST" class="w-full">
                                             @csrf
+                                            <input type="hidden" name="selected_date" class="booking-selected-date">
                                             <button type="submit"
                                                 class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                                 {{ label_text('global', 'Book trial lesson', __('site.Book trial lesson')) }}
                                             </button>
                                         </form>
                                     @endif
-                                    @if($orderTrialExists && !$orderTrialFinash)
+                                    @if($orderTrialExists && $orderTrialSameTutor && !$orderTrialFinash)
                                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '/conferences/student-index']) }}"
                                             class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                             {{ label_text('global', 'Go to dashboard Trial Lesson', __('site.Go to dashboard Trial Lesson')) }}
                                         </a>
                                     @endif
-                                    @if($orderTrialFinash && $checkAllowOrder)
+                                    @if($orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && $checkAllowOrder)
                                         <form action="{{ route('site.private_lesson_order', ['id' => $tutor->id]) }}"
                                             method="POST" class="w-full">
                                             @csrf
+                                            <input type="hidden" name="selected_date" class="booking-selected-date">
                                             <button type="submit"
                                                 class="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                                 {{ label_text('global', 'Book Lesson', __('site.Book Lesson')) }}
                                             </button>
                                         </form>
                                     @endif
-                                    @if($orderTrialExists && $orderTrialFinash && !$checkAllowOrder)
+                                    @if($orderTrialExists && (!$orderTrialSameTutor || $orderTrialFinash) && !$checkAllowOrder)
                                         <a href="{{ route('redirect.dashboard', ['redirect_to' => '/conferences/student-index']) }}"
                                             class="w-full block text-center py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-md">
                                             {{ label_text('global', 'Go to dashboard', __('site.Go to dashboard')) }}

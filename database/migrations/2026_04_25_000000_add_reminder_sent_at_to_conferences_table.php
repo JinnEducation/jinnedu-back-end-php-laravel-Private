@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        if (! Schema::hasColumn('conferences', 'reminder_sent_at')) {
+            Schema::table('conferences', function (Blueprint $table) {
+                $table->timestamp('reminder_sent_at')->nullable();
+            });
+        }
+    }
+
+    public function down()
+    {
+        if (Schema::hasColumn('conferences', 'reminder_sent_at')) {
+            Schema::table('conferences', function (Blueprint $table) {
+                $table->dropColumn('reminder_sent_at');
+            });
+        }
+    }
+};

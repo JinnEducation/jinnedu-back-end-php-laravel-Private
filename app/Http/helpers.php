@@ -322,18 +322,21 @@ function registerLog($instance, $text='', $type='log')
 function sendFCMNotification($title, $message, $token, $info = null, $userId = null)
 {
     // 1) حفظ الإشعار في قاعدة البيانات
-    try {
-        \App\Models\NotificationInfo::create([
-            'user_id'   => $userId,
-            'n_title'   => $title,
-            'n_details' => $message,
-            'n_url'     => is_array($info) && isset($info['url'])   ? $info['url']   : null,
-            'n_icon'    => is_array($info) && isset($info['icon'])  ? $info['icon']  : null,
-            'n_color'   => is_array($info) && isset($info['color']) ? $info['color'] : null,
-            'n_seen'    => 0,
-        ]);
-    } catch (\Throwable $e) {
-        \Log::error('Failed to store notification: '.$e->getMessage());
+    $shouldStoreNotification = ! (is_array($info) && isset($info['store_database']) && $info['store_database'] === false);
+    if ($shouldStoreNotification) {
+        try {
+            \App\Models\NotificationInfo::create([
+                'user_id'   => $userId,
+                'n_title'   => $title,
+                'n_details' => $message,
+                'n_url'     => is_array($info) && isset($info['url'])   ? $info['url']   : null,
+                'n_icon'    => is_array($info) && isset($info['icon'])  ? $info['icon']  : null,
+                'n_color'   => is_array($info) && isset($info['color']) ? $info['color'] : null,
+                'n_seen'    => 0,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Failed to store notification: '.$e->getMessage());
+        }
     }
 
     // 2) إرسال الإشعار عن طريق FCM (نفس القديم تقريباً)
@@ -385,6 +388,36 @@ function sendFCMNotification($title, $message, $token, $info = null, $userId = n
 
     curl_close($ch);
     return true;
+}
+
+function sendUserDashboardNotification($user, string $title, string $message, array $info = []): bool
+{
+    if (! $user) {
+        return false;
+    }
+
+    try {
+        $notificationInfo = \App\Models\NotificationInfo::create([
+            'user_id' => $user->id,
+            'n_title' => $title,
+            'n_details' => $message,
+            'n_url' => $info['url'] ?? null,
+            'n_icon' => $info['icon'] ?? null,
+            'n_color' => $info['color'] ?? null,
+            'n_seen' => 0,
+        ]);
+
+        \Notification::send($user, new \App\Notifications\GeneralNotification($notificationInfo->id, 0));
+
+        $fcmInfo = $info;
+        $fcmInfo['store_database'] = false;
+        sendFCMNotification($title, $message, $user->fcm ?? null, $fcmInfo, $user->id);
+
+        return true;
+    } catch (\Throwable $e) {
+        \Log::error('Failed to send user dashboard notification: '.$e->getMessage());
+        return false;
+    }
 }
 
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Front;
 
 use App\Enums\TransactionPaymentStatus;
 use App\Enums\TransactionStatus;
+use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\Controller;
+use App\Models\Conference;
 use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\User;
@@ -281,16 +283,28 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        $wallet->balance -= $amount;
-        $wallet->save();
+        try {
+            DB::transaction(function () use ($wallet, $orders, $amount, $user, $discountAmount) {
+                $this->ensurePrivateLessonSlotsAvailable($orders);
 
-        foreach ($orders as $order) {
-            $order->status = 1;
-            $order->payment = 'wallet';
-            $order->save();
+                $wallet->balance -= $amount;
+                $wallet->save();
+
+                foreach ($orders as $order) {
+                    $order->status = 1;
+                    $order->payment = 'wallet';
+                    $order->save();
+                }
+
+                $this->createPaidOrderSideEffects($orders);
+                $this->createOrderDebitTransactions($orders, $amount, $user->id, 'wallet', $discountAmount);
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
         }
-
-        $this->createOrderDebitTransactions($orders, $amount, $user->id, 'wallet', $discountAmount);
 
         return response()->json([
             'success' => true,
@@ -499,7 +513,55 @@ class CheckoutController extends Controller
             $order->save();
         }
 
+        $this->createPaidOrderSideEffects($orders);
         $this->createOrderDebitTransactions($orders, $finalPaidAmount, $transaction->user_id, $transaction->payment_channel, $discountAmount);
+    }
+
+    private function createPaidOrderSideEffects($orders): void
+    {
+        $this->ensurePrivateLessonSlotsAvailable($orders);
+
+        foreach ($orders as $order) {
+            if ((int) $order->ref_type !== 4) {
+                continue;
+            }
+
+            $conferenceExists = Conference::where('order_id', $order->id)->exists();
+            if ($conferenceExists) {
+                continue;
+            }
+
+            (new ConferenceController)->createPrivateLessonConference($order);
+        }
+    }
+
+    private function ensurePrivateLessonSlotsAvailable($orders): void
+    {
+        foreach ($orders as $order) {
+            if ((int) $order->ref_type !== 4) {
+                continue;
+            }
+
+            $dates = json_decode($order->dates);
+            if (! $dates?->start_date_time) {
+                continue;
+            }
+
+            $startDateTime = $dates->start_date_time;
+            $endDateTime = $dates->end_date_time ?: date('Y-m-d H:i:s', strtotime($startDateTime.' +60 minutes'));
+
+            $conflict = Conference::where('tutor_id', $order->ref_id)
+                ->where('order_id', '!=', $order->id)
+                ->whereNotNull('start_date_time')
+                ->whereNotNull('end_date_time')
+                ->where('start_date_time', '<', $endDateTime)
+                ->where('end_date_time', '>', $startDateTime)
+                ->first();
+
+            if ($conflict) {
+                throw new \Exception('This time was just booked. Please choose another time.');
+            }
+        }
     }
 
     private function createOrderDebitTransactions($orders, float $finalAmount, int $userId, string $channel, float $discountAmount = 0): void

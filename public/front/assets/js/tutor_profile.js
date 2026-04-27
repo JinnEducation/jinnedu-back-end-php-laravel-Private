@@ -64,6 +64,24 @@ $(document).ready(function () {
 
   // Day names in order (Sunday to Saturday)
   const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  let selectedDateTime = '';
+
+  function padNumber(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  function formatDateTime(date, time) {
+    const parsedTime = new Date(`2000-01-01 ${time}`);
+    const timeParts = String(time).split(':');
+    const hours = Number.isNaN(parsedTime.getTime())
+      ? padNumber(timeParts[0] || 0)
+      : padNumber(parsedTime.getHours());
+    const minutes = Number.isNaN(parsedTime.getTime())
+      ? padNumber(timeParts[1] || 0)
+      : padNumber(parsedTime.getMinutes());
+
+    return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${hours}:${minutes}:00`;
+  }
 
   // Process availability data by day
   const scheduleByDay = {};
@@ -88,8 +106,11 @@ $(document).ready(function () {
       }
       
       scheduleByDay[dayName].push({
+        date: slot.date || '',
         from: slot.hour_from || '',
-        to: slot.hour_to || ''
+        to: slot.hour_to || '',
+        startDateTime: slot.start_date_time || '',
+        endDateTime: slot.end_date_time || ''
       });
     });
   }
@@ -145,23 +166,21 @@ $(document).ready(function () {
           .text("..:.");
         timeSlotsContainer.append(ellipsis);
 
-        // Add each time slot
+        // Add each available one-hour start time
         daySlots.forEach(slot => {
-          // From time
+          const fromDate = slot.startDateTime || formatDateTime(dayDate, slot.from);
+
           const fromSlot = $("<div>")
-            .addClass("time-slot text-center py-1 text-sm border-b border-gray-400 font-semibold")
+            .addClass("time-slot cursor-pointer text-center py-1 text-sm border-b border-gray-400 font-semibold hover:text-primary")
             .text(slot.from)
             .attr("data-day", dayName)
-            .attr("data-time", slot.from);
+            .attr("data-time", slot.from)
+            .attr("data-date", fromDate)
+            .attr("title", slot.to ? `${slot.from} - ${slot.to}` : slot.from);
+          if (selectedDateTime === fromDate) {
+            fromSlot.addClass("bg-primary text-white rounded");
+          }
           timeSlotsContainer.append(fromSlot);
-
-          // To time
-          const toSlot = $("<div>")
-            .addClass("time-slot text-center py-1 text-sm border-b border-gray-400 font-semibold")
-            .text(slot.to)
-            .attr("data-day", dayName)
-            .attr("data-time", slot.to);
-          timeSlotsContainer.append(toSlot);
         });
       } else {
         // No availability
@@ -210,6 +229,16 @@ $(document).ready(function () {
 
   // Initial render
   renderSchedule();
+
+  $(document).on("click", ".time-slot", function () {
+    selectedDateTime = $(this).data("date") || "";
+
+    if (!selectedDateTime) return;
+
+    $(".time-slot").removeClass("bg-primary text-white rounded");
+    $(`.time-slot[data-date="${selectedDateTime}"]`).addClass("bg-primary text-white rounded");
+    $(".booking-selected-date").val(selectedDateTime);
+  });
 
   // ==========================================
   // FULL SCHEDULE MODAL

@@ -1,5 +1,5 @@
 Hello, {{ $data['user_name'] }}
 <br><br>
-{{ $data['messsage'] }}
+{{ $data['message'] ?? '' }}
 <br><br>
 Thank you!

@@ -30,7 +30,7 @@ class NotifyBookedClassMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Notify Booked Class Mail',
+            subject: $this->data['subject'] ?? 'Class Notification',
         );
     }
 

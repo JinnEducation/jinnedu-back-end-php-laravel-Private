@@ -40,10 +40,12 @@ use App\Models\OurCourseTutor;
 use App\Models\TutorFinance;
 use App\Models\Order;
 use App\Models\ConferenceAttendance;
+use App\Services\ConferenceScheduleNotificationService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Bouncer;
 use Mail;
+use Carbon\Carbon;
 
 class ConferenceController extends Controller
 {
@@ -61,7 +63,19 @@ class ConferenceController extends Controller
         $order->dates = json_decode($order->dates);
 
         $conference->start_date_time = $order->dates?->start_date_time;
-        $conference->end_date_time = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
+        $conference->end_date_time = $order->dates?->end_date_time
+            ?: date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +60 minutes'));
+
+        $conflict = Conference::where('tutor_id', $order->ref_id)
+            ->whereNotNull('start_date_time')
+            ->whereNotNull('end_date_time')
+            ->where('start_date_time', '<', $conference->end_date_time)
+            ->where('end_date_time', '>', $conference->start_date_time)
+            ->first();
+
+        if ($conflict) {
+            throw new \Exception('This time was just booked. Please choose another time.');
+        }
 
         $conference->date = $order->dates?->date;
         $conference->start_time = $order->dates?->start_date_time;
@@ -452,6 +466,8 @@ class ConferenceController extends Controller
         $limit = setDataTablePerPageLimit($request->limit);
 
         $items = Conference::query();
+        $items->orderBy('start_date_time', 'desc');
+        $items->orderBy('id', 'desc');
 
         if (!empty($request->tutor_id)) {
             $items->where('tutor_id', $request->tutor_id);
@@ -481,6 +497,7 @@ class ConferenceController extends Controller
 
             $item->rating = $item->reviews()->avg('stars');
             $item->recordings = $item->recordings()->first();
+            $item->is_end = $this->conferenceHasEnded($item);
 
             if ($item->ref_type == 1) {
                 $tutorFinanceCheck = TutorFinance::where(['ref_type' => 1, 'ref_id' => $item->ref_id, 'tutor_id' => $item->tutor_id, 'conference_id' => $item->id])->first();
@@ -510,7 +527,12 @@ class ConferenceController extends Controller
         $limit = setDataTablePerPageLimit($request->limit);
 
         $items = Conference::query();
-        $items->whereRaw('(student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1)', [$user->id, $user->id]);
+        $items->orderBy('start_date_time', 'desc');
+        $items->orderBy('id', 'desc');
+        $items->whereRaw('((student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1))', [$user->id, $user->id]);
+        if (!empty($request->ref_type)) {
+            $items->where('ref_type', $request->ref_type);
+        }
         if (!empty($request->q)) {
             $items->whereRaw(filterTextDB('title') . ' like ?', ['%' . filterText($request->q) . '%']);
         }
@@ -526,6 +548,8 @@ class ConferenceController extends Controller
             $item->tutor;
             $item->rating = $item->reviews()->avg('stars');
             $item->is_available = strtotime($item->date . ' ' . $item->start_time) >= time();
+            $item->is_end = $this->conferenceHasEnded($item);
+            $this->appendMeetingState($item, false);
             // $item->attendance_status = ConferenceAttendance::where(['conference_id'=>$item->id, 'user_id'=>$user->id, 'status'=>1])->exists();
             $item->attendance_status = ConferenceAttendance::where(['conference_id' => $item->id, 'user_id' => $user->id])->exists();
             $item->recordings = $item->recordings()->first();
@@ -550,9 +574,12 @@ class ConferenceController extends Controller
         $limit = setDataTablePerPageLimit($request->limit);
 
         $items = Conference::query();
-        $items->orderBy('date', 'desc');
-        $items->orderBy('start_time', 'desc');
+        $items->orderBy('start_date_time', 'desc');
+        $items->orderBy('id', 'desc');
         $items->where('tutor_id', $user->id);
+        if (!empty($request->ref_type)) {
+            $items->where('ref_type', $request->ref_type);
+        }
         if (!empty($request->q)) {
             $items->whereRaw(filterTextDB('title') . ' like ?', ['%' . filterText($request->q) . '%']);
         }
@@ -570,6 +597,9 @@ class ConferenceController extends Controller
             }
 
             $item->rating = $item->reviews()->avg('stars');
+            $item->recordings = $item->recordings()->first();
+            $item->is_end = $this->conferenceHasEnded($item);
+            $this->appendMeetingState($item, true);
             unset($item->tutor);
         }
 
@@ -592,6 +622,14 @@ class ConferenceController extends Controller
                 'msg-code' => '111'
             ], 200);
 
+        if ($this->conferenceHasEnded($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-has-ended'),
+                'msg-code' => '333'
+            ], 200);
+        }
+
         $period = 15;
         if ($conference->ref_type == 4 or $conference->ref_type == 2)
             $period = 40;
@@ -631,8 +669,9 @@ class ConferenceController extends Controller
                 'conference' => $checkConflictStudentDate
             ], 200);
 
+        $oldStartDateTime = $conference->start_date_time;
         $conference->student_change_date = 1;
-        $conference->old_student_start_date_time = $conference->start_date_time;
+        $conference->old_student_start_date_time = $oldStartDateTime;
         $conference->start_date_time = $start_date;
         $conference->end_date_time = $end_date;
 
@@ -667,26 +706,7 @@ class ConferenceController extends Controller
         //$conference->notes = json_encode($postValues);
         $conference->save();
 
-        // إرسال إشعار للمدرّس بأن الطالب غيّر الموعد
-        if ($conference->tutor_id) {
-            $tutor = User::find($conference->tutor_id);
-            if ($tutor && $tutor->fcm) {
-                $info = [
-                    'type' => 'schedule_change',
-                    'conference_id' => $conference->id,
-                    'new_date' => $conference->date,
-                    'new_time' => $conference->start_time . ' - ' . $conference->end_time
-                ];
-
-                sendFCMNotification(
-                    'Schedule Changed',
-                    'Student has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time,
-                    $tutor->fcm,
-                    $info,
-                    $tutor->id   // 👈 المدرّس صاحب الإشعار
-                );
-            }
-        }
+        app(ConferenceScheduleNotificationService::class)->notifyConferenceScheduleChanged($conference, $oldStartDateTime, $user->id);
 
         return response([
             'success' => true,
@@ -707,6 +727,14 @@ class ConferenceController extends Controller
                 'msg-code' => '111'
             ], 200);
 
+        if ($this->conferenceHasEnded($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-has-ended'),
+                'msg-code' => '333'
+            ], 200);
+        }
+
 
         $period = 15;
         if ($conference->ref_type == 4 or $conference->ref_type == 2)
@@ -747,8 +775,9 @@ class ConferenceController extends Controller
                 'conference' => $checkConflictStudentDate
             ], 200);
 
+        $oldStartDateTime = $conference->start_date_time;
         $conference->tutor_change_date = 1;
-        $conference->old_tutor_start_date_time = $conference->start_date_time;
+        $conference->old_tutor_start_date_time = $oldStartDateTime;
         $conference->start_date_time = $start_date;
         $conference->end_date_time = $end_date;
 
@@ -783,25 +812,7 @@ class ConferenceController extends Controller
         //$conference->notes = json_encode($postValues);
         $conference->save();
 
-        // إرسال إشعار للطالب بأن المدرّس غيّر الموعد
-        if ($conference->student_id) {
-            $student = User::find($conference->student_id);
-            if ($student && $student->fcm) {
-                $info = [
-                    'type' => 'schedule_change',
-                    'conference_id' => $conference->id,
-                    'new_date' => $conference->date,
-                    'new_time' => $conference->start_time . ' - ' . $conference->end_time
-                ];
-                sendFCMNotification(
-                    'Schedule Changed',
-                    'Your tutor has changed the lesson schedule to ' . $conference->date . ' at ' . $conference->start_time,
-                    $student->fcm,
-                    $info,
-                    $student->id
-                );
-            }
-        }
+        app(ConferenceScheduleNotificationService::class)->notifyConferenceScheduleChanged($conference, $oldStartDateTime, $user->id);
 
         return response([
             'success' => true,
@@ -823,17 +834,41 @@ class ConferenceController extends Controller
                 'msg-code' => '111'
             ], 200);
 
-        $response = json_decode($conference->response);
-
-        if($user->type == 1){
-            $response->data->start_url = $response->data->join_url;
+        if ($this->conferenceHasEnded($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-has-ended'),
+                'msg-code' => '333'
+            ], 200);
         }
+
+        if (! $this->conferenceIsActive($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-not-started-yet'),
+                'msg-code' => '445'
+            ], 200);
+        }
+
+        if (! $conference->meeting_started_at) {
+            return response([
+                'success' => false,
+                'message' => __('admin.waiting-for-tutor-to-start-conference'),
+                'msg-code' => '444'
+            ], 200);
+        }
+
+        $response = json_decode($conference->response);
         if (!$response)
             return response([
                 'success' => false,
                 'message' => 'response-dose-not-exist',
                 'msg-code' => '222'
             ], 200);
+
+        if($user->type == 1){
+            $response->data->start_url = $response->data->join_url;
+        }
             
         
 
@@ -899,9 +934,31 @@ class ConferenceController extends Controller
                 'msg-code' => '111'
             ], 200);
 
+        if ($this->conferenceHasEnded($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-has-ended'),
+                'msg-code' => '333'
+            ], 200);
+        }
 
-        $response = json_decode($conference->response);
-        $response = $response->data;
+        if (! $this->conferenceIsActive($conference)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.conference-not-started-yet'),
+                'msg-code' => '445'
+            ], 200);
+        }
+
+        if (! $conference->meeting_started_at) {
+            $conference->meeting_started_at = now();
+            $conference->save();
+            $this->notifyConferenceStarted($conference);
+        }
+
+
+        $responseBody = json_decode($conference->response);
+        $response = $responseBody?->data;
         if (!$response)
             return response([
                 'success' => false,
@@ -955,6 +1012,53 @@ class ConferenceController extends Controller
             'success' => true,
             'message' => 'item-listed-successfully',
             'result' => $conferenceLink
+        ], 200);
+    }
+
+    public function currentActive(Request $request)
+    {
+        $user = Auth::user();
+        $now = Carbon::now($this->conferenceTimezone())->toDateTimeString();
+        $today = Carbon::now($this->conferenceTimezone())->toDateString();
+
+        $items = Conference::query();
+
+        if ((int) $user->type === 2) {
+            $items->where('tutor_id', $user->id);
+        } elseif ((int) $user->type === 1) {
+            $items->whereRaw('((student_id=? and student_id<>0 and order_id<>0 and ref_type<>1) or (ref_id in (select class_id from group_class_students where student_id=?) and student_id=0 and order_id=0 and ref_type=1))', [$user->id, $user->id]);
+        } else {
+            return response([
+                'success' => true,
+                'message' => 'item-listed-successfully',
+                'result' => null,
+            ], 200);
+        }
+
+        $items->where(function ($query) use ($now, $today) {
+            $query->where(function ($dateTimeQuery) use ($now) {
+                $dateTimeQuery->whereNotNull('start_date_time')
+                    ->whereNotNull('end_date_time')
+                    ->where('start_date_time', '<=', $now)
+                    ->where('end_date_time', '>', $now);
+            })->orWhere('date', $today);
+        });
+
+        $conference = $items
+            ->orderBy('start_date_time')
+            ->orderBy('id')
+            ->get()
+            ->first(fn ($item) => $this->conferenceIsActive($item));
+
+        if ($conference) {
+            $conference->is_end = false;
+            $this->appendMeetingState($conference, (int) $user->type === 2);
+        }
+
+        return response([
+            'success' => true,
+            'message' => 'item-listed-successfully',
+            'result' => $conference,
         ], 200);
     }
 
@@ -1292,5 +1396,116 @@ class ConferenceController extends Controller
             ], 200);
         }
 
+    }
+
+    private function conferenceHasEnded(Conference $conference): bool
+    {
+        $endDateTime = $conference->end_date_time ?: trim($conference->date . ' ' . $conference->end_time);
+
+        if (!$endDateTime) {
+            return false;
+        }
+
+        try {
+            return Carbon::parse($endDateTime, $this->conferenceTimezone())
+                ->lessThanOrEqualTo(Carbon::now($this->conferenceTimezone()));
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function conferenceIsActive(Conference $conference): bool
+    {
+        $startDateTime = $conference->start_date_time ?: trim($conference->date . ' ' . $conference->start_time);
+        $endDateTime = $conference->end_date_time ?: trim($conference->date . ' ' . $conference->end_time);
+
+        if (!$startDateTime || !$endDateTime) {
+            return false;
+        }
+
+        try {
+            $timezone = $this->conferenceTimezone();
+            $now = Carbon::now($timezone);
+            $start = Carbon::parse($startDateTime, $timezone);
+            $end = Carbon::parse($endDateTime, $timezone);
+
+            return $start->lessThanOrEqualTo($now) && $end->greaterThan($now);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function appendMeetingState(Conference $conference, bool $forTutor): void
+    {
+        $conference->is_meeting_started = (bool) $conference->meeting_started_at;
+        $conference->is_active = $this->conferenceIsActive($conference);
+        $conference->active_elapsed_seconds = null;
+
+        if ($conference->is_active) {
+            try {
+                $timezone = $this->conferenceTimezone();
+                $startDateTime = $conference->start_date_time ?: trim($conference->date . ' ' . $conference->start_time);
+                $conference->active_elapsed_seconds = Carbon::parse($startDateTime, $timezone)
+                    ->diffInSeconds(Carbon::now($timezone));
+            } catch (\Throwable $e) {
+                $conference->active_elapsed_seconds = 0;
+            }
+        }
+
+        if (! $conference->meeting_started_at || $this->conferenceHasEnded($conference)) {
+            $conference->meet_url = null;
+            return;
+        }
+
+        $response = json_decode($conference->response);
+        $data = $response?->data ?? $response;
+        $conference->meet_url = $forTutor
+            ? ($data->start_url ?? null)
+            : ($data->join_url ?? $data->start_url ?? null);
+    }
+
+    private function conferenceTimezone(): string
+    {
+        return config('zoom.timezone', 'Asia/Gaza');
+    }
+
+    private function notifyConferenceStarted(Conference $conference): void
+    {
+        if ($conference->started_notification_sent_at) {
+            return;
+        }
+
+        $message = 'Your class has started. You can join now.';
+        $info = [
+            'type' => 'conference_started',
+            'conference_id' => $conference->id,
+            'url' => '/dashboard/conferences/student',
+            'icon' => 'fa fa-video-camera',
+            'color' => 'success',
+        ];
+
+        foreach ($this->conferenceStudents($conference) as $student) {
+            sendUserDashboardNotification($student, $conference->title, $message, $info);
+            if ($student->email) {
+                Mail::to($student->email)->send(new \App\Mail\NotifyBookedClassMail([
+                    'user_name' => $student->name,
+                    'message' => $message,
+                    'subject' => 'Class Started',
+                ]));
+            }
+        }
+
+        $conference->started_notification_sent_at = now();
+        $conference->save();
+    }
+
+    private function conferenceStudents(Conference $conference)
+    {
+        if ((int) $conference->ref_type === 1) {
+            $studentsIds = GroupClassStudent::where('class_id', $conference->ref_id)->pluck('student_id');
+            return User::whereIn('id', $studentsIds)->get();
+        }
+
+        return $conference->student ? collect([$conference->student]) : collect();
     }
 }

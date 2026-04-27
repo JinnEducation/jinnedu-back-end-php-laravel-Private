@@ -11,6 +11,7 @@ use App\Models\GroupClassOutline;
 use App\Models\GroupClassStudent;
 use App\Models\GroupClassTutor;
 use App\Models\Order;
+use App\Services\ConferenceScheduleNotificationService;
 use App\Models\Tutor;
 use App\Models\User;
 use Carbon\Carbon;
@@ -981,6 +982,8 @@ class GroupClassController extends Controller
             $user = Auth::user();
             $data['user_id'] = $user->id;
             $data['ipaddress'] = $request->ip();
+            $oldSchedule = [];
+            $shouldNotifyScheduleChange = false;
 
             /*if($id>0){
                 GroupClassDate::where('class_id',$id)->delete();
@@ -1084,6 +1087,7 @@ class GroupClassController extends Controller
                         'msg-code' => '111',
                     ], 200);
                 }
+                $oldSchedule = $item->dates()->pluck('class_date')->toArray();
                 $data['tutor_id'] = $item->start_month == $request->start_month ? $item->tutor_id : null;
 
                 if ($item->start_month == $request->start_month) {
@@ -1103,8 +1107,14 @@ class GroupClassController extends Controller
 
             $this->setGroupClassDates($item, $group_class_dates);
             $this->setGroupClassConferences($item);
+            $newSchedule = $item->dates()->pluck('class_date')->toArray();
+            $shouldNotifyScheduleChange = $id > 0 && $this->normalizeSchedule($oldSchedule) !== $this->normalizeSchedule($newSchedule);
 
             DB::commit();
+
+            if ($shouldNotifyScheduleChange) {
+                app(ConferenceScheduleNotificationService::class)->notifyGroupClassScheduleChanged($item->fresh(), $oldSchedule, $newSchedule);
+            }
 
             return response([
                 'success' => true,
@@ -1140,11 +1150,11 @@ class GroupClassController extends Controller
 
             $conference->title = $groupClass->name;
 
-            $conference->start_time = $date->class_date;
-            $conference->end_time = date('Y-m-d H:i:s', strtotime($conference->start_time . ' +40 minutes'));
+            $conference->start_date_time = $date->class_date;
+            $conference->end_date_time = date('Y-m-d H:i:s', strtotime($conference->start_date_time . ' +40 minutes'));
 
-            $start_time = explode(' ', $conference->start_time);
-            $end_time = explode(' ', $conference->end_time);
+            $start_time = explode(' ', $conference->start_date_time);
+            $end_time = explode(' ', $conference->end_date_time);
             // echo $end_date_time;exit;
             // echo date("H:iA", strtotime($date_time[1]));exit;
 
@@ -1255,6 +1265,17 @@ class GroupClassController extends Controller
                 ]);
             }
         }
+    }
+
+    private function normalizeSchedule(array $schedule): array
+    {
+        $normalized = array_values(array_unique(array_filter(array_map(function ($date) {
+            return date('Y-m-d H:i:s', strtotime($date));
+        }, $schedule))));
+
+        sort($normalized);
+
+        return $normalized;
     }
 
     public function show($id)

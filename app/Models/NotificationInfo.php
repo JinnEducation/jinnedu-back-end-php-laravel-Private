@@ -17,6 +17,7 @@ class NotificationInfo extends Model
         'n_icon',
         'n_color',
         'n_seen',
+        'user_id',
     ];
 
 

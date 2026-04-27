@@ -883,11 +883,13 @@ class HomeController extends Controller
         if (! $tutor->tutorProfile) {
             abort(404);
         }
-        $orderTrial = Order::where('user_id', Auth::id())->where('ref_type', 3)->where('ref_id', $tutor->id)->first();
+        $orderTrial = Order::where('user_id', Auth::id())->where('ref_type', 3)->first();
         $orderTrialExists = false;
         $orderTrialFinash = false;
+        $orderTrialSameTutor = false;
         if ($orderTrial) {
             $orderTrialExists = true;
+            $orderTrialSameTutor = (int) $orderTrial->ref_id === (int) $tutor->id;
             $conferences = Conference::where('order_id', $orderTrial->id)->first();
             if ($conferences) {
                 $status = $conferences->status;
@@ -918,7 +920,7 @@ class HomeController extends Controller
             $checkAllowOrder = true;
         }
 
-        $availabilities = $tutor->getFilteredAvailabilities();
+        $availabilities = $this->getTutorAvailableScheduleSlots($tutor);
         $tutorsSuggestions = User::where('type', 2)
             ->with([
                 'profile',
@@ -931,7 +933,7 @@ class HomeController extends Controller
         $reviews = TutorReview::where('tutor_id', $tutor->id)->get();
         $reviewsCount = $reviews->count();
 
-        return view('front.tutor_jinn', compact('tutor', 'availabilities', 'tutorsSuggestions', 'reviewsCount', 'reviews', 'checkAllowOrder', 'orderTrialExists', 'orderTrialFinash'));
+        return view('front.tutor_jinn', compact('tutor', 'availabilities', 'tutorsSuggestions', 'reviewsCount', 'reviews', 'checkAllowOrder', 'orderTrialExists', 'orderTrialFinash', 'orderTrialSameTutor'));
     }
 
     public function privateLessonOrder(string $locale, Request $request, string|int $id)
@@ -956,21 +958,15 @@ class HomeController extends Controller
 
             $orderController = new OrderController;
 
-            $request->date = $orderController->getLastAvailableBookingTime($tutor, 60);
+            $request->date = $this->resolveBookingDate($request, $tutor, $orderController, 60);
             if (! $request->date['success']) {
-                return redirect()->back()->with('error', 'No available time found');
+                return redirect()->back()->with('error', $request->date['message'] ?? 'No available time found');
             }
 
             $response = $orderController->privateLesson($request, $id);
             $original = $response->getOriginalContent();
             if ($original['success']) {
                 $walletController = new WalletController;
-                $responseCheckout = $walletController->checkout($original['result']['id'] ?? $original['order_id']);
-                $originalCheckout = $responseCheckout->getOriginalContent();
-
-                if (! $originalCheckout['success']) {
-                    return redirect()->back()->with('error', $originalCheckout['message']);
-                }
 
                 $orderId = $original['result']['id'] ?? $original['order']['id'];
                 $order = Order::find($orderId);
@@ -1045,16 +1041,16 @@ class HomeController extends Controller
                 return redirect()->back()->with('error', 'Tutor not found');
             }
 
-            $orderController = new OrderController;
-
-            $request->date = $orderController->getLastAvailableBookingTime($tutor, 15);
-            if (! $request->date['success']) {
-                return redirect()->back()->with('error', 'No available time found');
+            $order = Order::where('user_id', Auth::id())->where('ref_type', 3)->first();
+            if ($order) {
+                return redirect()->back()->with('error', 'You have already booked a trial lesson');
             }
 
-            $order = Order::where('user_id', Auth::id())->where('ref_type', 3)->where('ref_id', $tutor->id)->first();
-            if ($order) {
-                return redirect()->back()->with('error', 'You have already booked a trial lesson with this tutor');
+            $orderController = new OrderController;
+
+            $request->date = $this->resolveBookingDate($request, $tutor, $orderController, 15);
+            if (! $request->date['success']) {
+                return redirect()->back()->with('error', $request->date['message'] ?? 'No available time found');
             }
 
             $response = $orderController->trialLesson($request, $id);
@@ -1085,5 +1081,106 @@ class HomeController extends Controller
 
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    private function getTutorAvailableScheduleSlots($tutor, int $period = 60)
+    {
+        $weekStart = Carbon::now()->startOfWeek(Carbon::SUNDAY)->startOfDay();
+        $weekEnd = $weekStart->copy()->addDays(6)->endOfDay();
+        $now = Carbon::now();
+
+        $availabilities = $tutor->availabilities()->get();
+        if (! $availabilities || $availabilities->isEmpty()) {
+            return collect();
+        }
+
+        $bookings = Conference::where('tutor_id', $tutor->id)
+            ->whereNotNull('start_date_time')
+            ->whereNotNull('end_date_time')
+            ->where('start_date_time', '<', $weekEnd->format('Y-m-d H:i:s'))
+            ->where('end_date_time', '>', $weekStart->format('Y-m-d H:i:s'))
+            ->get(['start_date_time', 'end_date_time'])
+            ->map(function ($booking) {
+                return [
+                    'start' => Carbon::parse($booking->start_date_time),
+                    'end' => Carbon::parse($booking->end_date_time),
+                ];
+            });
+
+        $slots = collect();
+        $seenSlots = [];
+
+        for ($dayOffset = 0; $dayOffset < 7; $dayOffset++) {
+            $date = $weekStart->copy()->addDays($dayOffset);
+            $dayName = strtolower($date->format('l'));
+
+            $dayAvailabilities = $availabilities->filter(function ($availability) use ($dayName) {
+                return isset($availability->day, $availability->day->name)
+                    && strtolower($availability->day->name) === $dayName;
+            });
+
+            foreach ($dayAvailabilities as $availability) {
+                $availableFrom = Carbon::parse($date->format('Y-m-d').' '.$availability->hour_from);
+                $availableTo = Carbon::parse($date->format('Y-m-d').' '.$availability->hour_to);
+                $slotStart = $availableFrom->copy();
+
+                while ($slotStart->copy()->addMinutes($period)->lte($availableTo)) {
+                    $slotEnd = $slotStart->copy()->addMinutes($period);
+                    $slotKey = $slotStart->format('Y-m-d H:i:s');
+
+                    if ($slotStart->gt($now) && ! isset($seenSlots[$slotKey])) {
+                        $hasConflict = $bookings->contains(function ($booking) use ($slotStart, $slotEnd) {
+                            return $slotStart->lt($booking['end']) && $slotEnd->gt($booking['start']);
+                        });
+
+                        if (! $hasConflict) {
+                            $slots->push((object) [
+                                'day' => $availability->day,
+                                'date' => $date->format('Y-m-d'),
+                                'hour_from' => $slotStart->format('H:i'),
+                                'hour_to' => $slotEnd->format('H:i'),
+                                'start_date_time' => $slotStart->format('Y-m-d H:i:s'),
+                                'end_date_time' => $slotEnd->format('Y-m-d H:i:s'),
+                            ]);
+                            $seenSlots[$slotKey] = true;
+                        }
+                    }
+
+                    $slotStart->addMinutes($period);
+                }
+            }
+        }
+
+        return $slots;
+    }
+
+    private function resolveBookingDate(Request $request, $tutor, OrderController $orderController, int $period): array
+    {
+        $selectedDate = $request->input('selected_date');
+
+        if ($selectedDate) {
+            try {
+                $startDate = Carbon::parse($selectedDate)->format('Y-m-d H:i:s');
+                $endDate = Carbon::parse($startDate)->addMinutes($period)->format('Y-m-d H:i:s');
+                $date = [
+                    'success' => true,
+                    'start_date_time' => $startDate,
+                    'end_date_time' => $endDate,
+                    'date' => Carbon::parse($startDate)->format('Y-m-d'),
+                    'day_name' => Carbon::parse($startDate)->format('l'),
+                ];
+
+                $checkAllowBooking = $orderController->checkAllowBooking(Auth::user(), $tutor, $date['start_date_time'], $period);
+
+                return $checkAllowBooking['success'] ? $date : $checkAllowBooking;
+            } catch (\Exception $e) {
+                return [
+                    'success' => false,
+                    'message' => 'Invalid selected time',
+                ];
+            }
+        }
+
+        return $orderController->getLastAvailableBookingTime($tutor, $period);
     }
 }
