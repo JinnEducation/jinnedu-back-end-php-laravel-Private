@@ -332,6 +332,8 @@ class OrderController extends Controller
         $order->ref_type = 3;
         $order->ref_id = $tutor->id;
         $order->price = 0;
+        $order->status = 1;
+        $order->payment = 'free';
         $order->outline_id = 0;
         $order->tutor_id = $tutor->id;
         $order->save();
@@ -378,6 +380,15 @@ class OrderController extends Controller
 
         $conference->response = json_encode($result);
         $conference->save();
+
+        sendUserDashboardNotification(User::find($tutor->id), $conference->title, __('site.A student booked a trial lesson with you.'), [
+            'type' => 'trial_lesson_booked',
+            'conference_id' => $conference->id,
+            'orderId' => $order->id,
+            'url' => '/dashboard/conferences/tutor-index',
+            'icon' => 'fa fa-calendar',
+            'color' => 'success',
+        ]);
 
 
         // $braincert = new BraincertController;

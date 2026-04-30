@@ -26,6 +26,11 @@ class GroupClassController extends Controller
 {
     public function registerAsTutor(Request $request, $group_class_id)
     {
+        $locale = $request->header('lang') ?: $request->header('Accept-Language');
+        if ($locale && is_dir(lang_path($locale))) {
+            app()->setLocale($locale);
+        }
+
         $user = Auth::user() ?? $request->user()->id;
 
         $tutor = Tutor::find($user->id);
@@ -61,12 +66,104 @@ class GroupClassController extends Controller
             ], 200);
         }
 
+        $groupClassConferences = Conference::where('ref_type', 1)
+            ->where('ref_id', $group_class->id)
+            ->whereNotNull('start_date_time')
+            ->whereNotNull('end_date_time')
+            ->get(['id', 'start_date_time', 'end_date_time']);
+
+        if ($this->hasTutorConferenceConflict($tutor->id, $group_class->id, $groupClassConferences)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.group-class-schedule-conflicts-with-existing-conferences'),
+                'msg-code' => '444',
+            ], 200);
+        }
+
+        if (! $this->isTutorAvailableForGroupClass($tutor, $groupClassConferences)) {
+            return response([
+                'success' => false,
+                'message' => __('admin.tutor-not-available-for-group-class-schedule'),
+                'msg-code' => '445',
+            ], 200);
+        }
+
         GroupClassTutor::create($tutorData);
 
         return response([
             'success' => true,
             'message' => 'registered-done',
         ], 200);
+    }
+
+    private function hasTutorConferenceConflict(int $tutorId, int $groupClassId, $groupClassConferences): bool
+    {
+        foreach ($groupClassConferences as $conference) {
+            if (
+                Conference::where('tutor_id', $tutorId)
+                    ->whereNotNull('start_date_time')
+                    ->whereNotNull('end_date_time')
+                    ->where(function ($query) use ($groupClassId) {
+                        $query->where('ref_type', '<>', 1)
+                            ->orWhere('ref_id', '<>', $groupClassId);
+                    })
+                    ->where('start_date_time', '<', $conference->end_date_time)
+                    ->where('end_date_time', '>', $conference->start_date_time)
+                    ->exists()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isTutorAvailableForGroupClass(Tutor $tutor, $groupClassConferences): bool
+    {
+        $availability = $tutor->tutorProfile?->availability_json ?? [];
+
+        if (is_string($availability)) {
+            $availability = json_decode($availability, true) ?: [];
+        }
+
+        if (empty($availability) || ! is_array($availability)) {
+            return false;
+        }
+
+        foreach ($groupClassConferences as $conference) {
+            $start = Carbon::parse($conference->start_date_time);
+            $end = Carbon::parse($conference->end_date_time);
+            $day = strtolower($start->englishDayOfWeek);
+            $slots = $availability[$day] ?? [];
+            $startTime = $start->format('H:i');
+            $endTime = $end->format('H:i');
+            $isAvailable = false;
+
+            foreach ($slots as $slot) {
+                $from = $this->normalizeAvailabilityTime($slot['from'] ?? null);
+                $to = $this->normalizeAvailabilityTime($slot['to'] ?? null);
+
+                if ($from && $to && $from <= $startTime && $to >= $endTime) {
+                    $isAvailable = true;
+                    break;
+                }
+            }
+
+            if (! $isAvailable) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function normalizeAvailabilityTime(?string $time): ?string
+    {
+        if (! $time || strtotime($time) === false) {
+            return null;
+        }
+
+        return date('H:i', strtotime($time));
     }
 
     public function unRegisterAsTutor(Request $request, $group_class_id)

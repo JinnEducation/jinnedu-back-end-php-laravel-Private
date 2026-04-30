@@ -505,6 +505,7 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
         Route::get('/group-class-orders', [TutorStatisticsController::class, 'getTutorGroupClassOrders']);
         Route::get('/private-lesson-orders', [TutorStatisticsController::class, 'getTutorPrivateLessonOrders']);
         Route::get('/tutor-info', [TutorStatisticsController::class, 'tutorInfo']);
+        Route::get('/pending-balance-conferences', [TutorStatisticsController::class, 'pendingBalanceConferences']);
         Route::get('/get-tutors', [TutorStatisticsController::class, 'getTutors']);
         Route::get('/get-tutor-finance', [TutorStatisticsController::class, 'getTutorFinance']);
         Route::post('/update-tutor-finance/{id}', [TutorStatisticsController::class, 'updateTutorFinanceStatus']);

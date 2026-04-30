@@ -88,9 +88,11 @@ class ReviewController extends Controller
             $review = Review::create($data);
             
             // هنا الحجز
-            $walletController = new WalletController();
             $order = Order::where('id', $conference->order_id)->first();
-            $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference->id);
+            if ($order) {
+                $walletController = new WalletController();
+                $walletController->addTutorFinance($order, $order->tutor_id, $order->ref_type, $conference->id);
+            }
         }
         
         return response([

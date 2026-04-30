@@ -41,6 +41,7 @@ class NotifyBookedClass extends Command
         $this->notifyClassStarted($now);
         $this->notifyTutorToUploadRecording($now);
         $this->notifyTrialLessonEndedFollowup($now);
+        $this->notifyStudentClassEndedFeedback($now);
     }
 
     private function notifyOneHourBefore(Carbon $now): void
@@ -171,6 +172,65 @@ class NotifyBookedClass extends Command
                 ]);
             }
         }
+    }
+
+    private function notifyStudentClassEndedFeedback(Carbon $now): void
+    {
+        if (! Schema::hasColumn('conferences', 'student_feedback_notification_sent_at')) {
+            return;
+        }
+
+        $conferences = Conference::whereIn('ref_type', [1, 2, 3, 4])
+            ->whereNull('student_feedback_notification_sent_at')
+            ->whereNotNull('meeting_started_at')
+            ->where('end_date_time', '<=', $now)
+            ->with(['student'])
+            ->get();
+
+        foreach ($conferences as $conference) {
+            try {
+                $title = __('site.Class feedback requested');
+                $message = __('site.Your class has ended. Please tell us how it went. You can rate the class, or submit an objection if something was not right.');
+                $reviewUrl = $this->dashboardRedirectUrl("/conferences/{$conference->id}/reviews");
+                $complaintUrl = $this->dashboardRedirectUrl("/conferences/{$conference->id}/complaints");
+
+                foreach ($this->conferenceStudents($conference) as $student) {
+                    sendUserDashboardNotification($student, $title, $message, [
+                        'type' => 'class_feedback_requested',
+                        'conference_id' => $conference->id,
+                        'url' => '/dashboard/conferences/student-index',
+                        'icon' => 'fa fa-star',
+                        'color' => 'success',
+                    ]);
+
+                    if ($student->email) {
+                        Mail::to($student->email)->send(new \App\Mail\NotifyBookedClassMail([
+                            'user_name' => $student->name ?: $student->full_name,
+                            'message' => $message,
+                            'subject' => $title,
+                            'greeting' => __('site.Hello'),
+                            'thanks' => __('site.Thank you'),
+                            'actions' => [
+                                ['url' => $reviewUrl, 'text' => __('site.Rate the class')],
+                                ['url' => $complaintUrl, 'text' => __('site.Submit an objection')],
+                            ],
+                        ]));
+                    }
+                }
+
+                $conference->student_feedback_notification_sent_at = Carbon::now();
+                $conference->save();
+            } catch (\Throwable $e) {
+                Log::error('Failed to send student class feedback notification: '.$e->getMessage(), [
+                    'conference_id' => $conference->id,
+                ]);
+            }
+        }
+    }
+
+    private function dashboardRedirectUrl(string $path): string
+    {
+        return route('redirect.dashboard', ['redirect_to' => $path]);
     }
 
     private function conferenceStudents(Conference $conference)

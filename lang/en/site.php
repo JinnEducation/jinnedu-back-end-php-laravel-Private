@@ -473,6 +473,8 @@ return [
     'Full Schedule' => 'Full Schedule',
     'View Schedule' => 'View Schedule',
     'Please select a time to continue booking.' => 'Please select a time to continue booking.',
+    'A student booked a trial lesson with you.' => 'A student booked a trial lesson with you.',
+    'A student booked a private lesson with you.' => 'A student booked a private lesson with you.',
 
     'Profile Picture' => 'Profile Picture',
     'Google' => 'Google',
@@ -630,5 +632,14 @@ return [
     'connection_error_msg' => 'A connection error occurred. Please try again later.',
     'Return to Homepage' => 'Return to Homepage',
     'Refresh Page' => 'Refresh Page',
+
+    // Class feedback notifications
+    'Class feedback requested' => 'How was your class?',
+    'Your class has ended. Please tell us how it went. You can rate the class, or submit an objection if something was not right.' => 'Your class has ended. Please tell us how it went. You can rate the class, or submit an objection if something was not right.',
+    'Open my classes' => 'Open my classes',
+    'Rate the class' => 'Rate the class',
+    'Submit an objection' => 'Submit an objection',
+    'Hello' => 'Hello',
+    'Thank you' => 'Thank you',
 
 ];

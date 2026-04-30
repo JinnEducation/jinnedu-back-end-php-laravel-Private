@@ -459,6 +459,8 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Full Schedule' => 'الجدول الكامل',
     'View Schedule' => 'عرض الجدول',
     'Please select a time to continue booking.' => 'يرجى اختيار موعد لمتابعة الحجز.',
+    'A student booked a trial lesson with you.' => 'قام طالب بحجز حصة تجريبية معك.',
+    'A student booked a private lesson with you.' => 'قام طالب بحجز حصة خاصة معك.',
 
     'Profile Picture' => 'صورة الملف الشخصي',
     'Google' => 'Google',
@@ -613,5 +615,14 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'Return to Homepage' => 'العودة إلى الرئيسية',
     'Refresh Page' => 'تحديث الصفحة',
 
-    'Items' => 'العناصر'
+    'Items' => 'العناصر',
+
+    // Class feedback notifications
+    'Class feedback requested' => 'كيف كانت حصتك؟',
+    'Your class has ended. Please tell us how it went. You can rate the class, or submit an objection if something was not right.' => 'انتهت حصتك. نرجو أن تخبرنا كيف كانت تجربتك. يمكنك تقييم الحصة، أو تقديم اعتراض إذا كان هناك أي مشكلة.',
+    'Open my classes' => 'فتح حصصي',
+    'Rate the class' => 'تقييم الحصة',
+    'Submit an objection' => 'تقديم اعتراض',
+    'Hello' => 'مرحباً',
+    'Thank you' => 'شكراً',
 ];

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 class TutorStatisticsController extends Controller
 {
     public function getTutors(Request $request) {
@@ -86,6 +88,11 @@ class TutorStatisticsController extends Controller
 
     private function getUncalculatedConferencesBalance(int $tutorId): float
     {
+        return round($this->getPendingBalanceConferences($tutorId)->sum('pending_amount'), 2);
+    }
+
+    private function getPendingBalanceConferences(int $tutorId)
+    {
         $groupClassPercentage = (float) (getSettingVal('group_class_fees') ?? 0);
         $privateLessonPercentage = (float) (getSettingVal('private_lesson_fees') ?? 0);
 
@@ -99,11 +106,17 @@ class TutorStatisticsController extends Controller
             });
         }
 
-        $conferences = $conferencesQuery->get();
+        $conferences = $conferencesQuery
+            ->withCount(['complaints', 'recordings'])
+            ->get();
 
-        $total = 0.0;
+        $items = collect();
 
         foreach ($conferences as $conference) {
+            if (! $this->conferenceHasEnded($conference)) {
+                continue;
+            }
+
             if ($conference->ref_type == 1) {
                 $isCalculated = TutorFinance::where([
                     'ref_type' => 1,
@@ -155,7 +168,13 @@ class TutorStatisticsController extends Controller
                     continue;
                 }
 
-                $total += ($groupClassPercentage * $sessionFees) / 100;
+                $items->push($this->formatPendingBalanceConference(
+                    $conference,
+                    round(($groupClassPercentage * $sessionFees) / 100, 2),
+                    $groupClassPercentage,
+                    $sessionFees,
+                    $groupClass?->name
+                ));
                 continue;
             }
 
@@ -174,13 +193,109 @@ class TutorStatisticsController extends Controller
                     continue;
                 }
 
-                $total += ($privateLessonPercentage * (float) $order->price) / 100;
+                $items->push($this->formatPendingBalanceConference(
+                    $conference,
+                    round(($privateLessonPercentage * (float) $order->price) / 100, 2),
+                    $privateLessonPercentage,
+                    (float) $order->price,
+                    $conference->title
+                ));
             }
         }
 
-
-        return round($total, 2);
+        return $items->values();
     }
+
+    private function formatPendingBalanceConference(Conference $conference, float $pendingAmount, float $percentage, float $total, ?string $name)
+    {
+        $hasComplaint = (int) ($conference->complaints_count ?? 0) > 0;
+        $hasRecording = (int) ($conference->recordings_count ?? 0) > 0;
+
+        if ($hasComplaint) {
+            $reason = 'has-complaint';
+        } elseif (! $hasRecording) {
+            $reason = 'missing-recording';
+        } else {
+            $reason = 'waiting-admin-approval';
+        }
+
+        return [
+            'id' => $conference->id,
+            'conference_id' => $conference->id,
+            'ref_type' => $conference->ref_type,
+            'name' => $name ?: $conference->title,
+            'title' => $conference->title,
+            'class_date' => $conference->end_date_time ?: $conference->date,
+            'total' => round($total, 2),
+            'percentage' => $percentage,
+            'pending_amount' => $pendingAmount,
+            'reason' => $reason,
+            'has_complaint' => $hasComplaint,
+            'has_recording' => $hasRecording,
+        ];
+    }
+
+    private function conferenceHasEnded(Conference $conference): bool
+    {
+        $endDateTime = $conference->end_date_time ?: trim(($conference->date ?? '') . ' ' . ($conference->end_time ?? ''));
+
+        if (! $endDateTime) {
+            return false;
+        }
+
+        try {
+            return Carbon::parse($endDateTime)->lessThanOrEqualTo(now());
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    public function pendingBalanceConferences(Request $request)
+    {
+        $tutor = Tutor::find($request->tutor_id);
+
+        if(!$tutor){
+            return response()->json([
+               'success' => false,
+               'message' => 'Tutor not found',
+               'msg-code' => '111'
+            ], 200);
+        }
+
+        $limit = setDataTablePerPageLimit($request->limit);
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $items = $this->getPendingBalanceConferences((int) $request->tutor_id);
+
+        if (! empty($request->ref_type)) {
+            $items = $items->filter(fn ($item) => (int) $item['ref_type'] === (int) $request->ref_type);
+        }
+
+        if (! empty($request->q)) {
+            $query = mb_strtolower(filterText($request->q));
+            $items = $items->filter(function ($item) use ($query) {
+                return str_contains(mb_strtolower(filterText($item['name'] ?? '')), $query)
+                    || str_contains(mb_strtolower(filterText($item['title'] ?? '')), $query);
+            });
+        }
+
+        $items = $items->values();
+        $paginatedItems = $items->slice(($page - 1) * $limit, $limit)->values();
+
+        $result = new LengthAwarePaginator(
+            $paginatedItems,
+            $items->count(),
+            $limit,
+            $page,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        return response([
+               'success' => true,
+               'message' => 'item-listed-successfully',
+               'result' => $result
+        ], 200);
+    }
+
 
     public function getTutorGroupClassOrders(Request $request){
 

@@ -465,18 +465,16 @@ class WalletController extends Controller
                 $conferences = $conference->createPrivateLessonConference($order);
 
                 $user = User::find($order->tutor_id);
-                $info = [
-                    'type' => 'private lesson',
-                    'orderId' => $order->id,
-                ];
+                $bookedConference = $conferences?->first();
 
-                sendFCMNotification(
-                    'Jinnedu',
-                    'You have a new private lesson',
-                    $user->fcm,
-                    $info,
-                    $user->id
-                );
+                sendUserDashboardNotification($user, $bookedConference?->title ?? 'private-lesson', __('site.A student booked a private lesson with you.'), [
+                    'type' => 'private_lesson_booked',
+                    'conference_id' => $bookedConference?->id,
+                    'orderId' => $order->id,
+                    'url' => '/dashboard/conferences/tutor-index',
+                    'icon' => 'fa fa-calendar',
+                    'color' => 'success',
+                ]);
 
             } elseif ($order->ref_type == 6) {
 

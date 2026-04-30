@@ -66,6 +66,8 @@ $(document).ready(function () {
   const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   let selectedDateTime = '';
   let activeBookingForm = null;
+  const currentWeekStart = getWeekStart(new Date());
+  let visibleWeekStart = new Date(currentWeekStart);
 
   function padNumber(value) {
     return String(value).padStart(2, '0');
@@ -82,6 +84,54 @@ $(document).ready(function () {
       : padNumber(parsedTime.getMinutes());
 
     return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${hours}:${minutes}:00`;
+  }
+
+  function getWeekStart(date) {
+    const weekStart = new Date(date);
+    weekStart.setHours(0, 0, 0, 0);
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    return weekStart;
+  }
+
+  function formatDisplayDate(date) {
+    return `${padNumber(date.getMonth() + 1)}/${padNumber(date.getDate())}/${date.getFullYear()}`;
+  }
+
+  function updateWeekLabel(dateSelector) {
+    if (!dateSelector) return;
+
+    const weekEnd = new Date(visibleWeekStart);
+    weekEnd.setDate(visibleWeekStart.getDate() + 6);
+    $(dateSelector).text(`${formatDisplayDate(visibleWeekStart)} - ${formatDisplayDate(weekEnd)}`);
+  }
+
+  function isSameDay(firstDate, secondDate) {
+    return firstDate.getFullYear() === secondDate.getFullYear()
+      && firstDate.getMonth() === secondDate.getMonth()
+      && firstDate.getDate() === secondDate.getDate();
+  }
+
+  function parseSlotDateTime(dateTime) {
+    const normalizedDateTime = String(dateTime || '').replace(' ', 'T');
+    const parsedDateTime = new Date(normalizedDateTime);
+
+    return Number.isNaN(parsedDateTime.getTime()) ? null : parsedDateTime;
+  }
+
+  function isPastSlot(dateTime) {
+    const slotDateTime = parseSlotDateTime(dateTime);
+    const now = new Date();
+
+    return slotDateTime && isSameDay(slotDateTime, now) && slotDateTime <= now;
+  }
+
+  function updatePreviousWeekButtons() {
+    const isCurrentWeek = visibleWeekStart.getTime() <= currentWeekStart.getTime();
+    const disabledClasses = 'opacity-50 cursor-not-allowed';
+
+    $('#prevWeek, #prevWeekModal')
+      .toggleClass(disabledClasses, isCurrentWeek)
+      .prop('disabled', isCurrentWeek);
   }
 
   // Process availability data by day
@@ -121,17 +171,8 @@ $(document).ready(function () {
     const scheduleGrid = $(gridSelector);
     scheduleGrid.empty();
 
-    // Get current date for display
-    const today = new Date();
-    const currentDateStr = today.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    if (dateSelector) {
-      $(dateSelector).text(currentDateStr);
-    }
+    updateWeekLabel(dateSelector);
+    updatePreviousWeekButtons();
 
     // Render each day in order
     dayOrder.forEach((dayName, index) => {
@@ -148,8 +189,8 @@ $(document).ready(function () {
         .text(dayName);
 
       // Day number (current date + index)
-      const dayDate = new Date(today);
-      dayDate.setDate(today.getDate() - today.getDay() + index); // Start from Sunday
+      const dayDate = new Date(visibleWeekStart);
+      dayDate.setDate(visibleWeekStart.getDate() + index);
       const dayNumber = $("<div>")
         .addClass("text-xl font-bold text-primary mb-2")
         .text(dayDate.getDate());
@@ -169,16 +210,26 @@ $(document).ready(function () {
 
         // Add each available one-hour start time
         daySlots.forEach(slot => {
-          const fromDate = slot.startDateTime || formatDateTime(dayDate, slot.from);
+          const fromDate = formatDateTime(dayDate, slot.from);
+          const pastSlot = isPastSlot(fromDate);
 
           const fromSlot = $("<div>")
-            .addClass("time-slot cursor-pointer text-center py-1 text-sm border-b border-gray-400 font-semibold hover:text-primary")
+            .addClass("time-slot text-center py-1 text-sm border-b border-gray-400 font-semibold")
             .text(slot.from)
             .attr("data-day", dayName)
             .attr("data-time", slot.from)
             .attr("data-date", fromDate)
             .attr("title", slot.to ? `${slot.from} - ${slot.to}` : slot.from);
-          if (selectedDateTime === fromDate) {
+
+          if (pastSlot) {
+            fromSlot
+              .addClass("disabled-time-slot cursor-not-allowed text-gray-400 opacity-50")
+              .attr("aria-disabled", "true");
+          } else {
+            fromSlot.addClass("cursor-pointer hover:text-primary");
+          }
+
+          if (!pastSlot && selectedDateTime === fromDate) {
             fromSlot.addClass("bg-primary text-white rounded");
           }
           timeSlotsContainer.append(fromSlot);
@@ -204,6 +255,27 @@ $(document).ready(function () {
   // Render schedule for modal
   function renderScheduleModal() {
     renderScheduleGrid("#scheduleGridModal", "#weekDateModal");
+  }
+
+  function renderVisibleSchedules() {
+    renderSchedule();
+
+    if ($("#fullScheduleModal").hasClass("flex")) {
+      renderScheduleModal();
+    }
+  }
+
+  function changeVisibleWeek(weekOffset) {
+    const nextWeekStart = new Date(visibleWeekStart);
+    nextWeekStart.setDate(visibleWeekStart.getDate() + (weekOffset * 7));
+
+    if (nextWeekStart < currentWeekStart) {
+      visibleWeekStart = new Date(currentWeekStart);
+    } else {
+      visibleWeekStart = nextWeekStart;
+    }
+
+    renderVisibleSchedules();
   }
 
   function showBookingMessage(message) {
@@ -243,35 +315,35 @@ $(document).ready(function () {
     $("body").css("overflow", "auto");
   }
 
-  // Navigation buttons - disabled (just for display)
   $("#prevWeek").on("click", function (e) {
     e.preventDefault();
-    // Disabled - no functionality
+    changeVisibleWeek(-1);
   });
 
   $("#nextWeek").on("click", function (e) {
     e.preventDefault();
-    // Disabled - no functionality
+    changeVisibleWeek(1);
   });
 
-  // Modal navigation buttons - disabled (just for display)
   $("#prevWeekModal").on("click", function (e) {
     e.preventDefault();
-    // Disabled - no functionality
+    changeVisibleWeek(-1);
   });
 
   $("#nextWeekModal").on("click", function (e) {
     e.preventDefault();
-    // Disabled - no functionality
+    changeVisibleWeek(1);
   });
 
   // Initial render
   renderSchedule();
 
   $(document).on("click", ".time-slot", function () {
+    if ($(this).hasClass("disabled-time-slot")) return;
+
     selectedDateTime = $(this).data("date") || "";
 
-    if (!selectedDateTime) return;
+    if (!selectedDateTime || isPastSlot(selectedDateTime)) return;
 
     $(".time-slot").removeClass("bg-primary text-white rounded");
     $(`.time-slot[data-date="${selectedDateTime}"]`).addClass("bg-primary text-white rounded");
@@ -279,8 +351,15 @@ $(document).ready(function () {
   });
 
   $(".booking-form").on("submit", function (e) {
-    if ($(this).find(".booking-selected-date").val()) {
+    const selectedDate = $(this).find(".booking-selected-date").val();
+
+    if (selectedDate && !isPastSlot(selectedDate)) {
       return;
+    }
+
+    if (selectedDate && isPastSlot(selectedDate)) {
+      selectedDateTime = '';
+      $(this).find(".booking-selected-date").val('');
     }
 
     e.preventDefault();
@@ -293,6 +372,14 @@ $(document).ready(function () {
 
     if (!selectedDateTime) {
       showBookingMessage($("#modalBookingHint").text().trim() || "Please select a booking time.");
+      return;
+    }
+
+    if (isPastSlot(selectedDateTime)) {
+      selectedDateTime = '';
+      $(activeBookingForm).find(".booking-selected-date").val('');
+      showBookingMessage($("#modalBookingHint").text().trim() || "Please select a booking time.");
+      renderVisibleSchedules();
       return;
     }
 
