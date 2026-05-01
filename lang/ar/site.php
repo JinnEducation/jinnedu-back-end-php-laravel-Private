@@ -561,6 +561,7 @@ conditions and the privacy policy of the Jien platform.' => 'بالنقر على
     'December' => 'ديسمبر',
 
     'balance' => 'الرصيد',
+    'wallet-balance-is-not-enough' => 'رصيد المحفظة غير كافٍ لإتمام عملية الشراء.',
     'buy_credit' => 'شراء رصيد',
     'share' => 'مشاركة',
     'Share via:' => 'مشاركة عبر:',

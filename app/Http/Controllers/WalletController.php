@@ -310,6 +310,15 @@ class WalletController extends Controller
         $user = Auth::user();
 
         $wallet = $user->wallets()->first();
+        if (! $wallet) {
+            $wallet = UserWallet::create([
+                'user_id' => $user->id,
+                'balance' => 0,
+                'group_class_count' => 0,
+                'our_course_count' => 0,
+                'private_lesson_count' => 0,
+            ]);
+        }
         // if(!$wallet) return response([
         //         'success' => false,
         //         'message' => 'wallet-dose-not-exist',
@@ -428,18 +437,19 @@ class WalletController extends Controller
 
                     // $this->addTutorTransferToHisWallet($order,$order->tutor_id);
                 } else {
+                    if ($wallet->balance < $order->price) {
+                        return response([
+                            'success' => false,
+                            'message' => __('site.wallet-balance-is-not-enough'),
+                            'msg-code' => '333',
+                        ], 200);
+                    }
+
                     $wallet->balance -= $order->price;
                     $wallet->save();
                     // $this->addTutorTransferToHisWallet($order,$order->tutor_id);
                 }
-                // =====================================================================
-                if ($wallet->group_class_count > 0) {
-                    $wallet->group_class_count -= 1;
-                } else {
-                    $wallet->balance -= $order->price;
-                }
-                $wallet->save();
-                // =====================================================================
+
                 // $conference = new ConferenceController;
                 // $conferences = $conference->createOurCourseConferences($order);
                 $conferences = null;

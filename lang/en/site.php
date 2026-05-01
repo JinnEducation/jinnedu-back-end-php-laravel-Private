@@ -520,6 +520,7 @@ return [
     'Book Now' => 'Book Now',
 
     'balance' => 'Balance',
+    'wallet-balance-is-not-enough' => 'Your wallet balance is not enough to complete this purchase.',
     'buy_credit' => 'Buy credit',
     'share' => 'share',
     'Share via:' => 'Share via:',
