@@ -52,7 +52,27 @@ class CourseEnrollment extends Model
         return $query->where(function (Builder $q) {
             $q->whereHas('course', function (Builder $courseQuery) {
                 $courseQuery->where('is_free', true)
-                    ->orWhere('final_price', '<=', 0);
+                    ->orWhere('price', '<=', 0)
+                    ->orWhereHas('discounts', function (Builder $discountQuery) {
+                        $discountQuery->where('is_active', true)
+                            ->where(function (Builder $dateQuery) {
+                                $dateQuery->whereNull('starts_at')
+                                    ->orWhere('starts_at', '<=', now());
+                            })
+                            ->where(function (Builder $dateQuery) {
+                                $dateQuery->whereNull('ends_at')
+                                    ->orWhere('ends_at', '>=', now());
+                            })
+                            ->where(function (Builder $valueQuery) {
+                                $valueQuery->where(function (Builder $percentQuery) {
+                                    $percentQuery->where('type', 'percent')
+                                        ->where('value', '>=', 100);
+                                })->orWhere(function (Builder $fixedQuery) {
+                                    $fixedQuery->where('type', 'fixed')
+                                        ->whereColumn('value', '>=', 'courses.price');
+                                });
+                            });
+                    });
             })->orWhereHas('order', function (Builder $orderQuery) {
                 $orderQuery->where('status', 1);
             });
