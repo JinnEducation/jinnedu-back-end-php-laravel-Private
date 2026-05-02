@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\ConferenceRecordingController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\Constants\ContactUsController;
@@ -533,6 +534,7 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/students-conference-report', [ReportController::class, 'studentsConferenceReport'])->name('studentsConferenceReport');
         Route::get('/revenue-Report', [ReportController::class, 'revenueReport'])->name('revenue');
+        Route::get('/student-accounting-transactions', [AccountingReportController::class, 'studentTransactions'])->name('studentAccountingTransactions');
     });
 
     Route::get('/conference-recordings/conferences-with-recording', [ConferenceRecordingController::class, 'indexConferences']);

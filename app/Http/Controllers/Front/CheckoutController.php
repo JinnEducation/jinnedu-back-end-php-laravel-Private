@@ -185,6 +185,8 @@ class CheckoutController extends Controller
             'response' => json_encode(['type' => 'topup', 'payment_gateway' => $request->payment_gateway]),
         ]);
 
+        $this->createPendingWalletTopupTransaction($transaction);
+
         // Process payment gateway
         return $this->processPaymentGateway($transaction, $request, 'topup');
     }
@@ -252,6 +254,8 @@ class CheckoutController extends Controller
             ]),
         ]);
 
+        $this->createPendingOrderDebitTransactions($orders, $finalAmount, $transaction, $discountAmount);
+
         // Process payment gateway
         return $this->processPaymentGateway($transaction, $request, 'pay');
     }
@@ -287,8 +291,10 @@ class CheckoutController extends Controller
             DB::transaction(function () use ($wallet, $orders, $amount, $user, $discountAmount) {
                 $this->ensurePrivateLessonSlotsAvailable($orders);
 
+                $balanceBefore = (float) $wallet->balance;
                 $wallet->balance -= $amount;
                 $wallet->save();
+                $balanceAfter = (float) $wallet->balance;
 
                 foreach ($orders as $order) {
                     $order->status = 1;
@@ -297,7 +303,7 @@ class CheckoutController extends Controller
                 }
 
                 $this->createPaidOrderSideEffects($orders);
-                $this->createOrderDebitTransactions($orders, $amount, $user->id, 'wallet', $discountAmount);
+                $this->createOrderDebitTransactions($orders, $amount, $user->id, 'wallet', $discountAmount, null, $balanceBefore, $balanceAfter);
             });
         } catch (\Exception $e) {
             return response()->json([
@@ -338,6 +344,8 @@ class CheckoutController extends Controller
             $url = $this->extractPaymentUrl($transaction->payment_channel, $response);
 
             if (! $url) {
+                $this->markPaymentLedgerTransactions($transaction, 'failed');
+
                 return response()->json([
                     'success' => false,
                     'message' => 'payment-gateway-url-not-found',
@@ -352,6 +360,7 @@ class CheckoutController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Payment Gateway Error: '.$e->getMessage());
+            $this->markPaymentLedgerTransactions($transaction, 'failed');
 
             return response()->json([
                 'success' => false,
@@ -414,6 +423,7 @@ class CheckoutController extends Controller
                     // Payment failed
                     $transaction->payment_status = TransactionPaymentStatus::CANCELED;
                     $transaction->save();
+                    $this->markPaymentLedgerTransactions($transaction, 'failed');
 
                     return redirect()->route('checkout')
                         ->with('error', $resultData['message'] ?? 'Payment processing failed');
@@ -424,6 +434,7 @@ class CheckoutController extends Controller
                 // Mark transaction as failed
                 $transaction->payment_status = TransactionPaymentStatus::CANCELED;
                 $transaction->save();
+                $this->markPaymentLedgerTransactions($transaction, 'failed');
 
                 // throw $e;
 
@@ -433,6 +444,7 @@ class CheckoutController extends Controller
         } else {
             $transaction->payment_status = TransactionPaymentStatus::CANCELED;
             $transaction->save();
+            $this->markPaymentLedgerTransactions($transaction, 'canceled');
 
             return redirect()->route('checkout')
                 ->with('error', 'Payment was canceled');
@@ -467,16 +479,13 @@ class CheckoutController extends Controller
             }
 
             if ($type === 'topup') {
+                $balanceBefore = (float) $wallet->balance;
                 $wallet->update([
                     'balance' => $wallet->balance + $transaction->amount,
                 ]);
+                $balanceAfter = (float) $wallet->fresh()->balance;
 
-                WalletTransaction::create([
-                    'user_id' => $transaction->user_id,
-                    'type' => 'credit',
-                    'amount' => $transaction->amount,
-                    'description' => 'Wallet top-up via '.$transaction->payment_channel,
-                ]);
+                $this->completePendingWalletTopupTransaction($transaction, $balanceBefore, $balanceAfter);
             }
 
             if ($type === 'pay' && ! empty($metadata['order_ids'])) {
@@ -514,7 +523,7 @@ class CheckoutController extends Controller
         }
 
         $this->createPaidOrderSideEffects($orders);
-        $this->createOrderDebitTransactions($orders, $finalPaidAmount, $transaction->user_id, $transaction->payment_channel, $discountAmount);
+        $this->createOrderDebitTransactions($orders, $finalPaidAmount, $transaction->user_id, $transaction->payment_channel, $discountAmount, $transaction, $transaction->current_wallet, $transaction->current_wallet);
     }
 
     private function createPaidOrderSideEffects($orders): void
@@ -564,7 +573,83 @@ class CheckoutController extends Controller
         }
     }
 
-    private function createOrderDebitTransactions($orders, float $finalAmount, int $userId, string $channel, float $discountAmount = 0): void
+    private function createPendingWalletTopupTransaction(WalletPaymentTransaction $transaction): void
+    {
+        WalletTransaction::create([
+            'user_id' => $transaction->user_id,
+            'wallet_payment_transaction_id' => $transaction->id,
+            'type' => 'credit',
+            'transaction_type' => 'wallet_topup',
+            'payment_gateway' => $transaction->payment_channel,
+            'status' => 'pending',
+            'amount' => $transaction->amount,
+            'balance_before' => $transaction->current_wallet,
+            'currency_code' => $transaction->currency_code ?? 'USD',
+            'description' => 'transaction.wallet_topup',
+            'metadata' => [
+                'translation_key' => 'transaction.wallet_topup',
+                'reference_id' => $transaction->reference_id,
+            ],
+        ]);
+    }
+
+    private function completePendingWalletTopupTransaction(WalletPaymentTransaction $transaction, float $balanceBefore, float $balanceAfter): void
+    {
+        $ledger = WalletTransaction::where('wallet_payment_transaction_id', $transaction->id)
+            ->where('transaction_type', 'wallet_topup')
+            ->first();
+
+        if (! $ledger) {
+            $this->createPendingWalletTopupTransaction($transaction);
+            $ledger = WalletTransaction::where('wallet_payment_transaction_id', $transaction->id)
+                ->where('transaction_type', 'wallet_topup')
+                ->first();
+        }
+
+        $ledger->update([
+            'status' => 'completed',
+            'balance_before' => $balanceBefore,
+            'balance_after' => $balanceAfter,
+            'metadata' => array_merge($ledger->metadata ?? [], [
+                'completed_at' => now()->toDateTimeString(),
+            ]),
+        ]);
+    }
+
+    private function createPendingOrderDebitTransactions($orders, float $finalAmount, WalletPaymentTransaction $transaction, float $discountAmount = 0): void
+    {
+        $distributedAmounts = $this->distributeFinalAmountAcrossOrders($orders, $finalAmount);
+
+        foreach ($orders as $order) {
+            $debitAmount = (float) ($distributedAmounts[$order->id] ?? 0);
+            if ($debitAmount <= 0) {
+                continue;
+            }
+
+            WalletTransaction::create([
+                'user_id' => $transaction->user_id,
+                'order_id' => $order->id,
+                'wallet_payment_transaction_id' => $transaction->id,
+                'type' => 'debit',
+                'transaction_type' => $this->transactionTypeForOrder($order),
+                'payment_gateway' => $transaction->payment_channel,
+                'status' => 'pending',
+                'amount' => $debitAmount,
+                'balance_before' => $transaction->current_wallet,
+                'balance_after' => $transaction->current_wallet,
+                'currency_code' => $transaction->currency_code ?? 'USD',
+                'description' => 'transaction.'.$this->transactionTypeForOrder($order),
+                'metadata' => [
+                    'translation_key' => 'transaction.'.$this->transactionTypeForOrder($order),
+                    'reference_id' => $transaction->reference_id,
+                    'order_ref_type' => (int) $order->ref_type,
+                    'discount_amount' => $discountAmount,
+                ],
+            ]);
+        }
+    }
+
+    private function createOrderDebitTransactions($orders, float $finalAmount, int $userId, string $channel, float $discountAmount = 0, ?WalletPaymentTransaction $paymentTransaction = null, ?float $balanceBefore = null, ?float $balanceAfter = null): void
     {
         $distributedAmounts = $this->distributeFinalAmountAcrossOrders($orders, $finalAmount);
 
@@ -575,14 +660,67 @@ class CheckoutController extends Controller
                 continue;
             }
 
+            $transactionType = $this->transactionTypeForOrder($order);
+
+            if ($paymentTransaction) {
+                $ledger = WalletTransaction::where('wallet_payment_transaction_id', $paymentTransaction->id)
+                    ->where('order_id', $order->id)
+                    ->first();
+
+                if ($ledger) {
+                    $ledger->update([
+                        'status' => 'completed',
+                        'amount' => $debitAmount,
+                        'transaction_type' => $transactionType,
+                        'payment_gateway' => $channel,
+                        'balance_before' => $balanceBefore,
+                        'balance_after' => $balanceAfter,
+                        'metadata' => array_merge($ledger->metadata ?? [], [
+                            'completed_at' => now()->toDateTimeString(),
+                            'discount_amount' => $discountAmount,
+                        ]),
+                    ]);
+
+                    continue;
+                }
+            }
+
             WalletTransaction::create([
                 'user_id' => $userId,
                 'order_id' => $order->id,
                 'type' => 'debit',
+                'transaction_type' => $transactionType,
+                'payment_gateway' => $channel,
+                'status' => 'completed',
                 'amount' => $debitAmount,
-                'description' => 'Payment for order #'.$order->id.' via '.$channel.($discountAmount > 0 ? ' (discount applied)' : ''),
+                'balance_before' => $balanceBefore,
+                'balance_after' => $balanceAfter,
+                'description' => 'transaction.'.$transactionType,
+                'metadata' => [
+                    'translation_key' => 'transaction.'.$transactionType,
+                    'order_ref_type' => (int) $order->ref_type,
+                    'discount_amount' => $discountAmount,
+                ],
             ]);
         }
+    }
+
+    private function markPaymentLedgerTransactions(WalletPaymentTransaction $transaction, string $status): void
+    {
+        WalletTransaction::where('wallet_payment_transaction_id', $transaction->id)
+            ->where('status', 'pending')
+            ->update(['status' => $status]);
+    }
+
+    private function transactionTypeForOrder(Order $order): string
+    {
+        return match ((int) $order->ref_type) {
+            1 => 'group_class_purchase',
+            2 => 'course_purchase',
+            4 => 'private_lesson_purchase',
+            7 => 'wallet_package_purchase',
+            default => 'order_payment',
+        };
     }
 
     private function distributeFinalAmountAcrossOrders($orders, float $finalAmount): array

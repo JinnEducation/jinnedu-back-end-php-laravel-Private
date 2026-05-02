@@ -58,16 +58,17 @@ class LocalTestService implements PaymentInterface
                 ], 404);
             }
 
-            // Update transaction status
+            $prev = json_decode($transaction->response, true) ?: [];
+
+            // Update transaction status without dropping checkout metadata used later.
             $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
             $transaction->status = TransactionStatus::ACTIVE;
             $transaction->transaction_id = 'local-test-'.$referenceId;
-            $transaction->response = json_encode([
+            $transaction->response = json_encode(array_merge($prev, [
                 'test_mode' => true,
-                'order_ids' => json_decode($transaction->response, true)['order_ids'] ?? [],
                 'completed_at' => now()->toDateTimeString(),
-                'type' => json_decode($transaction->response, true)['type'],
-            ]);
+                'type' => $prev['type'] ?? 'local-test',
+            ]));
             $transaction->save();
 
             DB::commit();

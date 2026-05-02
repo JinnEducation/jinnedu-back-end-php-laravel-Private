@@ -146,17 +146,19 @@ class StripeService implements PaymentInterface
             ]);
         }
 
+        $prev = json_decode($transaction->response, true) ?: [];
+
         // === SAME LOGIC AS LocalTest ===
         $transaction->payment_status = TransactionPaymentStatus::COMPLETED;
         $transaction->status = TransactionStatus::ACTIVE;
         $transaction->transaction_id = 'stripe-'.$session->payment_intent;
-        $transaction->response = json_encode([
+        $transaction->response = json_encode(array_merge($prev, [
             'stripe_session_id' => $sessionId,
             'payment_intent' => $session->payment_intent,
             'completed_at' => now()->toDateTimeString(),
-            'type' => $metadata['type'] ?? 'stripe',
-            'order_ids' => json_decode($metadata['order_ids'] ?? '[]', true),
-        ]);
+            'type' => $prev['type'] ?? $metadata['type'] ?? 'stripe',
+            'order_ids' => $prev['order_ids'] ?? json_decode($metadata['order_ids'] ?? '[]', true),
+        ]));
         $transaction->save();
 
         return response()->json([

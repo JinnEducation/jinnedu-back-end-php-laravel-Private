@@ -566,6 +566,13 @@ class WalletController extends Controller
             $transactions->where('user_id', $request->user_id);
         }
 
+        if (! empty($request->q)) {
+            $transactions->whereHas('user', function ($query) use ($request) {
+                $query->whereRaw(filterTextDB('name').' like ?', ['%'.filterText($request->q).'%'])
+                    ->orWhereRaw(filterTextDB('email').' like ?', ['%'.filterText($request->q).'%']);
+            });
+        }
+
         $transactions = paginate($transactions, $limit);
 
         return response([
@@ -594,18 +601,30 @@ class WalletController extends Controller
             ], 200);
         }
 
+        $user = User::find($request->user_id);
+        $wallet = $user->wallets()->first();
+        $balanceBefore = $wallet ? (float) $wallet->balance : 0;
+        $balanceAfter = $balanceBefore + ($request->type == 'credit' ? (float) $request->amount : - (float) $request->amount);
+
         $transaction = WalletTransaction::create([
             'user_id' => $request->user_id,
             'order_id' => $request->order_id,
             'type' => $request->type,
             'amount' => $request->amount,
+            'transaction_type' => 'manual_adjustment',
+            'payment_gateway' => 'manual',
+            'status' => 'completed',
+            'balance_before' => $balanceBefore,
+            'balance_after' => $balanceAfter,
             'description' => $request->description,
+            'metadata' => [
+                'translation_key' => 'transaction.manual_adjustment',
+                'source' => 'admin_wallet_adjustment',
+            ],
         ]);
 
         if ($transaction) {
 
-            $user = User::find($request->user_id);
-            $wallet = $user->wallets()->first();
             if (! $wallet) {
                 $wallet = new UserWallet;
                 $wallet->user_id = $request->user_id;
