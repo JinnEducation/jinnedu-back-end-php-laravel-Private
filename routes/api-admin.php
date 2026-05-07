@@ -49,6 +49,7 @@ use App\Http\Controllers\Sections\CourseController;
 use App\Http\Controllers\Sections\DepartmentController;
 use App\Http\Controllers\Sections\NavigationController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SocialMediaLinkController;
 use App\Http\Controllers\StudentStatisticsController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\TutorFinanceController;
@@ -74,6 +75,11 @@ Route::middleware(['auth:sanctum', 'single_login_session', 'verified'])->group(f
     Route::get('/get-levels', [LevelController::class, 'index']);
 
     Route::get('/get-categories', [CategoryController::class, 'index']);
+
+    Route::prefix('social-media-links')->name('social-media-links.')->group(function () {
+        Route::get('/', [SocialMediaLinkController::class, 'index'])->name('index');
+        Route::post('/bulk-update', [SocialMediaLinkController::class, 'bulkUpdate'])->name('bulk-update');
+    });
 
     Route::get('/forbidden-words', [ForbiddenWordsController::class, 'index'])->name('words.index');
     Route::post('/forbidden-words', [ForbiddenWordsController::class, 'store'])->name('words.store');

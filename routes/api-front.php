@@ -51,6 +51,7 @@ use App\Http\Controllers\TutorController;
 use App\Http\Controllers\InviteController;
 
 use App\Http\Controllers\PaypalCheckoutController;
+use App\Http\Controllers\SocialMediaLinkController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PaymentResponseController;
@@ -61,6 +62,8 @@ use App\Services\Payment\PayPalService;
 use App\Services\Payment\StripeService;
 
 Route::prefix('front')->name('front.')->group(function () {
+    Route::get('/social-media-links', [SocialMediaLinkController::class, 'frontIndex'])->name('social-media-links');
+
     
     Route::prefix('contact-us')->name('contact-us.')->group(function () {
         Route::post('/create', [ContactUsController::class, 'store'])->name('create');

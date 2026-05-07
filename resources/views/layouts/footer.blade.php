@@ -221,36 +221,27 @@
             </div>
 
             <!-- أيقونات السوشال ميديا -->
-            <div class="flex space-x-2 rtl:space-x-reverse">
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-primary hover:scale-110 group">
-                    <i class="text-md fab fa-facebook-f group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-pink-600 hover:scale-110 group">
-                    <i class="text-md fab fa-instagram group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-gray-800 hover:scale-110 group">
-                    <i class="text-md fab fa-x-twitter group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-primary-700 hover:scale-110 group">
-                    <i class="text-md fab fa-linkedin-in group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-red-600 hover:scale-110 group">
-                    <i class="text-md fab fa-youtube group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-purple-600 hover:scale-110 group">
-                    <i class="text-md fab fa-discord group-hover:text-white"></i>
-                </a>
-                <a href="#"
-                    class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform hover:bg-primary-900 hover:scale-110 group">
-                    <i class="text-md fab fa-telegram-plane group-hover:text-white"></i>
-                </a>
-            </div>
+            @php
+                $socialMediaLinks = collect();
+
+                if (\Illuminate\Support\Facades\Schema::hasTable('social_media_links')) {
+                    $socialMediaLinks = \App\Models\SocialMediaLink::activeOrdered()->get();
+                }
+            @endphp
+
+            @if ($socialMediaLinks->isNotEmpty())
+                <div class="flex space-x-2 rtl:space-x-reverse">
+                    @foreach ($socialMediaLinks as $socialMediaLink)
+                        <a href="{{ $socialMediaLink->url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="{{ $socialMediaLink->name }}"
+                            class="flex justify-center items-center w-7 h-7 text-gray-600 bg-white rounded-full transition-all duration-300 transform {{ $socialMediaLink->hover_class }} hover:scale-110 group">
+                            <i class="text-md {{ $socialMediaLink->icon }} group-hover:text-white"></i>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </footer>

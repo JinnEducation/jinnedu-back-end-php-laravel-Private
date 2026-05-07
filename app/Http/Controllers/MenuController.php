@@ -17,6 +17,8 @@ class MenuController extends Controller
         'favorites.index' => [1, 2],
         'payout.create' => [2],
         'accounting.balance-report.*' => [2],
+        'accounting.site-balance-report' => [0],
+        'settings.social-media' => [0],
         'my-courses.all' => [1],
         'my-courses.completed' => [1],
         'my-courses.unfinished' => [1],
