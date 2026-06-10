@@ -362,10 +362,11 @@ class CourseAdminController extends Controller
         });
     }
 
-    public function destroy(Request $request, Course $course)
+    public function destroy(Request $request, $id)
     {
         $this->mustBeAdmin($request);
 
+        $course = Course::findOrFail($id);
         $course->delete();
 
         return response()->json(['message' => 'Course deleted.']);
